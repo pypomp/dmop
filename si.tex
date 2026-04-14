@@ -1,0 +1,194 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{booktabs}
+%\newcommand{\description}{}
+% \usepackage{enumitem}
+\usepackage{tabto}
+\usepackage{natbib}
+\bibliographystyle{apalike}
+\usepackage{float}
+
+% set theorem style to match the main text
+%\theoremstyle{thmstylethree} 
+% \theoremstyle{thmstyleone}
+% \theoremstyle{thmstyletwo}
+
+\usepackage{xcolor}
+\newcommand\eic[1]{\textcolor{orange}{#1}}
+
+\input{macros}
+
+%\theoremstyle{thmstyleone}
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}%
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+%\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}
+%\usepackage[doublespacing]{setspace}
+
+\usepackage[inline]{enumitem}
+\newcommand\inlineItemSep{,}
+
+% Use the lineno option to display guide line numbers if required.
+\usepackage{xr, refcount}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+
+\newcommand*{\myexternaldocument}[1]{%
+    \externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\externaldocument{ms}
+
+\renewcommand{\contentsname}{Supplementary Content}
+\renewcommand{\refname}{Supplementary References}
+\renewcommand\thefigure{S-\arabic{figure}}
+\renewcommand\thetable{S-\arabic{table}}
+\renewcommand\thepage{S-\arabic{page}}
+\renewcommand\thesection{S\arabic{section}}
+\renewcommand\theequation{S\arabic{equation}}
+\renewcommand\theprop{S\arabic{prop}}
+\renewcommand\thelem{S\arabic{lem}}
+\renewcommand\thedefn{S\arabic{defn}}
+\renewcommand\thethm{S\arabic{thm}}
+\renewcommand\thecor{S\arabic{cor}}
+
+%\renewcommand\thealgocf{S\arabic{algocf}}
+
+
+% needed to permit page breaks within an eqnarray environment
+\allowdisplaybreaks
+
+\begin{document}
+%\journaltitle{Journals of the Royal Statistical Society}
+%\DOI{DOI HERE}
+%\copyrightyear{XXXX}
+%\pubyear{XXXX}
+%\access{Advance Access Publication Date: Day Month Year}
+%\appnotes{Original article}
+
+%\firstpage{1}
+
+%\subtitle{Subject Section}
+\title{Supporting Materials for ``Automatic Differentiation Accelerates Inference for Partially Observed Markov Processes''}
+
+\author{Kevin Tan$^1$, Giles Hooker$^1$ and Edward L. Ionides$^2$\\\small $^1$University of Pennsylvania and $^2$University of Michigan}
+\date{}
+
+\maketitle
+
+\tableofcontents
+
+\pagebreak
+
+\section{Proof of Theorem~\ref{thm:mop-functional-forms} (DMOP-$\alpha$ Functional Forms)}
+
+
+\label{appendix:functional}
+\input{appendix/functional}
+
+
+\section{Proof of Theorem~\ref{thm:mop-convergence} (Optimization Convergence Analysis)}
+\label{appendix:convergence}
+\input{appendix/convergence}
+
+\section{Feynman-Kac Models and Monte Carlo Approximations}
+\label{appendix:feynman}
+\input{appendix/feynman}
+
+\section{Proof of Theorem~\ref{thm:mop-targeting} via a Strong Law of Large Numbers for Triangular Arrays of Particles With Off-Parameter Resampling}
+\label{appendix:targeting}
+\input{appendix/targeting}
+
+
+\section{Proof of Theorem~\ref{thm:mop-grad-consistency} via Consistency of Off-Parameter Resampled Gradient Estimates}
+\label{appendix:consistency}
+\input{appendix/consistency}
+
+\section{Proof of Theorem~\ref{thm:mop-biasvar} (Bias-Variance Analysis)}
+\label{appendix:biasvar}
+\input{appendix/biasvar}
+
+\section{Figures for Bayesian Inference}
+\label{appendix:bayes}
+\input{appendix/bayes}
+
+\section{Justification for the Choice of Baseline Comparisons}
+
+The reasoning we use in the main text to support the magnitude of our contribution is as follows: (i) iterated filtering methods are the current state of the art, and have been for a decade; (ii) we have demonstrated a substantial advance over iterated filtering.
+The main text focuses on demonstrating (ii), while supporting (i) via references.
+Listing a few references amounts only to anecdotal evidence, which is not sufficient to persuade someone properly skeptical about the claim.
+Therefore, this supplement provides an additional quantitative evaluation.
+
+We count the number of papers published in three top scientific journals ({\it Science}, {\it Nature}, and {\it Proceedings of the National Academy of Sciences of the USA (PNAS)}) that carry out statistical inference for partially observed nonlinear non-Gaussian stochastic dynamic models to address a scientific question by fitting mechanistic models to time series data.
+For all methods, papers in these high-profile journals are expected to represent only be the tip of the iceberg, but this count provides a concrete measure of the capability of the methods to handle world-class scientific inference problems.
+We could have considered additional journals, but the three we chose are undoubtedly prestigious and their scope covers the full range of scientific endeavor so there is less room for subfield bias.
+For iterated filtering, our high-impact application count gives the following:
+\begin{enumerate*}
+  % \item \citet{trevisin23} % this uses pomp for a simulator
+\item \citet{he23}\inlineItemSep
+  % \item \citet{griffiths23} % this uses pfilter but not if2
+  % \item \citet{gokhale23} % uses pomp for trajectory matching
+\item \citet{fox22}\inlineItemSep
+\item \citet{subramanian21}\inlineItemSep
+  \item \citet{pei21}\inlineItemSep
+  \item \citet{li20}\inlineItemSep
+  %  \item \citet{borchering21} % uses pomp for a simulator
+  \item \citet{giezendanner20}\inlineItemSep
+\item \citet{wale19}\inlineItemSep
+  % \item \citet{decelles19} % uses pomp for trajectory matching
+\item \citet{pons-salort18}\inlineItemSep
+\item \citet{ranjeva17}\inlineItemSep
+\item \citet{martinez16-pnas} \inlineItemSep
+\item \citet{becker16}\inlineItemSep
+\item \citet{bakker16}\inlineItemSep
+\item \citet{laneri15}\inlineItemSep
+\item \citet{blake14}\inlineItemSep
+\item \citet{blackwood13}\inlineItemSep
+\item \citet{blackwood13b}\inlineItemSep
+\item \citet{king08}\inlineItemSep
+\end{enumerate*}
+
+A referee advised consideration of an alternative approach by \citet{gu98} that we found to have a  high-impact application count of zero, via Google Scholar.
+
+A referee also recommended comparison with \citet{lindsten14}, for which the high-impact application count is also zero.
+\citet{lindsten14} has been employed once in {\it Nature Communications} \citep{calafat18} though that journal did not quite make it onto our elite list.
+We also found five applications of iterated filtering in {\it Nature Communications} \citep{ranjeva19,rodo21,santos22,briga24,perez25}.
+There is a paper in the Statistics section of {\it PNAS} by \citet{wang22} that demonstrates the method of \citet{lindsten14}, but here we are counting the demonstrated ability of the methodology to generate high-profile scientific papers, not statistical methodology papers.
+Otherwise, we would also count \citet{ionides06-pnas} and \citet{ionides15} for iterated filtering. 
+
+This reasoning supports iterated filtering as an empirically justified point of reference, in preference to the approaches of \citet{lindsten14} and \citet{gu98}.
+Further, the method of \citet{lindsten14} does not have the plug-and-play property so it cannot readily be applied to our example.
+The method of \citet{gu98} would have to be combined with an approach such as \citet{andrieu10} that has known scalability problems.
+Therefore, we focus on comparing with iterated filtering and we do not provide a comparison with \citet{lindsten14} or \citet{gu98}.
+
+Benchmark tasks are invaluable for making progress on challenging problems \citep{donoho17}.
+The Dhaka cholera data and model have served as such a benchmark since its introduction by \citet{king08}.
+Other papers testing methods on this example include \citet{ionides15,fasiolo16,wycoff24}.
+Thus, our test is established as a demanding inference problem that challenges the best available methods.
+We note that this benchmark challenge contains various difficulties that arise commonly in scientific inquiry but are absent from simple SIR models such as the simulation study considered by \citet{lindsten14}.
+Ability to accommodate such features is critical for the methodology to be effective for scientific inquiry.
+
+Iterated filtering has recently been used as a benchmark for new POMP model methodology by \citet{whitehouse23}.
+This analysis presented numerical results that claimed to beat iterated filtering, but was subsequently found to contain numerical errors.
+Corrected results are favorable for iterated filtering methods \citep{hao24-arxiv,whitehouse25-correction,he25}.
+
+Recent results of \citet{chen25} have extended the previous theoretical understanding of iterated filtering.
+The ongoing study of iterated filtering as a state-of-the-art approach to inference for POMP models gives additional support for our decision to use iterated filtering as a benchmark for our new methodology.
+
+\bibliographystyle{apalike}
+\bibliography{bib-ifad}
+
+
+\end{document}
