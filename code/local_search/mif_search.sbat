@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name="pypomp dacca test (mif)"
+#SBATCH --partition=gpu
+#SBATCH --gpus=v100:1
+#SBATCH --cpus-per-gpu=1
+#SBATCH --mem=20GB
+#SBATCH --output=mif_results/logs/slurm-%j.out
+#SBATCH --time=0-0:30:00
+#SBATCH --mail-type=fail,end
+
+# Note: account and mail-user can be set via environment variables (SBATCH_ACCOUNT and SBATCH_MAIL_USER)
+# e.g., by sourcing the .slurm_vars file in the project root.
+
+. ../../venv/bin/activate
+
+export RUN_LEVEL=4
+
+python -u mif_search.py

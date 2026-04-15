@@ -1,0 +1,249 @@
+---
+title: "Dacca Report (Local Search)"
+format:
+  html:
+    toc: true
+    embed-resources: true
+jupyter: python3
+execute:
+  daemon: false
+---
+
+```{python}
+# | label: setup
+# | echo: false
+import os
+import logging
+
+# Hide the noisy JAX CUDA initialization error on machines without a GPU
+logging.getLogger("jax._src.xla_bridge").setLevel(logging.CRITICAL)
+import pickle
+
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+from plotnine import *
+
+import pypomp as pp
+import jax
+
+# When rendering, run from dacca/performance so PKL_PATH resolves
+print(datetime.now())
+```
+
+```{python}
+# | label: load-data
+# | echo: false
+pomp_obj = pickle.load(open("mif_results/dacca_results_rl4.pkl", "rb"))
+pomp_obj_train = pickle.load(open("dmop_results/dacca_results_rl4.pkl", "rb"))
+LL_frame = pomp_obj.results()
+traces_raw_gpu = pomp_obj.traces()
+traces_raw_gpu["source"] = "gpu"
+traces_raw_train = pomp_obj_train.traces()
+traces_raw_train["source"] = "train"
+traces_raw = pd.concat([traces_raw_gpu, traces_raw_train], ignore_index=True)
+```
+
+# Individual results
+
+```{python}
+# | label: traces-long
+# | echo: false
+# Build long-format traces (equivalent to R pivot_longer)
+traces = traces_raw.rename(
+    columns={"theta_idx": "rep", "iteration": "iter", "loglik": "logLik"}
+)
+id_cols = ["rep", "iter", "logLik", "method", "source"]
+param_cols = [c for c in traces.columns if c not in id_cols]
+traces_long = traces.melt(
+    id_vars=id_cols,
+    value_vars=param_cols,
+    var_name="quantity",
+    value_name="param_value",
+)
+```
+
+## Summary results
+
+### IF2 only
+```{python}
+# | label: summary-if2
+# | echo: false
+pomp_obj.print_metadata()
+pomp_obj.print_summary()
+```
+
+### IF2 + train
+```{python}
+# | label: summary-if2-train
+# | echo: false
+pomp_obj_train.print_metadata()
+pomp_obj_train.print_summary()
+```
+
+## LogLik Summary Statistics
+
+### Final pfilter logLik by source
+```{python}
+# | label: loglik-summary-stats
+# | echo: false
+# Get final pfilter logLik for each replicate by source
+pfilter_traces = traces[traces["method"] == "pfilter"]
+last_pfilter_iter = pfilter_traces.groupby(["rep", "source"])["iter"].transform("max")
+final_pfilter_loglik = pfilter_traces.loc[
+    pfilter_traces["iter"] == last_pfilter_iter, ["rep", "source", "logLik"]
+].drop_duplicates(subset=["rep", "source"])
+
+# Compute summary statistics grouped by source
+loglik_summary = (
+    final_pfilter_loglik.groupby("source")["logLik"]
+    .agg(["count", "mean", "std", "min", "median", "max"])
+    .round(2)
+    .reset_index()
+)
+loglik_summary.columns = ["Source", "N", "Mean", "Std", "Min", "Median", "Max"]
+print(loglik_summary.to_string(index=False))
+```
+
+## Times
+
+### IF2 only
+```{python}
+# | label: time-summary
+# | echo: false
+time_df = pomp_obj.time()
+print(time_df)
+print("Total time: ", time_df["time"].sum())
+```
+
+### IF2 + train
+```{python}
+# | label: time-summary-train
+# | echo: false
+time_df = pomp_obj_train.time()
+print(time_df)
+print("Total time: ", time_df["time"].sum())
+```
+
+## IF2 only traces
+
+```{python}
+# | label: plot-traces
+# | fig-width: 12
+# | fig-height: 12
+# | echo: false
+traces_long_gpu = traces_long[traces_long["source"] == "gpu"].copy()
+(
+    ggplot(
+        traces_long_gpu,
+        aes(x="iter", y="param_value", group="rep", color="factor(rep)"),
+    )
+    + geom_line(show_legend=False)
+    + facet_wrap("quantity", scales="free_y")
+    + labs(title="IF2 only parameter traces")
+)
+```
+
+```{python}
+# | label: plot-ll-traces
+# | fig-width: 10
+# | fig-height: 6
+# | echo: false
+traces_ll = traces[traces["source"] == "gpu"][["rep", "iter", "logLik"]].copy()
+(
+    ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
+    + geom_line(show_legend=False)
+    # + coord_cartesian(ylim=(-4000, None))
+    + labs(title="IF2 only logLik traces")
+)
+```
+
+## IF2 + train traces
+
+```{python}
+# | label: plot-traces-train
+# | fig-width: 12
+# | fig-height: 12
+# | echo: false
+traces_long_train = traces_long[traces_long["source"] == "train"].copy()
+(
+    ggplot(
+        traces_long_train,
+        aes(x="iter", y="param_value", group="rep", color="factor(rep)"),
+    )
+    + geom_line(show_legend=False)
+    + facet_wrap("quantity", scales="free_y")
+    + labs(title="IF2 + train parameter traces")
+)
+```
+
+
+```{python}
+# | label: plot-ll-traces-train
+# | fig-width: 10
+# | fig-height: 6
+# | echo: false
+traces_ll = traces[traces["source"] == "train"][["rep", "iter", "logLik"]].copy()
+(
+    ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
+    + geom_line(show_legend=False)
+    # + coord_cartesian(ylim=(-4000, None))
+    + labs(title="IF2 + train logLik traces")
+)
+```
+
+# Comparison: GPU vs train
+
+## LogLik (density)
+
+```{python}
+# | label: final-loglik
+# | echo: false
+pfilter_traces = traces_long[traces_long["method"] == "pfilter"]
+last_pfilter_iter = pfilter_traces.groupby(["rep", "source"])["iter"].transform("max")
+final_loglik = pfilter_traces.loc[
+    pfilter_traces["iter"] == last_pfilter_iter, ["rep", "source", "logLik"]
+].drop_duplicates(subset=["rep", "source"])
+```
+
+```{python}
+# | label: plot-ll-density
+# | fig-width: 8
+# | fig-height: 5
+# | echo: false
+(
+    ggplot(
+        final_loglik.replace({"source": {"gpu": "IF2", "train": "IFAD"}}),
+        aes(x="logLik", fill="source", color="source"),
+    )
+    + geom_density(alpha=0.4)
+    + labs(x="logLik", title="Final logLik: IF2 only vs IFAD")
+    # + coord_cartesian(xlim=(-4000, None))
+)
+```
+
+## Final parameter estimates (density)
+
+```{python}
+# | label: final-params
+# | echo: false
+last_iter_by_source = traces_long.groupby("source")["iter"].transform("max")
+final_params = traces_long[traces_long["iter"] == last_iter_by_source].copy()
+```
+
+```{python}
+# | label: plot-param-density
+# | fig-width: 10
+# | fig-height: 10
+# | echo: false
+(
+    ggplot(
+        final_params.replace({"source": {"gpu": "IF2", "train": "IFAD"}}),
+        aes(x="param_value", fill="source", color="source"),
+    )
+    + geom_density(alpha=0.4)
+    + facet_wrap("quantity", scales="free")
+    + labs(x="estimate", title="Final parameter estimates: IF2 only vs IFAD")
+)
+```
