@@ -13,18 +13,26 @@ NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
 DEFAULT_ETA = 0.2
+DEFAULT_IVP_ETA = DEFAULT_ETA
 eta = {
     "gamma": DEFAULT_ETA,
     "epsilon": DEFAULT_ETA,
     "rho": 0.0,
     "m": DEFAULT_ETA,
     "c": 0.0,
+    "alpha": 0.0,
+    "delta": 0.0,
     "beta_trend": DEFAULT_ETA,
     **{f"bs{i + 1}": DEFAULT_ETA for i in range(6)},
     "sigma": DEFAULT_ETA,
     "tau": DEFAULT_ETA,
-    "omega": DEFAULT_ETA,
     **{f"omegas{i + 1}": DEFAULT_ETA for i in range(6)},
+    "S_0": DEFAULT_IVP_ETA,
+    "I_0": DEFAULT_IVP_ETA,
+    "Y_0": 0.0,
+    "R1_0": DEFAULT_IVP_ETA,
+    "R2_0": DEFAULT_IVP_ETA,
+    "R3_0": DEFAULT_IVP_ETA,
 }
 
 # Train step

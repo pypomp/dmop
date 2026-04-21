@@ -3,11 +3,11 @@ import os
 import jax  # noqa: E402
 import numpy as np  # noqa: E402
 import pypomp as pp  # noqa: E402
-import session_info
+import session_info  # type: ignore
 
-print(jax.devices())
+print(jax.devices())  # type: ignore
 
-session_info.show(dependencies=True)
+session_info.show(dependencies=True)  # type: ignore
 
 MAIN_SEED = 631409
 key = jax.random.key(MAIN_SEED)
@@ -20,14 +20,16 @@ NREPS_FITR = (2, 3, 20, 36)[RUN_LEVEL - 1]
 print(f"Running at level {RUN_LEVEL}")
 
 DEFAULT_SD = 0.02 / 8
+DEFAULT_IVP_SD = DEFAULT_SD * 8
 RW_SD = pp.RWSigma(
     sigmas={
         "gamma": DEFAULT_SD,
         "m": DEFAULT_SD,
-        "rho": 0.0,  # fixed in model code
+        "rho": 0.0,
         "epsilon": DEFAULT_SD,
-        "omega": 0.0,  # fixed in model code
-        "c": 0.0,  # fixed in model code
+        "c": 0.0,
+        "alpha": 0.0,
+        "delta": 0.0,
         "beta_trend": DEFAULT_SD,
         "sigma": DEFAULT_SD,
         "tau": DEFAULT_SD,
@@ -43,15 +45,25 @@ RW_SD = pp.RWSigma(
         "omegas4": DEFAULT_SD,
         "omegas5": DEFAULT_SD,
         "omegas6": DEFAULT_SD,
+        "S_0": DEFAULT_IVP_SD,
+        "I_0": DEFAULT_IVP_SD,
+        "Y_0": 0.0,
+        "R1_0": DEFAULT_IVP_SD,
+        "R2_0": DEFAULT_IVP_SD,
+        "R3_0": DEFAULT_IVP_SD,
     },
-    init_names=[],
+    init_names=["S_0", "I_0", "Y_0", "R1_0", "R2_0", "R3_0"],
 )
 COOLING_RATE = 0.5
 
-dacca_obj = pp.dacca(dt=None, nstep=20)
+dacca_obj = pp.models.dacca(dt=None, nstep=20)
 
 params_box = {k: (v * 0.9, v * 1.1) for k, v in dacca_obj.theta[0].items()}
 params_box["rho"] = (0.0, 0.0)
+params_box["c"] = (1.0, 1.0)
+params_box["alpha"] = (1.0, 1.0)
+params_box["delta"] = (0.02, 0.02)
+params_box["Y_0"] = (0.0, 0.0)
 # This is the params box from diffPomp
 # params_box = {
 #     "gamma": (10.0, 40.0),
