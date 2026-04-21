@@ -5,9 +5,12 @@ from prep import (
     dacca_obj,
     initial_params_list,
     key,
+    RW_SD,
+    COOLING_RATE,
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
+NFITR = (2, 5, 100, 200)[RUN_LEVEL - 1]
 NTRAIN = (2, 20, 40, 100)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
@@ -35,24 +38,29 @@ eta = {
     "R3_0": DEFAULT_IVP_ETA,
 }
 
-# Train step
+dacca_obj.mif(
+    theta=initial_params_list,
+    rw_sd=RW_SD,
+    M=NFITR,
+    a=COOLING_RATE,
+    J=NP_FITR,
+    key=key,
+)
+print(dacca_obj.results())
+
 dacca_obj.train(
     J=NP_FITR,
     M=NTRAIN,
-    theta=initial_params_list,
     eta=eta,
     optimizer="Adam",
     n_monitors=1,
-    key=key,
     eta_cooling=0.05,
 )
 print(dacca_obj.results())
 
-# # PFILTER round 2
 dacca_obj.pfilter(J=NP_EVAL, reps=NREPS_EVAL)
 print(dacca_obj.results())
 
-# Re-evaluate top fit to account for sample max luck
 dacca_obj.prune(n=1, refill=False)
 dacca_obj.pfilter(J=NP_EVAL, reps=NREPS_EVAL)
 print(dacca_obj.results())

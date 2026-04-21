@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name="pypomp dacca test (mif)"
-#SBATCH --partition=gpu_mig40
-#SBATCH --gpus=nvidia_a100_80gb_pcie_3g.40gb:1
+#SBATCH --job-name="pypomp dacca test (train)"
+#SBATCH --partition=gpu
+#SBATCH --gpus=v100:1
 #SBATCH --cpus-per-gpu=1
-#SBATCH --mem=20GB
-#SBATCH --output=mif_results/logs/slurm-%j.out
+#SBATCH --mem=10GB
+#SBATCH --output=dmop_results/logs/slurm-%j.out
 #SBATCH --time=0-0:30:00
 #SBATCH --mail-type=fail,end
 
@@ -15,4 +15,4 @@
 
 export RUN_LEVEL=4
 
-python -u mif_search.py
+python -u dmop_search.py
