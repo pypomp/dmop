@@ -1,19 +1,22 @@
-%\documentclass[11pt]{article} 
+\documentclass[11pt]{article} 
 %\documentclass[9pt,twocolumn,twoside]{pnas-new}
-\documentclass[numsec,webpdf,modern,medium,namedate]{oup-authoring-template}
-%\documentclass[9pt,twocolumn,twoside]{pnas-new}
+%\documentclass[numsec,webpdf,modern,medium,namedate]{oup-authoring-template}
 % Use the lineno option to display guide line numbers if required.
-\onecolumn
+%\onecolumn
+
+%\usepackage[foot]{amsaddr}
+
+\usepackage{natbib}
+\usepackage{hyperref}
 
 \usepackage{booktabs}
-\newcommand{\description}{}
+% \newcommand{\description}{}
 \usepackage{enumitem}
 
 \newcommand\new[1]{\textcolor{red}{#1}}
 \newcommand\eic[1]{\textcolor{orange}{#1}}
 
-%\newcommand\arxiv[2]{#1} % 1st argument for arxiv format
-\newcommand\arxiv[2]{#2} % 2nd argument for PNAS format
+\newcommand\arxiv[2]{#1} % 1st argument for arxiv format
 % also, swich to \documentclass[11pt]{article} for arxiv format
 
 \input{macros}
@@ -21,30 +24,28 @@
 \usepackage{tabto}
 
 
-\arxiv{
+%\arxiv{
   \usepackage{fullpage}
-  %% some packages loaded by pnas-new.cls which we need for
-  %% the arxiv version
   \usepackage{algorithm}
   \usepackage[noend]{algpseudocode}
   \usepackage{xcolor}
-  \usepackage{tikz}
-  \usepackage{enumitem}
-  \bibliographystyle{ieeetr}
-}{
-\theoremstyle{thmstyleone}%
-\newtheorem{theorem}{Theorem}%  meant for continuous numbers
-%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
-%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
-\newtheorem{proposition}[theorem]{Proposition}%
-%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
-\theoremstyle{thmstyletwo}%w
-\newtheorem{example}{Example}%
-\newtheorem{remark}{Remark}%
-\theoremstyle{thmstylethree}%
-\newtheorem{definition}{Definition}
-\usepackage[doublespacing]{setspace}
-\usepackage[fontsize=12pt]{fontsize}}
+%  \usepackage{tikz}
+%  \bibliographystyle{ieeetr}
+%}{
+  
+%% \theoremstyle{thmstyleone}%
+%% \newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%% %%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% %% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+%% \newtheorem{proposition}[theorem]{Proposition}%
+%% %%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+%% \theoremstyle{thmstyletwo}%w
+%% \newtheorem{example}{Example}%
+%% \newtheorem{remark}{Remark}%
+%% \theoremstyle{thmstylethree}%
+%% \newtheorem{definition}{Definition}
+%% \usepackage[doublespacing]{setspace}
+%% \usepackage[fontsize=12pt]{fontsize}}
 
 
 
@@ -58,55 +59,21 @@
 
 \begin{document}
 
-\arxiv{\title{Automatic Differentiation Accelerates Inference for Partially Observed Markov Processes}
+\title{Automatic Differentiation to Improve Parameter Estimation for Partially Observed Markov Processes}
 
-\author{K. Tan$^{1}$, G. Hooker$^{1}$ and E. L. Ionides$^{2}$
+\author{K. Tan$^{1}$, A. J. Abkemeier$^{2}$, G. Hooker$^{1}$ and E. L. Ionides$^{2}$
   \vspace{3ex}\\
   \small{$^{1}$Department of Statistics, University of Pennsylvania}\\
   \small{$^{2}$Department of Statistics, University of Michigan}}
   
-}{
-  
-\journaltitle{Journals of the Royal Statistical Society}
-\DOI{DOI HERE}
-\copyrightyear{XXXX}
-\pubyear{XXXX}
-\access{Advance Access Publication Date: Day Month Year}
-\appnotes{Original article}
+\maketitle
 
-\firstpage{1}
-
-%\subtitle{Subject Section}
-\title[AD for POMPs]{Automatic Differentiation Accelerates Inference for Partially Observed Markov Processes}
-
-\author[1,$\ast$]{Kevin Tan}
-\author[1]{Giles Hooker}
-\author[2]{Edward L. Ionides}
-%\author[4]{Fifth Author\ORCID{0000-0000-0000-0000}}
-\authormark{Tan et al.}
-
-\address[1]{\orgdiv{Department of Statistics and Data Science}, \orgname{University of Pennsylvania}, \orgaddress{\street{265 South 37th Street, 3rd \& 4th Floors}, \postcode{19104}, \state{Pennsylvania}, \country{United States of America}}}
-\address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\street{323 West Hall, 1085 S University Ave}, \postcode{48109}, \state{Michigan}, \country{United States of America}}}
-
-\corresp[$\ast$]{Address for correspondence. Kevin Tan, University of Pennsylvania, Philadelphia, 19104, USA. \href{Email:kevtan@wharton.upenn.edu}{kevtan@wharton.upenn.edu}}
-
-\received{Date}{0}{Year}
-\revised{Date}{0}{Year}
-\accepted{Date}{0}{Year}
-
-}
-
-\arxiv{
 \begin{abstract}
   Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm that uses AD to refine a coarse solution from an iterated filtering algorithm shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
 \end{abstract}
-}{
 
-  \abstract{Automatic differentiation (AD) has driven many recent advances in machine learning. However, partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood that is discontinuous in the model parameters. We present a new algorithm for estimating the derivative of the log-likelihood function via AD for a smooth particle filter. Our algorithm entails a bias-variance tradeoff that can lead to mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system while most previous approaches require access to the system's transition probabilities. Numerical results show that using AD to refine a coarse solution from an iterated filtering algorithm shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.}
-\keywords{Sequential Monte Carlo, Automatic Differentiation, Particle Filter, Markov Process, Likelihood}
-}
+% \keywords{Sequential Monte Carlo, Automatic Differentiation, Particle Filter, Markov Process, Likelihood}
 
-\maketitle
 
 \section{Introduction}
 
@@ -115,18 +82,18 @@ Commonly, the latent system is modeled as a Markov process, giving rise to a par
 POMP models arise in fields as diverse as optimal control \citep{singh22}, epidemiology \citep{he10, stocks17}, ecology \citep{knape12} and finance \citep{kim08, breto14}.
 Despite their ubiquity, estimation and inference for this broad class of models remains a challenging problem.
 We develop full-information plug-and-play inference for POMP models that takes advantage of automatic differentiation (AD) computation while controlling the Monte Carlo bias and variance of the resulting estimator.
-These useful desiderata have not previously been combined, and we discuss each component in turn.
+These desiderata have not previously been combined, and we discuss each component in turn.
 
 Full-information methods are those which make statistically efficient use of data, typically via likelihood-based or Bayesian methods that avoid dependence on summary statistics.
-The particle filter, also known as sequential Monte Carlo, serves as the foundation for various full-information inference algorithms for POMP models, since it provides an unbiased estimate of the likelihood function \citep{delMoral04}, enabling Bayesian inference \citep{andrieu10,chopin13} and likelihood-based inference \citep{ionides06-pnas,ionides15}.
+The particle filter, also known as sequential Monte Carlo, serves as the foundation for various full-information inference algorithms for POMP models, since it provides an unbiased estimate of the likelihood function \citep{delMoral04}, enabling Bayesian inference via particle Markov chain Monte Carlo \citep{andrieu10} and likelihood-based inference via iterated filtering algorithms IF1 \citep{ionides06-pnas} and IF2 \citep{ionides15}.
 
-The plug-and-play property holds for a POMP model inference algorithm if it does not need to evaluate the transition density of the latent Markov process, enabling an arbitrary model simulator to be plugged into the algorithm, a convenient property that facilitates scientific discovery \citep{he10}.
-Basic particle filters, also known as boostrap filters, possess this plug-and-play property.
-Plug-and-play methods are sometimes called likelihood-free \citep{owen15}, and it may be counter-intuitive that likelihood-based inference is possible using likelihood-free methods. 
-However, iterated filtering algorithms have shown that this is practical in various scientific investigations \citep{king08,blake14,pons-salort18,subramanian21,fox22,drake23}.
-Nevertheless, the Monte Carlo variability arising in iterated filtering applications becomes increasingly problematic as the size of the data and the complexity of the model increase.
+A POMP model inference algorithm is said to be plug-and-play if it does not need to evaluate the transition density of the latent Markov process, enabling an arbitrary model simulator to be plugged into the algorithm, a convenient property that facilitates scientific discovery \citep{he10}.
 Some plug-and-play methods depend on the construction of low-dimensional summary statistics \citep{wood10,toni09}, sacrificing statistical information for computational convenience.
 Here, our mission is to extend current computational capability among methods wich maintain statistical efficiency and the plug-and-play property.
+Plug-and-play methods are sometimes called likelihood-free \citep{owen15}, and it may be counter-intuitive that likelihood-based inference is possible using likelihood-free methods. 
+Basic particle filters, also known as boostrap filters, possess the plug-and-play property.
+Iterated particle filtering algorithms, such as IF1 and IF2, have shown that plug-and-play likelihood maximization is practical in various scientific investigations \citep{king08,blake14,pons-salort18,subramanian21,fox22,drake23}.
+However, iterated filtering algorithms have slow convergence near the MLE \citep{doucet13}
 
 Recent advances in AD for gradient estimation using particle filters \citep{naesseth18, jonschkowski18, corenflos21, scibior21, singh22} have drawn attention to AD as a tool for inference in POMP models.
 Widespread adoption of these approaches have been limited by their bias \citep{naesseth18, jonschkowski18}, high variance \citep{poyiadjis11, scibior21}, computational expense quadratic in the number of particles \citep{corenflos21, chen24}, or by the loss of the plug-and-play property \citep{poyiadjis11, scibior21, singh22, chen24}.
@@ -143,12 +110,12 @@ At $\alpha=1$, the variance can become prohibitively high, as discovered by thes
 However, the variance rapidly reduces as $\alpha$ decreases, and so a choice of $\alpha$ close to one can provide a low-bias, low-variance, plug-and-play gradient estimate with computational scaling linear in the number of particles.
 
 In practice, likelihood optimization via gradient descent with DMOP-$\alpha$ converges quickly within a neighborhood of the maximum but struggles to reach this neighborhood in the presence of local minima and saddle points.
-That behavior is complementary to that of iterated filtering algorithms \citep{ionides06-pnas,ionides15} which provide a relatively fast and stable way to identify this neighborhood.
-We therefore build a simple but effective hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from a few rounds of iterated filtering.
+By contrast, iterated filtering algorithms provide a relatively fast and stable way to identify this neighborhood.
+We therefore build a simple but effective hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
 We implement our algorithm using JAX \citep{jax}, which also enables us to take advantage of graphical processing unit (GPU) hardware.
 Our methodology is provided in an open-source software package, \texttt{pypomp} \citep{abkemeier25}.
 
-Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 \citep{ionides06-pnas,ionides11} and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
+Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
 Empirically, the benchmark tests demonstrate that IFAD is the most significant methodological advance since \cite{ionides15} for plug-and-play statistical inference on POMP models.
 The choice of models and methods for benchmarking is justified in Section~S8. 
 
@@ -346,12 +313,14 @@ As such, the use of the stop-gradient in \cite{scibior21} can be seen as the MOP
 
 % \arxiv{}{\vspace*{-3ex}}
 
-\section{Practical Maximum-Likelihood Estimation}
+\section{From Gradients to Maximum Likelihood Estimation}
 
-To design an effective procedure for likelihood maximization using DMOP-$\alpha$, we propose a simple algorithm we call Iterated Filtering followed by Automatic Differentiation (IFAD) in Algorithm \ref{alg:ifad}.
-IFAD runs a specified number of iterations of IF2 to warm-start an iterative first or second-order method that uses the DMOP-$\alpha$ gradient estimate.
-We write the algorithm in a fairly general manner, requiring only a Hessian estimate $H(\theta)$ with minimum eigenvalue no smaller than $c$, but in our experiments we use $H=I_p$, corresponding to gradient descent.
-To see the importance of this innovation, we briefly summarize the empirical results in Section~\ref{sec:cholera}.
+To design an effective procedure for likelihood maximization using DMOP-$\alpha$, we carry out iterated filtering then automatic differentiation (IFAD). 
+A basic IFAD approach is presented in Algorithm~\ref{IFAD}.
+This requires  a Hessian estimate $H(\theta)$ with minimum eigenvalue no smaller than $c$, but we allow for the possibility of a trivial estiamte, $H=I_p$, in which case the AD search becomes stochastic gradient descent (SGD).
+Algorithm~\ref{IFAD} is convenient for theoretical analysis, but two further modifications are helpful in practice.
+Our best numerical results were obtained by putting the gradient estimate into the Adam optimizer \citep{kingma15} together with learning rate decay. 
+Numerical results are provided in Section~\ref{sec:cholera}.
 
 \begin{algorithm}[htbp!]
 	\caption{IFAD}
@@ -367,15 +336,10 @@ To see the importance of this innovation, we briefly summarize the empirical res
 
 
 The convergence of IF2 (and so the first stage of IFAD) to a neighborhood of the MLE happens rapidly in practice. 
-In the case of the Dhaka cholera model of \cite{king08}, when an aggressive geometric cooling multiplier of 0.95 and initial random walk standard deviation of 0.02 is used, we require no more than 40 iterations of IF2 to obtain an acceptable warm-start. 
-However, even when applying much larger amounts of Monte Carlo effort, IF2 fails to get within seven log-likelihood units of the maximum on this problem (Figure~\ref{fig:boxplot}).
-These observations are consistent with theoretical results for iterated filtering, showing slow convergence close to the maximum \citep{doucet15-if}.
-IF2, without assistance from AD, requires additional computationally intensive techniques, such as repeated pruning and profiling, to reach the inferentially critical region within one log-likelihood unit of the maximum.
+%% In the case of the Dhaka cholera model of \cite{king08}, when an aggressive geometric cooling multiplier of 0.95 and initial random walk standard deviation of 0.02 is used, we require no more than 40 iterations of IF2 to obtain an acceptable warm-start. 
+However, even when applying much larger amounts of Monte Carlo effort, IF2 fails to get within seven \eic{ADJUST FOR BEST IF2 AND NEW UNDERSTANDING OF MLE} log-likelihood units of the maximum on this problem (Figure~\ref{fig:boxplot}).
+For this example, IF2, without assistance from AD, struggles to reach the inferentially critical region within one log-likelihood unit of the maximum, even when additional computationally intensive techniques are used, such as repeated pruning and profiling,
 
-Gradient methods can struggle with saddle points, local minima, and nonlinear ridges.
-Without initialization using IF2, Section~\ref{sec:cholera} shows that AD alone can perform poorly.
-Conversely, switching to gradient ascent with DMOP-$\alpha$ score estimates lets one bypass the difficulty that IF2 has with optimizing the last few units of log-likelihood. 
-In combination, these two methods avoid their respective weaknesses and provide, for the first time, straightforward and effective likelihood maximization for our benchmark problem.
 
 The AD stage confers a linear convergence rate for IFAD, up to a small region near the MLE shrinking in $J$, under the usual smoothness and strong convexity assumptions in convex optimization theory, as we show below in Theorem \ref{thm:mop-convergence}.
 
@@ -445,7 +409,7 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 \end{figure}
 
 
-\subsection{Results}
+%\subsection{Results}
 
 We tested IFAD against IF2 on a global search problem for the Dhaka cholera model.
 We re-implemented IF2 to do so, but we also compare our results with the results of \cite{ionides15} (labeled ``IF2 2015'').
@@ -455,7 +419,7 @@ For each method, we performed 100 searches, initialized with 100 starting parame
 % \kevin{Dynamically save to a tex file and load from there}
   
 %\arxiv{}{\vspace*{-1mm}}
-\begin{table}[htbp!]
+s\begin{table}[htbp!]
 \centering
 \input{imgs/095/table}
 \caption{Maximum log-likelihood found by IF2, IFAD, and MOP alone. IFAD performs the best among all methods.}
@@ -463,17 +427,22 @@ For each method, we performed 100 searches, initialized with 100 starting parame
 \label{table:mle}
 \end{table}
 
-\subsection{IFAD Successfully Finds the MLE}
+%\subsection{IFAD Successfully Finds the MLE}
+
 Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
 This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
 Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-Despite being initialized for a global search, IFAD manages to get much closer to the MLE over the $100$ searches than \cite{ionides15}, as seen in Table~\ref{table:mle}.
-On this problem, the sequence of local searches, refinement, and likelihood profiling that was previously required for finding the MLE is not necessary with IFAD. 
-When interpreting Table~\ref{table:mle}, note that by Wilks' Theorem, any difference of over $1.92$ units of log-likelihood has statistical relevance when testing one parameter at the $0.05$ significance level.
-Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
+The results of Table~\ref{table:mle}, Figure~\ref{fig:scatter} and Figure~\ref{fig:boxplot}) indicate that the actual MLE is around \eic{XXXXX}. 
+IFAD has effectively solved a long-standing benchmark problem.
+%%
+%% Despite being initialized for a global search, IFAD manages to get much closer to the MLE over the $100$ searches than \cite{ionides15}, as seen in Table~\ref{table:mle}.
+%% On this problem, the sequence of local searches, refinement, and likelihood profiling that was previously required for finding the MLE is not necessary with IFAD. 
+%% When interpreting Table~\ref{table:mle}, note that by Wilks' Theorem, any difference of over $1.92$ units of log-likelihood has statistical relevance when testing one parameter at the $0.05$ significance level.
+%%Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
 
-\subsection{IFAD Outperforms Both IF2 and DMOP Alone}
-While IF2 quickly approaches a neighborhood of the MLE within only 40 iterations, IF2 alone ultimately fails to achieve the last few log-likelihood units, as no IF2 search comes within 7 log-likelihood units of the MLE (as seen in Figure \ref{fig:scatter}). Conversely, we encountered many failed searches with gradient descent alone. This is a difficult, nonconvex, and noisy problem with $18$ parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
+% \subsection{IFAD Outperforms Both IF2 and DMOP Alone}
+
+While IF2 quickly approaches a neighborhood of the MLE within only 40 iterations, IF2 alone ultimately fails to achieve the last few log-likelihood units, as no IF2 search comes within 7 \eic{XXXX} log-likelihood units of the MLE (as seen in Figure \ref{fig:scatter}). Conversely, we encountered many failed searches with gradient descent alone. This is a difficult, nonconvex, and noisy problem with $18$ parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
 
 IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (as seen in Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE (as seen in Figures~\ref{fig:scatter} and \ref{fig:boxplot}).
 IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
@@ -482,10 +451,13 @@ In particular, Figure~\ref{fig:boxplot} shows that IFAD with $\alpha=0.97$ can m
 Since replicated searches are innevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is necessary to focus on the right tail of the distributions in Figure~\ref{fig:boxplot} to compare the capabilities of the methods. 
 
 
+\eic{ I GUESS AT THIS POINT WE JUST SHOW THE FULL RESULTS WITH ADAM AND COOLING.
 For the results presented here, we did not employ the many common heuristics used in the machine learning and optimization literature in the gradient descent stage.
 We used constant learning rates of $0.01, 0.05$, and $0.2$ for IFAD-$1,0,$ and $0.97$ respectively, and a constant cooling rate of $0.95$ for our IF2 implementation.
 While techniques such as annealing learning rates, gradient normalization, and momentum could further improve the performance of IFAD in other simulations we performed, we chose to report the results of the simplest implementation to serve as a baseline for the method's performance.
 Our experimentation with second-order optimization methods, using a Hessian estimate obtained by automatic differentiation of DMOP-$\alpha$, was computationally intensive and did not yield improved results, likely due to Monte~Carlo error in the Hessian estimate and non-convexity of the log-likelihood.
+}
+
 
 \begin{figure}[htbp!]
     \centering
@@ -672,11 +644,11 @@ Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to r
 \section{Computational Efficiency}
 
 Our numerical results use an implementation of our methods in the \texttt{pypomp} package \citep{abkemeier25}.
-The source code for this paper is in the \texttt{dacca\_resubmission} directory within the \texttt{pypomp} repository for quantitative tests \href{https://github.com/pypomp/quant}{https://github.com/pypomp/quant}.
+The source code for this paper is at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter, and we found the empirical value of this factor to be 3.75.
 DMOP-$\alpha$ and IFAD therefore share the same $O(NJ)$ time complexity as the particle filter, unlike the $O(NJ^2)$ complexity of \cite{corenflos21} and Algorithm 2 in \citep{poyiadjis11, scibior21}.
 
-Implementation of the particle filter, simulator, and DMOP-$\alpha$ in \texttt{JAX} \citep{jax} takes advantage of just-in-time compilation and GPU acceleration, even with a simulator written in Python.
+\eic{REWRITE WITH LATEST PYPOMP RESULTS} Implementation of the particle filter, simulator, and DMOP-$\alpha$ in \texttt{JAX} \citep{jax} takes advantage of just-in-time compilation and GPU acceleration, even with a simulator written in Python.
 This led to a 16x speedup (379ms vs 6.29s on a Intel i9-13900K CPU and NVIDIA RTX3090 GPU) over the CPU-only implementation of the particle filter (with a simulator written in C++) in the \texttt{pomp} package of \cite{king16}.
 Additional speedup is accrued when computing multiple Monte Carlo replications, since \texttt{JAX} can take advantage of the simple parallelization opportunity.
 
@@ -689,8 +661,9 @@ Practical likelihood-based data analysis involves many likelihood optimizations 
 This occurs with profile likelihood confidence intervals and model selection. A careful scientist should consider many model variations, to see whether the conclusions of the study are sensitive to alternative model specifications.
 Coding model variations is relatively simple when using plug-and-play inference methodology.
 However, assessing the scientific potential of these variations requires likelihood optimization.
-Speeding up the process of model fitting has practical consequences for the rate at which scientists can evaluate hypotheses.
-We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which succeeds in finding the MLE from a coarse global search in the complex benchmark model of \cite{king08}.
+Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
+Improving the process of model fitting has practical consequences for the ability of scientists to evaluate hypotheses.
+We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which provides a high-quality log-likelihood maximization in the complex benchmark model of \cite{king08}.
 We anticipate that this will promote scientific advances in all domains where complex POMP models arise.
 
 
@@ -708,54 +681,15 @@ The analysis is similar, with comparable rates but with a slightly less convenie
 
 \section*{Acknowledgments}
 This research was supported by National Science Foundation grants DMS-1761603 and DEB-1933497. 
-We thank Nicolas Chopin for communications regarding the strong law of large numbers for off-parameter resampled particle filters, and other feedback. We thank Jun Chen and Arnaud Doucet for helpful discussions regarding the manuscript.
+We thank Nicolas Chopin for communications regarding the strong law of large numbers for off-parameter resampled particle filters, and other feedback. We thank Jun Chen, Arnaud Doucet and Kunyang He for helpful discussions regarding the manuscript.
 
 
 %\bibsplit[2]
 %Use \bibsplit to split the references from the body of the text. Value "[2]" represents the number of reference in the left column (Note: Please avoid single column figures & tables on this page.)
 
-\bibliographystyle{abbrvnat}
+%\bibliographystyle{abbrvnat}
+\bibliographystyle{apalike}
 % Bibliography
 \bibliography{bib-ifad}
-
-
-\arxiv{
-\appendix
-
-\section{MOP-$\alpha$ Functional Forms}
-\label{appendix:functional}
-\input{appendix/functional}
-
-
-\section{Optimization Convergence Analysis}
-\label{appendix:convergence}
-\input{appendix/convergence}
-
-\section{Feynman-Kac Models and Monte Carlo Approximations}
-\label{appendix:feynman}
-\input{appendix/feynman}
-
-\section{A Strong Law of Large Numbers for Triangular Arrays of Particles With Off-Parameter Resampling}
-\label{appendix:targeting}
-\input{appendix/targeting}
-
-
-\section{Consistency of Off-Parameter Resampled Gradient Estimates}
-\label{appendix:consistency}
-\input{appendix/consistency}
-
-\section{Bias-Variance Analysis}
-\label{appendix:biasvar}
-\input{appendix/biasvar}
-
-
-\section{Figures for Bayesian Inference}
-\label{appendix:bayes}
-\input{appendix/bayes}
-
-
-}{
-}
-
 
 \end{document}
