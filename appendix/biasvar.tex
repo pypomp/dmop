@@ -337,7 +337,7 @@ We now proceed to obtain an MSE bound for DMOP-$\alpha$.
     \end{equation}
 \end{thm}
 \begin{proof}[Proof.]    
-The broad idea is to decompose the MSE into three terms as in Eq.~(\ref{eq:mse-decomp}).
+The broad idea is to decompose the MSE into three terms as in Equation~(\ref{eq:mse-decomp}).
 The first term can be controlled by a mixing argument, the second term garners $O(Nk)$ error, and the third term is $O\left(\frac{N}{1-\alpha}\right)$.
 It is unclear whether the bias can be reduced further, since the gradient is a sum of $N$ terms and is therefore $O(N)$ itself. 
 
@@ -351,7 +351,7 @@ and decompose
      \\ & \hspace{20mm}
      \sum_{n=1}^N\|\nabla_\theta\hat s_{n,k}^1(\theta) - \nabla_\theta\hat s_{n,k}^\alpha(\theta)\|_2^2 + \sum_{n=1}^N\|\nabla_\theta\hat s_{n,k}^\alpha(\theta) -  \nabla_\theta\hat\ell_n^\alpha(\theta)\|_2^2. \label{eq:mse-decomp}
 \end{align}
-We bound the first term of Equation \ref{eq:mse-decomp} , $\sum_{n=1}^N\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,k}^1(\theta)\|_2^2$, by decomposing it into two terms, 
+We bound the first term of Equation~(\ref{eq:mse-decomp}), $\sum_{n=1}^N\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,k}^1(\theta)\|_2^2$, by decomposing it into two terms, 
 \begin{eqnarray}
 \nonumber
 \hspace{-10mm} \sum_{n=1}^N\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,k}^1(\theta)\|_2^2 &\leq&
@@ -359,10 +359,10 @@ We bound the first term of Equation \ref{eq:mse-decomp} , $\sum_{n=1}^N\|\nabla_
 && \hspace{-65mm}
 \sum_{n=1}^N \|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,k|\hat\pi_{n-k}=\pi_{n-k}}^1(\theta)\|_2^2 + \sum_{n=1}^N \|\nabla_\theta\hat s_{n,k|\hat\pi_{n-k}=\pi_{n-k}}^1(\theta) - \nabla_\theta\hat s_{n,k}^1(\theta)\|_2^2.
 \end{eqnarray}
-The first term of Equation \ref{eq:mse-decomp} is a particle approximation dependent on $k$ timesteps, so by Lemma 2 of \cite{karjalainen23}, this is bounded by
+The first term of Equation~(\ref{eq:mse-decomp}) is a particle approximation dependent on $k$ timesteps, so by Lemma~2 of \cite{karjalainen23}, this is bounded by
 \begin{equation}\E\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,k|\hat\pi_{n-k}=\pi_{n-k}}^1(\theta)\|_2^2 \leq \frac{Cp \, G'(\theta)^2k^2}{J}.\end{equation}
 
-Bounding the second term of Equation \ref{eq:mse-decomp} amounts to bounding the difference between functionals of two different particle measures that mix under the same Markov kernel. Here, we use Assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} that ensure strong mixing. We know from Theorem 3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
+Bounding the second term of Equation~(\ref{eq:mse-decomp}) amounts to bounding the difference between functionals of two different particle measures that mix under the same Markov kernel. Here, we use Assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} that ensure strong mixing. We know from Theorem~3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
 \begin{equation}\beta_{\text{TV}}(\textbf{M}_{n,n+k}) \leq (1-\epsilon)^{\floor{k/(c\log(J))}},\end{equation}
 i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in \ref{assump:bounded-process} and \ref{assump:bounded-measurement}. 
 Then, we can bound 
@@ -423,7 +423,7 @@ So,
     \leq 2Np \, G'(\theta)^2\left(k-\frac{\alpha(1-\alpha^k)}{1-\alpha}\right) 
     \leq 2Np \, G'(\theta)^2k.
 \end{align}
-Now, we address the third term of Equation \ref{eq:mse-decomp}, $\E\|\nabla_\theta\hat s_k^\alpha(\theta) -  \nabla_\theta\hat\ell^\alpha(\theta)\|_\infty$. From the variance argument, we know that we can bound $\|\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta)\|$ as follows,
+Now, we address the third term of Equation~(\ref{eq:mse-decomp}), $\E\|\nabla_\theta\hat s_k^\alpha(\theta) -  \nabla_\theta\hat\ell^\alpha(\theta)\|_\infty$. From the variance argument, we know that we can bound $\|\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta)\|$ as follows,
 \begin{align}
     &\left\lVert \nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta) \right\rVert_2^2
     \nonumber \\
@@ -474,18 +474,18 @@ Therefore, our decomposition yields the MSE bound
 \end{cor}
 \begin{proof}[Proof.]
 Observe that MOP-$0$ is equivalent to MOP-$(1,1)$. Noting that $k=1$ and that we only need to bound the difference between $\nabla_\theta \ell(\theta)$ and $\nabla_\theta \hat s_1^1(\theta)$, repeating the above arguments almost verbatim allows us to obtain this result. 
-As before, we bound the first term of Eq. (\ref{eq:mse-decomp}), $\sum_{n=1}^N\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,1}^1(\theta)\|_2^2$, by decomposing it into two terms, 
+As before, we bound the first term of Equation~(\ref{eq:mse-decomp}), $\sum_{n=1}^N\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,1}^1(\theta)\|_2^2$, by decomposing it into two terms, 
 \begin{eqnarray} \nonumber
 \hspace{-5mm} \sum_{n=1}^N\big\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,1}^1(\theta)\big\|_2^2 &\leq 
 \\ &&\hspace{-70mm} 
 \sum_{n=1}^N \big\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,1|\hat\pi_{n-1}=\pi_{n-1}}^1(\theta)\big\|_2^2 + \sum_{n=1}^N \big\|\nabla_\theta\hat s_{n,1|\hat\pi_{n-1}=\pi_{n-1}}^1(\theta) - \nabla_\theta\hat s_{n,1}^1(\theta)\big\|_2^2.
 \label{eq:mse-alpha0}
 \end{eqnarray}
-The first term in Eq.~(\ref{eq:mse-alpha0}) is a particle approximation dependent on $1$ timesteps, so by Lemma 2 of \cite{karjalainen23}, this is bounded by
+The first term in Equation~(\ref{eq:mse-alpha0}) is a particle approximation dependent on $1$ timesteps, so by Lemma 2 of \cite{karjalainen23}, this is bounded by
 \begin{equation}
 \E\big\|\nabla_\theta\ell_n(\theta) - \nabla_\theta\hat s_{n,1|\hat\pi_{n-1}=\pi_{n-1}}^1(\theta)\big\|_2^2 \leq \frac{Cp \, G'(\theta)^2}{J}.
 \end{equation}
-The second term  in Eq.~(\ref{eq:mse-alpha0}) amounts to bounding the difference between functionals of two different particle measures that mix under the same Markov kernel. Here, we use Assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} that ensure strong mixing. We know from Theorem 3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
+The second term  in Equation~(\ref{eq:mse-alpha0}) amounts to bounding the difference between functionals of two different particle measures that mix under the same Markov kernel. Here, we use Assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} that ensure strong mixing. We know from Theorem 3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
 \begin{equation}
 \beta_{\text{TV}}(\textbf{M}_{n,n+k}) \leq (1-\epsilon)^{\floor{k/(c\log(J))}},
 \end{equation}
@@ -518,5 +518,5 @@ Therefore, we have
     \nonumber \\
     &\lesssim N\frac{Cp \, G'(\theta)^2}{J} + Np \, G'(\theta)^2(1-\epsilon)^{\floor{1/(c\log(J))}},
 \end{align}
-which matches Eq. (\ref{eq:cor-s1}).
+which matches Equation~(\ref{eq:cor-s1}).
 \end{proof}
