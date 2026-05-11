@@ -6,12 +6,12 @@ from prep import (
     initial_params_list,
     key,
     RW_SD,
-    COOLING_RATE,
+    ALPHA,
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
-NFITR = (2, 5, 100, 200)[RUN_LEVEL - 1]
-NTRAIN = (2, 20, 40, 100)[RUN_LEVEL - 1]
+NFITR = (2, 5, 100, 250)[RUN_LEVEL - 1]
+NTRAIN = (2, 20, 40, 125)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
@@ -25,10 +25,10 @@ eta = {
     "c": 0.0,
     "alpha": 0.0,
     "delta": 0.0,
-    "beta_trend": DEFAULT_ETA,
+    "beta_trend": DEFAULT_ETA * 0.5,
     **{f"bs{i + 1}": DEFAULT_ETA for i in range(6)},
-    "sigma": DEFAULT_ETA,
-    "tau": DEFAULT_ETA,
+    "sigma": DEFAULT_ETA * 0.5,
+    "tau": DEFAULT_ETA * 0.5,
     **{f"omegas{i + 1}": DEFAULT_ETA for i in range(6)},
     "S_0": DEFAULT_IVP_ETA,
     "I_0": DEFAULT_IVP_ETA,
@@ -42,7 +42,7 @@ dacca_obj.mif(
     theta=initial_params_list,
     rw_sd=RW_SD,
     M=NFITR,
-    a=COOLING_RATE,
+    a=0.5,
     J=NP_FITR,
     key=key,
 )
@@ -52,6 +52,7 @@ dacca_obj.train(
     J=NP_FITR,
     M=NTRAIN,
     eta=eta,
+    alpha=ALPHA,
     optimizer="Adam",
     n_monitors=1,
     eta_cooling=0.05,
@@ -68,5 +69,5 @@ print(dacca_obj.results())
 dacca_obj.print_summary()
 print(dacca_obj.time())
 
-with open(f"dmop_results/dacca_results_rl{RUN_LEVEL}.pkl", "wb") as f:
+with open(f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}.pkl", "wb") as f:
     pickle.dump(dacca_obj, f)

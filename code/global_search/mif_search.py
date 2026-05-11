@@ -1,7 +1,6 @@
 import pickle
 
 from prep import (
-    COOLING_RATE,
     RUN_LEVEL,
     RW_SD,
     dacca_obj,
@@ -9,8 +8,8 @@ from prep import (
     key,
 )
 
-NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
-NFITR = (2, 5, 100, 350)[RUN_LEVEL - 1]
+NP_FITR = (2, 500, 1000, 6000)[RUN_LEVEL - 1]
+NFITR = (2, 5, 100, 550)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
@@ -19,11 +18,10 @@ dacca_obj.mif(
     theta=initial_params_list,
     rw_sd=RW_SD,
     M=NFITR,
-    a=COOLING_RATE,
+    a=0.8,
     J=NP_FITR,
     key=key,
 )
-print(dacca_obj.results())
 
 dacca_obj.pfilter(J=NP_EVAL, reps=NREPS_EVAL)
 print(dacca_obj.results())

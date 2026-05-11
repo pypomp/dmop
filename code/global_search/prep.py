@@ -15,7 +15,7 @@ np.random.seed(MAIN_SEED)
 
 RUN_LEVEL = int(os.environ.get("RUN_LEVEL", "1"))
 
-NREPS_FITR = (2, 3, 20, 36)[RUN_LEVEL - 1]
+NREPS_FITR = (2, 3, 20, 100)[RUN_LEVEL - 1]
 
 print(f"Running at level {RUN_LEVEL}")
 
@@ -54,9 +54,11 @@ RW_SD = pp.RWSigma(
     },
     init_names=["S_0", "I_0", "Y_0", "R1_0", "R2_0", "R3_0"],
 )
-COOLING_RATE = 0.5
+COOLING_RATE = 0.8
 
 dacca_obj = pp.models.dacca(dt=None, nstep=20)
+
+ALPHA = float(os.environ.get("ALPHA", "0.97"))
 
 # params_box = {k: (v * 0.9, v * 1.1) for k, v in dacca_obj.theta[0].items()}
 # params_box["rho"] = (0.0, 0.0)
@@ -88,12 +90,12 @@ params_box = {
     "omegas4": (-10.0, 0.0),
     "omegas5": (-10.0, 0.0),
     "omegas6": (-10.0, 0.0),
-    "S_0": (0.2, 0.8),
-    "I_0": (0.1, 0.6),
+    "S_0": (0.0, 1.0),
+    "I_0": (0.0, 1.0),
     "Y_0": (0.0, 0.0),  # fixed
-    "R1_0": (0.00001, 0.01),
-    "R2_0": (0.00001, 0.01),
-    "R3_0": (0.00001, 0.01),
+    "R1_0": (0.0, 1.0),
+    "R2_0": (0.0, 1.0),
+    "R3_0": (0.0, 1.0),
 }
 
 key, subkey = jax.random.split(key)
