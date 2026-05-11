@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="pypomp dacca test (train)"
-#SBATCH --partition=gpu
-#SBATCH --gpus=v100:1
+#SBATCH --partition=gpu-rtx6000
+#SBATCH --gpus=rtx_pro_6000_blackwell:1
 #SBATCH --cpus-per-gpu=1
 #SBATCH --mem=10GB
 #SBATCH --output=dmop_results/logs/slurm-%j.out
@@ -11,7 +11,7 @@
 # Note: account and mail-user can be set via environment variables (SBATCH_ACCOUNT and SBATCH_MAIL_USER)
 # e.g., by sourcing the .slurm_vars file in the project root.
 
-. ../../venv/bin/activate
+. ../../.venv/bin/activate
 
 export RUN_LEVEL=4
 

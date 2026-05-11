@@ -203,7 +203,7 @@ traces_ll = traces[traces["source"] == "train"][["rep", "iter", "logLik"]].copy(
 (
     ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
     + geom_line(show_legend=False)
-    # + coord_cartesian(ylim=(-4000, None))
+    + coord_cartesian(ylim=(-4000, None))
     + labs(title="IF2 + DMOP logLik traces")
 )
 ```
@@ -227,17 +227,26 @@ final_loglik = pfilter_traces.loc[
 # | fig-width: 8
 # | fig-height: 5
 # | echo: false
+
+outliers = final_loglik[final_loglik["logLik"] < -3800]
+if not outliers.empty:
+    print("Values filtered out (logLik < -3800):")
+    print(outliers.to_string(index=False))
+
+final_loglik_filtered = final_loglik[final_loglik["logLik"] >= -3800].copy()
+
 p_ll = (
     ggplot(
-        final_loglik.replace({"source": {"gpu": "IF2", "train": "DMOP"}}),
+        final_loglik_filtered.replace({"source": {"gpu": "IF2", "train": "IFAD"}}),
         aes(x="source", y="logLik", fill="source", color="source"),
     )
     + geom_boxplot(alpha=0.2, outlier_alpha=0, show_legend=False)
     + geom_jitter(width=0.2, alpha=0.5, show_legend=False)
-    + labs(x="", y="logLik", title="Final logLik: IF2 vs. DMOP")
+    + labs(x="", y="logLik", title="Final logLik: IF2 vs. IFAD")
     + theme_minimal()
+    # + coord_cartesian(ylim=(-3800, None))
 )
-p_ll.save("../../imgs/ll_boxplot.pdf", width=6, height=6, verbose=False)
+p_ll.save("../../imgs/ll_boxplot_global.pdf", width=6, height=6, verbose=False)
 p_ll
 ```
 
@@ -248,6 +257,11 @@ p_ll
 # | echo: false
 last_iter_by_source = traces_long.groupby("source")["iter"].transform("max")
 final_params = traces_long[traces_long["iter"] == last_iter_by_source].copy()
+
+default_theta = pp.models.dacca().theta[0]
+default_params_df = pd.DataFrame([default_theta]).melt(
+    var_name="quantity", value_name="default_value"
+)
 ```
 
 ```{python}
@@ -258,18 +272,31 @@ final_params = traces_long[traces_long["iter"] == last_iter_by_source].copy()
 quantities = sorted(final_params["quantity"].unique())
 
 for i in range(0, len(quantities), 4):
-    q_subset = quantities[i:i+4]
+    q_subset = quantities[i : i + 4]
     p = (
         ggplot(
-            final_params[final_params["quantity"].isin(q_subset)].replace({"source": {"gpu": "IF2", "train": "DMOP"}}),
+            final_params[final_params["quantity"].isin(q_subset)].replace(
+                {"source": {"gpu": "IF2", "train": "DMOP"}}
+            ),
             aes(x="param_value", fill="source", color="source"),
         )
         + geom_density(alpha=0.4)
+        + geom_vline(
+            default_params_df[default_params_df["quantity"].isin(q_subset)],
+            aes(xintercept="default_value"),
+            color="red",
+            linetype="dotted",
+            size=1,
+            inherit_aes=False,
+        )
         + facet_wrap("quantity", scales="free", ncol=2)
         + scale_x_continuous(labels=lambda l: [f"{x:g}" for x in l])
         + scale_y_continuous(labels=lambda l: [f"{x:g}" for x in l])
         + theme(axis_text_x=element_text(size=8), axis_text_y=element_text(size=8))
-        + labs(x="estimate", title=f"Final parameter estimates: IF2 vs. DMOP (Part {i//4 + 1})")
+        + labs(
+            x="estimate",
+            title=f"Final parameter estimates: IF2 vs. DMOP (Part {i // 4 + 1})",
+        )
     )
     display(p)
 ```
