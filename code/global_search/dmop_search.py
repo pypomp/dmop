@@ -7,6 +7,7 @@ from prep import (
     key,
     RW_SD,
     ALPHA,
+    N_MONITORS,
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
@@ -45,6 +46,7 @@ dacca_obj.mif(
     a=0.5,
     J=NP_FITR,
     key=key,
+    n_monitors=N_MONITORS,
 )
 print(dacca_obj.results())
 
@@ -69,5 +71,7 @@ print(dacca_obj.results())
 dacca_obj.print_summary()
 print(dacca_obj.time())
 
-with open(f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}.pkl", "wb") as f:
+with open(
+    f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}.pkl", "wb"
+) as f:
     pickle.dump(dacca_obj, f)

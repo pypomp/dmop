@@ -59,6 +59,7 @@ COOLING_RATE = 0.8
 dacca_obj = pp.models.dacca(dt=None, nstep=20)
 
 ALPHA = float(os.environ.get("ALPHA", "0.97"))
+N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
 
 # params_box = {k: (v * 0.9, v * 1.1) for k, v in dacca_obj.theta[0].items()}
 # params_box["rho"] = (0.0, 0.0)

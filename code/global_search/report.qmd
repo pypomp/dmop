@@ -14,6 +14,8 @@ execute:
 # | echo: false
 import os
 import logging
+import glob
+
 
 # Hide the noisy JAX CUDA initialization error on machines without a GPU
 logging.getLogger("jax._src.xla_bridge").setLevel(logging.CRITICAL)
@@ -36,8 +38,12 @@ print(datetime.now())
 ```{python}
 # | label: load-data
 # | echo: false
-pomp_obj = pickle.load(open("mif_results/dacca_results_rl4.pkl", "rb"))
-pomp_obj_train = pickle.load(open("dmop_results/dacca_results_rl4.pkl", "rb"))
+RUN_LEVEL = int(os.environ.get("RUN_LEVEL", "4"))
+ALPHA = os.environ.get("ALPHA", "0.97")
+N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
+
+pomp_obj = pickle.load(open(f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}.pkl", "rb"))
+pomp_obj_train = pickle.load(open(f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}.pkl", "rb"))
 LL_frame = pomp_obj.results()
 traces_raw_gpu = pomp_obj.traces()
 traces_raw_gpu["source"] = "gpu"
@@ -162,7 +168,7 @@ traces_ll = traces[traces["source"] == "gpu"][["rep", "iter", "logLik"]].copy()
 (
     ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
     + geom_line(show_legend=False)
-    # + coord_cartesian(ylim=(-4000, None))
+    + coord_cartesian(ylim=(-4000, None))
     + labs(title="IF2 only logLik traces")
 )
 ```
@@ -299,4 +305,71 @@ for i in range(0, len(quantities), 4):
         )
     )
     display(p)
+```
+
+# Comparison: N_MONITORS=1 traces
+
+```{python}
+# | label: plot-nm1-comparison
+# | fig-width: 10
+# | fig-height: 6
+# | echo: false
+files = glob.glob("mif_results/*_nm1.pkl") + glob.glob("dmop_results/*_nm1.pkl")
+
+all_stats = []
+
+for f in files:
+    try:
+        with open(f, "rb") as pf:
+            obj = pickle.load(pf)
+            t = obj.traces()
+
+            if "method" in t.columns:
+                t = t[t["method"].isin(["mif", "train"])]
+
+            stats = (
+                t.groupby("iteration")["logLik"]
+                .agg(
+                    median="median",
+                    q10=lambda x: np.percentile(x, 10),
+                    qmax=lambda x: np.percentile(x, 100),
+                )
+                .reset_index()
+            )
+
+            label = (
+                os.path.basename(f).replace(".pkl", "").replace("dacca_results_", "")
+            )
+            stats["source"] = label
+            all_stats.append(stats)
+    except Exception as e:
+        print(f"Error loading {f}: {e}")
+
+if all_stats:
+    df_stats = pd.concat(all_stats, ignore_index=True)
+
+    max_iter_global = df_stats["iteration"].max()
+    df_stats["iteration_scaled"] = df_stats.groupby("source")["iteration"].transform(
+        lambda x: x * (max_iter_global / x.max())
+    )
+
+    p = (
+        ggplot(
+            df_stats,
+            aes(x="iteration_scaled", y="median", color="source", fill="source"),
+        )
+        + geom_line(size=1)
+        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
+        + labs(
+            title="LogLik Traces Comparison (N_MONITORS=1)",
+            subtitle="Median with 10% and 100% percentiles (Scaled X-axis)",
+            x="Iteration (Scaled)",
+            y="logLik",
+        )
+        + theme_minimal()
+        + coord_cartesian(ylim=(-4000, None))
+    )
+    display(p)
+else:
+    print("No N_MONITORS=1 files found.")
 ```
