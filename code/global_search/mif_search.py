@@ -6,10 +6,11 @@ from prep import (
     dacca_obj,
     initial_params_list,
     key,
+    N_MONITORS,
 )
 
-NP_FITR = (2, 500, 1000, 6000)[RUN_LEVEL - 1]
-NFITR = (2, 5, 100, 550)[RUN_LEVEL - 1]
+NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
+NFITR = (2, 5, 100, 700)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
@@ -21,6 +22,7 @@ dacca_obj.mif(
     a=0.8,
     J=NP_FITR,
     key=key,
+    n_monitors=N_MONITORS,
 )
 
 dacca_obj.pfilter(J=NP_EVAL, reps=NREPS_EVAL)
@@ -33,5 +35,5 @@ dacca_obj.print_summary()
 print(dacca_obj.time())
 
 # Save results
-with open(f"mif_results/dacca_results_rl{RUN_LEVEL}.pkl", "wb") as f:
+with open(f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}.pkl", "wb") as f:
     pickle.dump(dacca_obj, f)
