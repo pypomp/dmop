@@ -1,0 +1,549 @@
+---
+title: "Custom Comparison Report: IF2 vs. DMOP"
+format:
+  html:
+    toc: true
+    embed-resources: true
+jupyter: python3
+execute:
+  daemon: false
+---
+
+```{python}
+# | label: setup
+# | echo: false
+import os
+import logging
+import glob
+import pickle
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+from plotnine import *
+from IPython.display import display, Markdown
+
+import pypomp as pp
+import jax
+
+# Hide the noisy JAX CUDA initialization error on machines without a GPU
+logging.getLogger("jax._src.xla_bridge").setLevel(logging.CRITICAL)
+
+print("Report generated on:", datetime.now())
+```
+
+# 1. Raincloud Plot of Final Log-Likelihoods (N_MONITORS=1)
+
+This plot shows the distribution of the final evaluation pfilter log-likelihoods across the replicates for each model with $N\_MONITORS=1$.
+
+```{python}
+# | label: plot-raincloud-nm1
+# | fig-width: 10
+# | fig-height: 6
+# | echo: false
+
+all_reps_loglik = []
+model_files_nm1 = [
+    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl"),
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl"),
+]
+
+for label, f in model_files_nm1:
+    try:
+        with open(f, "rb") as pf:
+            obj = pickle.load(pf)
+            res = obj.results(index=-2)
+
+            if "loglik" in res.columns:
+                res = res.rename(columns={"loglik": "logLik"})
+            if "theta_idx" in res.columns:
+                res = res.rename(columns={"theta_idx": "rep"})
+
+            df_lbl = pd.DataFrame(
+                {"rep": res["rep"], "logLik": res["logLik"], "Model": label}
+            )
+            all_reps_loglik.append(df_lbl)
+    except Exception as e:
+        print(f"Error loading/processing {f}: {e}")
+
+if all_reps_loglik:
+    df_raincloud = pd.concat(all_reps_loglik, ignore_index=True)
+
+    # Filter out extreme outliers (logLik < -3800) for better visualization, as done in the original report
+    outliers = df_raincloud[df_raincloud["logLik"] < -3800]
+    if not outliers.empty:
+        display(Markdown("#### Values filtered out (logLik < -3800):"))
+        display(Markdown(outliers.to_markdown(index=False)))
+
+    df_raincloud_filtered = df_raincloud[df_raincloud["logLik"] >= -3800].copy()
+
+    # Convert Model to categorical for consistent ordering and default colors
+    df_raincloud_filtered["Model"] = pd.Categorical(
+        df_raincloud_filtered["Model"],
+        categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
+        ordered=True
+    )
+
+    # Precompute offset positions for horizontal raincloud layout
+    model_map = {"IFAD-0": 0.0, "IFAD-0.97": 1.0, "IFAD-1": 2.0, "IF2": 3.0}
+    df_raincloud_filtered["Model_num"] = df_raincloud_filtered["Model"].map(model_map).astype(float)
+
+    # Shift violin baseline slightly up, boxplot down, and jitter further down
+    df_raincloud_filtered["Model_violin_x"] = df_raincloud_filtered["Model_num"] + 0.05
+    df_raincloud_filtered["Model_boxplot_x"] = df_raincloud_filtered["Model_num"] - 0.1
+
+    # Custom jitter centered below the boxplot (Model_num - 0.30)
+    np.random.seed(42)
+    df_raincloud_filtered["Model_jitter_x"] = (
+        df_raincloud_filtered["Model_num"]
+        - 0.30
+        + np.random.uniform(-0.04, 0.04, size=len(df_raincloud_filtered))
+    )
+
+    # Calculate the max log-likelihood for reference line
+    max_loglik = df_raincloud_filtered["logLik"].max()
+
+    # Calculate major ticks every 10 units dynamically
+    min_loglik_tick = int(np.floor(df_raincloud_filtered["logLik"].min() / 10) * 10)
+    max_loglik_tick = int(np.ceil(df_raincloud_filtered["logLik"].max() / 10) * 10)
+    tick_breaks = list(range(min_loglik_tick, max_loglik_tick + 10, 10))
+
+    # Build premium raincloud plot using geom_violin(style='right') in plotnine (if supported)
+    p = (
+        ggplot(df_raincloud_filtered, aes(y="logLik", fill="Model", color="Model"))
+        + geom_violin(
+            aes(x="Model_violin_x", group="Model"),
+            style="right",
+            width=1.0,
+            alpha=0.6,
+            show_legend=False,
+        )
+        + geom_boxplot(
+            aes(x="Model_boxplot_x", group="Model"),
+            width=0.10,
+            alpha=0.6,
+            color="black",
+            outlier_alpha=0,
+            size=0.8,
+            show_legend=False,
+        )
+        + geom_point(aes(x="Model_jitter_x"), alpha=0.6, size=1.5, show_legend=False)
+        + geom_hline(
+            yintercept=max_loglik, color="red", linetype="dotted", size=1.2, alpha=0.9
+        )
+        + coord_flip()
+        + scale_x_continuous(
+            breaks=[0, 1, 2, 3], labels=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"]
+        )
+        + scale_y_continuous(breaks=tick_breaks)
+        + labs(
+            title="",
+            subtitle="",
+            x="",
+            y="Log-Likelihood",
+        )
+        + theme_minimal()
+        + theme(
+            axis_text_x=element_text(size=14, color="black"),
+            axis_text_y=element_text(size=14, color="black"),
+            axis_title_x=element_text(size=15, color="black"),
+            axis_title_y=element_text(size=15, color="black"),
+            panel_grid_major_y=element_blank(),
+            panel_grid_minor_y=element_blank(),
+            panel_grid_major_x=element_line(color="#e5e5e5", size=0.8),
+            panel_grid_minor_x=element_blank(),
+        )
+    )
+    p.save("../../imgs/precise_raincloud.pdf", width=7, height=3.8, verbose=False)
+    display(p)
+else:
+    print("No data available to plot.")
+```
+
+# 2. Runtime Comparison Table (N_MONITORS=0)
+
+The table below shows the runtimes for each model component (`mif`, `train`, `pfilter`) and the total time taken for the models with $N\_MONITORS=0$.
+
+```{python}
+# | label: time-table-nm0
+# | echo: false
+
+runtimes = []
+model_files_nm0 = [
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
+    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+]
+
+for label, f in model_files_nm0:
+    try:
+        with open(f, "rb") as pf:
+            obj = pickle.load(pf)
+            t_df = obj.time()
+            row = {"Model": label}
+            
+            mif_t = t_df.loc[t_df["method"] == "mif", "time"].sum()
+            train_t = t_df.loc[t_df["method"] == "train", "time"].sum()
+            pfilter_t = t_df.loc[t_df["method"] == "pfilter", "time"].sum()
+            
+            row["mif (s)"] = f"{mif_t:.2f}" if mif_t > 0 else "-"
+            row["train (s)"] = f"{train_t:.2f}" if train_t > 0 else "-"
+            row["pfilter (s)"] = f"{pfilter_t:.2f}" if pfilter_t > 0 else "-"
+            row["Total Time (s)"] = f"{(mif_t + train_t + pfilter_t):.2f}"
+            runtimes.append(row)
+    except Exception as e:
+        print(f"Error loading runtime from {f}: {e}")
+
+if runtimes:
+    df_runtimes = pd.DataFrame(runtimes)
+    display(Markdown(df_runtimes.to_markdown(index=False)))
+else:
+    print("No runtime data available.")
+```
+
+# 3. LogLik Traces Comparison (N_MONITORS=1, Time-Scaled)
+
+This section shows the log-likelihood search traces for the $N\_MONITORS=1$ models. 
+The x-axis represents execution time in seconds, **scaled by the execution runtimes of their corresponding $N\_MONITORS=0$ runs**. The `mif` (IF2) part and the `train` (DMOP/training) part of each model's trace are scaled independently by their respective $N\_MONITORS=0$ component runtimes.
+
+```{python}
+# | label: plot-nm1-comparison-time-scaled
+# | fig-width: 10
+# | fig-height: 6
+# | echo: false
+
+files = [
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
+    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl", "mif_results/dacca_results_rl4_nm0.pkl"),
+]
+
+all_stats = []
+best_loglik_all = -np.inf
+
+for label, nm1_f, nm0_f in files:
+    try:
+        # 1. Load N_MONITORS=0 component runtimes
+        with open(nm0_f, "rb") as pf:
+            obj_nm0 = pickle.load(pf)
+            time_df = obj_nm0.time()
+            t_mif = time_df.loc[time_df["method"] == "mif", "time"].sum()
+            t_train = time_df.loc[time_df["method"] == "train", "time"].sum()
+        
+        # 2. Load N_MONITORS=1 traces
+        with open(nm1_f, "rb") as pf:
+            obj_nm1 = pickle.load(pf)
+            t = obj_nm1.traces().copy()
+
+            if "loglik" in t.columns:
+                t = t.rename(columns={"loglik": "logLik"})
+            if "theta_idx" in t.columns:
+                t = t.rename(columns={"theta_idx": "rep"})
+            if "iteration" not in t.columns:
+                t = t.rename(columns={"iter": "iteration"})
+
+            # Track overall best log-likelihood across loaded final pfilter evaluations
+            res_nm1 = obj_nm1.results(index=-2)
+            if not res_nm1.empty:
+                if "loglik" in res_nm1.columns:
+                    res_nm1 = res_nm1.rename(columns={"loglik": "logLik"})
+                max_in_run = res_nm1["logLik"].max()
+                if max_in_run > best_loglik_all:
+                    best_loglik_all = max_in_run
+
+            if "method" not in t.columns:
+                t["method"] = "mif"
+
+            t = t[t["method"].isin(["mif", "train"])]
+
+            # 3. Calculate scaling parameters
+            mif_t_df = t[t["method"] == "mif"]
+            max_mif_iter = mif_t_df["iteration"].max() if not mif_t_df.empty else 1
+            if max_mif_iter == 0:
+                max_mif_iter = 1
+
+            train_t_df = t[t["method"] == "train"]
+            if not train_t_df.empty:
+                min_train_iter = train_t_df["iteration"].min()
+                max_train_iter = train_t_df["iteration"].max()
+                train_range = max_train_iter - min_train_iter
+                if train_range == 0:
+                    train_range = 1
+            else:
+                min_train_iter = 0
+                max_train_iter = 0
+                train_range = 1
+
+            # Scale iteration step to physical seconds of N_MONITORS=0 run
+            def get_scaled_time(row):
+                method = row["method"]
+                it = row["iteration"]
+                if method == "mif":
+                    return it * (t_mif / max_mif_iter)
+                elif method == "train":
+                    return t_mif + (it - min_train_iter) * (t_train / train_range)
+                else:
+                    return np.nan
+
+            t["time_scaled"] = t.apply(get_scaled_time, axis=1)
+
+            # Compute median and percentiles
+            stats = (
+                t.groupby(["method", "iteration", "time_scaled"])["logLik"]
+                .agg(
+                    median="median",
+                    q10=lambda x: np.percentile(x, 10),
+                    qmax=lambda x: np.percentile(x, 100),
+                )
+                .reset_index()
+            )
+
+            stats["source"] = label
+            all_stats.append(stats)
+    except Exception as e:
+        print(f"Error loading/processing {nm1_f} or {nm0_f}: {e}")
+
+if all_stats:
+    df_stats = pd.concat(all_stats, ignore_index=True)
+    df_stats["source"] = pd.Categorical(
+        df_stats["source"],
+        categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
+        ordered=True
+    )
+
+    # Plot 1: Standard Y-axis Zoom
+    p1 = (
+        ggplot(
+            df_stats,
+            aes(x="time_scaled", y="median", color="source", fill="source"),
+        )
+        + geom_line(size=1)
+        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
+        + geom_hline(
+            yintercept=best_loglik_all, color="red", linetype="dotted", size=1.2, alpha=0.9
+        )
+        + labs(
+            title="LogLik Traces Comparison (N_MONITORS=1)",
+            subtitle="Median with 10% and 100% percentiles (X-axis Scaled by N_MONITORS=0 Runtime)",
+            x="Elapsed Time (Seconds)",
+            y="logLik",
+        )
+        + theme_minimal()
+        + coord_cartesian(ylim=(-4000, None))
+    )
+    display(p1)
+
+    # Plot 2: Close-up Zoom (Manuscript Version)
+    p2 = (
+        ggplot(
+            df_stats,
+            aes(x="time_scaled", y="median", color="source", fill="source"),
+        )
+        + geom_line(size=1.2)
+        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
+        + geom_hline(
+            yintercept=best_loglik_all, color="red", linetype="dotted", size=1.2, alpha=0.9
+        )
+        + labs(
+            title="",
+            subtitle="",
+            x="Elapsed Time (Seconds)",
+            y="Log-Likelihood",
+        )
+        + theme_minimal()
+        + theme(
+            axis_text_x=element_text(size=14, color="black"),
+            axis_text_y=element_text(size=14, color="black"),
+            axis_title_x=element_text(size=15, color="black"),
+            axis_title_y=element_text(size=15, color="black"),
+            legend_text=element_text(size=12, color="black"),
+            legend_title=element_blank(),
+            legend_position="right",
+            panel_grid_major=element_line(color="#e5e5e5", size=0.8),
+            panel_grid_minor=element_blank(),
+        )
+        + coord_cartesian(ylim=(-3800, None))
+    )
+    p2.save("../../imgs/precise_traces.pdf", width=7, height=3.8, verbose=False)
+    display(p2)
+
+    # Compute and display Summary Statistics Table
+    summary_data = []
+    for source, group in df_stats.groupby("source"):
+        final_iter = group["iteration"].max()
+        final_row = group[group["iteration"] == final_iter].iloc[0]
+        max_loglik = group["qmax"].max()
+
+        summary_data.append(
+            {
+                "Model": source,
+                "Final Median LogLik": f"{final_row['median']:.2f}",
+                "Final Max LogLik": f"{final_row['qmax']:.2f}",
+            }
+        )
+
+    def to_markdown_table(data):
+        if not data:
+            return ""
+        headers = list(data[0].keys())
+        header_row = "| " + " | ".join(headers) + " |"
+        separator_row = "| " + " | ".join(["---"] * len(headers)) + " |"
+        data_rows = []
+        for row in data:
+            data_rows.append("| " + " | ".join(str(row[h]) for h in headers) + " |")
+        return "\n".join([header_row, separator_row] + data_rows)
+
+    display(Markdown("\n### Summary Statistics for N_MONITORS=1 Models"))
+    display(Markdown(to_markdown_table(summary_data)))
+else:
+    print("No N_MONITORS=1 files found.")
+```
+
+# 4. Parameter Estimate Density Plots (N_MONITORS=0)
+
+This section shows density plots of final parameter estimates across the replicates for each model with $N\_MONITORS=0$. Dotted red lines represent the default parameters.
+
+```{python}
+# | label: plot-param-density-nm0
+# | fig-width: 10
+# | fig-height: 7
+# | echo: false
+
+all_params = []
+model_files_nm0 = [
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
+    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+]
+
+for label, f in model_files_nm0:
+    try:
+        with open(f, "rb") as pf:
+            obj = pickle.load(pf)
+            t = obj.traces().copy()
+            
+            if "loglik" in t.columns:
+                t = t.rename(columns={"loglik": "logLik"})
+            if "theta_idx" in t.columns:
+                t = t.rename(columns={"theta_idx": "rep"})
+            if "iteration" not in t.columns:
+                t = t.rename(columns={"iter": "iteration"})
+
+            id_cols = ["rep", "iteration", "logLik", "method"]
+            id_cols = [c for c in id_cols if c in t.columns]
+            param_cols = [c for c in t.columns if c not in id_cols and c not in ["c", "omega", "rho"]]
+            
+            t_long = t.melt(
+                id_vars=id_cols,
+                value_vars=param_cols,
+                var_name="quantity",
+                value_name="param_value",
+            )
+            
+            last_iter = t_long["iteration"].max()
+            final_p = t_long[t_long["iteration"] == last_iter].copy()
+            final_p["source"] = label
+            all_params.append(final_p)
+    except Exception as e:
+        print(f"Error loading {f}: {e}")
+
+if all_params:
+    df_params = pd.concat(all_params, ignore_index=True)
+    df_params["source"] = pd.Categorical(
+        df_params["source"],
+        categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
+        ordered=True
+    )
+    
+    default_theta = pp.models.dacca().theta[0]
+    default_params_df = pd.DataFrame([default_theta]).melt(
+        var_name="quantity", value_name="default_value"
+    )
+    
+    quantities = sorted(df_params["quantity"].unique())
+
+    for i in range(0, len(quantities), 4):
+        q_subset = quantities[i : i + 4]
+        p = (
+            ggplot(
+                df_params[df_params["quantity"].isin(q_subset)],
+                aes(x="param_value", fill="source", color="source"),
+            )
+            + geom_density(alpha=0.4)
+            + geom_vline(
+                default_params_df[default_params_df["quantity"].isin(q_subset)],
+                aes(xintercept="default_value"),
+                color="red",
+                linetype="dotted",
+                size=1,
+                inherit_aes=False,
+            )
+            + facet_wrap("quantity", scales="free", ncol=2)
+            + scale_x_continuous(labels=lambda l: [f"{x:g}" for x in l])
+            + scale_y_continuous(labels=lambda l: [f"{x:g}" for x in l])
+            + theme_minimal()
+            + theme(axis_text_x=element_text(size=8), axis_text_y=element_text(size=8))
+            + labs(
+                x="estimate",
+                title=f"Final parameter estimates (N_MONITORS=0): Comparison (Part {i // 4 + 1})",
+            )
+        )
+        display(p)
+else:
+    print("No parameter data available.")
+```
+
+# 5. Best Log-Likelihoods (N_MONITORS=0)
+
+This table shows the best (maximum) and median log-likelihoods obtained from the final pfilter evaluation across the replicates for the $N\_MONITORS=0$ runs.
+
+```{python}
+# | label: best-loglik-nm0
+# | echo: false
+
+best_logliks = []
+model_files_nm0 = [
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
+    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+]
+
+for label, f in model_files_nm0:
+    try:
+        with open(f, "rb") as pf:
+            obj = pickle.load(pf)
+            # Best LogLik from the very last pfilter entry (post-pruned, most accurate)
+            res_last = obj.results(index=-1)
+            if "loglik" in res_last.columns:
+                res_last = res_last.rename(columns={"loglik": "logLik"})
+            best_ll = res_last["logLik"].max()
+
+            # Median LogLik from the pre-pruned pfilter entry (across all search replicates)
+            res_pre = obj.results(index=-2)
+            if "loglik" in res_pre.columns:
+                res_pre = res_pre.rename(columns={"loglik": "logLik"})
+            median_ll = res_pre["logLik"].median()
+
+            best_logliks.append(
+                {
+                    "Model": label,
+                    "Best LogLik": f"{best_ll:.2f}",
+                    "Median LogLik": f"{median_ll:.2f}",
+                }
+            )
+    except Exception as e:
+        print(f"Error loading {f}: {e}")
+
+if best_logliks:
+    df_best = pd.DataFrame(best_logliks)
+    display(Markdown(df_best.to_markdown(index=False)))
+else:
+    print("No log-likelihood data available for N_MONITORS=0.")
+```
+

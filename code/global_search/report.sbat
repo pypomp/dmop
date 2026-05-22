@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --job-name="quarto report"
+#SBATCH --partition=standard
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=15GB
+#SBATCH --output=slurm-report-%j.out
+#SBATCH --time=0-00:05:00
+
+# This file can be used when running the qmd file uses too much RAM for the login node.
+# Env variables ALPHA, N_MONITORS, RUN_LEVEL should be passed via --export=ALL in sbatch
+
+. ../../.venv/bin/activate
+
+quarto render report.qmd

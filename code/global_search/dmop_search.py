@@ -1,4 +1,6 @@
 import pickle
+import numpy as np
+import pypomp as pp
 
 from prep import (
     RUN_LEVEL,
@@ -11,32 +13,45 @@ from prep import (
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
-NFITR = (2, 5, 100, 250)[RUN_LEVEL - 1]
-NTRAIN = (2, 20, 40, 125)[RUN_LEVEL - 1]
+NFITR = (2, 5, 100, 175)[RUN_LEVEL - 1]
+NTRAIN = (2, 20, 40, 150)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
-DEFAULT_ETA = 0.2
-DEFAULT_IVP_ETA = DEFAULT_ETA
+M = NTRAIN
+warmup = (1, 5, 10, 10)[RUN_LEVEL - 1]
+
+
+def w(v):
+    if v == 0.0:
+        return 0.0
+    return np.concatenate([np.linspace(v * 0.1, v, warmup), np.full(M - warmup, v)])
+
+
+if ALPHA == 0.0:
+    DEFAULT_ETA = 0.1  # Tiny learning rate to prevent exploding noisy gradients
+else:
+    DEFAULT_ETA = 0.1
+DEFAULT_IVP_ETA = DEFAULT_ETA / 2
 eta = {
-    "gamma": DEFAULT_ETA,
-    "epsilon": DEFAULT_ETA,
+    "gamma": w(DEFAULT_ETA * 0.5),
+    "epsilon": w(DEFAULT_ETA),
     "rho": 0.0,
-    "m": DEFAULT_ETA,
+    "m": w(DEFAULT_ETA),
     "c": 0.0,
     "alpha": 0.0,
     "delta": 0.0,
-    "beta_trend": DEFAULT_ETA * 0.5,
-    **{f"bs{i + 1}": DEFAULT_ETA for i in range(6)},
-    "sigma": DEFAULT_ETA * 0.5,
-    "tau": DEFAULT_ETA * 0.5,
-    **{f"omegas{i + 1}": DEFAULT_ETA for i in range(6)},
-    "S_0": DEFAULT_IVP_ETA,
-    "I_0": DEFAULT_IVP_ETA,
+    "beta_trend": w(DEFAULT_ETA * 0.5),
+    **{f"bs{i + 1}": w(DEFAULT_ETA) for i in range(6)},
+    "sigma": w(DEFAULT_ETA * 0.5),
+    "tau": w(DEFAULT_ETA * 0.5),
+    **{f"omegas{i + 1}": w(DEFAULT_ETA) for i in range(6)},
+    "S_0": w(DEFAULT_IVP_ETA),
+    "I_0": w(DEFAULT_IVP_ETA),
     "Y_0": 0.0,
-    "R1_0": DEFAULT_IVP_ETA,
-    "R2_0": DEFAULT_IVP_ETA,
-    "R3_0": DEFAULT_IVP_ETA,
+    "R1_0": w(DEFAULT_IVP_ETA),
+    "R2_0": w(DEFAULT_IVP_ETA),
+    "R3_0": w(DEFAULT_IVP_ETA),
 }
 
 dacca_obj.mif(
@@ -53,11 +68,10 @@ print(dacca_obj.results())
 dacca_obj.train(
     J=NP_FITR,
     M=NTRAIN,
-    eta=eta,
+    eta=pp.LearningRate(eta).cosine_decay(final_factor=0.05, M=NTRAIN),
     alpha=ALPHA,
-    optimizer="Adam",
-    n_monitors=1,
-    eta_cooling=0.05,
+    optimizer=pp.Adam(beta1=0.0),
+    n_monitors=N_MONITORS,
 )
 print(dacca_obj.results())
 
