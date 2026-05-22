@@ -26,7 +26,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 from plotnine import *
-from IPython.display import display
+from IPython.display import display, Markdown
 
 import pypomp as pp
 import jax
@@ -141,6 +141,8 @@ print("Total time: ", time_df["time"].sum())
 # | fig-height: 7
 # | echo: false
 traces_long_gpu = traces_long[traces_long["source"] == "gpu"].copy()
+if traces_long_gpu["iter"].max() >= 5000:
+    traces_long_gpu = traces_long_gpu[traces_long_gpu["iter"] % 10 == 0]
 quantities = sorted(traces_long_gpu["quantity"].unique())
 
 for i in range(0, len(quantities), 4):
@@ -165,6 +167,8 @@ for i in range(0, len(quantities), 4):
 # | fig-height: 6
 # | echo: false
 traces_ll = traces[traces["source"] == "gpu"][["rep", "iter", "logLik"]].copy()
+if traces_ll["iter"].max() >= 5000:
+    traces_ll = traces_ll[traces_ll["iter"] % 10 == 0]
 (
     ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
     + geom_line(show_legend=False)
@@ -181,6 +185,8 @@ traces_ll = traces[traces["source"] == "gpu"][["rep", "iter", "logLik"]].copy()
 # | fig-height: 7
 # | echo: false
 traces_long_train = traces_long[traces_long["source"] == "train"].copy()
+if traces_long_train["iter"].max() >= 5000:
+    traces_long_train = traces_long_train[traces_long_train["iter"] % 10 == 0]
 quantities = sorted(traces_long_train["quantity"].unique())
 
 for i in range(0, len(quantities), 4):
@@ -206,6 +212,8 @@ for i in range(0, len(quantities), 4):
 # | fig-height: 6
 # | echo: false
 traces_ll = traces[traces["source"] == "train"][["rep", "iter", "logLik"]].copy()
+if traces_ll["iter"].max() >= 5000:
+    traces_ll = traces_ll[traces_ll["iter"] % 10 == 0]
 (
     ggplot(traces_ll, aes(x="iter", y="logLik", group="rep", color="factor(rep)"))
     + geom_line(show_legend=False)
@@ -305,71 +313,4 @@ for i in range(0, len(quantities), 4):
         )
     )
     display(p)
-```
-
-# Comparison: N_MONITORS=1 traces
-
-```{python}
-# | label: plot-nm1-comparison
-# | fig-width: 10
-# | fig-height: 6
-# | echo: false
-files = glob.glob("mif_results/*_nm1.pkl") + glob.glob("dmop_results/*_nm1.pkl")
-
-all_stats = []
-
-for f in files:
-    try:
-        with open(f, "rb") as pf:
-            obj = pickle.load(pf)
-            t = obj.traces()
-
-            if "method" in t.columns:
-                t = t[t["method"].isin(["mif", "train"])]
-
-            stats = (
-                t.groupby("iteration")["logLik"]
-                .agg(
-                    median="median",
-                    q10=lambda x: np.percentile(x, 10),
-                    qmax=lambda x: np.percentile(x, 100),
-                )
-                .reset_index()
-            )
-
-            label = (
-                os.path.basename(f).replace(".pkl", "").replace("dacca_results_", "")
-            )
-            stats["source"] = label
-            all_stats.append(stats)
-    except Exception as e:
-        print(f"Error loading {f}: {e}")
-
-if all_stats:
-    df_stats = pd.concat(all_stats, ignore_index=True)
-
-    max_iter_global = df_stats["iteration"].max()
-    df_stats["iteration_scaled"] = df_stats.groupby("source")["iteration"].transform(
-        lambda x: x * (max_iter_global / x.max())
-    )
-
-    p = (
-        ggplot(
-            df_stats,
-            aes(x="iteration_scaled", y="median", color="source", fill="source"),
-        )
-        + geom_line(size=1)
-        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
-        + labs(
-            title="LogLik Traces Comparison (N_MONITORS=1)",
-            subtitle="Median with 10% and 100% percentiles (Scaled X-axis)",
-            x="Iteration (Scaled)",
-            y="logLik",
-        )
-        + theme_minimal()
-        + coord_cartesian(ylim=(-4000, None))
-    )
-    display(p)
-else:
-    print("No N_MONITORS=1 files found.")
 ```

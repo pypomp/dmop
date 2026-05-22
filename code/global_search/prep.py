@@ -61,13 +61,7 @@ dacca_obj = pp.models.dacca(dt=None, nstep=20)
 ALPHA = float(os.environ.get("ALPHA", "0.97"))
 N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
 
-# params_box = {k: (v * 0.9, v * 1.1) for k, v in dacca_obj.theta[0].items()}
-# params_box["rho"] = (0.0, 0.0)
-# params_box["c"] = (1.0, 1.0)
-# params_box["alpha"] = (1.0, 1.0)
-# params_box["delta"] = (0.02, 0.02)
-# params_box["Y_0"] = (0.0, 0.0)
-# This is based on the params box from diffPomp
+# This is the params box from the IF2 paper
 params_box = {
     "gamma": (10.0, 40.0),
     "m": (0.03, 0.60),

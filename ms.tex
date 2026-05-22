@@ -419,10 +419,10 @@ For each method, we performed 100 searches, initialized with 100 starting parame
 % \kevin{Dynamically save to a tex file and load from there}
   
 %\arxiv{}{\vspace*{-1mm}}
-s\begin{table}[htbp!]
+\begin{table}[htbp!]
 \centering
-\input{imgs/095/table}
-\caption{Maximum log-likelihood found by IF2, IFAD, and MOP alone. IFAD performs the best among all methods.}
+\input{imgs/precise_table}
+\caption{Maximum log-likelihood found by IF2 and IFAD. IFAD-0.97 performs the best among all methods.}
 \arxiv{}{\vspace*{-7mm}}
 \label{table:mle}
 \end{table}
@@ -473,11 +473,10 @@ Our experimentation with second-order optimization methods, using a Hessian esti
 \begin{figure}[ht]
     \centering
     \arxiv{}{\vspace*{0.1ex}}
-    \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/boxplot.png}
-    \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/boxplot_all.png}
+    \includegraphics[width=\arxiv{10cm}{\textwidth/\real{2.2}}]{imgs/precise_raincloud.pdf}
     %\arxiv{}{\vspace*{-1mm}}
-    \caption{\textbf{A:} Performance of the top 20 runs. The top 20 runs of IFAD-0.97 are uniformly better than all other methods.  \textbf{B:} Raincloud plot of all searches. IFAD outperforms all other methods.
-    The dotted red line shows the true maximized log-likelihood.}
+    \caption{Raincloud plot of all searches. IFAD-0.97 outperforms all other methods.
+    The dotted red line shows the maximized log-likelihood.}
     \label{fig:boxplot}
     \arxiv{}{\vspace*{-5mm}}
 \end{figure}
@@ -485,9 +484,10 @@ Our experimentation with second-order optimization methods, using a Hessian esti
 \begin{figure}[ht]
     \centering
     \vspace{1mm}
-    \includegraphics[width=\arxiv{10cm}{\textwidth/2}]{imgs/095/optim.png}
+    \includegraphics[width=\arxiv{10cm}{\textwidth/2}]{imgs/precise_traces.pdf}
     \arxiv{}{\vspace*{-1mm}}
-    \caption{Optimization progress of IFAD and IF2. The dashed orange line depicts the median warm-start given by running 40 IF2 iterations. Running 60 more iterations of IF2 ultimately underperforms IFAD. We see that IFAD has better tail control and successfully reaches the MLE. 
+    \caption{Optimization progress of IFAD and IF2.
+    The shaded regions cover the area between the 100th and 10th percentiles of log-likelihood estimates at each iteration.
     We use a dotted red line to display the MLE.}
     \label{fig:optim}
     \arxiv{}{\vspace*{-3ex}}
