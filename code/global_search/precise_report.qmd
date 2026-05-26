@@ -71,24 +71,26 @@ for label, f in model_files_nm1:
 if all_reps_loglik:
     df_raincloud = pd.concat(all_reps_loglik, ignore_index=True)
 
-    # Filter out extreme outliers (logLik < -3800) for better visualization, as done in the original report
-    outliers = df_raincloud[df_raincloud["logLik"] < -3800]
+    # Filter out extreme outliers (logLik < -3780) for better visualization, as done in the original report
+    outliers = df_raincloud[df_raincloud["logLik"] < -3780]
     if not outliers.empty:
-        display(Markdown("#### Values filtered out (logLik < -3800):"))
+        display(Markdown("#### Values filtered out (logLik < -3780):"))
         display(Markdown(outliers.to_markdown(index=False)))
 
-    df_raincloud_filtered = df_raincloud[df_raincloud["logLik"] >= -3800].copy()
+    df_raincloud_filtered = df_raincloud[df_raincloud["logLik"] >= -3780].copy()
 
     # Convert Model to categorical for consistent ordering and default colors
     df_raincloud_filtered["Model"] = pd.Categorical(
         df_raincloud_filtered["Model"],
         categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
-        ordered=True
+        ordered=True,
     )
 
     # Precompute offset positions for horizontal raincloud layout
     model_map = {"IFAD-0": 0.0, "IFAD-0.97": 1.0, "IFAD-1": 2.0, "IF2": 3.0}
-    df_raincloud_filtered["Model_num"] = df_raincloud_filtered["Model"].map(model_map).astype(float)
+    df_raincloud_filtered["Model_num"] = (
+        df_raincloud_filtered["Model"].map(model_map).astype(float)
+    )
 
     # Shift violin baseline slightly up, boxplot down, and jitter further down
     df_raincloud_filtered["Model_violin_x"] = df_raincloud_filtered["Model_num"] + 0.05
@@ -216,10 +218,26 @@ The x-axis represents execution time in seconds, **scaled by the execution runti
 # | echo: false
 
 files = [
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
-    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl", "mif_results/dacca_results_rl4_nm0.pkl"),
+    (
+        "IFAD-0",
+        "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl",
+        "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl",
+    ),
+    (
+        "IFAD-0.97",
+        "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl",
+        "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl",
+    ),
+    (
+        "IFAD-1",
+        "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl",
+        "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl",
+    ),
+    (
+        "IF2",
+        "mif_results/dacca_results_rl4_nm1.pkl",
+        "mif_results/dacca_results_rl4_nm0.pkl",
+    ),
 ]
 
 all_stats = []
@@ -233,7 +251,7 @@ for label, nm1_f, nm0_f in files:
             time_df = obj_nm0.time()
             t_mif = time_df.loc[time_df["method"] == "mif", "time"].sum()
             t_train = time_df.loc[time_df["method"] == "train", "time"].sum()
-        
+
         # 2. Load N_MONITORS=1 traces
         with open(nm1_f, "rb") as pf:
             obj_nm1 = pickle.load(pf)
@@ -291,9 +309,39 @@ for label, nm1_f, nm0_f in files:
 
             t["time_scaled"] = t.apply(get_scaled_time, axis=1)
 
+            # Drop rows with NaN logLik before grouping to avoid NaNs in percentiles/median due to initial parameter value rows at IF2/train transition.
+            dropped_rows = t[t["logLik"].isna()]
+            if not dropped_rows.empty:
+                cols_to_print = [
+                    c
+                    for c in ["method", "iteration", "rep", "logLik"]
+                    if c in t.columns
+                ]
+                print(f"Dropped {len(dropped_rows)} rows with NaN logLik for {label}:")
+                print(dropped_rows[cols_to_print].head(5).to_string(index=False))
+                if len(dropped_rows) > 5:
+                    print("...")
+
+                # Check how many do not occur at iteration 0 or the transition point (max_mif_iter)
+                unexpected_dropped = dropped_rows[
+                    ~dropped_rows["iteration"].isin([0, max_mif_iter])
+                ]
+                print(
+                    f"  - {len(unexpected_dropped)} of these did not occur at iteration 0 or transition iteration {max_mif_iter}."
+                )
+                if not unexpected_dropped.empty:
+                    print("  Unexpected dropped rows:")
+                    print(
+                        unexpected_dropped[cols_to_print].head(5).to_string(index=False)
+                    )
+                    if len(unexpected_dropped) > 5:
+                        print("  ...")
+
+            t_clean = t.dropna(subset=["logLik"])
+
             # Compute median and percentiles
             stats = (
-                t.groupby(["method", "iteration", "time_scaled"])["logLik"]
+                t_clean.groupby(["method", "iteration", "time_scaled"])["logLik"]
                 .agg(
                     median="median",
                     q10=lambda x: np.percentile(x, 10),
@@ -312,19 +360,75 @@ if all_stats:
     df_stats["source"] = pd.Categorical(
         df_stats["source"],
         categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
-        ordered=True
+        ordered=True,
     )
+    df_stats["method"] = pd.Categorical(
+        df_stats["method"], categories=["mif", "train"], ordered=True
+    )
+
+    # Extract the transition points (first training iteration with non-null log-likelihood) for each DMOP model
+    df_transition = pd.DataFrame()
+    df_train_only = df_stats[
+        (df_stats["method"] == "train") & (df_stats["median"].notna())
+    ]
+    if not df_train_only.empty:
+        df_transition = df_train_only.loc[
+            df_train_only.groupby("source", observed=True)["time_scaled"].idxmin()
+        ]
 
     # Plot 1: Standard Y-axis Zoom
     p1 = (
         ggplot(
             df_stats,
-            aes(x="time_scaled", y="median", color="source", fill="source"),
+            aes(x="time_scaled", y="median", color="source"),
         )
         + geom_line(size=1)
-        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
+        + geom_line(
+            aes(y="q10", color="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.2,
+            size=0.5,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="qmax", color="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.2,
+            size=0.5,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="q10", color="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.35,
+            size=0.5,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="qmax", color="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.35,
+            size=0.5,
+            show_legend=False,
+        )
+        + geom_ribbon(
+            aes(ymin="q10", ymax="qmax", fill="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.1,
+            color=None,
+        )
+        + geom_ribbon(
+            aes(ymin="q10", ymax="qmax", fill="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.1,
+            color=None,
+        )
         + geom_hline(
-            yintercept=best_loglik_all, color="red", linetype="dotted", size=1.2, alpha=0.9
+            yintercept=best_loglik_all,
+            color="red",
+            linetype="dotted",
+            size=1.2,
+            alpha=0.9,
         )
         + labs(
             title="LogLik Traces Comparison (N_MONITORS=1)",
@@ -335,18 +439,69 @@ if all_stats:
         + theme_minimal()
         + coord_cartesian(ylim=(-4000, None))
     )
+    if not df_transition.empty:
+        p1 = p1 + geom_vline(
+            aes(xintercept="time_scaled", color="source"),
+            data=df_transition,
+            linetype="dotted",
+            size=1.0,
+            show_legend=False,
+        )
     display(p1)
 
     # Plot 2: Close-up Zoom (Manuscript Version)
     p2 = (
         ggplot(
             df_stats,
-            aes(x="time_scaled", y="median", color="source", fill="source"),
+            aes(x="time_scaled", y="median", color="source"),
         )
         + geom_line(size=1.2)
-        + geom_ribbon(aes(ymin="q10", ymax="qmax"), alpha=0.1, color=None)
+        + geom_line(
+            aes(y="q10", color="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.2,
+            size=0.6,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="qmax", color="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.2,
+            size=0.6,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="q10", color="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.35,
+            size=0.6,
+            show_legend=False,
+        )
+        + geom_line(
+            aes(y="qmax", color="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.35,
+            size=0.6,
+            show_legend=False,
+        )
+        + geom_ribbon(
+            aes(ymin="q10", ymax="qmax", fill="source"),
+            data=df_stats[df_stats["source"] != "IF2"],
+            alpha=0.1,
+            color=None,
+        )
+        + geom_ribbon(
+            aes(ymin="q10", ymax="qmax", fill="source"),
+            data=df_stats[df_stats["source"] == "IF2"],
+            alpha=0.1,
+            color=None,
+        )
         + geom_hline(
-            yintercept=best_loglik_all, color="red", linetype="dotted", size=1.2, alpha=0.9
+            yintercept=best_loglik_all,
+            color="red",
+            linetype="dotted",
+            size=1.2,
+            alpha=0.9,
         )
         + labs(
             title="",
@@ -368,6 +523,14 @@ if all_stats:
         )
         + coord_cartesian(ylim=(-3800, None))
     )
+    if not df_transition.empty:
+        p2 = p2 + geom_vline(
+            aes(xintercept="time_scaled", color="source"),
+            data=df_transition,
+            linetype="dotted",
+            size=1.0,
+            show_legend=False,
+        )
     p2.save("../../imgs/precise_traces.pdf", width=7, height=3.8, verbose=False)
     display(p2)
 
@@ -498,15 +661,54 @@ else:
     print("No parameter data available.")
 ```
 
-# 5. Best Log-Likelihoods (N_MONITORS=0)
+# 5. Best Log-Likelihoods (N_MONITORS=0 & N_MONITORS=1)
 
-This table shows the best (maximum) and median log-likelihoods obtained from the final pfilter evaluation across the replicates for the $N\_MONITORS=0$ runs.
+This section displays the log-likelihood statistics obtained from the final pfilter evaluations across the replicates for both the $N\_MONITORS=0$ and $N\_MONITORS=1$ runs.
+
+To ensure consistency and transparency, we report:
+1. **Best LogLik (Post-Pruned, index=-1)**: The fresh, unbiased evaluation of the single selected best replicate.
+
+2. **Best LogLik (Pre-Pruned, index=-2)**: The maximum evaluation among all 100 replicates before pruning. (Note: Due to selection bias/the winner's curse and particle filter stochasticity, the maximum value in `index=-2` may appear slightly higher than the fresh evaluation in `index=-1`).
+
+3. **Median LogLik (Pre-Pruned, index=-2)**: The median evaluation across all 100 replicates.
+
+### N_MONITORS = 0 Models
 
 ```{python}
 # | label: best-loglik-nm0
 # | echo: false
 
-best_logliks = []
+def get_stats(model_files):
+    stats_list = []
+    for label, f in model_files:
+        try:
+            with open(f, "rb") as pf:
+                obj = pickle.load(pf)
+                # 1. Best LogLik from the very last pfilter entry (post-pruned, most accurate)
+                res_last = obj.results(index=-1)
+                if "loglik" in res_last.columns:
+                    res_last = res_last.rename(columns={"loglik": "logLik"})
+                best_ll_post = res_last["logLik"].max()
+
+                # 2. Pre-pruned pfilter entry (across all search replicates)
+                res_pre = obj.results(index=-2)
+                if "loglik" in res_pre.columns:
+                    res_pre = res_pre.rename(columns={"loglik": "logLik"})
+                best_ll_pre = res_pre["logLik"].max()
+                median_ll_pre = res_pre["logLik"].median()
+
+                stats_list.append(
+                    {
+                        "Model": label,
+                        "Best LogLik (Post-Pruned, index=-1)": f"{best_ll_post:.2f}",
+                        "Best LogLik (Pre-Pruned, index=-2)": f"{best_ll_pre:.2f}",
+                        "Median LogLik (Pre-Pruned, index=-2)": f"{median_ll_pre:.2f}",
+                    }
+                )
+        except Exception as e:
+            stats_list.append({"Model": label, "Error": str(e)})
+    return pd.DataFrame(stats_list)
+
 model_files_nm0 = [
     ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
     ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
@@ -514,36 +716,24 @@ model_files_nm0 = [
     ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
 ]
 
-for label, f in model_files_nm0:
-    try:
-        with open(f, "rb") as pf:
-            obj = pickle.load(pf)
-            # Best LogLik from the very last pfilter entry (post-pruned, most accurate)
-            res_last = obj.results(index=-1)
-            if "loglik" in res_last.columns:
-                res_last = res_last.rename(columns={"loglik": "logLik"})
-            best_ll = res_last["logLik"].max()
+df_nm0 = get_stats(model_files_nm0)
+display(Markdown(df_nm0.to_markdown(index=False)))
+```
 
-            # Median LogLik from the pre-pruned pfilter entry (across all search replicates)
-            res_pre = obj.results(index=-2)
-            if "loglik" in res_pre.columns:
-                res_pre = res_pre.rename(columns={"loglik": "logLik"})
-            median_ll = res_pre["logLik"].median()
+### N_MONITORS = 1 Models
 
-            best_logliks.append(
-                {
-                    "Model": label,
-                    "Best LogLik": f"{best_ll:.2f}",
-                    "Median LogLik": f"{median_ll:.2f}",
-                }
-            )
-    except Exception as e:
-        print(f"Error loading {f}: {e}")
+```{python}
+# | label: best-loglik-nm1
+# | echo: false
 
-if best_logliks:
-    df_best = pd.DataFrame(best_logliks)
-    display(Markdown(df_best.to_markdown(index=False)))
-else:
-    print("No log-likelihood data available for N_MONITORS=0.")
+model_files_nm1_eval = [
+    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl"),
+    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl"),
+    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl"),
+    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl"),
+]
+
+df_nm1 = get_stats(model_files_nm1_eval)
+display(Markdown(df_nm1.to_markdown(index=False)))
 ```
 
