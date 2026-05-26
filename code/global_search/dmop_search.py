@@ -13,19 +13,40 @@ from prep import (
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
-NFITR = (2, 5, 100, 175)[RUN_LEVEL - 1]
-NTRAIN = (2, 20, 40, 150)[RUN_LEVEL - 1]
+NFITR_0 = (2, 5, 100, 60)[RUN_LEVEL - 1]
+NFITR_97 = (2, 5, 100, 175)[RUN_LEVEL - 1]
+NFITR_1 = (2, 5, 100, 60)[RUN_LEVEL - 1]
+NTRAIN_0 = (2, 20, 40, 225)[RUN_LEVEL - 1]
+NTRAIN_97 = (2, 20, 40, 175)[RUN_LEVEL - 1]
+NTRAIN_1 = (2, 20, 40, 225)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
-
-M = NTRAIN
 warmup = (1, 5, 10, 10)[RUN_LEVEL - 1]
+
+M_mif = -1
+M_train = -1
+beta1 = -1.0
+match ALPHA:
+    case 0.0:
+        M_train = NTRAIN_0
+        M_mif = NFITR_0
+        beta1 = 0.0
+    case 0.97:
+        M_train = NTRAIN_97
+        M_mif = NFITR_97
+        beta1 = 0.9
+    case 1.0:
+        M_train = NTRAIN_1
+        M_mif = NFITR_1
+        beta1 = 0.9
 
 
 def w(v):
     if v == 0.0:
         return 0.0
-    return np.concatenate([np.linspace(v * 0.1, v, warmup), np.full(M - warmup, v)])
+    return np.concatenate(
+        [np.linspace(v * 0.1, v, warmup), np.full(M_train - warmup, v)]
+    )
 
 
 if ALPHA == 0.0:
@@ -57,7 +78,7 @@ eta = {
 dacca_obj.mif(
     theta=initial_params_list,
     rw_sd=RW_SD,
-    M=NFITR,
+    M=M_mif,
     a=0.5,
     J=NP_FITR,
     key=key,
@@ -67,10 +88,10 @@ print(dacca_obj.results())
 
 dacca_obj.train(
     J=NP_FITR,
-    M=NTRAIN,
-    eta=pp.LearningRate(eta).cosine_decay(final_factor=0.05, M=NTRAIN),
+    M=M_train,
+    eta=pp.LearningRate(eta).cosine_decay(final_factor=0.05, M=M_train),
     alpha=ALPHA,
-    optimizer=pp.Adam(beta1=0.0),
+    optimizer=pp.Adam(beta1=beta1),
     n_monitors=N_MONITORS,
 )
 print(dacca_obj.results())
