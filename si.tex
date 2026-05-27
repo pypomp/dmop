@@ -173,6 +173,35 @@ Corrected results are favorable for iterated filtering methods \citep{hao24-arxi
 Recent results of \citet{chen25} have extended the previous theoretical understanding of iterated filtering.
 The ongoing study of iterated filtering as a state-of-the-art approach to inference for POMP models gives additional support for our decision to use iterated filtering as a benchmark for our new methodology.
 
+\section{Algorithmic Parameters}
+\label{appendix:algparams}
+
+We include the full set of algorithmic parameters used for the Dhaka results in Table~\ref{table:algparams}. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{4.5cm}cccc}
+\toprule
+\textbf{Hyperparameter} & \textbf{Standard IF2} & \textbf{IFAD-0} & \textbf{IFAD-0.97} & \textbf{IFAD-1} \\
+\midrule
+Number of Particles ($J$) & 5,000 & 5,000 & 5,000 & 5,000 \\
+Warm-start Iterations & 650 & 60 & 175 & 60 \\
+GD Iterations & --- & 225 & 175 & 225 \\
+IF2 Cooling Rate & 0.8 & 0.5 & 0.5 & 0.5 \\
+Initial RWSD & 0.02 & 0.02 & 0.02 & 0.02 \\
+Initial RWSD (IVPs) & 0.16 & 0.16 & 0.16 & 0.16 \\
+Gradient Optimizer & --- & Adam & Adam & Adam \\
+Momentum ($\beta_1$) & --- & 0.0 & 0.9 & 0.9 \\
+LR Schedule & --- & Cosine Decay & Cosine Decay & Cosine Decay \\
+Initial LR ($\eta_0$) & --- & 0.1 & 0.1 & 0.1 \\
+Warm-up Steps & --- & 10 & 10 & 10 \\
+Eval. Particles / Reps & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 \\
+\bottomrule
+\end{tabular}
+\caption{Algorithmic parameters for the global search benchmarking on the Dhaka cholera model.}
+\label{table:algparams}
+\end{table}
+
 \bibliographystyle{apalike}
 \bibliography{bib-ifad}
 

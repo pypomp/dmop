@@ -15,6 +15,7 @@
 
 \newcommand\new[1]{\textcolor{red}{#1}}
 \newcommand\eic[1]{\textcolor{orange}{#1}}
+\newcommand\aja[1]{\textcolor{blue}{#1}}
 
 \newcommand\arxiv[2]{#1} % 1st argument for arxiv format
 % also, swich to \documentclass[11pt]{article} for arxiv format
@@ -411,10 +412,16 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 
 %\subsection{Results}
 
-We tested IFAD against IF2 on a global search problem for the Dhaka cholera model.
-We re-implemented IF2 to do so, but we also compare our results with the results of \cite{ionides15} (labeled ``IF2 2015'').
-Our re-implementation reaches a better log-likelihood than that of \cite{ionides15} due to a better choice of algorithmic parameters.
-For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. We summarize our findings below. 
+We tested IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in \texttt{pypomp} 0.4.6.0 \citep{abkemeier25}.
+For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. 
+To ensure a fair comparison under comparable computational effort, we run each method for about as long as it takes for IFAD-0.97 to converge, as it converges to the highest log-likelihood in the shortest time. 
+For each method, we choose algorithmic parameters that maximize the log-likelihood best for that method while running within the allotted time. 
+We run standard IF2 for 650 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 175 iterations.
+IFAD-0 and IFAD-1 are run for 60 IF2 iterations and 225 Adam iterations.
+A summary of these optimization settings is provided in \arxiv{Section~\ref{appendix:algparams}}{Section~S9 of the supplement}, and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
+\aja{I might want to add results for how high the other methods get when allowed to run for longer.}
+We summarize our findings in Table \ref{table:mle}. 
+\aja{Should indicate that we ran separate runs for recording the times and recording the intermediate log-lik estimates.}
 
 % \kevin{Dynamically save to a tex file and load from there}
   
@@ -422,7 +429,7 @@ For each method, we performed 100 searches, initialized with 100 starting parame
 \begin{table}[htbp!]
 \centering
 \input{imgs/precise_table}
-\caption{Maximum log-likelihood found by IF2 and IFAD. IFAD-0.97 performs the best among all methods.}
+\caption{Maximum log-likelihood found by IF2 and IFAD. IFAD-0.97 performs the best among all methods in about the same time span.}
 \arxiv{}{\vspace*{-7mm}}
 \label{table:mle}
 \end{table}
@@ -431,8 +438,9 @@ For each method, we performed 100 searches, initialized with 100 starting parame
 
 Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
 This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
+\aja{The statement about beating AK with IFAD is less impressive when we can also beat it with IF2. Maybe we shouldn't compare to past attempts?}
 Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-The results of Table~\ref{table:mle}, Figure~\ref{fig:scatter} and Figure~\ref{fig:boxplot}) indicate that the actual MLE is around \eic{XXXXX}. 
+The results of Table~\ref{table:mle} and Figure~\ref{fig:boxplot}) indicate that the actual MLE is around -3744.17. 
 IFAD has effectively solved a long-standing benchmark problem.
 %%
 %% Despite being initialized for a global search, IFAD manages to get much closer to the MLE over the $100$ searches than \cite{ionides15}, as seen in Table~\ref{table:mle}.
@@ -442,33 +450,28 @@ IFAD has effectively solved a long-standing benchmark problem.
 
 % \subsection{IFAD Outperforms Both IF2 and DMOP Alone}
 
-While IF2 quickly approaches a neighborhood of the MLE within only 40 iterations, IF2 alone ultimately fails to achieve the last few log-likelihood units, as no IF2 search comes within 7 \eic{XXXX} log-likelihood units of the MLE (as seen in Figure \ref{fig:scatter}). Conversely, we encountered many failed searches with gradient descent alone. This is a difficult, nonconvex, and noisy problem with $18$ parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
+While IF2 quickly approaches a neighborhood of the MLE within only 40 iterations (Figure \ref{fig:optim}), IF2 alone ultimately fails to achieve the last few log-likelihood units, as no IF2 search comes within 3.5 log-likelihood units of the MLE. 
+Conversely, we have encountered many failed searches with gradient descent alone. 
+This is a difficult, nonconvex, and noisy problem with $18$ parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
 
-IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (as seen in Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE (as seen in Figures~\ref{fig:scatter} and \ref{fig:boxplot}).
+IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE (Figure \ref{fig:boxplot}).
 IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
 Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:boxplot} shows that IFAD can find higher likelihood values, more quickly and more reliably than the previous state-of-the-art. 
-In particular, Figure~\ref{fig:boxplot} shows that IFAD with $\alpha=0.97$ can maximize the challenging likelihood of \cite{king08} using a modest number of iterations and Monte Carlo replications, whereas previously it was necessary to carry out an extensive customized search or to live with an incompletely maximized likelihood.
+In particular, Figure~\ref{fig:boxplot} shows that IFAD with $\alpha=0.97$ can maximize the challenging likelihood of \cite{king08} in a short time, whereas previously it was necessary to carry out an extensive customized search or to live with an incompletely maximized likelihood.
 Since replicated searches are innevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is necessary to focus on the right tail of the distributions in Figure~\ref{fig:boxplot} to compare the capabilities of the methods. 
 
+\aja{Choose a parameter estimate density plot to display?}
 
-\eic{ I GUESS AT THIS POINT WE JUST SHOW THE FULL RESULTS WITH ADAM AND COOLING.
-For the results presented here, we did not employ the many common heuristics used in the machine learning and optimization literature in the gradient descent stage.
-We used constant learning rates of $0.01, 0.05$, and $0.2$ for IFAD-$1,0,$ and $0.97$ respectively, and a constant cooling rate of $0.95$ for our IF2 implementation.
-While techniques such as annealing learning rates, gradient normalization, and momentum could further improve the performance of IFAD in other simulations we performed, we chose to report the results of the simplest implementation to serve as a baseline for the method's performance.
-Our experimentation with second-order optimization methods, using a Hessian estimate obtained by automatic differentiation of DMOP-$\alpha$, was computationally intensive and did not yield improved results, likely due to Monte~Carlo error in the Hessian estimate and non-convexity of the log-likelihood.
-}
-
-
-\begin{figure}[htbp!]
-    \centering
-    \vspace{1mm}
-    \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/pairs.png}
-    \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/qq.png}
-    %\arxiv{}{\vspace*{-1mm}}
-    \caption{Scatterplots depicting the performance of IFAD against that of IF2. \textbf{A:} Paired searches from the same starting point. Tuning $\alpha$ allows IFAD-$0.97$ to strictly improve on IF2, \cite{poyiadjis11}, and \cite{naesseth18}, on almost every initialization. \textbf{B:} Q-Q plot of ranked IFAD searches against ranked IF2 searches. IFAD performs best on average, and approaches the MLE while no IF2 search successfully gets within 7 log-likelihood units of it. The dotted red line shows the true maximized log-likelihood. }
-    \label{fig:scatter}
-    \arxiv{}{\vspace*{-4mm}}
-\end{figure}
+% \begin{figure}[htbp!]
+%     \centering
+%     \vspace{1mm}
+%     \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/pairs.png}
+%     \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/qq.png}
+%     %\arxiv{}{\vspace*{-1mm}}
+%     \caption{Scatterplots depicting the performance of IFAD against that of IF2. \textbf{A:} Paired searches from the same starting point. Tuning $\alpha$ allows IFAD-$0.97$ to strictly improve on IF2, \cite{poyiadjis11}, and \cite{naesseth18}, on almost every initialization. \textbf{B:} Q-Q plot of ranked IFAD searches against ranked IF2 searches. IFAD performs best on average, and approaches the MLE while no IF2 search successfully gets within 7 log-likelihood units of it. The dotted red line shows the true maximized log-likelihood. }
+%     \label{fig:scatter}
+%     \arxiv{}{\vspace*{-4mm}}
+% \end{figure}
 
 \begin{figure}[ht]
     \centering
@@ -488,7 +491,9 @@ Our experimentation with second-order optimization methods, using a Hessian esti
     \arxiv{}{\vspace*{-1mm}}
     \caption{Optimization progress of IFAD and IF2.
     The shaded regions cover the area between the 100th and 10th percentiles of log-likelihood estimates at each iteration.
-    We use a dotted red line to display the MLE.}
+    We use a dotted red line to display the MLE.
+    The vertical dotted lines indicate where the IFAD runs switch from IF2 to Adam optimization.
+    Some log-likelihood estimates appear to be above the MLE; this is because the estimates prior to the final iteration use just 1 replicate instead of 36 replicates to estimate the log-likelihood, which leads to larger Monte~Carlo variance.}
     \label{fig:optim}
     \arxiv{}{\vspace*{-3ex}}
 \end{figure}
