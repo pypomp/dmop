@@ -456,9 +456,9 @@ This is a difficult, nonconvex, and noisy problem with $18$ parameters, and grad
 
 IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE (Figure \ref{fig:boxplot}).
 IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
-Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:boxplot} shows that IFAD can find higher likelihood values, more quickly and more reliably than the previous state-of-the-art. 
+Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:boxplot} shows that IFAD can find higher likelihood values more quickly and more reliably than the previous state-of-the-art. 
 In particular, Figure~\ref{fig:boxplot} shows that IFAD with $\alpha=0.97$ can maximize the challenging likelihood of \cite{king08} in a short time, whereas previously it was necessary to carry out an extensive customized search or to live with an incompletely maximized likelihood.
-Since replicated searches are innevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is necessary to focus on the right tail of the distributions in Figure~\ref{fig:boxplot} to compare the capabilities of the methods. 
+Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is necessary to focus on the right tail of the distributions in Figure~\ref{fig:boxplot} to compare the capabilities of the methods. 
 
 \aja{Choose a parameter estimate density plot to display?}
 

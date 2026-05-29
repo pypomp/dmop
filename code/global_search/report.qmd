@@ -41,9 +41,11 @@ print(datetime.now())
 RUN_LEVEL = int(os.environ.get("RUN_LEVEL", "4"))
 ALPHA = os.environ.get("ALPHA", "0.97")
 N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
+LONG = os.environ.get("LONG", "false").lower() in ("true", "1", "yes")
 
-pomp_obj = pickle.load(open(f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}.pkl", "rb"))
-pomp_obj_train = pickle.load(open(f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}.pkl", "rb"))
+suffix = "_long" if LONG else ""
+pomp_obj = pickle.load(open(f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}{suffix}.pkl", "rb"))
+pomp_obj_train = pickle.load(open(f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}{suffix}.pkl", "rb"))
 LL_frame = pomp_obj.results()
 traces_raw_gpu = pomp_obj.traces()
 traces_raw_gpu["source"] = "gpu"

@@ -29,6 +29,9 @@ import jax
 # Hide the noisy JAX CUDA initialization error on machines without a GPU
 logging.getLogger("jax._src.xla_bridge").setLevel(logging.CRITICAL)
 
+LONG = os.environ.get("LONG", "false").lower() in ("true", "1", "yes")
+suffix = "_long" if LONG else ""
+
 print("Report generated on:", datetime.now())
 ```
 
@@ -44,10 +47,10 @@ This plot shows the distribution of the final evaluation pfilter log-likelihoods
 
 all_reps_loglik = []
 model_files_nm1 = [
-    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl"),
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl"),
+    ("IF2", f"mif_results/dacca_results_rl4_nm1{suffix}.pkl"),
+    ("IFAD-1", f"dmop_results/dacca_results_rl4_alpha1.0_nm1{suffix}.pkl"),
+    ("IFAD-0.97", f"dmop_results/dacca_results_rl4_alpha0.97_nm1{suffix}.pkl"),
+    ("IFAD-0", f"dmop_results/dacca_results_rl4_alpha0.0_nm1{suffix}.pkl"),
 ]
 
 for label, f in model_files_nm1:
@@ -158,7 +161,7 @@ if all_reps_loglik:
             panel_grid_minor_x=element_blank(),
         )
     )
-    p.save("../../imgs/precise_raincloud.pdf", width=7, height=3.8, verbose=False)
+    p.save(f"../../imgs/precise_raincloud{suffix}.pdf", width=7, height=3.8, verbose=False)
     display(p)
 else:
     print("No data available to plot.")
@@ -191,6 +194,12 @@ for label, f in model_files_nm0:
             train_t = t_df.loc[t_df["method"] == "train", "time"].sum()
             pfilter_t = t_df.loc[t_df["method"] == "pfilter", "time"].sum()
             
+            if LONG:
+                if label == "IF2":
+                    mif_t *= 4
+                else:
+                    train_t *= 4
+            
             row["mif (s)"] = f"{mif_t:.2f}" if mif_t > 0 else "-"
             row["train (s)"] = f"{train_t:.2f}" if train_t > 0 else "-"
             row["pfilter (s)"] = f"{pfilter_t:.2f}" if pfilter_t > 0 else "-"
@@ -220,22 +229,22 @@ The x-axis represents execution time in seconds, **scaled by the execution runti
 files = [
     (
         "IFAD-0",
-        "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl",
+        f"dmop_results/dacca_results_rl4_alpha0.0_nm1{suffix}.pkl",
         "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl",
     ),
     (
         "IFAD-0.97",
-        "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl",
+        f"dmop_results/dacca_results_rl4_alpha0.97_nm1{suffix}.pkl",
         "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl",
     ),
     (
         "IFAD-1",
-        "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl",
+        f"dmop_results/dacca_results_rl4_alpha1.0_nm1{suffix}.pkl",
         "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl",
     ),
     (
         "IF2",
-        "mif_results/dacca_results_rl4_nm1.pkl",
+        f"mif_results/dacca_results_rl4_nm1{suffix}.pkl",
         "mif_results/dacca_results_rl4_nm0.pkl",
     ),
 ]
@@ -251,6 +260,12 @@ for label, nm1_f, nm0_f in files:
             time_df = obj_nm0.time()
             t_mif = time_df.loc[time_df["method"] == "mif", "time"].sum()
             t_train = time_df.loc[time_df["method"] == "train", "time"].sum()
+            
+            if LONG:
+                if label == "IF2":
+                    t_mif *= 4
+                else:
+                    t_train *= 4
 
         # 2. Load N_MONITORS=1 traces
         with open(nm1_f, "rb") as pf:
@@ -531,7 +546,7 @@ if all_stats:
             size=1.0,
             show_legend=False,
         )
-    p2.save("../../imgs/precise_traces.pdf", width=7, height=3.8, verbose=False)
+    p2.save(f"../../imgs/precise_traces{suffix}.pdf", width=7, height=3.8, verbose=False)
     display(p2)
 
     # Compute and display Summary Statistics Table
@@ -566,25 +581,25 @@ else:
     print("No N_MONITORS=1 files found.")
 ```
 
-# 4. Parameter Estimate Density Plots (N_MONITORS=0)
+# 4. Parameter Estimate Density Plots (N_MONITORS=1)
 
-This section shows density plots of final parameter estimates across the replicates for each model with $N\_MONITORS=0$. Dotted red lines represent the default parameters.
+This section shows density plots of final parameter estimates across the replicates for each model with $N\_MONITORS=1$. Dotted red lines represent the default parameters.
 
 ```{python}
-# | label: plot-param-density-nm0
+# | label: plot-param-density-nm1
 # | fig-width: 10
 # | fig-height: 7
 # | echo: false
 
 all_params = []
-model_files_nm0 = [
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
-    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+model_files_nm1 = [
+    ("IFAD-0", f"dmop_results/dacca_results_rl4_alpha0.0_nm1{suffix}.pkl"),
+    ("IFAD-0.97", f"dmop_results/dacca_results_rl4_alpha0.97_nm1{suffix}.pkl"),
+    ("IFAD-1", f"dmop_results/dacca_results_rl4_alpha1.0_nm1{suffix}.pkl"),
+    ("IF2", f"mif_results/dacca_results_rl4_nm1{suffix}.pkl"),
 ]
 
-for label, f in model_files_nm0:
+for label, f in model_files_nm1:
     try:
         with open(f, "rb") as pf:
             obj = pickle.load(pf)
@@ -653,7 +668,7 @@ if all_params:
             + theme(axis_text_x=element_text(size=8), axis_text_y=element_text(size=8))
             + labs(
                 x="estimate",
-                title=f"Final parameter estimates (N_MONITORS=0): Comparison (Part {i // 4 + 1})",
+                title=f"Final parameter estimates (N_MONITORS=1): Comparison (Part {i // 4 + 1})",
             )
         )
         display(p)
@@ -727,10 +742,10 @@ display(Markdown(df_nm0.to_markdown(index=False)))
 # | echo: false
 
 model_files_nm1_eval = [
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm1.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm1.pkl"),
-    ("IF2", "mif_results/dacca_results_rl4_nm1.pkl"),
+    ("IFAD-0", f"dmop_results/dacca_results_rl4_alpha0.0_nm1{suffix}.pkl"),
+    ("IFAD-0.97", f"dmop_results/dacca_results_rl4_alpha0.97_nm1{suffix}.pkl"),
+    ("IFAD-1", f"dmop_results/dacca_results_rl4_alpha1.0_nm1{suffix}.pkl"),
+    ("IF2", f"mif_results/dacca_results_rl4_nm1{suffix}.pkl"),
 ]
 
 df_nm1 = get_stats(model_files_nm1_eval)

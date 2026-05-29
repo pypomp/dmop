@@ -60,6 +60,8 @@ dacca_obj = pp.models.dacca(dt=None, nstep=20)
 
 ALPHA = float(os.environ.get("ALPHA", "0.97"))
 N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
+LONG = os.environ.get("LONG", "false").lower() in ("true", "1", "yes")
+
 
 # This is the params box from the IF2 paper
 params_box = {

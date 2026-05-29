@@ -10,6 +10,7 @@ from prep import (
     RW_SD,
     ALPHA,
     N_MONITORS,
+    LONG,
 )
 
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
@@ -39,6 +40,9 @@ match ALPHA:
         M_train = NTRAIN_1
         M_mif = NFITR_1
         beta1 = 0.9
+
+if LONG:
+    M_train *= 4
 
 
 def w(v):
@@ -106,7 +110,8 @@ print(dacca_obj.results())
 dacca_obj.print_summary()
 print(dacca_obj.time())
 
+suffix = "_long" if LONG else ""
 with open(
-    f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}.pkl", "wb"
+    f"dmop_results/dacca_results_rl{RUN_LEVEL}_alpha{ALPHA}_nm{N_MONITORS}{suffix}.pkl", "wb"
 ) as f:
     pickle.dump(dacca_obj, f)
