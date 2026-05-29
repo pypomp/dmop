@@ -7,10 +7,15 @@ from prep import (
     initial_params_list,
     key,
     N_MONITORS,
+    LONG,
 )
 
+a = 0.8
 NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
 NFITR = (2, 5, 100, 650)[RUN_LEVEL - 1]
+if LONG:
+    NFITR *= 4
+    a = 0.9
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 
@@ -19,7 +24,7 @@ dacca_obj.mif(
     theta=initial_params_list,
     rw_sd=RW_SD,
     M=NFITR,
-    a=0.8,
+    a=a,
     J=NP_FITR,
     key=key,
     n_monitors=N_MONITORS,
@@ -35,5 +40,8 @@ dacca_obj.print_summary()
 print(dacca_obj.time())
 
 # Save results
-with open(f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}.pkl", "wb") as f:
+suffix = "_long" if LONG else ""
+with open(
+    f"mif_results/dacca_results_rl{RUN_LEVEL}_nm{N_MONITORS}{suffix}.pkl", "wb"
+) as f:
     pickle.dump(dacca_obj, f)
