@@ -412,16 +412,16 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 
 \subsection{Results}
 
-We tested IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in \texttt{pypomp} 0.4.6.0 \citep{abkemeier25}.
-For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. 
+We test IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in \texttt{pypomp} 0.4.6.0 \citep{abkemeier25}.
+For each method, we perform 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. 
 To ensure a fair comparison under comparable computational effort, we run each method for about as long as it takes for IFAD-0.97 to converge, as it converges to the highest log-likelihood in the shortest time. 
-For each method, we choose algorithmic parameters that maximize the log-likelihood best for that method while running within the allotted time. 
+For each method, we choose algorithmic parameters that maximize the log-likelihood best for that method while finishing within the allotted time. 
 We run standard IF2 for 650 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 175 iterations.
 IFAD-0 and IFAD-1 are run for 60 IF2 iterations and 225 Adam iterations.
-To assess whether other methods can catch up to IFAD-0.97 given more time, we separately run the IF2-only approach for four times as many iterations and the IFAD variants with four times as many Adam iterations, slowing the cooling rate for each as well.
+To assess whether other methods can catch up to IFAD-0.97 given more time, we separately run the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
 A summary of these optimization settings is provided in \arxiv{Section~\ref{appendix:algparams}}{Section~S9 of the supplement}, and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 
-We summarize our findings in Table \ref{table:mle} and Figures \ref{fig:boxplot} and \ref{fig:optim}. 
+We summarize our findings in Table \ref{table:mle} and Figures \ref{fig:boxplot}, \ref{fig:density}, and \ref{fig:optim}. 
 Because estimating the log-likelihoods at every iteration of IF2 with particle filtering for Figure \ref{fig:optim} lengthens the computation time and thus compromises the fair comparison between methods, we obtain the times in Table \ref{table:mle} and Figure \ref{fig:optim} by running the methods again without the extra calls to the particle filter. 
 Every other value displayed for the Dhaka results comes from the runs with the extra particle filter calls. 
 
@@ -438,19 +438,23 @@ Every other value displayed for the Dhaka results comes from the runs with the e
 
 %\subsection{IFAD Successfully Finds the MLE}
 
-Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
-This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
-\aja{The statement about beating AK with IFAD is less impressive when we can also beat it with IF2. Maybe we shouldn't compare to past attempts?}
-Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-
 Examining Table \ref{table:mle}, IFAD-0.97 can attain a log-likelihood of -3744.17, which surpasses IF2 even when IF2 runs for 4 times as long.
 IFAD-1 comes close in the time it takes for IFAD-0.97 to hit its maximum, but it needs to be run for an extended time to reach that maximum and partly close the gap in median log-likelihood. 
 IFAD-0 falls close to 4 log-units short of IFAD-0.97 even with extended time, ostensibly due to having high bias. 
-Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being run for long enough and ostensibly would not catch up to IFAD-0.97 in a reasonable amount of time. 
+Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being run for long enough and ostensibly would not catch up to IFAD-0.97 without excessive time and effort. 
 
-Notably, the estimates for IFAD-0.97 frequently display much less Monte~Carlo variance than that of the other methods, as can be seen in Figure~\ref{fig:boxplot}. 
+Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
+This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
+Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
+Using the improved computational efficiency of \texttt{pypomp} (elaborated upon in Section \ref{sec:efficiency}), IF2 alone can easily surpass all of these previous results within a wall clock time of 15 minutes, and IFAD-0.97 holds the record at $-3744.17$ within a slightly shorter time. 
+\aja{It wouldn't actually take that long to run the IF2 searches in R, so I don't think that really explains why -3747.82 hadn't been easily hit previously.}
 
-\aja{Choose a parameter estimate density plot to display?}
+Notably, the log-likelihood and parameter estimates for IFAD-0.97 frequently exhibit much less Monte~Carlo variance than that of the other methods, as can be seen in Figures~\ref{fig:boxplot} and~\ref{fig:density}. 
+IFAD in general exhibits less Monte~Carlo variance than IF2, especially for the parameter estimates. 
+IFAD-0 has the second-lowest Monte~Carlo variance for most parameter estimates, although it has the lowest for the initial state proporitons $S_0$ and $R_{1,0}$. 
+That said, these are also the most biased estimates, and IFAD-1 tends to agree more closely with IFAD-0.97. 
+Because multiple searches are employed in large part to mitigate the effects of Monte~Carlo variance, the lower Monte~Carlo variance of IFAD-0.97 suggests that fewer searches are needed when running IFAD-0.97 to obtain a log-likelihood close to the maximum. 
+Lowering the Monte~Carlo variance also narrows the width of Monte-Carlo-adjusted profile confidence intervals \citep{ionides17}.
 
 %%
 %% Despite being initialized for a global search, IFAD manages to get much closer to the MLE over the $100$ searches than \cite{ionides15}, as seen in Table~\ref{table:mle}.
@@ -467,7 +471,7 @@ This is a difficult, nonconvex, and noisy problem with $23$ estimated parameters
 IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE.
 IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
 Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:optim} shows that IFAD can find higher likelihood values more quickly and more reliably than the previous state-of-the-art. 
-Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is necessary to focus on the right tail of the distributions in Figure~\ref{fig:boxplot} to compare the capabilities of the methods. 
+Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is important to give extra consideration to the right tail of the distributions in Figure~\ref{fig:boxplot} when comparing the capabilities of the methods. 
 
 % \begin{figure}[htbp!]
 %     \centering
@@ -486,10 +490,22 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
     \includegraphics[width=\arxiv{0.48\textwidth}{\textwidth/\real{2.2}}]{imgs/precise_raincloud.pdf}\hfill
     \includegraphics[width=\arxiv{0.48\textwidth}{\textwidth/\real{2.2}}]{imgs/precise_raincloud_long.pdf}
     %\arxiv{}{\vspace*{-1mm}}
-    \caption{Raincloud plot of all searches. IFAD-0.97 outperforms all other methods.
+    \caption{Raincloud plot of the searches. 
+    \captiona\ Comparable computational effort. 
+    \captionb\ Extended computational effort. 
+    Log-likelihoods lower than -3800 are omitted. 
+    IFAD-0.97 outperforms all other methods.
     The dotted red line shows the maximized log-likelihood.}
     \label{fig:boxplot}
     \arxiv{}{\vspace*{-5mm}}
+\end{figure}
+
+
+\begin{figure}[htbp!]
+    \centering
+    \includegraphics[width=\arxiv{14cm}{\textwidth}]{imgs/precise_density_long.pdf}
+    \caption{Density plots of the final parameter estimates across the 100 replicates for nine key parameters of the cholera model under extended computational effort.}
+    \label{fig:density}
 \end{figure}
 
 \begin{figure}[ht]
@@ -497,7 +513,7 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
     \vspace{1mm}
     \includegraphics[width=\arxiv{14cm}{\textwidth/2}]{imgs/precise_traces_long.pdf}
     \arxiv{}{\vspace*{-1mm}}
-    \caption{Optimization progress of IFAD and IF2.
+    \caption{Optimization progress of IFAD and IF2 under extended computational effort.
     The shaded regions cover the area between the 100th and 10th percentiles of log-likelihood estimates at each iteration.
     We use a dotted red line to display the MLE.
     The vertical dotted lines indicate where the IFAD runs switch from IF2 to Adam optimization.
@@ -654,16 +670,33 @@ Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to r
 
 
 
-\section{Computational Efficiency}
+\section{Computational Efficiency} \label{sec:efficiency}
 
 Our numerical results use an implementation of our methods in the \texttt{pypomp} package \citep{abkemeier25}.
 The source code for this paper is at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter, and we found the empirical value of this factor to be 3.75.
 DMOP-$\alpha$ and IFAD therefore share the same $O(NJ)$ time complexity as the particle filter, unlike the $O(NJ^2)$ complexity of \cite{corenflos21} and Algorithm 2 in \citep{poyiadjis11, scibior21}.
 
-\eic{REWRITE WITH LATEST PYPOMP RESULTS} Implementation of the particle filter, simulator, and DMOP-$\alpha$ in \texttt{JAX} \citep{jax} takes advantage of just-in-time compilation and GPU acceleration, even with a simulator written in Python.
-This led to a 16x speedup (379ms vs 6.29s on a Intel i9-13900K CPU and NVIDIA RTX3090 GPU) over the CPU-only implementation of the particle filter (with a simulator written in C++) in the \texttt{pomp} package of \cite{king16}.
-Additional speedup is accrued when computing multiple Monte Carlo replications, since \texttt{JAX} can take advantage of the simple parallelization opportunity.
+Implementation of the particle filter, IF2, and DMOP-$\alpha$ in \texttt{JAX} \citep{jax} takes advantage of just-in-time compilation and GPU acceleration.
+While CPU-based implementations of the particle filtering methods can effectively leverage multiple cores by parallelizing over independent replications of a given method, \texttt{pypomp} can effectively leverage tens of thousands of GPU cores by vectorizing over both particles and independent method replications.
+To examine the performance improvement on the Dhaka model, we ran 1 instance of IF2 with 60 iterations and 5000 particles using 1 CPU core and compared this with running 100 replications on a GPU.
+The results in Table \ref{table:speedup} show that, despite running 100 times as many replications, the GPU finishes 10.4 times faster, giving it a throughput 1038.9 times greater than the single CPU core.
+
+\begin{table}[htbp!]
+\centering
+\begin{tabular}{lll}
+\toprule
+Metric & \texttt{pomp} \citep{king16} & \texttt{pypomp} \citep{abkemeier25} \\
+\midrule
+Language & R (\texttt{C++} simulator) & Python (\texttt{JAX}) \\
+Hardware& 3.0 GHz Intel Xeon Gold 6154 (1 core) & NVIDIA RTX6000 Pro Blackwell \\
+IF2 Replications & 1 & 100 \\
+Latency (s) & 935 & 90 \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of execution latency for running IF2 (60 iterations, 5000 particles, 1 versus 100 replications) between the CPU-only R \texttt{pomp} package and the GPU-accelerated \texttt{pypomp} package.}
+\label{table:speedup}
+\end{table}
 
 
 

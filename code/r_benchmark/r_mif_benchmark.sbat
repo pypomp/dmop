@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name="r_mif_benchmark"
+#SBATCH --partition=standard
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16GB
+#SBATCH --output=code/r_benchmark/r_benchmark-%j.out
+#SBATCH --time=0-00:30:00
+#SBATCH --mail-type=fail,end
+
+# Make sure to run sbatch from the project root
+
+# Run the R benchmark script
+Rscript code/r_benchmark/r_mif_benchmark.R

@@ -115,6 +115,8 @@ if all_reps_loglik:
     max_loglik_tick = int(np.ceil(df_raincloud_filtered["logLik"].max() / 10) * 10)
     tick_breaks = list(range(min_loglik_tick, max_loglik_tick + 10, 10))
 
+    label_letter = "B" if LONG else "A"
+
     # Build premium raincloud plot using geom_violin(style='right') in plotnine (if supported)
     p = (
         ggplot(df_raincloud_filtered, aes(y="logLik", fill="Model", color="Model"))
@@ -137,6 +139,15 @@ if all_reps_loglik:
         + geom_point(aes(x="Model_jitter_x"), alpha=0.6, size=1.5, show_legend=False)
         + geom_hline(
             yintercept=max_loglik, color="red", linetype="dotted", size=1.2, alpha=0.9
+        )
+        + annotate(
+            "text",
+            x=3.4,
+            y=df_raincloud_filtered["logLik"].min() + 2,
+            label=label_letter,
+            size=28,
+            fontweight="bold",
+            color="black",
         )
         + coord_flip()
         + scale_x_continuous(
@@ -672,6 +683,60 @@ if all_params:
             )
         )
         display(p)
+
+    # Save a premium 3x3 grid of density plots for the 9 key parameters to be used in the manuscript
+    df_params["quantity"] = df_params["quantity"].replace({"omegas5": "omega5"})
+    default_params_df["quantity"] = default_params_df["quantity"].replace({"omegas5": "omega5"})
+
+    key_quantities = ["sigma", "tau", "gamma", "epsilon", "S_0", "I_0", "R1_0", "bs3", "omega5"]
+    df_key_params = df_params[df_params["quantity"].isin(key_quantities)].copy()
+    
+    label_map = {
+        "sigma": "Process noise (σ)",
+        "tau": "Measurement noise (τ)",
+        "gamma": "Recovery rate (γ)",
+        "epsilon": "Immunity loss rate (ε)",
+        "S_0": "Initial susceptible (S_0)",
+        "I_0": "Initial infected (I_0)",
+        "R1_0": "Initial recovered (R1_0)",
+        "bs3": "Seasonality spline (bs3)",
+        "omega5": "Reservoir spline (ω_5)",
+    }
+    df_key_params["quantity_label"] = df_key_params["quantity"].map(label_map)
+    df_key_params["quantity_label"] = pd.Categorical(
+        df_key_params["quantity_label"],
+        categories=[label_map[q] for q in key_quantities],
+        ordered=True
+    )
+    
+    p_key = (
+        ggplot(
+            df_key_params,
+            aes(x="param_value", fill="source", color="source"),
+        )
+        + geom_density(alpha=0.4)
+        + facet_wrap("quantity_label", scales="free", ncol=3)
+        + scale_x_continuous(labels=lambda l: [f"{x:g}" for x in l])
+        + scale_y_continuous(labels=lambda l: [f"{x:g}" for x in l])
+        + theme_minimal()
+        + theme(
+            axis_text_x=element_text(size=10, color="black"),
+            axis_text_y=element_text(size=10, color="black"),
+            axis_title_x=element_text(size=12, color="black"),
+            axis_title_y=element_text(size=12, color="black"),
+            strip_text=element_text(size=11, fontweight="bold", color="black"),
+            legend_text=element_text(size=10),
+            legend_title=element_blank(),
+            legend_position="bottom",
+            panel_spacing=0.08,
+        )
+        + labs(
+            x="Parameter Value Estimate",
+            y="Density",
+        )
+    )
+    p_key.save(f"../../imgs/precise_density{suffix}.pdf", width=9.5, height=9.0, verbose=False)
+    display(p_key)
 else:
     print("No parameter data available.")
 ```
@@ -686,6 +751,8 @@ To ensure consistency and transparency, we report:
 2. **Best LogLik (Pre-Pruned, index=-2)**: The maximum evaluation among all 100 replicates before pruning. (Note: Due to selection bias/the winner's curse and particle filter stochasticity, the maximum value in `index=-2` may appear slightly higher than the fresh evaluation in `index=-1`).
 
 3. **Median LogLik (Pre-Pruned, index=-2)**: The median evaluation across all 100 replicates.
+
+4. **Variance LogLik (Pre-Pruned, index=-2)**: The variance of evaluations across all 100 replicates before pruning.
 
 ### N_MONITORS = 0 Models
 
@@ -711,6 +778,7 @@ def get_stats(model_files):
                     res_pre = res_pre.rename(columns={"loglik": "logLik"})
                 best_ll_pre = res_pre["logLik"].max()
                 median_ll_pre = res_pre["logLik"].median()
+                var_ll_pre = res_pre["logLik"].var()
 
                 stats_list.append(
                     {
@@ -718,6 +786,7 @@ def get_stats(model_files):
                         "Best LogLik (Post-Pruned, index=-1)": f"{best_ll_post:.2f}",
                         "Best LogLik (Pre-Pruned, index=-2)": f"{best_ll_pre:.2f}",
                         "Median LogLik (Pre-Pruned, index=-2)": f"{median_ll_pre:.2f}",
+                        "Variance LogLik (Pre-Pruned, index=-2)": f"{var_ll_pre:.2f}",
                     }
                 )
         except Exception as e:
