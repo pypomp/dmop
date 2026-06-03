@@ -188,10 +188,10 @@ The table below shows the runtimes for each model component (`mif`, `train`, `pf
 
 runtimes = []
 model_files_nm0 = [
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
-    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+    ("IFAD-0", f"dmop_results/dacca_results_rl4_alpha0.0_nm0{suffix}.pkl"),
+    ("IFAD-0.97", f"dmop_results/dacca_results_rl4_alpha0.97_nm0{suffix}.pkl"),
+    ("IFAD-1", f"dmop_results/dacca_results_rl4_alpha1.0_nm0{suffix}.pkl"),
+    ("IF2", f"mif_results/dacca_results_rl4_nm0{suffix}.pkl"),
 ]
 
 for label, f in model_files_nm0:
@@ -204,12 +204,6 @@ for label, f in model_files_nm0:
             mif_t = t_df.loc[t_df["method"] == "mif", "time"].sum()
             train_t = t_df.loc[t_df["method"] == "train", "time"].sum()
             pfilter_t = t_df.loc[t_df["method"] == "pfilter", "time"].sum()
-            
-            if LONG:
-                if label == "IF2":
-                    mif_t *= 4
-                else:
-                    train_t *= 4
             
             row["mif (s)"] = f"{mif_t:.2f}" if mif_t > 0 else "-"
             row["train (s)"] = f"{train_t:.2f}" if train_t > 0 else "-"
@@ -241,22 +235,22 @@ files = [
     (
         "IFAD-0",
         f"dmop_results/dacca_results_rl4_alpha0.0_nm1{suffix}.pkl",
-        "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl",
+        f"dmop_results/dacca_results_rl4_alpha0.0_nm0{suffix}.pkl",
     ),
     (
         "IFAD-0.97",
         f"dmop_results/dacca_results_rl4_alpha0.97_nm1{suffix}.pkl",
-        "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl",
+        f"dmop_results/dacca_results_rl4_alpha0.97_nm0{suffix}.pkl",
     ),
     (
         "IFAD-1",
         f"dmop_results/dacca_results_rl4_alpha1.0_nm1{suffix}.pkl",
-        "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl",
+        f"dmop_results/dacca_results_rl4_alpha1.0_nm0{suffix}.pkl",
     ),
     (
         "IF2",
         f"mif_results/dacca_results_rl4_nm1{suffix}.pkl",
-        "mif_results/dacca_results_rl4_nm0.pkl",
+        f"mif_results/dacca_results_rl4_nm0{suffix}.pkl",
     ),
 ]
 
@@ -271,12 +265,6 @@ for label, nm1_f, nm0_f in files:
             time_df = obj_nm0.time()
             t_mif = time_df.loc[time_df["method"] == "mif", "time"].sum()
             t_train = time_df.loc[time_df["method"] == "train", "time"].sum()
-            
-            if LONG:
-                if label == "IF2":
-                    t_mif *= 4
-                else:
-                    t_train *= 4
 
         # 2. Load N_MONITORS=1 traces
         with open(nm1_f, "rb") as pf:
@@ -794,10 +782,10 @@ def get_stats(model_files):
     return pd.DataFrame(stats_list)
 
 model_files_nm0 = [
-    ("IFAD-0", "dmop_results/dacca_results_rl4_alpha0.0_nm0.pkl"),
-    ("IFAD-0.97", "dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl"),
-    ("IFAD-1", "dmop_results/dacca_results_rl4_alpha1.0_nm0.pkl"),
-    ("IF2", "mif_results/dacca_results_rl4_nm0.pkl"),
+    ("IFAD-0", f"dmop_results/dacca_results_rl4_alpha0.0_nm0{suffix}.pkl"),
+    ("IFAD-0.97", f"dmop_results/dacca_results_rl4_alpha0.97_nm0{suffix}.pkl"),
+    ("IFAD-1", f"dmop_results/dacca_results_rl4_alpha1.0_nm0{suffix}.pkl"),
+    ("IF2", f"mif_results/dacca_results_rl4_nm0{suffix}.pkl"),
 ]
 
 df_nm0 = get_stats(model_files_nm0)
