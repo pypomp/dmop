@@ -338,7 +338,7 @@ Numerical results are provided in Section~\ref{sec:cholera}.
 
 The convergence of IF2 (and so the first stage of IFAD) to a neighborhood of the MLE happens rapidly in practice. 
 %% In the case of the Dhaka cholera model of \cite{king08}, when an aggressive geometric cooling multiplier of 0.95 and initial random walk standard deviation of 0.02 is used, we require no more than 40 iterations of IF2 to obtain an acceptable warm-start. 
-However, even when applying much larger amounts of Monte Carlo effort, IF2 fails to get within seven \eic{ADJUST FOR BEST IF2 AND NEW UNDERSTANDING OF MLE} log-likelihood units of the maximum on this problem (Figure~\ref{fig:boxplot}).
+However, even when applying much larger amounts of Monte Carlo effort, IF2 fails to get much closer than 3 log-likelihood units of the maximum on this problem (Figure~\ref{fig:boxplot}).
 For this example, IF2, without assistance from AD, struggles to reach the inferentially critical region within one log-likelihood unit of the maximum, even when additional computationally intensive techniques are used, such as repeated pruning and profiling,
 
 
