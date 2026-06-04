@@ -6,6 +6,16 @@
 
 %\usepackage[foot]{amsaddr}
 
+\newcommand\suppSecProofFunctionalForms{S1}
+\newcommand\suppSecProofOptimizationConvergence{S2}
+\newcommand\suppSecFeynmanKac{S3}
+\newcommand\suppSecProofTriangularArrays{S4}
+\newcommand\suppSecProofConsistency{S5}
+\newcommand\suppSecProofBiasVar{S6}
+\newcommand\suppSecBayesFigs{S7}
+\newcommand\suppSecBaselineJustification{S8}
+\newcommand\suppSecAlgorithmicParameters{S9}
+
 \usepackage{natbib}
 \usepackage{hyperref}
 
@@ -96,29 +106,29 @@ Basic particle filters, also known as boostrap filters, possess the plug-and-pla
 Iterated particle filtering algorithms, such as IF1 and IF2, have shown that plug-and-play likelihood maximization is practical in various scientific investigations \citep{king08,blake14,pons-salort18,subramanian21,fox22,drake23}.
 However, iterated filtering algorithms have slow convergence near the MLE \citep{doucet13}
 
-Recent advances in AD for gradient estimation using particle filters \citep{naesseth18, jonschkowski18, corenflos21, scibior21, singh22} have drawn attention to AD as a tool for inference in POMP models.
+Advances in AD for gradient estimation using particle filters \citep{naesseth18, jonschkowski18, corenflos21, scibior21, singh22} have drawn attention to AD as a tool for inference in POMP models.
 Widespread adoption of these approaches have been limited by their bias \citep{naesseth18, jonschkowski18}, high variance \citep{poyiadjis11, scibior21}, computational expense quadratic in the number of particles \citep{corenflos21, chen24}, or by the loss of the plug-and-play property \citep{poyiadjis11, scibior21, singh22, chen24}.
 We present a new algorithm which (for reasons which will be discussed later) we call a {\it Differentiated Measurement Off-Parameter} (DMOP) particle filter.
 DMOP corresponds to the derivative of a smooth variant of the particle filter that we call MOP, though DMOP is conveniently calculated using AD without the need to actually implement the full MOP filter.
-MOP has the special property that, unlike most particle filters, the gradient of the filtered log-likelihood estimate provides a consistent estimate of the gradient of log-likelihood.
+MOP has the special property that, unlike most particle filters, the gradient of the filtered log-likelihood estimate provides a consistent estimate of the gradient of the log-likelihood.
 Particle filters have previously been adapted to provide a smooth estimate of the likelihood function \citep{svensson18,malik11}, but MOP and DMOP differ from these by possessing the plug-and-play property.
 
 DMOP trades bias against variance via a discount factor, $\alpha \in [0,1]$.
-We show that DMOP-$\alpha$ posesses a bias-variance tradeoff that permits both low bias and low variance for suitable choices of $\alpha$ strictly in $(0,1)$, both in theory (Theorem \ref{thm:mop-biasvar}) and practice (Figure \ref{fig:biasvar}).
-We show that DMOP-$\alpha$ coincides with the biased gradient estimator of \cite{naesseth18} when $\alpha=0$.
-In a limit as the number of particles increases, DMOP-$\alpha$ matches the high-variance gradient estimate from \citep{poyiadjis11, scibior21} when $\alpha=1$ (Theorem \ref{thm:mop-functional-forms}).
-At $\alpha=1$, the variance can become prohibitively high, as discovered by these researchers and others \citep{arya22}.
+We find that DMOP-$\alpha$ posesses a bias-variance tradeoff that permits both low bias and low variance for suitable choices of $\alpha$ strictly in $(0,1)$, both in theory (Theorem \ref{thm:mop-biasvar}) and practice (Figure \ref{fig:biasvar}).
+Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$\alpha$ coincides with the biased gradient estimator of \cite{naesseth18} when $\alpha=0$.
+In a limit as the number of particles increases, Theorem~\ref{thm:mop-functional-forms} also shows that DMOP-$\alpha$ with $\alpha=1$ matches the high-variance gradient estimate from \cite{poyiadjis11} and \cite{scibior21}.
+In this case, the variance can become prohibitively high, as discovered by these researchers and others \citep{arya22}.
 However, the variance rapidly reduces as $\alpha$ decreases, and so a choice of $\alpha$ close to one can provide a low-bias, low-variance, plug-and-play gradient estimate with computational scaling linear in the number of particles.
 
 In practice, likelihood optimization via gradient descent with DMOP-$\alpha$ converges quickly within a neighborhood of the maximum but struggles to reach this neighborhood in the presence of local minima and saddle points.
 By contrast, iterated filtering algorithms provide a relatively fast and stable way to identify this neighborhood.
 We therefore build a simple but effective hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
 We implement our algorithm using JAX \citep{jax}, which also enables us to take advantage of graphical processing unit (GPU) hardware.
-Our methodology is included in \texttt{pypomp} \citep{abkemeier25}, an open-source software package for POMP modeling leveraging GPU acceleration and automatic differentiation.
+Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
 Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
-Empirically, the benchmark tests demonstrate that IFAD is the most significant methodological advance since \cite{ionides15} for plug-and-play statistical inference on POMP models.
-The choice of models and methods for benchmarking is justified in Section~S8. 
+Empirically, the benchmark tests suggest that IFAD is the most significant methodological advance since \cite{ionides15} for plug-and-play statistical inference on POMP models.
+The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
 We also demonstrate empirical advances using DMOP-$\alpha$ for Bayesian inference.
 In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{homan14} in conjunction with an empirical Bayes-type prior estimated with IF2 to reduce the burn-in period of particle MCMC \citep{andrieu10} on the Dhaka cholera model of \cite{king08} from the $700,000$ iterations in \cite{fasiolo16} to just $500$.
@@ -151,24 +161,16 @@ If we fix $\omega$ and $\phi$, the sample indices do not change with $\theta$, b
 When $\theta = \phi$, we have $w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta} = 1$ and MOP-$\alpha$ reduces  to the standard particle filter; this is the setting we use in practice,  but use the construction allows us to define a derivative.
 One can think of MOP-$\alpha$ as reconstructing local smooth approximations of the discontinuous likelihood estimates produced by a particle filter for a fixed number of particles $J$ and fixed seed $\omega$.
 These approximate the likelihood at $\theta$ in a neighborhood around $\phi$, with the intent that differentiating these smooth log-likelihood reconstructions yields a score estimate.
-%This is illustrated in the left panel of Figure \ref{fig:biasvar} for various choices of $\alpha$. 
 
 DMOP-$\alpha$ (Algorithm~\ref{alg:dmop}) computes the fixed-seed derivative of the likelihood estimate obtained by MOP-$\alpha$ at $\theta=\phi$.
-To better understand the implementation DMOP-$\alpha$ %, and its relationship to MOP-$\alpha$, 
-we review some background for AD.
+To better understand the implementation in DMOP-$\alpha$, we review some background for AD.
  Standard AD consists of two evaluation passes: a forward pass in which the function is evaluated and a graph built of the evaluation process, followed by a backward pass where the derivative is evaluated by recursive use of the chain rule on the computation graph \citep{griewank08}.  
-  The two evaluation passes in MOP-$\alpha$ at $\phi$ and $\theta$ correspond directly to the two evaluation passes in DMOP-$\alpha$.
+  The two evaluation passes in MOP-$\alpha$ at $\phi$ and $\theta$ correspond to the two AD evaluation passes in DMOP-$\alpha$.
   Differentiation of MOP-$\alpha$ with respect to $\theta$ requires a preliminary evaluation at $\phi$ and subsequent differentiation with respect to $\theta$ for the second pass which we obtain through AD.
 In practice, however, we only work in the $\theta = \phi$ setting in which case MOP-$\alpha$ corresponds to the standard particle filter and we only need to make one pass.
 In order to apply AD in this setting without using two passes, we must both instantiate the weighting scheme (even though the weights are always 1) and distinguish which components of the weights correspond to which pass.
-This can be achieved using the {\it stop-gradient} capability that appears in Algorithm~\ref{alg:dmop} where its application in the weight correction step indicates that AD should apply the chain rule to the numerator but not the denominator of the correction; note that it is this construction that yields weights which are always 1, but which also have non-zero derivatives.  
+This can be achieved using the {\it stop-gradient} capability that appears in Algorithm~\ref{alg:dmop} where its application in the weight correction step indicates that AD should apply the chain rule to the numerator but not the denominator of the correction; note that this construction yields weights which are always 1, but which also have non-zero derivatives.  
   
-%  To implement this using AD software, it is convenient to use the {\it stop-gradient} capability which allows the weights calculated as a function of $\phi$ in the first pass of MOP-$\alpha$ to be evaluated at $\phi=\theta$ in the first pass of DMOP-$\alpha$, but then treated as constant (and so not differentiated) in the second pass.
-%  In the forward pass, we have $w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta} = 1$ and so the likelihood calculated by DMOP-$\alpha$ in the forward pass matches that of a standard particle filter.
-%Note that DMOP-$\alpha$ applies AD to an algorithm that avoids explicit mention of $\phi$, and so evaluation of the derivative of MOP-$\alpha$ via DMOP-$\alpha$ does not involve implementing the full MOP-$\alpha$ algorithm.
-%The practical value of studying MOP-$\alpha$ is that it provides a route to understanding DMOP-$\alpha$.
-
-
   
 \begin{figure}[htbp!]
   \centering
@@ -304,7 +306,7 @@ When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and DMO
     yielding the estimator of \cite{poyiadjis11} for the bootstrap filter.
 \end{thm}
 
-We defer the proof to \arxiv{Appendix~\ref{appendix:functional}}{the supplement (Section~S1)}. 
+We defer the proof to the supplement (Section~\suppSecProofFunctionalForms). 
 The argument relies on a useful decomposition of the after-resampling estimate $L_n^{A,\theta,\alpha}$, repeated applications of the log-derivative identity that $\nabla_x \log(f(x)) = (\nabla_x f(x))/f(x)$, and noting $\theta=\phi$ implies that $w_{n,j}^{P,\theta}$ evaluates to $1$. 
 
 The result in Theorem \ref{thm:mop-functional-forms} provides mathematical intuition for why \cite{scibior21}'s use of the stop-gradient procedure in the particle filter recovers the estimate of \cite{poyiadjis11}.
@@ -317,9 +319,9 @@ As such, the use of the stop-gradient in \cite{scibior21} can be seen as the MOP
 \section{From Gradients to Maximum Likelihood Estimation}
 
 To design an effective procedure for likelihood maximization using DMOP-$\alpha$, we carry out iterated filtering then automatic differentiation (IFAD). 
-A basic IFAD approach is presented in Algorithm~\ref{IFAD}.
+A basic IFAD approach is presented in Algorithm~\ref{alg:ifad}.
 This requires  a Hessian estimate $H(\theta)$ with minimum eigenvalue no smaller than $c$, but we allow for the possibility of a trivial estiamte, $H=I_p$, in which case the AD search becomes stochastic gradient descent (SGD).
-Algorithm~\ref{IFAD} is convenient for theoretical analysis, but two further modifications are helpful in practice.
+Algorithm~\ref{alg:ifad} is convenient for theoretical analysis, but two further modifications are helpful in practice.
 Our best numerical results were obtained by putting the gradient estimate into the Adam optimizer \citep{kingma15} together with learning rate decay. 
 Numerical results are provided in Section~\ref{sec:cholera}.
 
@@ -360,7 +362,7 @@ $$
 \end{thm}
 \arxiv{}{\vspace*{-10ex}}
 The proof of Theorem~\ref{thm:linear} uses results from randomized numerical linear algebra, building on Theorem~6 of \cite{mahoney16}. 
-Details are deferred to \arxiv{Appendix~\ref{appendix:convergence}}{the supplement (Section~S2)}. 
+Details are deferred to the supplement (Section~\suppSecProofOptimizationConvergence). 
 This result shows that particle estimates for the gradient can enjoy the same linear convergence rate on well-conditioned problems as gradient descent with access to the score. 
 
 We therefore see that the second stage of IFAD converges linearly to the MLE if (1) the log-likelihood surface is well-conditioned in a neighborhood of the MLE and (2) the first stage of IFAD successfully reaches a (high-probability) basin of attraction of the MLE.
@@ -419,7 +421,7 @@ For each method, we choose algorithmic parameters that maximize the log-likeliho
 We run standard IF2 for 650 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 175 iterations.
 IFAD-0 and IFAD-1 are run for 60 IF2 iterations and 225 Adam iterations.
 To assess whether other methods can catch up to IFAD-0.97 given more time, we separately run the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
-A summary of these optimization settings is provided in \arxiv{Section~\ref{appendix:algparams}}{Section~S9 of the supplement}, and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
+A summary of these optimization settings is provided in the supplement {Section~\suppSecAlgorithmicParameters), and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 
 We summarize our findings in Table \ref{table:mle} and Figures \ref{fig:boxplot}, \ref{fig:density}, and \ref{fig:optim}. 
 Because estimating the log-likelihoods at every iteration of IF2 with particle filtering for Figure \ref{fig:optim} lengthens the computation time and thus compromises the fair comparison between methods, we obtain the times in Table \ref{table:mle} and Figure \ref{fig:optim} by running the methods again without the extra calls to the particle filter. 
@@ -546,7 +548,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
 
 Without the IF2 prior, NUTS with the MOP-$\alpha$ estimate alone tended to diverge.
 In contrast, particle Metropolis-Hastings, with or without said prior, fails to effectively explore the parameter space.
-We display these results \arxiv{in Figures \ref{fig:mh} and \ref{fig:nuts} in Appendix~\ref{appendix:bayes}}{within the supplement (Section~S7)}. 
+We display these results in the supplement (Section~\suppSecBayesFigs). 
 This speedup in the mixing time of particle MCMC by over three orders of magnitude provides hope that particle Bayesian inference might be increasingly employed for the complex scientific models commonly encountered in areas like epidemiology.
 
 
@@ -590,7 +592,7 @@ This is a strong law of large numbers for triangular arrays of particles resampl
 \end{thm}
 
 \begin{proof}[Proof.]
-    We provide a proof sketch here, deferring the details to \arxiv{Appendix~\ref{appendix:targeting}}{the supplement (Section~S4)}. 
+    We provide a proof sketch here, deferring the details to the supplement (Section~\suppSecProofTriangularArrays). 
     When $\theta=\phi$, the ratio ${g_{n,j}^\theta}/{g_{n,j}^\phi}=1$ regardless of $\alpha$, reducing to the vanilla particle filter.
     When $\alpha=1$ and $\theta\neq\phi,$ suppose inductively that $\{(X^{F,\theta}_{n-1,j},w^{F,\theta}_{n-1,j})\}_{j=1}^J$ targets $f_{X_{n-1}|Y_{1:n-1}}(x_{n-1}|y^*_{1:n-1};\theta)$.
     It can then be shown that $\{(X^{P,\theta}_{n,j},w^{P,\theta}_{n,j})\}_{j=1}^J$ targets $f_{X_{n}|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)$, that $\{(X^{P,\theta}_{n,j},w^{P,\theta}_{n,j} \, g^\theta_{n,j} )\}_{j=1}^J$ targets  $f_{X_{n}|Y_{1:n}}(x_{n}|y^*_{1:n};\theta)$, and that weighting the particles by $(X^{F,\theta}_{n,j},w^{F,\theta}_{n,j}) = (X^{P,\theta}_{n,k_j}, w^{P,\theta}_{n,k_j} \, g^\theta_{n,k_j} \big/ g^\phi_{n,k_j})$,
@@ -612,7 +614,7 @@ As such we directly show the consistency of the MOP-$1$ gradient estimate below.
     \label{thm:mop-grad-consistency}
 \end{thm}
 
-We present a proof outline here, postponing the full argument to \arxiv{Appendix~\ref{appendix:consistency}}{the supplement (Section~S5)}.
+We present a proof outline here, postponing the full argument to the supplement (Section~\suppSecProofConsistency).
 Assumption \ref{assump:local-bounded-derivative} lets us show uniform equicontinuity of the sequence for almost every $\omega \in \Omega$, allowing us to apply Arzela-Ascoli and Theorem \ref{thm:mop-targeting} to establish uniform convergence for the derivatives as a sequence $(\nabla_\theta \hat\lik_J^1(\theta)(\omega))_{J \in \mathbb{N}}$. This is a sufficient condition for swapping the limit and derivative to show that for almost every $\omega \in \Omega$, $\lim_{J \to \infty} \nabla_\theta \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lim_{J \to \infty} \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lik(\theta).$
 
 
@@ -642,7 +644,7 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 \end{thm}
 \arxiv{}{\vspace*{-1ex}}
 
-We provide an outline, deferring the full proof to \arxiv{Appendix~\ref{appendix:biasvar}}{the supplement (Section~S6)}.
+We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
 The discount factor, $\alpha$, ensures strong mixing.
 The covariance of the derivative of MOP-$(\alpha,k)$ are controlled with Davydov's inequality and a standard $L^p$ error bound for the particle filter. 
@@ -659,7 +661,7 @@ The variance increases as $\alpha$ goes to $1$.
 
 %\subsection{Bias-Variance Tradeoff}
 
-We show in \arxiv{Appendix~\ref{appendix:biasvar}}{the supplementary material} that the variance of DMOP-$0$ is $\tilde{O}\big( Np \, G'(\theta)^2\big/J \big)$.
+We show in Section~\suppSecProofBiasVar that the variance of DMOP-$0$ is $\tilde{O}\big( Np \, G'(\theta)^2\big/J \big)$.
 Previously, \cite{poyiadjis11} established that the variance of DMOP-$1$ is $\tilde{O}(N^4/J)$, ignoring factors of $p$ and $G'$. 
 Combining these results with Theorem \ref{thm:mop-biasvar} shows that DMOP-$\alpha$ interpolates between the variances of DMOP-$0$ and DMOP-$1$, as $N \leq Nk^2 \leq N^4$, with a phase transition as soon as $\alpha<1$. 
 The phase transition arises because even though the particle filter has forgetting properties \citep{karjalainen23}, the resulting derivative estimate of \cite{poyiadjis11} does not, and we require both for the variance reduction. 
