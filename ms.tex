@@ -414,7 +414,7 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 
 \subsection{Results}
 
-We test IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in \texttt{pypomp} 0.4.6.0 \citep{abkemeier25}.
+We test IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in Pypomp 0.4.6.0 \citep{abkemeier25}.
 For each method, we perform 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. 
 To ensure a fair comparison under comparable computational effort, we run each method for about as long as it takes for IFAD-0.97 to converge, as it converges to the highest log-likelihood in the shortest time. 
 For each method, we choose algorithmic parameters that maximize the log-likelihood best for that method while finishing within the allotted time. 
@@ -448,8 +448,8 @@ Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being
 Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
 This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
 Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-Using the improved computational efficiency of \texttt{pypomp} (elaborated upon in Section \ref{sec:efficiency}), IF2 alone can easily surpass all of these previous results within a wall clock time of 15 minutes, and IFAD-0.97 holds the record at $-3744.17$ within a slightly shorter time. 
-\aja{It wouldn't actually take that long to run the IF2 searches in R, so I don't think that really explains why -3747.82 hadn't been easily hit previously.}
+Using the improved computational efficiency of Pypomp (elaborated upon in Section \ref{sec:efficiency}), IF2 alone can easily surpass all of these previous results within a wall clock time of 15 minutes, and IFAD-0.97 holds the record at $-3744.17$ within a slightly shorter time. 
+
 
 Notably, the log-likelihood and parameter estimates for IFAD-0.97 frequently exhibit much less Monte~Carlo variance than that of the other methods, as can be seen in Figures~\ref{fig:boxplot} and~\ref{fig:density}. 
 IFAD in general exhibits less Monte~Carlo variance than IF2, especially for the parameter estimates. 
@@ -576,7 +576,7 @@ In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-
 We show here that MOP-$\alpha$ targets the filtering distribution under $\theta$ and is strongly consistent for the likelihood under $\theta$ when $\alpha=1$ or $\theta=\phi$.
 Employing $\alpha<1$ lead to inconsistency when $\theta$ deviates from $\phi$, but this bias disappears as $\theta$ approaches $\phi$.
 
-While the result is presented here as specific to MOP-$\alpha$, we prove a more general result in \arxiv{Appendix~\ref{appendix:targeting}}{the supplementary material}.
+While the result is presented here as specific to MOP-$\alpha$, we prove a more general result in the supplement (Section~\suppSecProofTriangularArrays).
 This is a strong law of large numbers for triangular arrays of particles resampled arbitrarily, with resampling probabilities not proportional to the targeted distribution of interest, but reweighted to correct for the cumulative discrepancy between the resampling and the target distribution.
 
 %\kevin{Should we just show the general result? That is, for an arbitrary set of indices $k_{n,j}$ generated in proportion to some arbitrary weights $\pi_{n,j}$ that do not necessarily sum to $1$ as the estimate is self-normalized, reweighting the particles by $w_{n,a(j)}g_{n,a(j)}/\pi_{n,a(j)}$ targets the posterior. $\pi_{n,j}$ can depend on $\{(x_{n,1:J},g_{n,1:J})\}$ as long as the resampling is carried out independently of $\{(x_{n,1:J},g_{n,1:J})\}$, conditional on $\pi_{n,1:J}$}
@@ -674,13 +674,13 @@ Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to r
 
 \section{Computational Efficiency} \label{sec:efficiency}
 
-Our numerical results use an implementation of our methods in the \texttt{pypomp} package \citep{abkemeier25}.
+Our numerical results use an implementation of our methods in the Pypomp library \citep{abkemeier25}.
 The source code for this paper is at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter, and we found the empirical value of this factor to be 3.75.
 DMOP-$\alpha$ and IFAD therefore share the same $O(NJ)$ time complexity as the particle filter, unlike the $O(NJ^2)$ complexity of \cite{corenflos21} and Algorithm 2 in \citep{poyiadjis11, scibior21}.
 
-Implementation of the particle filter, IF2, and DMOP-$\alpha$ in \texttt{JAX} \citep{jax} takes advantage of just-in-time compilation and GPU acceleration.
-While CPU-based implementations of the particle filtering methods can effectively leverage multiple cores by parallelizing over independent replications of a given method, \texttt{pypomp} can effectively leverage tens of thousands of GPU cores by vectorizing over both particles and independent method replications.
+Implementation of the particle filter, IF2, and DMOP-$\alpha$ in JAX \citep{jax} takes advantage of just-in-time compilation and GPU acceleration.
+While CPU-based implementations of the particle filtering methods can effectively leverage multiple cores by parallelizing over independent replications of a given method, Pypomp can effectively leverage tens of thousands of GPU cores by vectorizing over both particles and independent method replications.
 To examine the performance improvement on the Dhaka model, we ran 1 instance of IF2 with 60 iterations and 5000 particles using 1 CPU core and compared this with running 100 replications on a GPU.
 The results in Table \ref{table:speedup} show that, despite running 100 times as many replications, the GPU finishes 10.4 times faster, giving it a throughput 1038.9 times greater than the single CPU core.
 
@@ -688,15 +688,15 @@ The results in Table \ref{table:speedup} show that, despite running 100 times as
 \centering
 \begin{tabular}{lll}
 \toprule
-Metric & \texttt{pomp} \citep{king16} & \texttt{pypomp} \citep{abkemeier25} \\
+Metric & \texttt{pomp} \citep{king16} & Pypomp \citep{abkemeier25} \\
 \midrule
-Language & R (\texttt{C++} simulator) & Python (\texttt{JAX}) \\
+Language & R (C simulator) & Python (JAX) \\
 Hardware& 3.0 GHz Intel Xeon Gold 6154 (1 core) & NVIDIA RTX6000 Pro Blackwell \\
 IF2 Replications & 1 & 100 \\
 Latency (s) & 935 & 90 \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of execution latency for running IF2 (60 iterations, 5000 particles, 1 versus 100 replications) between the CPU-only R \texttt{pomp} package and the GPU-accelerated \texttt{pypomp} package.}
+\caption{Comparison of execution latency for running IF2 (60 iterations, 5000 particles, 1 versus 100 replications) between the \texttt{pomp} (CPU-only, R and compiled C) and Pypomp (GPU-accelerated, compiled Python).}
 \label{table:speedup}
 \end{table}
 
