@@ -18,6 +18,9 @@
 
 \usepackage{natbib}
 \usepackage{hyperref}
+%\hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue, urlcolor=blue}
+\hypersetup{hidelinks}
+
 
 \usepackage{booktabs}
 % \newcommand{\description}{}
@@ -76,11 +79,13 @@
   \vspace{3ex}\\
   \small{$^{1}$Department of Statistics, University of Pennsylvania}\\
   \small{$^{2}$Department of Statistics, University of Michigan}}
-  
+
+\date{}
+
 \maketitle
 
 \begin{abstract}
-  Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm that uses AD to refine a coarse solution from an iterated filtering algorithm shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
+  Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm, using AD to refine a coarse solution from an iterated filtering algorithm, shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
 \end{abstract}
 
 % \keywords{Sequential Monte Carlo, Automatic Differentiation, Particle Filter, Markov Process, Likelihood}
@@ -98,9 +103,9 @@ These desiderata have not previously been combined, and we discuss each componen
 Full-information methods are those which make statistically efficient use of data, typically via likelihood-based or Bayesian methods that avoid dependence on summary statistics.
 The particle filter, also known as sequential Monte Carlo, serves as the foundation for various full-information inference algorithms for POMP models, since it provides an unbiased estimate of the likelihood function \citep{delMoral04}, enabling Bayesian inference via particle Markov chain Monte Carlo \citep{andrieu10} and likelihood-based inference via iterated filtering algorithms IF1 \citep{ionides06-pnas} and IF2 \citep{ionides15}.
 
-A POMP model inference algorithm is said to be plug-and-play if it does not need to evaluate the transition density of the latent Markov process, enabling an arbitrary model simulator to be plugged into the algorithm, a convenient property that facilitates scientific discovery \citep{he10}.
-Some plug-and-play methods depend on the construction of low-dimensional summary statistics \citep{wood10,toni09}, sacrificing statistical information for computational convenience.
-Here, our mission is to extend current computational capability among methods wich maintain statistical efficiency and the plug-and-play property.
+An inference algorithm for a POMP model is said to be plug-and-play if it does not need to evaluate the transition density of the latent Markov process, enabling an arbitrary model simulator to be plugged into the algorithm, a convenient property that facilitates scientific discovery \citep{he10}.
+Some plug-and-play methods depend on the construction of low-dimensional summary statistics \citep{wood10,toni09}, sacrificing statistical efficiency for computational convenience.
+Here, our mission is to extend current computational capability among methods that maintain statistical efficiency and the plug-and-play property.
 Plug-and-play methods are sometimes called likelihood-free \citep{owen15}, and it may be counter-intuitive that likelihood-based inference is possible using likelihood-free methods. 
 Basic particle filters, also known as boostrap filters, possess the plug-and-play property.
 Iterated particle filtering algorithms, such as IF1 and IF2, have shown that plug-and-play likelihood maximization is practical in various scientific investigations \citep{king08,blake14,pons-salort18,subramanian21,fox22,drake23}.
@@ -156,7 +161,7 @@ The discrete resampling step of the bootstrap particle filter has been the prima
 The discontinuity of this resampling (as a function of $\theta$, for fixed $\omega$) means that the derivative of the expectation is not consistently estimated by the expectation of the derivative. 
 MOP-$\alpha$ is a mathematical construction designed to avoid this discontinuity.
 We begin with a filter that resamples particles with weights calculated at a baseline parameter value, $\phi$, and then corrects these weights to target the filtering distribution at another parameter value, $\theta$, yielding the name {\it measurement off-parameter}.
-The name is chosen by analogy with similar {\it off-policy} algorithms used for reinforcement learning in which a policy that was not implemented is evaluated by reweighting the rewards of the policy that was actually applied.
+The terminology is chosen by analogy with similar {\it off-policy} algorithms used for reinforcement learning in which a policy that was not implemented is evaluated by reweighting the rewards of the policy that was actually applied.
 If we fix $\omega$ and $\phi$, the sample indices do not change with $\theta$, but the re-weighting scheme does, allowing MOP-$\alpha$ to be differentiated with respect to $\theta$.
 When $\theta = \phi$, we have $w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta} = 1$ and MOP-$\alpha$ reduces  to the standard particle filter; this is the setting we use in practice,  but use the construction allows us to define a derivative.
 One can think of MOP-$\alpha$ as reconstructing local smooth approximations of the discontinuous likelihood estimates produced by a particle filter for a fixed number of particles $J$ and fixed seed $\omega$.
@@ -176,10 +181,10 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
   \centering
   
     \arxiv{}{\vspace*{0.15ex}}
-    \includegraphics[width=\arxiv{10cm}{\textwidth/\real{2.2}}]{imgs/095/mop.png}
-    \includegraphics[width=\arxiv{10cm}{\textwidth/\real{2.21}}]{imgs/095/biasvar.png}
+    \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/mop.png}
+    \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/biasvar.png}
     \arxiv{}{\vspace*{-2ex}}
-    \caption{\textbf{A:} Non‐differentiable likelihood estimates and smooth off‐parameter approximations that hold locally around the baseline parameter $\phi$. \textbf{B:} Illustration of the bias-variance tradeoff induced by the discounting hyperparameter $\alpha$. We display the MSE of score estimates for the trend in transmission at the MLE for the Dhaka cholera model of \cite{king08}. Our novel contribution of $\alpha \in (0,1)$ significantly improves the quality of the likelihood approximation and the score estimates.}
+    \caption{\textbf{A:} Non‐differentiable likelihood estimates and smooth off‐parameter approximations that hold locally around the baseline parameter $\phi$. \textbf{B:} Illustration of the bias-variance tradeoff induced by the discounting hyperparameter $\alpha$. We display the MSE of score estimates for the recovery rate at the MLE for the Dhaka cholera model of \cite{king08}. Our novel contribution of $\alpha \in (0,1)$ significantly improves the quality of the likelihood approximation and the score estimates.}
     \label{fig:biasvar}
     \arxiv{}{\vspace*{-2ex}}
 \end{figure}
@@ -210,7 +215,9 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
             \hspace*{4mm} Calculate corrected weights
             $w_{n,j}^{F,\theta}= w^{P,\theta}_{n,k_j} \, g^{\theta}_{n,k_j} \, \big/ \, { g^{\phi}_{n,k_j}}$.\newline
             \hspace*{4mm} Compute $ L_n^{A,\theta,\alpha} = L_n^\phi\cdot {\sum_{j=1}^J w^{F,\theta}_{n,j}} \, \big/ \, {\sum_{j=1}^J  w^{P,\theta}_{n,j}}$.\newline
-		\textbf{Return:} likelihood estimate $\hat{\lik}^A(\theta) = \prod_{n=1}^N L_n^{A,\theta,\alpha}$ or $\hat{\lik}^B(\theta) = \prod_{n=1}^N L_n^{B,\theta,\alpha}$, and filtering distributions $\{(X_{n,j}^{F, \theta}, w^{F,\theta}_{n,j})\}_{n,j=1}^{N,J}.$
+	    \textbf{Return:} likelihood estimate $\hat{\lik}^A(\theta) = \prod_{n=1}^N L_n^{A,\theta,\alpha}$ or $\hat{\lik}^B(\theta) = \prod_{n=1}^N L_n^{B,\theta,\alpha}$,
+            log-likelihood $\hat{\loglik}^A(\theta)=\log\big(\hat{\lik}^A(\theta)\big)$ or  $\hat{\loglik}^B(\theta)=\log\big(\hat{\lik}^B(\theta)\big)$,
+            and filtering distributions $\{(X_{n,j}^{F, \theta}, w^{F,\theta}_{n,j})\}_{n,j=1}^{N,J}.$
 \end{algorithm}
 
 
@@ -238,7 +245,7 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
             \hspace*{4mm} Calculate corrected weights
             $w_{n,j}^{F,\theta}= w^{P,\theta}_{n,k_j} \, g^{\theta}_{n,k_j} \, \big/ \, { \mathtt{stop\_gradient}(g^{\theta}_{n,k_j})}$.\newline
             \hspace*{4mm} Compute $ L_n^{A,\theta,\alpha} = L_n^\phi\cdot {\sum_{j=1}^J w^{F,\theta}_{n,j}} \, \big/ \, {\sum_{j=1}^J  w^{P,\theta}_{n,j}}$.\newline
-	    \textbf{Return:} likelihood estimate $\hat{\lik}^A(\theta) = \prod_{n=1}^N L_n^{A,\theta,\alpha}$ or $\hat{\lik}^B(\theta) = \prod_{n=1}^N L_n^{B,\theta,\alpha}$, and gradient estimate $\hat{\mathcal{D}}^A(\theta)$ or $\hat{\mathcal{D}}^B(\theta)$.
+	    \textbf{Return:} log-likelihood estimate $\hat{\loglik}^A(\theta)= \log\big(\hat{\lik}^A(\theta)\big) = \sum_{n=1}^N \log L_n^{A,\theta,\alpha}$ or $\hat{\loglik}^B(\theta)=\log\big(\hat{\lik}^B(\theta)\big) = \sum_{n=1}^N \log L_n^{B,\theta,\alpha}$, and gradient estimate $\hat{\mathcal{D}}^A(\theta)$ or $\hat{\mathcal{D}}^B(\theta)$.
 \end{algorithm}
 
 MOP-$\alpha$ has similarities with \cite{svensson18}, in which particles from a previous run at $\phi$ are reweighted to evaluate the likelihood at any sufficiently nearby parameter $\theta$ for $0$-th order optimization.
@@ -289,7 +296,7 @@ When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and DMO
 \begin{thm}[DMOP-$0$ and DMOP-$1$ Functional Forms]
     \label{thm:mop-functional-forms}
     Writing $\nabla_\theta \hat\ell^\alpha(\theta)$ for the gradient estimate yielded by DMOP-$\alpha$ %when $\theta=\phi$ 
-    and using the after-resampling conditional likelihood estimate so that $\hat\lik(\theta) = \prod_{n=1}^N L_n^{A, \theta, \alpha}$, when $\alpha=0$,
+    and using the after-resampling conditional likelihood estimate so that $\hat\loglik(\theta)= \log \hat\lik(\theta) = \log \prod_{n=1}^N L_n^{A, \theta, \alpha}$, when $\alpha=0$,
     \vspace*{-3ex}
     \begin{equation} \nonumber
         \nabla_\theta \hat\ell^0(\theta) 
@@ -388,7 +395,7 @@ As in \cite{king08}, the transition dynamics follow a stochastic differential eq
 \end{align*}
 with Brownian motion $B(t)$, cholera death rate $m$, recovery rate $\gamma$, mean immunity duration $1/\epsilon$, standard deviation of the force of infection $\sigma$, and population death rate $\delta=0.02$. The force of infection, $\lambda_t$, is modeled by splines $(s_j)_{j=1}^6$
 \vspace*{-3ex}
-\begin{equation*}    \lambda_t=\exp\hspace{-1mm}\left(\hspace{-.5mm}\beta_{\text{trend}}(t-t_0)+\hspace{-1mm}\sum_{j=1}^{6} \beta_j s_j(t)\hspace{-1mm}\right)\hspace{-1mm}\frac{I}{P} + \exp\hspace{-1mm} \left(\sum_{j=1}^{6} \omega_j s_j(t)\hspace{-1mm}\right)\hspace{-1mm},
+\begin{equation*}    \lambda_t=\exp\hspace{-1mm}\bigg(\hspace{-.5mm}\beta_{\text{trend}}(t-t_0)+\hspace{-1mm}\sum_{j=1}^{6} \beta_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm}\frac{I}{P} + \exp\hspace{-1mm} \bigg(\sum_{j=1}^{6} \omega_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm},
     \vspace*{-3ex}
 \end{equation*}
 where the coefficients $(\beta_j)_{j=1}^6$ model seasonality in the force of infection, $\beta_{\text{trend}}$ models the trend in the force of infection, and the $\omega_j$ represent seasonality of a non-human environmental reservoir of disease.
@@ -412,24 +419,18 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 \end{figure}
 
 
-\subsection{Results}
+%\subsection{Results}
 
-We test IFAD with $\alpha = 0, 0.97, 1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in Pypomp 0.4.6.0 \citep{abkemeier25}.
-For each method, we perform 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used in \cite{ionides15}. 
-To ensure a fair comparison under comparable computational effort, we run each method for about as long as it takes for IFAD-0.97 to converge, as it converges to the highest log-likelihood in the shortest time. 
-For each method, we choose algorithmic parameters that maximize the log-likelihood best for that method while finishing within the allotted time. 
-We run standard IF2 for 650 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 175 iterations.
-IFAD-0 and IFAD-1 are run for 60 IF2 iterations and 225 Adam iterations.
-To assess whether other methods can catch up to IFAD-0.97 given more time, we separately run the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
-A summary of these optimization settings is provided in the supplement {Section~\suppSecAlgorithmicParameters), and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
+We tested IFAD with $\alpha = 0$, $\alpha=0.97$ and $\alpha=1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in Pypomp 0.4.6.0 \citep{abkemeier25}.
+For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used by \cite{ionides15}. 
+To ensure a fair comparison under comparable computational effort, we ran each method for a similar amount of time.
+For each method, we chose algorithmic parameters that maximized the log-likelihood well for that method while finishing within the allotted time. 
+We ran IF2 for 650 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 175 iterations.
+IFAD-0 and IFAD-1 were run for 60 IF2 iterations and 225 Adam iterations.
+The cooling rate used for IF2 was slower than that used for the warm start in IFAD. 
+To assess whether other methods can catch up to IFAD-0.97 given more time, we separately ran the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
+A summary of the optimization settings is provided in the supplement (Section~\suppSecAlgorithmicParameters), and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 
-We summarize our findings in Table \ref{table:mle} and Figures \ref{fig:boxplot}, \ref{fig:density}, and \ref{fig:optim}. 
-Because estimating the log-likelihoods at every iteration of IF2 with particle filtering for Figure \ref{fig:optim} lengthens the computation time and thus compromises the fair comparison between methods, we obtain the times in Table \ref{table:mle} and Figure \ref{fig:optim} by running the methods again without the extra calls to the particle filter. 
-Every other value displayed for the Dhaka results comes from the runs with the extra particle filter calls. 
-
-% \kevin{Dynamically save to a tex file and load from there}
-  
-%\arxiv{}{\vspace*{-1mm}}
 \begin{table}[htbp!]
 \centering
 \input{imgs/precise_table}
@@ -438,53 +439,13 @@ Every other value displayed for the Dhaka results comes from the runs with the e
 \label{table:mle}
 \end{table}
 
-%\subsection{IFAD Successfully Finds the MLE}
+Our findings are summarized in Table \ref{table:mle} and Figures \ref{fig:boxplot}, \ref{fig:density}, and \ref{fig:optim}. 
+Because estimating the log-likelihoods at every iteration of IF2 with particle filtering for Figure \ref{fig:optim} lengthens the computation time and thus compromises the fair comparison between methods, we obtained the times in Table \ref{table:mle} and Figure \ref{fig:optim} by running the methods again without the extra calls to the particle filter. 
+Every other value displayed for the Dhaka results comes from the runs with the extra particle filter calls. 
 
-Examining Table \ref{table:mle}, IFAD-0.97 can attain a log-likelihood of -3744.17, which surpasses IF2 even when IF2 runs for 4 times as long.
-IFAD-1 comes close in the time it takes for IFAD-0.97 to hit its maximum, but it needs to be run for an extended time to reach that maximum and partly close the gap in median log-likelihood. 
-IFAD-0 falls close to 4 log-units short of IFAD-0.97 even with extended time, ostensibly due to having high bias. 
-Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being run for long enough and ostensibly would not catch up to IFAD-0.97 without excessive time and effort. 
-
-Previously, an MLE at a log-likelihood of $-3748.6$ was reported by \cite{king16}.
-This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
-Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-Using the improved computational efficiency of Pypomp (elaborated upon in Section \ref{sec:efficiency}), IF2 alone can easily surpass all of these previous results within a wall clock time of 15 minutes, and IFAD-0.97 holds the record at $-3744.17$ within a slightly shorter time. 
-
-
-Notably, the log-likelihood and parameter estimates for IFAD-0.97 frequently exhibit much less Monte~Carlo variance than that of the other methods, as can be seen in Figures~\ref{fig:boxplot} and~\ref{fig:density}. 
-IFAD in general exhibits less Monte~Carlo variance than IF2, especially for the parameter estimates. 
-IFAD-0 has the second-lowest Monte~Carlo variance for most parameter estimates, although it has the lowest for the initial state proporitons $S_0$ and $R_{1,0}$. 
-That said, these are also the most biased estimates, and IFAD-1 tends to agree more closely with IFAD-0.97. 
-Because multiple searches are employed in large part to mitigate the effects of Monte~Carlo variance, the lower Monte~Carlo variance of IFAD-0.97 suggests that fewer searches are needed when running IFAD-0.97 to obtain a log-likelihood close to the maximum. 
-Lowering the Monte~Carlo variance also narrows the width of Monte-Carlo-adjusted profile confidence intervals \citep{ionides17}.
-
-%%
-%% Despite being initialized for a global search, IFAD manages to get much closer to the MLE over the $100$ searches than \cite{ionides15}, as seen in Table~\ref{table:mle}.
-%% On this problem, the sequence of local searches, refinement, and likelihood profiling that was previously required for finding the MLE is not necessary with IFAD. 
-%% When interpreting Table~\ref{table:mle}, note that by Wilks' Theorem, any difference of over $1.92$ units of log-likelihood has statistical relevance when testing one parameter at the $0.05$ significance level.
-%%Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
-
-\subsection{IFAD Outperforms Both IF2 and DMOP Alone}
-
-While IF2 quickly approaches a neighborhood of the MLE (Figure \ref{fig:optim}), IF2 alone ultimately fails to achieve the last few log-likelihood units, as IF2 struggles to get much closer than about 3 log-likelihood units of the MLE even when run for an extended time (Table \ref{table:mle}).
-Conversely, we have encountered many failed searches with gradient descent alone. 
-This is a difficult, nonconvex, and noisy problem with $23$ estimated parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
-
-IFAD, in comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE.
-IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
-Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:optim} shows that IFAD can find higher likelihood values more quickly and more reliably than the previous state-of-the-art. 
-Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is important to give extra consideration to the right tail of the distributions in Figure~\ref{fig:boxplot} when comparing the capabilities of the methods. 
-
-% \begin{figure}[htbp!]
-%     \centering
-%     \vspace{1mm}
-%     \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/pairs.png}
-%     \includegraphics[width=\arxiv{8cm}{\textwidth/\real{2.2}}]{imgs/095/qq.png}
-%     %\arxiv{}{\vspace*{-1mm}}
-%     \caption{Scatterplots depicting the performance of IFAD against that of IF2. \textbf{A:} Paired searches from the same starting point. Tuning $\alpha$ allows IFAD-$0.97$ to strictly improve on IF2, \cite{poyiadjis11}, and \cite{naesseth18}, on almost every initialization. \textbf{B:} Q-Q plot of ranked IFAD searches against ranked IF2 searches. IFAD performs best on average, and approaches the MLE while no IF2 search successfully gets within 7 log-likelihood units of it. The dotted red line shows the true maximized log-likelihood. }
-%     \label{fig:scatter}
-%     \arxiv{}{\vspace*{-4mm}}
-% \end{figure}
+Examining Table \ref{table:mle}, IFAD-0.97 attained a log-likelihood of -3744.17, which surpassed IF2 even when IF2 ran for 4 times as long.
+IFAD-1 sometimes came close to IFAD-0.97, but its additional noise gave it worse median performance.
+IFAD-1 needed to be run for an extended time for the medai log-likelihood to start catching up with IFAD-0.97.
 
 \begin{figure}[ht]
     \centering
@@ -497,7 +458,7 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
     \captionb\ Extended computational effort. 
     Log-likelihoods lower than -3800 are omitted. 
     IFAD-0.97 outperforms all other methods.
-    The dotted red line shows the maximized log-likelihood.}
+    The dotted red line shows the best-known maximized log-likelihood.}
     \label{fig:boxplot}
     \arxiv{}{\vspace*{-5mm}}
 \end{figure}
@@ -519,10 +480,38 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
     The shaded regions cover the area between the 100th and 10th percentiles of log-likelihood estimates at each iteration.
     We use a dotted red line to display the MLE.
     The vertical dotted lines indicate where the IFAD runs switch from IF2 to Adam optimization.
-    Some log-likelihood estimates appear to be above the MLE; this is because the estimates prior to the final iteration use just 1 replicate instead of 36 replicates to estimate the log-likelihood, which leads to larger Monte~Carlo variance.}
+    Some log-likelihood estimates appear to be slightly above the MLE; this is due to Monte~Carlo evaluation error.}
     \label{fig:optim}
     \arxiv{}{\vspace*{-3ex}}
 \end{figure}
+
+ 
+IFAD-0 fell about 4 log-units short of IFAD-0.97 even with extended time, presumably due to its high bias. 
+Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being run for long enough and could not catch up to IFAD-0.97 within a reasonable timeframe.
+
+Previously, a maximized log-likelihood of $-3748.6$ for this model and data was reported by \cite{king16}.
+This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
+Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
+Using the improved computational efficiency of Pypomp (elaborated upon in Section \ref{sec:efficiency}), IF2 alone can easily surpass all of these previous results within a wall clock time of 15 minutes, and IFAD-0.97 holds the record at $-3744.17$ within a slightly shorter time. 
+
+
+Notably, the log-likelihood and parameter estimates for IFAD-0.97 frequently exhibit much less Monte~Carlo variance than that of the other methods, as can be seen in Figures~\ref{fig:boxplot} and~\ref{fig:density}. 
+IFAD in general exhibits less Monte~Carlo variance than IF2, especially for the parameter estimates. 
+IFAD-0 has the second-lowest Monte~Carlo variance for most parameter estimates, although it has the lowest for the initial state proporitons $S_0$ and $R_{1,0}$. 
+That said, the choice $\alpha=0$ is also known to have the greatest bias, and IFAD-1 agrees more closely with IFAD-0.97. 
+Because multiple searches are employed to mitigate the effects of Monte~Carlo variance, the lower Monte~Carlo variance of IFAD-0.97 suggests that fewer searches are needed when running IFAD-0.97 to obtain a log-likelihood close to the maximum. 
+Lowering the Monte~Carlo variance also narrows the width of Monte-Carlo-adjusted profile confidence intervals \citep{ionides17}.
+
+%\subsection{IFAD Outperforms Both IF2 and DMOP Alone}
+
+While IF2 effectively approaches a neighborhood of the MLE (Figure \ref{fig:optim}), IF2 alone ultimately fails to achieve the last few log-likelihood units, as IF2 struggles to get much closer than about 3 log-likelihood units of the MLE even when run for an extended time (Table \ref{table:mle}).
+Conversely, we encountered many failed searches with gradient descent alone. 
+This is a difficult, nonconvex, and noisy problem with $23$ estimated parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
+
+IFAD, by comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE.
+IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
+Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:optim} shows that IFAD can find higher likelihood values more quickly and more reliably than the previous state-of-the-art. 
+Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is important to give extra consideration to the right tail of the distributions in Figure~\ref{fig:boxplot} when comparing the capabilities of the methods. 
 
 
 \section{Application to Bayesian Inference}
@@ -537,7 +526,7 @@ To alleviate this, we employ a No U-Turn Sampler (NUTS) \citep{homan14} powered 
 Using NUTS with MOP-$\alpha$ and this prior significantly lowers the mixing time of the Markov chain to as little as $500$ iterations (Figure \ref{fig:nuts-eb}).
 NUTS has been implemented with previous differentiable particle filters \citep{rosato22} but not in our plug-and-play context with control over the bias/variance tradeoff.
 
-\begin{figure}[t!]
+\begin{figure}[tb]
     \centering
     \vspace{1mm}
     \includegraphics[width=\arxiv{\textwidth/\real{1.25}}{\textwidth}/\real{1.25}]{imgs/pmcmc/nuts_eb.png}
@@ -545,6 +534,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
     \label{fig:nuts-eb}
     \arxiv{}{\vspace*{-4mm}}
 \end{figure}
+
 
 Without the IF2 prior, NUTS with the MOP-$\alpha$ estimate alone tended to diverge.
 In contrast, particle Metropolis-Hastings, with or without said prior, fails to effectively explore the parameter space.
@@ -570,16 +560,14 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
 
-\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
+%\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
 
-
-We show here that MOP-$\alpha$ targets the filtering distribution under $\theta$ and is strongly consistent for the likelihood under $\theta$ when $\alpha=1$ or $\theta=\phi$.
+We show that MOP-$\alpha$ targets the filtering distribution under $\theta$ and is strongly consistent for the likelihood under $\theta$ when $\alpha=1$ or $\theta=\phi$.
 Employing $\alpha<1$ lead to inconsistency when $\theta$ deviates from $\phi$, but this bias disappears as $\theta$ approaches $\phi$.
 
 While the result is presented here as specific to MOP-$\alpha$, we prove a more general result in the supplement (Section~\suppSecProofTriangularArrays).
 This is a strong law of large numbers for triangular arrays of particles resampled arbitrarily, with resampling probabilities not proportional to the targeted distribution of interest, but reweighted to correct for the cumulative discrepancy between the resampling and the target distribution.
 
-%\kevin{Should we just show the general result? That is, for an arbitrary set of indices $k_{n,j}$ generated in proportion to some arbitrary weights $\pi_{n,j}$ that do not necessarily sum to $1$ as the estimate is self-normalized, reweighting the particles by $w_{n,a(j)}g_{n,a(j)}/\pi_{n,a(j)}$ targets the posterior. $\pi_{n,j}$ can depend on $\{(x_{n,1:J},g_{n,1:J})\}$ as long as the resampling is carried out independently of $\{(x_{n,1:J},g_{n,1:J})\}$, conditional on $\pi_{n,1:J}$}
 
 \begin{thm}[MOP-$\alpha$ Targets the Filtering Distribution and Likelihood]
     \label{thm:mop-targeting}
@@ -601,7 +589,8 @@ This is a strong law of large numbers for triangular arrays of particles resampl
 \end{proof}
 
 
-\subsection{DMOP-$1$ Score Estimate Is Consistent}
+%\subsection{DMOP-$1$ Score Estimate Is Consistent}
+
 We take advantage of the equivalence between DMOP-$\alpha$ and the derivative of MOP-$\alpha$ to investigate the former by studying the latter.
 Although we have shown the DMOP-$1$ gradient estimate yields the estimate of \cite{poyiadjis11} and \cite{scibior21} when applied to the bootstrap filter, those authors estimate the Fisher score by 
 $\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{X_{0:N}, Y_{1:N}}(x_{0:n,j}^{A, F,\theta}, y_{1:N}^* ; \theta)$ and not
@@ -661,7 +650,7 @@ The variance increases as $\alpha$ goes to $1$.
 
 %\subsection{Bias-Variance Tradeoff}
 
-We show in Section~\suppSecProofBiasVar that the variance of DMOP-$0$ is $\tilde{O}\big( Np \, G'(\theta)^2\big/J \big)$.
+We show in Section~{\suppSecProofBiasVar} that the variance of DMOP-$0$ is $\tilde{O}\big( Np \, G'(\theta)^2\big/J \big)$.
 Previously, \cite{poyiadjis11} established that the variance of DMOP-$1$ is $\tilde{O}(N^4/J)$, ignoring factors of $p$ and $G'$. 
 Combining these results with Theorem \ref{thm:mop-biasvar} shows that DMOP-$\alpha$ interpolates between the variances of DMOP-$0$ and DMOP-$1$, as $N \leq Nk^2 \leq N^4$, with a phase transition as soon as $\alpha<1$. 
 The phase transition arises because even though the particle filter has forgetting properties \citep{karjalainen23}, the resulting derivative estimate of \cite{poyiadjis11} does not, and we require both for the variance reduction. 
@@ -674,9 +663,8 @@ Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to r
 
 \section{Computational Efficiency} \label{sec:efficiency}
 
-Our numerical results use an implementation of our methods in the Pypomp library \citep{abkemeier25}.
-The source code for this paper is at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
-DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter, and we found the empirical value of this factor to be 3.75.
+DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter.
+We found the empirical value of this factor to be 3.75, using the implementation of our methods in the Pypomp library \citep{abkemeier25}.
 DMOP-$\alpha$ and IFAD therefore share the same $O(NJ)$ time complexity as the particle filter, unlike the $O(NJ^2)$ complexity of \cite{corenflos21} and Algorithm 2 in \citep{poyiadjis11, scibior21}.
 
 Implementation of the particle filter, IF2, and DMOP-$\alpha$ in JAX \citep{jax} takes advantage of just-in-time compilation and GPU acceleration.
