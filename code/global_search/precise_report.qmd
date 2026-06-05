@@ -603,7 +603,7 @@ for label, f in model_files_nm1:
         with open(f, "rb") as pf:
             obj = pickle.load(pf)
             t = obj.traces().copy()
-            
+
             if "loglik" in t.columns:
                 t = t.rename(columns={"loglik": "logLik"})
             if "theta_idx" in t.columns:
@@ -613,15 +613,19 @@ for label, f in model_files_nm1:
 
             id_cols = ["rep", "iteration", "logLik", "method"]
             id_cols = [c for c in id_cols if c in t.columns]
-            param_cols = [c for c in t.columns if c not in id_cols and c not in ["c", "omega", "rho"]]
-            
+            param_cols = [
+                c
+                for c in t.columns
+                if c not in id_cols and c not in ["c", "omega", "rho"]
+            ]
+
             t_long = t.melt(
                 id_vars=id_cols,
                 value_vars=param_cols,
                 var_name="quantity",
                 value_name="param_value",
             )
-            
+
             last_iter = t_long["iteration"].max()
             final_p = t_long[t_long["iteration"] == last_iter].copy()
             final_p["source"] = label
@@ -634,14 +638,14 @@ if all_params:
     df_params["source"] = pd.Categorical(
         df_params["source"],
         categories=["IFAD-0", "IFAD-0.97", "IFAD-1", "IF2"],
-        ordered=True
+        ordered=True,
     )
-    
+
     default_theta = pp.models.dacca().theta[0]
     default_params_df = pd.DataFrame([default_theta]).melt(
         var_name="quantity", value_name="default_value"
     )
-    
+
     quantities = sorted(df_params["quantity"].unique())
 
     for i in range(0, len(quantities), 4):
@@ -674,29 +678,41 @@ if all_params:
 
     # Save a premium 3x3 grid of density plots for the 9 key parameters to be used in the manuscript
     df_params["quantity"] = df_params["quantity"].replace({"omegas5": "omega5"})
-    default_params_df["quantity"] = default_params_df["quantity"].replace({"omegas5": "omega5"})
+    default_params_df["quantity"] = default_params_df["quantity"].replace(
+        {"omegas5": "omega5"}
+    )
 
-    key_quantities = ["sigma", "tau", "gamma", "epsilon", "S_0", "I_0", "R1_0", "bs3", "omega5"]
+    key_quantities = [
+        "sigma",
+        "tau",
+        "gamma",
+        "epsilon",
+        "S_0",
+        "I_0",
+        "R1_0",
+        "bs3",
+        "omega5",
+    ]
     df_key_params = df_params[df_params["quantity"].isin(key_quantities)].copy()
-    
+
     label_map = {
-        "sigma": "Process noise (σ)",
-        "tau": "Measurement noise (τ)",
-        "gamma": "Recovery rate (γ)",
-        "epsilon": "Immunity loss rate (ε)",
-        "S_0": "Initial susceptible (S_0)",
-        "I_0": "Initial infected (I_0)",
-        "R1_0": "Initial recovered (R1_0)",
-        "bs3": "Seasonality spline (bs3)",
-        "omega5": "Reservoir spline (ω_5)",
+        "sigma": r"Process noise ($\sigma$)",
+        "tau": r"Measurement noise ($\tau$)",
+        "gamma": r"Recovery rate ($\gamma$)",
+        "epsilon": r"Immunity loss rate ($\epsilon$)",
+        "S_0": r"Initial susceptible ($S_0$)",
+        "I_0": r"Initial infected ($I_0$)",
+        "R1_0": r"Initial recovered ($R_{1,0}$)",
+        "bs3": r"Seasonality spline ($\beta_3$)",
+        "omega5": r"Reservoir spline ($\omega_5$)",
     }
     df_key_params["quantity_label"] = df_key_params["quantity"].map(label_map)
     df_key_params["quantity_label"] = pd.Categorical(
         df_key_params["quantity_label"],
         categories=[label_map[q] for q in key_quantities],
-        ordered=True
+        ordered=True,
     )
-    
+
     p_key = (
         ggplot(
             df_key_params,
@@ -716,14 +732,16 @@ if all_params:
             legend_text=element_text(size=10),
             legend_title=element_blank(),
             legend_position="bottom",
-            panel_spacing=0.08,
+            panel_spacing=0.02,
         )
         + labs(
             x="Parameter Value Estimate",
             y="Density",
         )
     )
-    p_key.save(f"../../imgs/precise_density{suffix}.pdf", width=9.5, height=9.0, verbose=False)
+    p_key.save(
+        f"../../imgs/precise_density{suffix}.pdf", width=9.5, height=6.0, verbose=False
+    )
     display(p_key)
 else:
     print("No parameter data available.")
