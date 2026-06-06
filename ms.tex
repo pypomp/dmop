@@ -179,14 +179,10 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
   
 \begin{figure}[htbp!]
   \centering
-  
-    \arxiv{}{\vspace*{0.15ex}}
     \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/mop.png}
     \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/biasvar.png}
-    \arxiv{}{\vspace*{-2ex}}
     \caption{\textbf{A:} Non‐differentiable likelihood estimates and smooth off‐parameter approximations that hold locally around the baseline parameter $\phi$. \textbf{B:} Illustration of the bias-variance tradeoff induced by the discounting hyperparameter $\alpha$. We display the MSE of score estimates for the recovery rate at the MLE for the Dhaka cholera model of \cite{king08}. Our novel contribution of $\alpha \in (0,1)$ significantly improves the quality of the likelihood approximation and the score estimates.}
     \label{fig:biasvar}
-    \arxiv{}{\vspace*{-2ex}}
 \end{figure}
 
 
@@ -259,15 +255,12 @@ For the categorical distribution, we use systematic resampling \citep{arulampala
 
 In Algorithm~\ref{alg:mop}, the conditional likelihoods are reweighted by a correction factor $w^{P,\theta}_{n,j}$ that accumulates over filtering steps to account for the resampling under $\phi$. 
 Writing $g^{\theta}_{n,j}={f}_{{Y}_{n}|{X}_{n}}(y_{n}^{*}|{X}_{n,j}^{P,\theta}\giventh{\theta})$ for the measurement density and $L_n^{\phi} = \frac{1}{J}\sum_{m=1}^{J}g^{\phi}_{n,m}$ for the conditional likelihood estimate under $\phi$, we obtain two estimates of the conditional likelihood under $\theta$,
-\arxiv{}{\vspace*{-1.5mm}}
 \begin{equation}
      \label{eq:mop-conditional-likelihood}
      L_n^{B,\theta,\alpha} = \frac{\sum_{j=1}^Jg^\theta_{n,j}\, w^{P,\theta}_{n,j}}{\sum_{j=1}^J  w^{P,\theta}_{n,j}}, \arxiv{\hspace{15mm}}{\;\;}
      L_n^{A,\theta,\alpha} = L_n^\phi\cdot \frac{\sum_{j=1}^J w^{F,\theta}_{n,j}}{\sum_{j=1}^J  w^{P,\theta}_{n,j}},
-     \arxiv{}{\vspace*{-1.5mm}}
 \end{equation}
 where we recursively correct the weights for each particle for the cumulative error incurred by the off-parameter resampling:
-\arxiv{}{\vspace*{-3ex}}
 \begin{equation}
     \label{eq:weighting-scheme}
     w_{n,j}^{P,\theta} = (w_{n-1,j}^{F,\theta})^\alpha, 
@@ -275,7 +268,6 @@ where we recursively correct the weights for each particle for the cumulative er
     w^{F,\theta}_{n,j} = w^{P,\theta}_{n,k_j} \, g^{\theta}_{n,k_j} \, \big/ g^{\phi}_{n,k_j}, 
     \arxiv{\hspace{5mm}}{\;}
     w^{F,\theta}_{0,j}= 1.
-    \arxiv{}{\vspace*{-3ex}}
 \end{equation}
 The before-resampling estimate $L_n^{B,\theta,\alpha}$ is preferable in practice, as it has slightly lower variance than the after-resampling estimate $L_n^{A,\theta,\alpha}$, but the latter is useful in deriving properties of the MOP-$\alpha$ gradient estimate such as that in Theorem \ref{thm:mop-functional-forms}.
 
@@ -297,18 +289,14 @@ When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and DMO
     \label{thm:mop-functional-forms}
     Writing $\nabla_\theta \hat\ell^\alpha(\theta)$ for the gradient estimate yielded by DMOP-$\alpha$ %when $\theta=\phi$ 
     and using the after-resampling conditional likelihood estimate so that $\hat\loglik(\theta)= \log \hat\lik(\theta) = \log \prod_{n=1}^N L_n^{A, \theta, \alpha}$, when $\alpha=0$,
-    \vspace*{-3ex}
     \begin{equation} \nonumber
         \nabla_\theta \hat\ell^0(\theta) 
         = \frac{1}{J} \sum_{n=1}^N \sum_{j=1}^J \nabla_\theta \log f_{Y_n|X_{n}}(y_n^*|x_{n,j}^{F, \theta}; \theta),
-        \vspace*{-3ex}
     \end{equation}
     yielding \cite{naesseth18}'s estimator with the bootstrap filter. When $\alpha=1$,
-    \vspace*{-3ex}
     \begin{equation} \nonumber
         \nabla_\theta \hat{\ell}^1(\theta) 
         = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\left(y_{1:N}^* | x_{1:n,j}^{A, F,\theta}\right),
-    \vspace*{-3ex}
     \end{equation}
     yielding the estimator of \cite{poyiadjis11} for the bootstrap filter.
 \end{thm}
@@ -320,8 +308,6 @@ The result in Theorem \ref{thm:mop-functional-forms} provides mathematical intui
 When $\theta=\phi$, the correction $g_{n,k_j}^\theta/g_{n,k_j}^\phi$ is equivalent to $g_{n,k_j}^\theta / \text{stop\_gradient}(g_{n,k_j}^\theta)$, and is implemented in this way in practice.
 As such, the use of the stop-gradient in \cite{scibior21} can be seen as the MOP-$\alpha$ weight correction for $\alpha=1$, and $\theta=\phi$.
 
-
-% \arxiv{}{\vspace*{-3ex}}
 
 \section{From Gradients to Maximum Likelihood Estimation}
 
@@ -361,13 +347,11 @@ Choose the learning rate $\eta$ so $\eta \leq \frac{c(1-\beta)}{2\Gamma}$. Consi
 Choose the learning rate $\eta$ so $\eta \leq \frac{c(1-\beta)}{2\Gamma}$. 
 Then, for $\alpha$ sufficiently close to 1 and $J$ sufficiently large (depending on $\epsilon$ and $\delta$), we have that
 $\|\nabla_\theta \hat\ell^\alpha(\theta_m) - \nabla_\theta\ell^\alpha(\theta_m)\| \leq \epsilon$ and $H(\theta_m) \succ cI_p \succ 0$ for all $m$, and that
-\arxiv{}{\vspace*{-3ex}}
 $$
 \ell(\theta^*) - \ell(\theta_{m+1}) \leq \Big(1-\eta\beta\, \frac{8\gamma}{9c}\Big)\big(\ell(\theta^*)-\ell(\theta_m)\big) \text{ with probability at least } 1-\delta.
 $$
 \label{thm:mop-convergence}
 \end{thm}
-\arxiv{}{\vspace*{-10ex}}
 The proof of Theorem~\ref{thm:linear} uses results from randomized numerical linear algebra, building on Theorem~6 of \cite{mahoney16}. 
 Details are deferred to the supplement (Section~\suppSecProofOptimizationConvergence). 
 This result shows that particle estimates for the gradient can enjoy the same linear convergence rate on well-conditioned problems as gradient descent with access to the score. 
@@ -385,18 +369,16 @@ This model categorizes individuals in a population as susceptible, $S(t)$, infec
 In this case, the compartment $R(t)$ is further subdivided into three recovered compartments $R^1(t)$, $R^2(t)$, $R^3(t)$ denoting varying degrees of cholera immunity.
 We write $P(t)$ for the total population, and $M_n$ for the cholera deaths in each month.
 As in \cite{king08}, the transition dynamics follow a stochastic differential equation (SDE):
-\vspace*{-1mm}
 \begin{align*}
     dS&=\big(k \epsilon R^k+\delta(P-S)-\lambda(t) S\big)\, dt+d P-({\sigma S I}/{P})\, dB, \\
     dI&=\big(\lambda(t) S-(m+\delta+\gamma) I\big)\, dt+({\sigma S I}/{P})\, dB, \\
     dR^1&=\big(\gamma I-(k \epsilon+\delta) R^1\big)\, dt, \hspace{3ex} \dots \\
     dR^k&=\big(k \epsilon R^{k-1} -(k \epsilon+\delta) R^k\big)\, dt,
-    \vspace*{-3ex}
 \end{align*}
 with Brownian motion $B(t)$, cholera death rate $m$, recovery rate $\gamma$, mean immunity duration $1/\epsilon$, standard deviation of the force of infection $\sigma$, and population death rate $\delta=0.02$. The force of infection, $\lambda_t$, is modeled by splines $(s_j)_{j=1}^6$
-\vspace*{-3ex}
-\begin{equation*}    \lambda_t=\exp\hspace{-1mm}\bigg(\hspace{-.5mm}\beta_{\text{trend}}(t-t_0)+\hspace{-1mm}\sum_{j=1}^{6} \beta_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm}\frac{I}{P} + \exp\hspace{-1mm} \bigg(\sum_{j=1}^{6} \omega_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm},
-    \vspace*{-3ex}
+\begin{equation*}
+  \lambda_t=\exp\hspace{-1mm}\bigg(\hspace{-.5mm}\beta_{\text{trend}}(t-t_0)+\hspace{-1mm}\sum_{j=1}^{6} \beta_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm}\frac{I}{P} + \exp\hspace{-1mm} \bigg(\sum_{j=1}^{6} \omega_j s_j(t)\hspace{-1mm}\bigg)\hspace{-1mm},
+    \arxiv{}{\vspace*{-3ex}}
 \end{equation*}
 where the coefficients $(\beta_j)_{j=1}^6$ model seasonality in the force of infection, $\beta_{\text{trend}}$ models the trend in the force of infection, and the $\omega_j$ represent seasonality of a non-human environmental reservoir of disease.
 The measurement model for observed monthly cholera deaths is
@@ -719,9 +701,6 @@ The analysis is similar, with comparable rates but with a slightly less convenie
 This research was supported by National Science Foundation grants DMS-1761603 and DEB-1933497. 
 We thank Nicolas Chopin for communications regarding the strong law of large numbers for off-parameter resampled particle filters, and other feedback. We thank Jun Chen, Arnaud Doucet and Kunyang He for helpful discussions regarding the manuscript.
 
-
-%\bibsplit[2]
-%Use \bibsplit to split the references from the body of the text. Value "[2]" represents the number of reference in the left column (Note: Please avoid single column figures & tables on this page.)
 
 %\bibliographystyle{abbrvnat}
 \bibliographystyle{apalike}
