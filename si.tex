@@ -1519,6 +1519,11 @@ The ongoing study of iterated filtering as a state-of-the-art approach to infere
 \label{appendix:algparams}
 
 We include the full set of algorithmic parameters used for the Dhaka results in Table~\ref{table:algparams}. 
+The warm start iterations are IF2 iterations, which are followed by gradient descent (GD) iterations when using IFAD. 
+The IF2 cooling rate is the fractional reduction in the parameter perturbations over 50 iterations, so that a cooling rate of 0.5 corresponds to approximately 1\% cooling per iteration.
+The random walk standard deviation (RWSD) scales the noise added at each filtering step to each regular parameter.
+Initial value parameters (IVPs), that affect the value of the latent process only at time $t_0$, are treated differently: they are perturbed only at time $t_0$, with a larger RWSD. 
+Parameters are transformed to a unit scale, for example by taking logarithms or a logistic transformation, so that a single RWSD value works for all parameters.
 
 \begin{table}[H]
 \centering
@@ -1543,6 +1548,11 @@ Eval. Particles / Reps & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 \\
 \caption{Algorithmic parameters for the global search benchmarking on the Dhaka cholera model.}
 \label{table:algparams}
 \end{table}
+
+Following some experimentation, IFAD was implemnenteed by plugging the DMOP gradient estimate into the Adam optimizer \citep{kingma14arxiv}.
+The momentum parameter in Adam was turned off for IFAD-0, since this low-variance estimate did not reqquire it.
+Decreasing the learning rate (LR) was found to be helpful, and we selected the commonly used cosine decay.
+Warm-up steps were taken with Adam to stabilize its initial performance and avoid noisy 
 
 
 \bibliography{bib-ifad}
