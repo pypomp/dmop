@@ -1335,6 +1335,7 @@ We now proceed to obtain an MSE bound for DMOP-$\alpha$.
         \nonumber
     \end{equation}
 \end{thm}
+
 \begin{proof}[Proof.]
 
 
@@ -2607,913 +2608,980 @@ itself converges to MOP-$1$ as $\alpha\uparrow1$, but
 Equation~(\ref{eq:dmop-alpha-crude-mse}) discards the cancellation
 required to recover this limit.
 
-\paragraph{Sharper bias--variance analysis.}
-The preceding truncation argument is useful for bounding stochastic
-fluctuations, but it is too crude for bounding the systematic
-dependence on $\alpha$. In particular, separately bounding
-\begin{equation}
-    \nabla_\theta\hat s_k^1(\theta)
-    -
-    \nabla_\theta\hat s_k^\alpha(\theta)
-\end{equation}
-and
-\begin{equation}
-    \nabla_\theta\hat s_k^\alpha(\theta)
-    -
-    \nabla_\theta\hat\ell^\alpha(\theta)
-\end{equation}
-discards cancellation between the contribution inside the truncation
-window and the omitted tail. This leads to a bound that diverges as
-$\alpha\uparrow1$, even though the MOP-$\alpha$ estimator converges to
-the MOP-$1$ estimator.
+\section{Sharper Bias-Variance Analysis}
 
-A sharper analysis begins with the exact bias--variance decomposition.
-Write
-\begin{equation}
-    E_n^\alpha(\theta)
-    :=
-    \nabla_\theta\hat\ell_n^\alpha(\theta)
-    -
-    \nabla_\theta\ell_n(\theta).
-\end{equation}
-Then
-\begin{align}
-    &\E\left\|
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &=
-    \E\left\|
-    \sum_{n=1}^N
-    \left\{
-    E_n^\alpha(\theta)-\E E_n^\alpha(\theta)
-    \right\}
-    \right\|_2^2
-    +
-    \left\|
-    \sum_{n=1}^N
-    \E E_n^\alpha(\theta)
-    \right\|_2^2.
-    \label{eq:exact-mse-bias-variance}
-\end{align}
 
-The first term in
-Equation~(\ref{eq:exact-mse-bias-variance}) is a centered fluctuation.
-It can be controlled by the same particle-filter mixing and covariance
-summation argument used in the variance theorem. In particular, one
-expects a bound of the form
-\begin{equation}
-    \E\left\|
-    \sum_{n=1}^N
-    \left\{
-    E_n^\alpha(\theta)-\E E_n^\alpha(\theta)
-    \right\}
-    \right\|_2^2
-    \lesssim
-    \frac{NpG'(\theta)^2\tau_J}{J}
-    V_\alpha,
-    \label{eq:centered-alpha-error}
-\end{equation}
-where $\tau_J\asymp\log(J)$ is the particle-filter mixing time and
-$V_\alpha$ records the effective memory of the score functional.
 
-The second term must be bounded directly. The appropriate argument is
-lagwise forgetting. Let the effect at time $n$ of a score increment
-from time $n-r$ be denoted schematically by
-\begin{equation}
-    \mathcal{H}_{n,r}.
-\end{equation}
-The MOP-$1$ estimator gives this lag full coefficient one, whereas
-MOP-$\alpha$ gives it coefficient $\alpha^r$. Their difference is
-therefore weighted by
-\begin{equation}
-    1-\alpha^r.
-\end{equation}
-If the effect of a perturbation at lag $r$ contracts geometrically,
-then the required lagwise estimate is
-\begin{equation}
-    \left\|
-    \E\mathcal{H}_{n,r}
-    \right\|_2
-    \lesssim
-    \sqrt p\,G'(\theta)\rho_J^r,
-    \label{eq:lagwise-forgetting-lemma}
-\end{equation}
-where $\rho_J\in(0,1)$ is determined by the particle-filter forgetting
-rate. Theorem~3 of \cite{karjalainen23} suggests
-\begin{equation}
-    \rho_J
-    :=
-    (1-\epsilon)^{1/(c\log(J))}
-\end{equation}
-up to constants and the treatment of the floor function.
 
-Under Equation~(\ref{eq:lagwise-forgetting-lemma}), the per-time bias
-induced by discounting satisfies
-\begin{align}
-    \left\|
-    \E E_n^\alpha(\theta)
-    \right\|_2
-    &\lesssim
-    \sqrt p\,G'(\theta)
-    \sum_{r=1}^{\infty}
-    (1-\alpha^r)\rho_J^r
-    +
-    \frac{\sqrt p\,G'(\theta)}{J}
-    \nonumber \\
-    &=
-    \sqrt p\,G'(\theta)
-    \frac{\rho_J(1-\alpha)}
-    {(1-\rho_J)(1-\alpha\rho_J)}
-    +
-    \frac{\sqrt p\,G'(\theta)}{J}.
-    \label{eq:per-time-alpha-bias}
-\end{align}
-The first term is the approximation bias due to $\alpha<1$, while the
-second is the finite-particle bias.
+% \paragraph{Sharper bias--variance analysis.}
+% The preceding truncation argument is useful for bounding stochastic
+% fluctuations, but it is too crude for bounding the systematic
+% dependence on $\alpha$. In particular, separately bounding
+% \begin{equation}
+%     \nabla_\theta\hat s_k^1(\theta)
+%     -
+%     \nabla_\theta\hat s_k^\alpha(\theta)
+% \end{equation}
+% and
+% \begin{equation}
+%     \nabla_\theta\hat s_k^\alpha(\theta)
+%     -
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+% \end{equation}
+% discards cancellation between the contribution inside the truncation
+% window and the omitted tail. This leads to a bound that diverges as
+% $\alpha\uparrow1$, even though the MOP-$\alpha$ estimator converges to
+% the MOP-$1$ estimator.
 
-Consequently,
-\begin{align}
-    &\left\|
-    \sum_{n=1}^N
-    \E E_n^\alpha(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &\lesssim
-    N^2pG'(\theta)^2
-    \left\{
-    \frac{\rho_J(1-\alpha)}
-    {(1-\rho_J)(1-\alpha\rho_J)}
-    +
-    \frac{1}{J}
-    \right\}^2.
-    \label{eq:cumulative-alpha-bias}
-\end{align}
-Combining
-Equations~(\ref{eq:centered-alpha-error}) and
-(\ref{eq:cumulative-alpha-bias}) gives the refined form
-\begin{align}
-    &\E\left\|
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &\lesssim
-    \frac{NpG'(\theta)^2\tau_J}{J}
-    V_\alpha
-    +
-    N^2pG'(\theta)^2
-    \left\{
-    \frac{\rho_J(1-\alpha)}
-    {(1-\rho_J)(1-\alpha\rho_J)}
-    +
-    \frac{1}{J}
-    \right\}^2.
-    \label{eq:refined-alpha-mse}
-\end{align}
+% A sharper analysis begins with the exact bias--variance decomposition.
+% Write
+% \begin{equation}
+%     E_n^\alpha(\theta)
+%     :=
+%     \nabla_\theta\hat\ell_n^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell_n(\theta).
+% \end{equation}
+% Then
+% \begin{align}
+%     &\E\left\|
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &=
+%     \E\left\|
+%     \sum_{n=1}^N
+%     \left\{
+%     E_n^\alpha(\theta)-\E E_n^\alpha(\theta)
+%     \right\}
+%     \right\|_2^2
+%     +
+%     \left\|
+%     \sum_{n=1}^N
+%     \E E_n^\alpha(\theta)
+%     \right\|_2^2.
+%     \label{eq:exact-mse-bias-variance}
+% \end{align}
 
-Unlike the separate truncation bound, the approximation-bias
-coefficient in Equation~(\ref{eq:refined-alpha-mse}) satisfies
-\begin{equation}
-    \frac{\rho_J(1-\alpha)}
-    {(1-\rho_J)(1-\alpha\rho_J)}
-    \longrightarrow0
-    \qquad
-    \text{as }
-    \alpha\uparrow1.
-\end{equation}
-Thus, the quadratic factor $N^2$ does not represent an unavoidable
-$N^2$ error. It is the square of the cumulative systematic bias, whose
-coefficient vanishes as $\alpha$ approaches one and as $J$ increases.
+% The first term in
+% Equation~(\ref{eq:exact-mse-bias-variance}) is a centered fluctuation.
+% It can be controlled by the same particle-filter mixing and covariance
+% summation argument used in the variance theorem. In particular, one
+% expects a bound of the form
+% \begin{equation}
+%     \E\left\|
+%     \sum_{n=1}^N
+%     \left\{
+%     E_n^\alpha(\theta)-\E E_n^\alpha(\theta)
+%     \right\}
+%     \right\|_2^2
+%     \lesssim
+%     \frac{NpG'(\theta)^2\tau_J}{J}
+%     V_\alpha,
+%     \label{eq:centered-alpha-error}
+% \end{equation}
+% where $\tau_J\asymp\log(J)$ is the particle-filter mixing time and
+% $V_\alpha$ records the effective memory of the score functional.
 
-For the average score, Equation~(\ref{eq:refined-alpha-mse}) becomes
-\begin{align}
-    &\E\left\|
-    \frac{1}{N}
-    \left\{
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\}
-    \right\|_2^2
-    \nonumber \\
-    &\lesssim
-    \frac{pG'(\theta)^2\tau_J}{NJ}
-    V_\alpha
-    +
-    pG'(\theta)^2
-    \left\{
-    \frac{\rho_J(1-\alpha)}
-    {(1-\rho_J)(1-\alpha\rho_J)}
-    +
-    \frac{1}{J}
-    \right\}^2.
-    \label{eq:refined-average-score-mse}
-\end{align}
+% The second term must be bounded directly. The appropriate argument is
+% lagwise forgetting. Let the effect at time $n$ of a score increment
+% from time $n-r$ be denoted schematically by
+% \begin{equation}
+%     \mathcal{H}_{n,r}.
+% \end{equation}
+% The MOP-$1$ estimator gives this lag full coefficient one, whereas
+% MOP-$\alpha$ gives it coefficient $\alpha^r$. Their difference is
+% therefore weighted by
+% \begin{equation}
+%     1-\alpha^r.
+% \end{equation}
+% If the effect of a perturbation at lag $r$ contracts geometrically,
+% then the required lagwise estimate is
+% \begin{equation}
+%     \left\|
+%     \E\mathcal{H}_{n,r}
+%     \right\|_2
+%     \lesssim
+%     \sqrt p\,G'(\theta)\rho_J^r,
+%     \label{eq:lagwise-forgetting-lemma}
+% \end{equation}
+% where $\rho_J\in(0,1)$ is determined by the particle-filter forgetting
+% rate. Theorem~3 of \cite{karjalainen23} suggests
+% \begin{equation}
+%     \rho_J
+%     :=
+%     (1-\epsilon)^{1/(c\log(J))}
+% \end{equation}
+% up to constants and the treatment of the floor function.
 
-To obtain an $O(N)$ MSE for the unnormalized score, it is sufficient
-that the per-time bias be at most of order $N^{-1/2}$. Thus it is
-sufficient to require
-\begin{equation}
-    \frac{\rho_J(1-\alpha_N)}
-    {(1-\rho_J)(1-\alpha_N\rho_J)}
-    \lesssim
-    \frac{1}{\sqrt N}
-    \label{eq:alpha-bias-rate-condition}
-\end{equation}
-and
-\begin{equation}
-    J_N\gtrsim\sqrt N.
-    \label{eq:particle-bias-rate-condition}
-\end{equation}
-Since
-\begin{equation}
-    1-\rho_J
-    \asymp
-    \frac{1}{\log(J)},
-\end{equation}
-if
-\begin{equation}
-    1-\alpha_N
-    \ll
-    1-\rho_J,
-\end{equation}
-then
-\begin{equation}
-    \frac{\rho_J(1-\alpha_N)}
-    {(1-\rho_J)(1-\alpha_N\rho_J)}
-    \asymp
-    (1-\alpha_N)\log(J)^2.
-\end{equation}
-A sufficient choice is therefore
-\begin{equation}
-    1-\alpha_N
-    \lesssim
-    \frac{1}{
-    \sqrt N\,\log(J_N)^2
-    }.
-    \label{eq:sufficient-alpha-sequence}
-\end{equation}
-Under
-Equations~(\ref{eq:particle-bias-rate-condition}) and
-(\ref{eq:sufficient-alpha-sequence}), the squared-bias contribution is
-of order at most $N$, rather than $N^2$. We formalize the argument below.
+% Under Equation~(\ref{eq:lagwise-forgetting-lemma}), the per-time bias
+% induced by discounting satisfies
+% \begin{align}
+%     \left\|
+%     \E E_n^\alpha(\theta)
+%     \right\|_2
+%     &\lesssim
+%     \sqrt p\,G'(\theta)
+%     \sum_{r=1}^{\infty}
+%     (1-\alpha^r)\rho_J^r
+%     +
+%     \frac{\sqrt p\,G'(\theta)}{J}
+%     \nonumber \\
+%     &=
+%     \sqrt p\,G'(\theta)
+%     \frac{\rho_J(1-\alpha)}
+%     {(1-\rho_J)(1-\alpha\rho_J)}
+%     +
+%     \frac{\sqrt p\,G'(\theta)}{J}.
+%     \label{eq:per-time-alpha-bias}
+% \end{align}
+% The first term is the approximation bias due to $\alpha<1$, while the
+% second is the finite-particle bias.
 
-\subsection{A refined MSE bound via lagwise score forgetting}
+% Consequently,
+% \begin{align}
+%     &\left\|
+%     \sum_{n=1}^N
+%     \E E_n^\alpha(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &\lesssim
+%     N^2pG'(\theta)^2
+%     \left\{
+%     \frac{\rho_J(1-\alpha)}
+%     {(1-\rho_J)(1-\alpha\rho_J)}
+%     +
+%     \frac{1}{J}
+%     \right\}^2.
+%     \label{eq:cumulative-alpha-bias}
+% \end{align}
+% Combining
+% Equations~(\ref{eq:centered-alpha-error}) and
+% (\ref{eq:cumulative-alpha-bias}) gives the refined form
+% \begin{align}
+%     &\E\left\|
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &\lesssim
+%     \frac{NpG'(\theta)^2\tau_J}{J}
+%     V_\alpha
+%     +
+%     N^2pG'(\theta)^2
+%     \left\{
+%     \frac{\rho_J(1-\alpha)}
+%     {(1-\rho_J)(1-\alpha\rho_J)}
+%     +
+%     \frac{1}{J}
+%     \right\}^2.
+%     \label{eq:refined-alpha-mse}
+% \end{align}
 
-The preceding truncation argument loses the cancellation between the
-within-window discrepancy and the omitted tail. We instead decompose
-the DMOP-$\alpha$ error into its centered fluctuation and systematic
-bias, and control the latter directly using lagwise forgetting.
+% Unlike the separate truncation bound, the approximation-bias
+% coefficient in Equation~(\ref{eq:refined-alpha-mse}) satisfies
+% \begin{equation}
+%     \frac{\rho_J(1-\alpha)}
+%     {(1-\rho_J)(1-\alpha\rho_J)}
+%     \longrightarrow0
+%     \qquad
+%     \text{as }
+%     \alpha\uparrow1.
+% \end{equation}
+% Thus, the quadratic factor $N^2$ does not represent an unavoidable
+% $N^2$ error. It is the square of the cumulative systematic bias, whose
+% coefficient vanishes as $\alpha$ approaches one and as $J$ increases.
 
-For $i\leq n$, let
-\begin{equation}
-    H_{n,i}(\theta)
-\end{equation}
-denote the contribution of the measurement-score increment at time
-$i$ to the conditional score increment at time $n$. Equivalently,
-writing $r=n-i$, we use the notation
-\begin{equation}
-    H_{n,r}(\theta)
-    :=
-    H_{n,n-r}(\theta).
-\end{equation}
-The differentiated MOP recursion gives the lagwise representations
-\begin{equation}
-    \nabla_\theta\ell_n(\theta)
-    =
-    \sum_{r=0}^{n-1} H_{n,r}(\theta)
-    \label{eq:exact-score-lag-decomposition}
-\end{equation}
-and
-\begin{equation}
-    \nabla_\theta\ell_n^\alpha(\theta)
-    =
-    \sum_{r=0}^{n-1}
-    \alpha^r H_{n,r}(\theta),
-    \label{eq:population-alpha-score}
-\end{equation}
-where $\nabla_\theta\ell_n^\alpha(\theta)$ denotes the
-infinite-particle target of the $n$th DMOP-$\alpha$ score increment.
-Thus,
-\begin{equation}
-    \nabla_\theta\ell_n(\theta)
-    -
-    \nabla_\theta\ell_n^\alpha(\theta)
-    =
-    \sum_{r=1}^{n-1}
-    (1-\alpha^r)H_{n,r}(\theta).
-    \label{eq:direct-alpha-score-difference}
-\end{equation}
+% For the average score, Equation~(\ref{eq:refined-alpha-mse}) becomes
+% \begin{align}
+%     &\E\left\|
+%     \frac{1}{N}
+%     \left\{
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\}
+%     \right\|_2^2
+%     \nonumber \\
+%     &\lesssim
+%     \frac{pG'(\theta)^2\tau_J}{NJ}
+%     V_\alpha
+%     +
+%     pG'(\theta)^2
+%     \left\{
+%     \frac{\rho_J(1-\alpha)}
+%     {(1-\rho_J)(1-\alpha\rho_J)}
+%     +
+%     \frac{1}{J}
+%     \right\}^2.
+%     \label{eq:refined-average-score-mse}
+% \end{align}
 
-We first establish the required lagwise forgetting estimate.
+% To obtain an $O(N)$ MSE for the unnormalized score, it is sufficient
+% that the per-time bias be at most of order $N^{-1/2}$. Thus it is
+% sufficient to require
+% \begin{equation}
+%     \frac{\rho_J(1-\alpha_N)}
+%     {(1-\rho_J)(1-\alpha_N\rho_J)}
+%     \lesssim
+%     \frac{1}{\sqrt N}
+%     \label{eq:alpha-bias-rate-condition}
+% \end{equation}
+% and
+% \begin{equation}
+%     J_N\gtrsim\sqrt N.
+%     \label{eq:particle-bias-rate-condition}
+% \end{equation}
+% Since
+% \begin{equation}
+%     1-\rho_J
+%     \asymp
+%     \frac{1}{\log(J)},
+% \end{equation}
+% if
+% \begin{equation}
+%     1-\alpha_N
+%     \ll
+%     1-\rho_J,
+% \end{equation}
+% then
+% \begin{equation}
+%     \frac{\rho_J(1-\alpha_N)}
+%     {(1-\rho_J)(1-\alpha_N\rho_J)}
+%     \asymp
+%     (1-\alpha_N)\log(J)^2.
+% \end{equation}
+% A sufficient choice is therefore
+% \begin{equation}
+%     1-\alpha_N
+%     \lesssim
+%     \frac{1}{
+%     \sqrt N\,\log(J_N)^2
+%     }.
+%     \label{eq:sufficient-alpha-sequence}
+% \end{equation}
+% Under
+% Equations~(\ref{eq:particle-bias-rate-condition}) and
+% (\ref{eq:sufficient-alpha-sequence}), the squared-bias contribution is
+% of order at most $N$, rather than $N^2$. We formalize the argument below.
 
-\begin{lem}[Lagwise forgetting of conditional score contributions]
-\label{lem:lagwise-score-forgetting}
-Suppose Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement} hold. Then there exist constants
-$C<\infty$ and $\rho\in(0,1)$, depending only on
-$M,\bar M,G,\bar G$, such that, uniformly in $n$ and
-$0\leq r<n$,
-\begin{equation}
-    \left\|
-    H_{n,r}(\theta)
-    \right\|_2
-    \leq
-    C\sqrt p\,G'(\theta)\rho^r.
-    \label{eq:lagwise-score-forgetting}
-\end{equation}
-\end{lem}
+% \subsection{A refined MSE bound via lagwise score forgetting}
 
-\begin{proof}
-Under Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement}, every filtering and backward
-smoothing kernel admits a uniform minorization. In particular, there
-exists $\varepsilon_0>0$, depending only on
-$M,\bar M,G,\bar G$, such that the corresponding Dobrushin
-coefficient is bounded by
-\begin{equation}
-    \beta_{\mathsf{TV}}(B_m)
-    \leq
-    1-\varepsilon_0
-    =:
-    \rho
-    <
-    1
-\end{equation}
-uniformly in $m$. By submultiplicativity of the Dobrushin
-coefficient,
-\begin{equation}
-    \beta_{\mathsf{TV}}
-    \left(
-    B_{i+1}\cdots B_n
-    \right)
-    \leq
-    \rho^{n-i}.
-    \label{eq:backward-kernel-contraction}
-\end{equation}
+% The preceding truncation argument loses the cancellation between the
+% within-window discrepancy and the omitted tail. We instead decompose
+% the DMOP-$\alpha$ error into its centered fluctuation and systematic
+% bias, and control the latter directly using lagwise forgetting.
 
-The lag-$r$ score contribution is the difference between two
-expectations of the bounded score increment at time $n-r$, propagated
-through $r$ filtering or backward-smoothing steps. Hence, for each
-coordinate $q=1,\ldots,p$,
-\begin{align}
-    \left|
-    H_{n,r}^{(q)}(\theta)
-    \right|
-    &\leq
-    \operatorname{osc}
-    \left(
-    \partial_{\theta_q}
-    \log g_{n-r}^{\theta}
-    \right)
-    \beta_{\mathsf{TV}}
-    \left(
-    B_{n-r+1}\cdots B_n
-    \right)
-    \nonumber \\
-    &\leq
-    C G'(\theta)\rho^r,
-\end{align}
-where the first inequality is the standard contraction inequality
-\begin{equation}
-    \left|
-    \mu K(h)-\nu K(h)
-    \right|
-    \leq
-    \operatorname{osc}(h)
-    \beta_{\mathsf{TV}}(K)
-\end{equation}
-for probability measures $\mu,\nu$, a Markov kernel $K$, and a
-bounded function $h$. Summing the coordinatewise bounds gives
-\begin{equation}
-    \left\|
-    H_{n,r}(\theta)
-    \right\|_2
-    \leq
-    C\sqrt p\,G'(\theta)\rho^r.
-\end{equation}
-\end{proof}
+% For $i\leq n$, let
+% \begin{equation}
+%     H_{n,i}(\theta)
+% \end{equation}
+% denote the contribution of the measurement-score increment at time
+% $i$ to the conditional score increment at time $n$. Equivalently,
+% writing $r=n-i$, we use the notation
+% \begin{equation}
+%     H_{n,r}(\theta)
+%     :=
+%     H_{n,n-r}(\theta).
+% \end{equation}
 
-The preceding lemma is not an additional model assumption. It is a
-consequence of the uniform lower and upper bounds already imposed in
-Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement}.
+% For \(i \geq 2\), define the local complete-data score increment
+% \begin{equation}
+%     \zeta_i^\theta(x_{i-1},x_i)
+%     :=
+%     \nabla_\theta
+%     \log f_{X_i \mid X_{i-1}}
+%     (x_i \mid x_{i-1};\theta)
+%     +
+%     \nabla_\theta
+%     \log f_{Y_i \mid X_i}
+%     (y_i^\ast \mid x_i;\theta),
+% \end{equation}
+% and define
+% \begin{equation}
+%     \zeta_1^\theta(x_1)
+%     :=
+%     \nabla_\theta \log f_{X_1}(x_1;\theta)
+%     +
+%     \nabla_\theta
+%     \log f_{Y_1 \mid X_1}
+%     (y_1^\ast \mid x_1;\theta).
+% \end{equation}
 
-We next record the particle approximation bounds needed below.
+% For \(1 \leq i \leq n\), let
+% \begin{equation}
+%     H_{n,i}(\theta)
+%     :=
+%     \E_\theta
+%     \left[
+%         \zeta_i^\theta(X_{i-1},X_i)
+%         \,\middle|\,
+%         Y_{1:n}=y_{1:n}^\ast
+%     \right]
+%     -
+%     \E_\theta
+%     \left[
+%         \zeta_i^\theta(X_{i-1},X_i)
+%         \,\middle|\,
+%         Y_{1:n-1}=y_{1:n-1}^\ast
+%     \right],
+% \end{equation}
+% where, for \(i=1\), the argument \(X_0\) is omitted, and for
+% \(i=n\), the second conditional expectation is defined to be zero.
+% Thus,
+% \begin{equation}
+%     H_{n,n}(\theta)
+%     =
+%     \E_\theta
+%     \left[
+%         \zeta_n^\theta(X_{n-1},X_n)
+%         \,\middle|\,
+%         Y_{1:n}=y_{1:n}^\ast
+%     \right].
+% \end{equation}
+% \begin{equation}
+%     \nabla_\theta
+%     \log f_{Y_n \mid Y_{1:n-1}}
+%     (y_n^\ast \mid y_{1:n-1}^\ast;\theta)
+%     =
+%     \sum_{i=1}^n H_{n,i}(\theta).
+% \end{equation}
+% The differentiated MOP recursion gives the lagwise representations
+% \begin{equation}
+%     \nabla_\theta\ell_n(\theta)
+%     =
+%     \sum_{r=0}^{n-1} H_{n,r}(\theta)
+%     \label{eq:exact-score-lag-decomposition}
+% \end{equation}
+% and
+% \begin{equation}
+%     \nabla_\theta\ell_n^\alpha(\theta)
+%     =
+%     \sum_{r=0}^{n-1}
+%     \alpha^r H_{n,r}(\theta),
+%     \label{eq:population-alpha-score}
+% \end{equation}
+% where $\nabla_\theta\ell_n^\alpha(\theta)$ denotes the
+% infinite-particle target of the $n$th DMOP-$\alpha$ score increment.
+% Thus,
+% \begin{equation}
+%     \nabla_\theta\ell_n(\theta)
+%     -
+%     \nabla_\theta\ell_n^\alpha(\theta)
+%     =
+%     \sum_{r=1}^{n-1}
+%     (1-\alpha^r)H_{n,r}(\theta).
+%     \label{eq:direct-alpha-score-difference}
+% \end{equation}
 
-\begin{lem}[Lagwise particle approximation]
-\label{lem:lagwise-particle-approximation}
-Under Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement}, let
-$\widehat H_{n,r}^J(\theta)$ denote the particle approximation of
-$H_{n,r}(\theta)$. There exists $C<\infty$, independent of
-$n,r,N,J$, such that
-\begin{align}
-    \left\|
-    \E\widehat H_{n,r}^J(\theta)
-    -
-    H_{n,r}(\theta)
-    \right\|_2
-    &\leq
-    \frac{C\sqrt p\,G'(\theta)}{J},
-    \label{eq:lagwise-particle-bias}
-    \\
-    \left(
-    \E\left\|
-    \widehat H_{n,r}^J(\theta)
-    -
-    \E\widehat H_{n,r}^J(\theta)
-    \right\|_2^4
-    \right)^{1/4}
-    &\leq
-    \frac{C\sqrt p\,G'(\theta)}{\sqrt J}.
-    \label{eq:lagwise-particle-l4}
-\end{align}
-\end{lem}
+% We first establish the required lagwise forgetting estimate.
 
-\begin{proof}
-Each $\widehat H_{n,r}^J(\theta)$ is a normalized
-Feynman--Kac particle approximation of a bounded score functional.
-Assumption~{\refAssumpBoundedMeasurement} gives
-\begin{equation}
-    \left\|
-    \nabla_\theta\log g_i^\theta
-    \right\|_2
-    \leq
-    \sqrt p\,G'(\theta),
-\end{equation}
-while Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement} give uniform stability of the
-Feynman--Kac semigroup.
+% \begin{lem}[Lagwise forgetting of conditional score contributions]
+% \label{lem:lagwise-score-forgetting}
+% Suppose Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement} hold. Then there exist constants
+% $C<\infty$ and $\rho\in(0,1)$, depending only on
+% $M,\bar M,G,\bar G$, such that, uniformly in $n$ and
+% $0\leq r<n$,
+% \begin{equation}
+%     \left\|
+%     H_{n,r}(\theta)
+%     \right\|_2
+%     \leq
+%     C\sqrt p\,G'(\theta)\rho^r.
+%     \label{eq:lagwise-score-forgetting}
+% \end{equation}
+% \end{lem}
 
-The standard first-order expansion of a normalized particle measure
-around its deterministic Feynman--Kac flow gives
-\begin{equation}
-    \left|
-    \E\left[
-    \eta_n^J(h)
-    \right]
-    -
-    \eta_n(h)
-    \right|
-    \leq
-    \frac{C\operatorname{osc}(h)}{J},
-\end{equation}
-uniformly in time. Applying this coordinatewise to the bounded
-lagwise score functional gives
-Equation~(\ref{eq:lagwise-particle-bias}).
+% \begin{proof}
+% Under Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement}, every filtering and backward
+% smoothing kernel admits a uniform minorization. In particular, there
+% exists $\varepsilon_0>0$, depending only on
+% $M,\bar M,G,\bar G$, such that the corresponding Dobrushin
+% coefficient is bounded by
+% \begin{equation}
+%     \beta_{\mathsf{TV}}(B_m)
+%     \leq
+%     1-\varepsilon_0
+%     =:
+%     \rho
+%     <
+%     1
+% \end{equation}
+% uniformly in $m$. By submultiplicativity of the Dobrushin
+% coefficient,
+% \begin{equation}
+%     \beta_{\mathsf{TV}}
+%     \left(
+%     B_{i+1}\cdots B_n
+%     \right)
+%     \leq
+%     \rho^{n-i}.
+%     \label{eq:backward-kernel-contraction}
+% \end{equation}
 
-Likewise, the standard $L^4$ particle approximation inequality gives
-\begin{equation}
-    \left(
-    \E\left|
-    \eta_n^J(h)-\eta_n(h)
-    \right|^4
-    \right)^{1/4}
-    \leq
-    \frac{C\operatorname{osc}(h)}{\sqrt J}.
-\end{equation}
-Applying this coordinatewise and summing over the $p$ coordinates
-gives Equation~(\ref{eq:lagwise-particle-l4}).
-\end{proof}
+% The lag-$r$ score contribution is the difference between two
+% expectations of the bounded score increment at time $n-r$, propagated
+% through $r$ filtering or backward-smoothing steps. Hence, for each
+% coordinate $q=1,\ldots,p$,
+% \begin{align}
+%     \left|
+%     H_{n,r}^{(q)}(\theta)
+%     \right|
+%     &\leq
+%     \operatorname{osc}
+%     \left(
+%     \partial_{\theta_q}
+%     \log g_{n-r}^{\theta}
+%     \right)
+%     \beta_{\mathsf{TV}}
+%     \left(
+%     B_{n-r+1}\cdots B_n
+%     \right)
+%     \nonumber \\
+%     &\leq
+%     C G'(\theta)\rho^r,
+% \end{align}
+% where the first inequality is the standard contraction inequality
+% \begin{equation}
+%     \left|
+%     \mu K(h)-\nu K(h)
+%     \right|
+%     \leq
+%     \operatorname{osc}(h)
+%     \beta_{\mathsf{TV}}(K)
+% \end{equation}
+% for probability measures $\mu,\nu$, a Markov kernel $K$, and a
+% bounded function $h$. Summing the coordinatewise bounds gives
+% \begin{equation}
+%     \left\|
+%     H_{n,r}(\theta)
+%     \right\|_2
+%     \leq
+%     C\sqrt p\,G'(\theta)\rho^r.
+% \end{equation}
+% \end{proof}
 
-We may now state the refined MSE result.
+% The preceding lemma is not an additional model assumption. It is a
+% consequence of the uniform lower and upper bounds already imposed in
+% Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement}.
 
-\begin{thm}[Refined MSE bound for DMOP-$\alpha$]
-\label{thm:refined-dmop-alpha-mse}
-Suppose Assumptions~{\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement} hold, let $\alpha\in[0,1)$, and set
-$\theta=\phi$. Then there exist constants $C<\infty$,
-$\rho\in(0,1)$, and a particle mixing time
-\begin{equation}
-    \tau_J
-    \lesssim
-    \log(J),
-\end{equation}
-such that
-\begin{align}
-    &\E\left\|
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &\leq
-    C pG'(\theta)^2
-    \left[
-    \frac{
-    N\tau_J
-    }{
-    J(1-\alpha)^2
-    }
-    +
-    N^2
-    \left\{
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }
-    +
-    \frac{1}{
-    J(1-\alpha)
-    }
-    \right\}^2
-    \right].
-    \label{eq:refined-dmop-alpha-mse-final}
-\end{align}
-In particular, since $\tau_J\lesssim\log(J)$,
-\begin{align}
-    &\E\left\|
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &\lesssim
-    pG'(\theta)^2
-    \left[
-    \frac{
-    N\log(J)
-    }{
-    J(1-\alpha)^2
-    }
-    +
-    N^2
-    \left\{
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }
-    +
-    \frac{1}{
-    J(1-\alpha)
-    }
-    \right\}^2
-    \right].
-    \label{eq:refined-dmop-alpha-logj}
-\end{align}
-\end{thm}
+% We next record the particle approximation bounds needed below.
 
-\begin{proof}
-For each $n$, define
-\begin{equation}
-    E_n^\alpha(\theta)
-    :=
-    \nabla_\theta\hat\ell_n^\alpha(\theta)
-    -
-    \nabla_\theta\ell_n(\theta).
-\end{equation}
-Then
-\begin{align}
-    &\E\left\|
-    \sum_{n=1}^N E_n^\alpha(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &=
-    \E\left\|
-    \sum_{n=1}^N
-    \left\{
-    E_n^\alpha(\theta)
-    -
-    \E E_n^\alpha(\theta)
-    \right\}
-    \right\|_2^2
-    +
-    \left\|
-    \sum_{n=1}^N
-    \E E_n^\alpha(\theta)
-    \right\|_2^2.
-    \label{eq:refined-exact-bias-variance}
-\end{align}
+% \begin{lem}[Lagwise particle approximation]
+% \label{lem:lagwise-particle-approximation}
+% Under Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement}, let
+% $\widehat H_{n,r}^J(\theta)$ denote the particle approximation of
+% $H_{n,r}(\theta)$. There exists $C<\infty$, independent of
+% $n,r,N,J$, such that
+% \begin{align}
+%     \left\|
+%     \E\widehat H_{n,r}^J(\theta)
+%     -
+%     H_{n,r}(\theta)
+%     \right\|_2
+%     &\leq
+%     \frac{C\sqrt p\,G'(\theta)}{J},
+%     \label{eq:lagwise-particle-bias}
+%     \\
+%     \left(
+%     \E\left\|
+%     \widehat H_{n,r}^J(\theta)
+%     -
+%     \E\widehat H_{n,r}^J(\theta)
+%     \right\|_2^4
+%     \right)^{1/4}
+%     &\leq
+%     \frac{C\sqrt p\,G'(\theta)}{\sqrt J}.
+%     \label{eq:lagwise-particle-l4}
+% \end{align}
+% \end{lem}
 
-We first bound the bias. From
-Equations~(\ref{eq:population-alpha-score}) and
-(\ref{eq:direct-alpha-score-difference}),
-\begin{align}
-    \E E_n^\alpha(\theta)
-    &=
-    \sum_{r=0}^{n-1}
-    \alpha^r
-    \left\{
-    \E\widehat H_{n,r}^J(\theta)
-    -
-    H_{n,r}(\theta)
-    \right\}
-    \nonumber \\
-    &\hspace{5mm}
-    -
-    \sum_{r=1}^{n-1}
-    (1-\alpha^r)H_{n,r}(\theta).
-    \label{eq:per-time-bias-decomposition}
-\end{align}
-Therefore, by Lemmas~\ref{lem:lagwise-score-forgetting} and
-\ref{lem:lagwise-particle-approximation},
-\begin{align}
-    \left\|
-    \E E_n^\alpha(\theta)
-    \right\|_2
-    &\leq
-    \frac{
-    C\sqrt p\,G'(\theta)
-    }{J}
-    \sum_{r=0}^{n-1}\alpha^r
-    +
-    C\sqrt p\,G'(\theta)
-    \sum_{r=1}^{n-1}
-    (1-\alpha^r)\rho^r
-    \nonumber \\
-    &\leq
-    C\sqrt p\,G'(\theta)
-    \left\{
-    \frac{1}{J(1-\alpha)}
-    +
-    \sum_{r=1}^{\infty}
-    (1-\alpha^r)\rho^r
-    \right\}.
-    \label{eq:per-time-bias-before-sum}
-\end{align}
-The remaining series is
-\begin{align}
-    \sum_{r=1}^{\infty}
-    (1-\alpha^r)\rho^r
-    &=
-    \sum_{r=1}^{\infty}\rho^r
-    -
-    \sum_{r=1}^{\infty}(\alpha\rho)^r
-    \nonumber \\
-    &=
-    \frac{\rho}{1-\rho}
-    -
-    \frac{\alpha\rho}{1-\alpha\rho}
-    \nonumber \\
-    &=
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }.
-    \label{eq:exact-lagwise-alpha-series}
-\end{align}
-Consequently,
-\begin{equation}
-    \left\|
-    \E E_n^\alpha(\theta)
-    \right\|_2
-    \leq
-    C\sqrt p\,G'(\theta)
-    \left\{
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }
-    +
-    \frac{1}{
-    J(1-\alpha)
-    }
-    \right\}.
-    \label{eq:refined-per-time-bias}
-\end{equation}
-It follows that
-\begin{align}
-    \left\|
-    \sum_{n=1}^N
-    \E E_n^\alpha(\theta)
-    \right\|_2^2
-    &\leq
-    N^2
-    \max_{1\leq n\leq N}
-    \left\|
-    \E E_n^\alpha(\theta)
-    \right\|_2^2
-    \nonumber \\
-    &\leq
-    C N^2pG'(\theta)^2
-    \left\{
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }
-    +
-    \frac{1}{
-    J(1-\alpha)
-    }
-    \right\}^2.
-    \label{eq:refined-cumulative-bias}
-\end{align}
+% \begin{proof}
+% Each $\widehat H_{n,r}^J(\theta)$ is a normalized
+% Feynman--Kac particle approximation of a bounded score functional.
+% Assumption~{\refAssumpBoundedMeasurement} gives
+% \begin{equation}
+%     \left\|
+%     \nabla_\theta\log g_i^\theta
+%     \right\|_2
+%     \leq
+%     \sqrt p\,G'(\theta),
+% \end{equation}
+% while Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement} give uniform stability of the
+% Feynman--Kac semigroup.
 
-We next bound the centered fluctuation. The lagwise representation is
-\begin{equation}
-    E_n^\alpha(\theta)
-    -
-    \E E_n^\alpha(\theta)
-    =
-    \sum_{r=0}^{n-1}
-    \alpha^r
-    \left\{
-    \widehat H_{n,r}^J(\theta)
-    -
-    \E\widehat H_{n,r}^J(\theta)
-    \right\}.
-    \label{eq:centered-lagwise-representation}
-\end{equation}
-For fixed lags $r,s$, Lemma~S9 and the particle-filter contraction
-bound imply that
-\begin{align}
-    &\left|
-    \E\left[
-    \left\langle
-    \widehat H_{m,r}^J
-    -
-    \E\widehat H_{m,r}^J,
-    \widehat H_{n,s}^J
-    -
-    \E\widehat H_{n,s}^J
-    \right\rangle
-    \right]
-    \right|
-    \nonumber \\
-    &\qquad\leq
-    \frac{
-    CpG'(\theta)^2
-    }{J}
-    a_J\left(
-    \left|n-m\right|-r-s
-    \right)^{1/2},
-    \label{eq:lagwise-covariance-bound}
-\end{align}
-where $a_J(l)=1$ for $l\leq0$ and, for $l>0$,
-\begin{equation}
-    a_J(l)
-    \leq
-    (1-\epsilon)^{
-    \floor{l/(c\log(J))}
-    }.
-\end{equation}
-Moreover,
-\begin{equation}
-    \sum_{l=0}^{\infty}a_J(l)^{1/2}
-    \lesssim
-    \tau_J
-    \lesssim
-    \log(J).
-    \label{eq:particle-mixing-sum}
-\end{equation}
-Equation~(\ref{eq:lagwise-covariance-bound}) follows from
-Davydov's inequality together with the $L^4$ estimate in
-Equation~(\ref{eq:lagwise-particle-l4}).
+% The standard first-order expansion of a normalized particle measure
+% around its deterministic Feynman--Kac flow gives
+% \begin{equation}
+%     \left|
+%     \E\left[
+%     \eta_n^J(h)
+%     \right]
+%     -
+%     \eta_n(h)
+%     \right|
+%     \leq
+%     \frac{C\operatorname{osc}(h)}{J},
+% \end{equation}
+% uniformly in time. Applying this coordinatewise to the bounded
+% lagwise score functional gives
+% Equation~(\ref{eq:lagwise-particle-bias}).
 
-Expanding the centered second moment and using
-Equations~(\ref{eq:centered-lagwise-representation})--%
-(\ref{eq:particle-mixing-sum}), we obtain
-\begin{align}
-    &\E\left\|
-    \sum_{n=1}^N
-    \left\{
-    E_n^\alpha(\theta)
-    -
-    \E E_n^\alpha(\theta)
-    \right\}
-    \right\|_2^2
-    \nonumber \\
-    &\leq
-    \sum_{m,n=1}^N
-    \sum_{r,s\geq0}
-    \alpha^{r+s}
-    \frac{
-    CpG'(\theta)^2
-    }{J}
-    a_J\left(
-    |n-m|-r-s
-    \right)^{1/2}
-    \nonumber \\
-    &\lesssim
-    \frac{
-    CNpG'(\theta)^2\tau_J
-    }{J}
-    \left(
-    \sum_{r=0}^{\infty}\alpha^r
-    \right)^2
-    \nonumber \\
-    &=
-    \frac{
-    CNpG'(\theta)^2\tau_J
-    }{
-    J(1-\alpha)^2
-    }.
-    \label{eq:refined-centered-variance}
-\end{align}
-Combining
-Equations~(\ref{eq:refined-exact-bias-variance}),
-(\ref{eq:refined-cumulative-bias}), and
-(\ref{eq:refined-centered-variance}) proves
-Equation~(\ref{eq:refined-dmop-alpha-mse-final}).
-\end{proof}
+% Likewise, the standard $L^4$ particle approximation inequality gives
+% \begin{equation}
+%     \left(
+%     \E\left|
+%     \eta_n^J(h)-\eta_n(h)
+%     \right|^4
+%     \right)^{1/4}
+%     \leq
+%     \frac{C\operatorname{osc}(h)}{\sqrt J}.
+% \end{equation}
+% Applying this coordinatewise and summing over the $p$ coordinates
+% gives Equation~(\ref{eq:lagwise-particle-l4}).
+% \end{proof}
 
-\begin{cor}[Average-score MSE]
-\label{cor:refined-average-score-mse}
-Under the assumptions of
-Theorem~\ref{thm:refined-dmop-alpha-mse},
-\begin{align}
-    &\E\left\|
-    \frac{1}{N}
-    \left\{
-    \nabla_\theta\hat\ell^\alpha(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\}
-    \right\|_2^2
-    \nonumber \\
-    &\lesssim
-    pG'(\theta)^2
-    \left[
-    \frac{
-    \log(J)
-    }{
-    NJ(1-\alpha)^2
-    }
-    +
-    \left\{
-    \frac{
-    \rho(1-\alpha)
-    }{
-    (1-\rho)(1-\alpha\rho)
-    }
-    +
-    \frac{1}{
-    J(1-\alpha)
-    }
-    \right\}^2
-    \right].
-    \label{eq:refined-average-score-mse-final}
-\end{align}
-\end{cor}
+% We may now state the refined MSE result.
 
-\begin{cor}[Conditions for an $O(N)$ unnormalized MSE]
-\label{cor:linear-n-mse}
-Suppose $\alpha=\alpha_N$ and $J=J_N$ satisfy
-\begin{equation}
-    1-\alpha_N
-    \lesssim
-    N^{-1/2},
-    \label{eq:alpha-linear-n-condition}
-\end{equation}
-\begin{equation}
-    J_N(1-\alpha_N)
-    \gtrsim
-    \sqrt N,
-    \label{eq:particle-bias-linear-n-condition}
-\end{equation}
-and
-\begin{equation}
-    \frac{
-    \log(J_N)
-    }{
-    J_N(1-\alpha_N)^2
-    }
-    \lesssim
-    1.
-    \label{eq:variance-linear-n-condition}
-\end{equation}
-Then
-\begin{equation}
-    \E\left\|
-    \nabla_\theta\hat\ell^{\alpha_N}(\theta)
-    -
-    \nabla_\theta\ell(\theta)
-    \right\|_2^2
-    \lesssim
-    NpG'(\theta)^2.
-\end{equation}
-\end{cor}
+% \begin{thm}[Refined MSE bound for DMOP-$\alpha$]
+% \label{thm:refined-dmop-alpha-mse}
+% Suppose Assumptions~{\refAssumpBoundedProcess} and
+% {\refAssumpBoundedMeasurement} hold, let $\alpha\in[0,1)$, and set
+% $\theta=\phi$. Then there exist constants $C<\infty$,
+% $\rho\in(0,1)$, and a particle mixing time
+% \begin{equation}
+%     \tau_J
+%     \lesssim
+%     \log(J),
+% \end{equation}
+% such that
+% \begin{align}
+%     &\E\left\|
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &\leq
+%     C pG'(\theta)^2
+%     \left[
+%     \frac{
+%     N\tau_J
+%     }{
+%     J(1-\alpha)^2
+%     }
+%     +
+%     N^2
+%     \left\{
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }
+%     +
+%     \frac{1}{
+%     J(1-\alpha)
+%     }
+%     \right\}^2
+%     \right].
+%     \label{eq:refined-dmop-alpha-mse-final}
+% \end{align}
+% In particular, since $\tau_J\lesssim\log(J)$,
+% \begin{align}
+%     &\E\left\|
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &\lesssim
+%     pG'(\theta)^2
+%     \left[
+%     \frac{
+%     N\log(J)
+%     }{
+%     J(1-\alpha)^2
+%     }
+%     +
+%     N^2
+%     \left\{
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }
+%     +
+%     \frac{1}{
+%     J(1-\alpha)
+%     }
+%     \right\}^2
+%     \right].
+%     \label{eq:refined-dmop-alpha-logj}
+% \end{align}
+% \end{thm}
 
-\begin{proof}
-Because $\rho<1$ is independent of $N$ and $J$,
-\begin{equation}
-    \frac{
-    \rho(1-\alpha_N)
-    }{
-    (1-\rho)(1-\alpha_N\rho)
-    }
-    \lesssim
-    1-\alpha_N.
-\end{equation}
-Thus,
-Equations~(\ref{eq:alpha-linear-n-condition}) and
-(\ref{eq:particle-bias-linear-n-condition}) imply that the quantity
-inside braces in
-Equation~(\ref{eq:refined-dmop-alpha-mse-final}) is
-$O(N^{-1/2})$. Its squared contribution is therefore $O(N)$.
-Equation~(\ref{eq:variance-linear-n-condition}) makes the centered
-variance term $O(N)$ as well.
-\end{proof}
+% \begin{proof}
+% For each $n$, define
+% \begin{equation}
+%     E_n^\alpha(\theta)
+%     :=
+%     \nabla_\theta\hat\ell_n^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell_n(\theta).
+% \end{equation}
+% Then
+% \begin{align}
+%     &\E\left\|
+%     \sum_{n=1}^N E_n^\alpha(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &=
+%     \E\left\|
+%     \sum_{n=1}^N
+%     \left\{
+%     E_n^\alpha(\theta)
+%     -
+%     \E E_n^\alpha(\theta)
+%     \right\}
+%     \right\|_2^2
+%     +
+%     \left\|
+%     \sum_{n=1}^N
+%     \E E_n^\alpha(\theta)
+%     \right\|_2^2.
+%     \label{eq:refined-exact-bias-variance}
+% \end{align}
+
+% We first bound the bias. From
+% Equations~(\ref{eq:population-alpha-score}) and
+% (\ref{eq:direct-alpha-score-difference}),
+% \begin{align}
+%     \E E_n^\alpha(\theta)
+%     &=
+%     \sum_{r=0}^{n-1}
+%     \alpha^r
+%     \left\{
+%     \E\widehat H_{n,r}^J(\theta)
+%     -
+%     H_{n,r}(\theta)
+%     \right\}
+%     \nonumber \\
+%     &\hspace{5mm}
+%     -
+%     \sum_{r=1}^{n-1}
+%     (1-\alpha^r)H_{n,r}(\theta).
+%     \label{eq:per-time-bias-decomposition}
+% \end{align}
+% Therefore, by Lemmas~\ref{lem:lagwise-score-forgetting} and
+% \ref{lem:lagwise-particle-approximation},
+% \begin{align}
+%     \left\|
+%     \E E_n^\alpha(\theta)
+%     \right\|_2
+%     &\leq
+%     \frac{
+%     C\sqrt p\,G'(\theta)
+%     }{J}
+%     \sum_{r=0}^{n-1}\alpha^r
+%     +
+%     C\sqrt p\,G'(\theta)
+%     \sum_{r=1}^{n-1}
+%     (1-\alpha^r)\rho^r
+%     \nonumber \\
+%     &\leq
+%     C\sqrt p\,G'(\theta)
+%     \left\{
+%     \frac{1}{J(1-\alpha)}
+%     +
+%     \sum_{r=1}^{\infty}
+%     (1-\alpha^r)\rho^r
+%     \right\}.
+%     \label{eq:per-time-bias-before-sum}
+% \end{align}
+% The remaining series is
+% \begin{align}
+%     \sum_{r=1}^{\infty}
+%     (1-\alpha^r)\rho^r
+%     &=
+%     \sum_{r=1}^{\infty}\rho^r
+%     -
+%     \sum_{r=1}^{\infty}(\alpha\rho)^r
+%     \nonumber \\
+%     &=
+%     \frac{\rho}{1-\rho}
+%     -
+%     \frac{\alpha\rho}{1-\alpha\rho}
+%     \nonumber \\
+%     &=
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }.
+%     \label{eq:exact-lagwise-alpha-series}
+% \end{align}
+% Consequently,
+% \begin{equation}
+%     \left\|
+%     \E E_n^\alpha(\theta)
+%     \right\|_2
+%     \leq
+%     C\sqrt p\,G'(\theta)
+%     \left\{
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }
+%     +
+%     \frac{1}{
+%     J(1-\alpha)
+%     }
+%     \right\}.
+%     \label{eq:refined-per-time-bias}
+% \end{equation}
+% It follows that
+% \begin{align}
+%     \left\|
+%     \sum_{n=1}^N
+%     \E E_n^\alpha(\theta)
+%     \right\|_2^2
+%     &\leq
+%     N^2
+%     \max_{1\leq n\leq N}
+%     \left\|
+%     \E E_n^\alpha(\theta)
+%     \right\|_2^2
+%     \nonumber \\
+%     &\leq
+%     C N^2pG'(\theta)^2
+%     \left\{
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }
+%     +
+%     \frac{1}{
+%     J(1-\alpha)
+%     }
+%     \right\}^2.
+%     \label{eq:refined-cumulative-bias}
+% \end{align}
+
+% We next bound the centered fluctuation. The lagwise representation is
+% \begin{equation}
+%     E_n^\alpha(\theta)
+%     -
+%     \E E_n^\alpha(\theta)
+%     =
+%     \sum_{r=0}^{n-1}
+%     \alpha^r
+%     \left\{
+%     \widehat H_{n,r}^J(\theta)
+%     -
+%     \E\widehat H_{n,r}^J(\theta)
+%     \right\}.
+%     \label{eq:centered-lagwise-representation}
+% \end{equation}
+% For fixed lags $r,s$, Lemma~S9 and the particle-filter contraction
+% bound imply that
+% \begin{align}
+%     &\left|
+%     \E\left[
+%     \left\langle
+%     \widehat H_{m,r}^J
+%     -
+%     \E\widehat H_{m,r}^J,
+%     \widehat H_{n,s}^J
+%     -
+%     \E\widehat H_{n,s}^J
+%     \right\rangle
+%     \right]
+%     \right|
+%     \nonumber \\
+%     &\qquad\leq
+%     \frac{
+%     CpG'(\theta)^2
+%     }{J}
+%     a_J\left(
+%     \left|n-m\right|-r-s
+%     \right)^{1/2},
+%     \label{eq:lagwise-covariance-bound}
+% \end{align}
+% where $a_J(l)=1$ for $l\leq0$ and, for $l>0$,
+% \begin{equation}
+%     a_J(l)
+%     \leq
+%     (1-\epsilon)^{
+%     \floor{l/(c\log(J))}
+%     }.
+% \end{equation}
+% Moreover,
+% \begin{equation}
+%     \sum_{l=0}^{\infty}a_J(l)^{1/2}
+%     \lesssim
+%     \tau_J
+%     \lesssim
+%     \log(J).
+%     \label{eq:particle-mixing-sum}
+% \end{equation}
+% Equation~(\ref{eq:lagwise-covariance-bound}) follows from
+% Davydov's inequality together with the $L^4$ estimate in
+% Equation~(\ref{eq:lagwise-particle-l4}).
+
+% Expanding the centered second moment and using
+% Equations~(\ref{eq:centered-lagwise-representation})--%
+% (\ref{eq:particle-mixing-sum}), we obtain
+% \begin{align}
+%     &\E\left\|
+%     \sum_{n=1}^N
+%     \left\{
+%     E_n^\alpha(\theta)
+%     -
+%     \E E_n^\alpha(\theta)
+%     \right\}
+%     \right\|_2^2
+%     \nonumber \\
+%     &\leq
+%     \sum_{m,n=1}^N
+%     \sum_{r,s\geq0}
+%     \alpha^{r+s}
+%     \frac{
+%     CpG'(\theta)^2
+%     }{J}
+%     a_J\left(
+%     |n-m|-r-s
+%     \right)^{1/2}
+%     \nonumber \\
+%     &\lesssim
+%     \frac{
+%     CNpG'(\theta)^2\tau_J
+%     }{J}
+%     \left(
+%     \sum_{r=0}^{\infty}\alpha^r
+%     \right)^2
+%     \nonumber \\
+%     &=
+%     \frac{
+%     CNpG'(\theta)^2\tau_J
+%     }{
+%     J(1-\alpha)^2
+%     }.
+%     \label{eq:refined-centered-variance}
+% \end{align}
+% Combining
+% Equations~(\ref{eq:refined-exact-bias-variance}),
+% (\ref{eq:refined-cumulative-bias}), and
+% (\ref{eq:refined-centered-variance}) proves
+% Equation~(\ref{eq:refined-dmop-alpha-mse-final}).
+% \end{proof}
+
+% \begin{cor}[Average-score MSE]
+% \label{cor:refined-average-score-mse}
+% Under the assumptions of
+% Theorem~\ref{thm:refined-dmop-alpha-mse},
+% \begin{align}
+%     &\E\left\|
+%     \frac{1}{N}
+%     \left\{
+%     \nabla_\theta\hat\ell^\alpha(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\}
+%     \right\|_2^2
+%     \nonumber \\
+%     &\lesssim
+%     pG'(\theta)^2
+%     \left[
+%     \frac{
+%     \log(J)
+%     }{
+%     NJ(1-\alpha)^2
+%     }
+%     +
+%     \left\{
+%     \frac{
+%     \rho(1-\alpha)
+%     }{
+%     (1-\rho)(1-\alpha\rho)
+%     }
+%     +
+%     \frac{1}{
+%     J(1-\alpha)
+%     }
+%     \right\}^2
+%     \right].
+%     \label{eq:refined-average-score-mse-final}
+% \end{align}
+% \end{cor}
+
+% \begin{cor}[Conditions for an $O(N)$ unnormalized MSE]
+% \label{cor:linear-n-mse}
+% Suppose $\alpha=\alpha_N$ and $J=J_N$ satisfy
+% \begin{equation}
+%     1-\alpha_N
+%     \lesssim
+%     N^{-1/2},
+%     \label{eq:alpha-linear-n-condition}
+% \end{equation}
+% \begin{equation}
+%     J_N(1-\alpha_N)
+%     \gtrsim
+%     \sqrt N,
+%     \label{eq:particle-bias-linear-n-condition}
+% \end{equation}
+% and
+% \begin{equation}
+%     \frac{
+%     \log(J_N)
+%     }{
+%     J_N(1-\alpha_N)^2
+%     }
+%     \lesssim
+%     1.
+%     \label{eq:variance-linear-n-condition}
+% \end{equation}
+% Then
+% \begin{equation}
+%     \E\left\|
+%     \nabla_\theta\hat\ell^{\alpha_N}(\theta)
+%     -
+%     \nabla_\theta\ell(\theta)
+%     \right\|_2^2
+%     \lesssim
+%     NpG'(\theta)^2.
+% \end{equation}
+% \end{cor}
+
+% \begin{proof}
+% Because $\rho<1$ is independent of $N$ and $J$,
+% \begin{equation}
+%     \frac{
+%     \rho(1-\alpha_N)
+%     }{
+%     (1-\rho)(1-\alpha_N\rho)
+%     }
+%     \lesssim
+%     1-\alpha_N.
+% \end{equation}
+% Thus,
+% Equations~(\ref{eq:alpha-linear-n-condition}) and
+% (\ref{eq:particle-bias-linear-n-condition}) imply that the quantity
+% inside braces in
+% Equation~(\ref{eq:refined-dmop-alpha-mse-final}) is
+% $O(N^{-1/2})$. Its squared contribution is therefore $O(N)$.
+% Equation~(\ref{eq:variance-linear-n-condition}) makes the centered
+% variance term $O(N)$ as well.
+% \end{proof}
 
 
 % \begin{cor}[MSE of DMOP-$0$]
