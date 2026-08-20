@@ -541,6 +541,8 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
+\kevin{Suggested assumption edits for the revised supplement: clarify in (A3) that $\nabla_\theta$ is the total derivative through the reparameterized simulator. Add an assumption (A6), ``Second-Order Tangent Stability'': the normalized Feynman--Kac flow and its differentiated MOP recursion admit first- and second-order perturbation expansions; a perturbation introduced $r$ filtering steps in the past contributes at most $C_0\rho^r$ times its size to the first-order conditional-score perturbation and at most $C_0\rho^r$ times its squared size to the second-order remainder, uniformly in time and $\alpha\in[0,1]$, for constants $C_0<\infty$ and $\rho\in(0,1)$. This is the differentiated analogue of strong filter stability. It can be verified by adapting the tangent-semigroup estimates of \citet{delMoral15derivative,tadic18}, for example under uniform bounds on the first two log-derivatives of the initial, transition, and measurement densities together with differentiation under the integral sign. The algorithm remains plug-and-play because it does not evaluate the transition density or its derivatives. The proof uses multinomial resampling; systematic resampling remains the practical default.}
+
 
 %\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
 
@@ -615,12 +617,16 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 \end{thm}
 \arxiv{}{\vspace*{-1ex}}
 
+\kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}, under (A2), (A3), the proposed second-order tangent-stability assumption (A6), multinomial resampling, $\theta=\phi$, and $\alpha\in[0,1)$: $\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell\|_2^2\lesssim pG'(\theta)^2\big[N/\{J(1-\alpha)^2\}+N^2\{\rho(1-\alpha)/((1-\rho)(1-\alpha\rho))+J^{-1}\}^2\big]$, and $\Var(\nabla_\theta\hat\ell^\alpha)\lesssim NpG'(\theta)^2/\{J(1-\alpha)^2\}$. The constant is independent of $N$, $J$, and $\alpha$.}
+
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
 The discount factor, $\alpha$, ensures strong mixing.
 The covariance of the derivative of MOP-$(\alpha,k)$ are controlled with Davydov's inequality and a standard $L^p$ error bound for the particle filter. 
 The MSE bound considers the error between the target derivative and DMOP-$(1,k)$, and the error between DMOP-$(1,k)$ and DMOP-$\alpha$. 
 The latter can be shown to be $\tilde{O}\big(Np \, G'(\theta)^2(k+\psi_k(\alpha))\big)$, and the former can be controlled with a result on the the forgetting of the particle filter from \cite{karjalainen23} and the very same $L^p$ error bound mentioned above. 
+
+\kevin{Suggested replacement proof outline: expand the differentiated particle flow around its deterministic counterpart. Conditional centering removes the first-order sampling terms, while second-order tangent stability makes the remaining $J^{-1}$ contributions geometrically summable. This gives finite-particle bias $O(J^{-1})$ per conditional score, uniformly in time and $\alpha$. The other bias is the population error from discounting historical score contributions and vanishes as $\alpha\uparrow1$. Near one, the leading MSE terms are $N/\{J(1-\alpha)^2\}+N^2(1-\alpha)^2+N^2/J^2$; balancing suggests $1-\alpha\asymp(NJ)^{-1/4}$ and MSE $\lesssim N^{3/2}/\sqrt J+N^2/J^2$.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -640,6 +646,8 @@ The phase transition arises because even though the particle filter has forgetti
 DMOP-$\alpha$ achieves a lower MSE than DMOP-$1$, as $\alpha, k$ can be as large as desired to balance the impact of the last three terms of Equation \ref{eq:mop-mse}.
 We also show that DMOP-$0$ achieves a MSE of $\tilde{O}\big(NpG'(\theta)^2(J^{-1}+(1-\epsilon)^{\lfloor1/c\log(J)\rfloor})\big)$, where the second term corresponds to uncontrolled mixing error.
 Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to reduce said mixing error, leading to uncontrolled asymptotic bias. 
+
+\kevin{Suggested correction to this endpoint discussion: \citet{poyiadjis11} give an asymptotic-variance lower bound that is a positive quadratic polynomial in $N$ under their nondegeneracy condition, not a sharp $N^4/J$ variance law. A generic path-functional upper bound can be $O(N^4/J)$: rescaling an oscillation-one result to an $O(N)$ additive score contributes $N^2$ to MSE, and the path-space expansion can contribute another $N^2$. Thus oscillation normalization alone does not create the quartic power. Under non-cancellation of the DMOP-$0$ population bias and a uniform Poyiadjis nondegeneracy lower bound, the interior choice above is strictly better in rate than both endpoints when $1\ll J\ll N$; these lower-bound qualifications are essential.}
 
 
 
