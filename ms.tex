@@ -535,6 +535,7 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
     \item \textbf{Bounded Process Model.} There exist $\underbar{M}, \bar{M}$ such that $0 < \underbar{M} \leq f_{X_n|X_{n-1}}(x_n | x_{n-1};\theta) \leq \bar{M} < \infty$.\label{assump:bounded-process}
     \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$, and $G'(\theta)$ with $\|\nabla_\theta \log f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right)\|_\infty \leq G'(\theta)< \infty$.\label{assump:bounded-measurement}
     \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, so the MOP-$\alpha$ gradient and Hessian estimates at $\theta=\phi$ are almost surely bounded by $G(\theta)$ and $H(\theta)$ for all $\alpha$.\label{assump:local-bounded-derivative}
+    \kevin{For the finite-difference proof in Section~S5, (A4) should be strengthened locally as follows. For fixed $N$ and baseline $\phi$, there is an open neighborhood $U$ of $\phi$ on which the fixed-seed MOP-$1$ reconstruction is twice continuously differentiable in its evaluation parameter and $\sup_{J\geq1}\sup_{\theta\in U}\|\nabla_\theta^2\hat\ell_J^1(\theta)\|_{\mathrm{op}}<\infty$ almost surely. The baseline, random seed, and first-pass resampling indices are held fixed as the evaluation parameter varies.}
     \item \textbf{Differentiable Density Ratios and Simulator.} The measurement density, \arxiv{\\}{}$f_{Y_n|X_n}(y_n^*|x_n; \theta)$, and simulator have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
 \end{enumerate}
 \arxiv{}{\vspace*{-3ex}}
@@ -589,6 +590,8 @@ As such we directly show the consistency of the MOP-$1$ gradient estimate below.
 
 We present a proof outline here, postponing the full argument to the supplement (Section~\suppSecProofConsistency).
 Assumption \ref{assump:local-bounded-derivative} lets us show uniform equicontinuity of the sequence for almost every $\omega \in \Omega$, allowing us to apply Arzela-Ascoli and Theorem \ref{thm:mop-targeting} to establish uniform convergence for the derivatives as a sequence $(\nabla_\theta \hat\lik_J^1(\theta)(\omega))_{J \in \mathbb{N}}$. This is a sufficient condition for swapping the limit and derivative to show that for almost every $\omega \in \Omega$, $\lim_{J \to \infty} \nabla_\theta \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lim_{J \to \infty} \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lik(\theta).$
+
+\kevin{The Arzel\`a--Ascoli outline above should be replaced. The proof in Section~S5 uses coordinatewise finite differences: Taylor's theorem bounds the difference between $\partial_i\hat\ell_J^1(\phi)$ and $\{\hat\ell_J^1(\phi+h e_i)-\hat\ell_J^1(\phi)\}/h$ by $H^*h/2$. Strong consistency is needed only at the countable collection of points $\phi$ and $\phi+h_r e_i$. Taking $J\to\infty$ and then $h_r\downarrow0$ proves gradient consistency without interchanging a derivative and an unproved uniform limit.}
 
 
 %\subsection{DMOP-$\alpha$ Error, Bias and Variance}
