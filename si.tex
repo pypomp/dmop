@@ -853,35 +853,130 @@ $L^{B,\theta}$ should generally be preferred in practice, since there is no reas
 \section{Proof of Theorem~{\thmMopGradConsistency} via Consistency of Off-Parameter Resampled Gradient Estimates}
 \label{appendix:consistency}
 
+Theorem~\ref{thm:off-parameter-targeting} gives pointwise convergence of
+the MOP-$1$ likelihood estimate. Pointwise convergence of differentiable
+functions does not, by itself, imply convergence of their derivatives. We
+use the uniform Hessian bound in Assumption~{\refAssumpLocalBoundedDerivative}
+to control the difference between a derivative and a finite difference. This
+reduces the proof to strong consistency at a countable collection of fixed
+parameter values.
 
+We first record the deterministic argument used below. Let $e_i$ denote the
+$i$th coordinate vector in $\R^p$.
 
-We now provide a result showing that under sufficient regularity conditions, one can interchange the order of differentiation and expectation of functionals of off-parameter resampled particle estimates, showing that if an off-parameter resampled particle estimate is consistent for some estimand, its derivative is consistent for the derivative of the estimand as well.
+\begin{lem}[Consistency of derivatives from finite differences]
+\label{lem:consistent-derivatives}
+Let $U$ be an open neighborhood of $\phi$. For every $J$, let $F_J$ be a
+random function in $C^2(U)$, and let $F\in C^1(U)$. Suppose that, for every
+fixed $\theta\in U$,
+\begin{equation}
+F_J(\theta)\stackrel{a.s.}{\longrightarrow}F(\theta),
+\label{eq:pointwise-function-convergence}
+\end{equation}
+and that there is a deterministic $H^*<\infty$ such that, almost surely,
+\begin{equation}
+\sup_{J\geq1}\sup_{\theta\in U}
+\left|\frac{\partial^2}{\partial\theta_i^2}F_J(\theta)\right|
+\leq H^*,
+\qquad i=1,\ldots,p.
+\label{eq:uniform-coordinate-hessian-bound}
+\end{equation}
+Then
+\begin{equation}
+\nabla_\theta F_J(\phi)stackrel{a.s.}{\longrightarrow}
+\nabla_\theta F(\phi).
+\label{eq:derivative-convergence}
+\end{equation}
+\end{lem}
 
-One may wonder why this may be necessary, given that we have already shown strong consistency for measurable bounded functionals in Theorem \ref{thm:off-parameter-targeting}. If we require the gradient to be bounded as well, then the gradient is also a bounded functional. The answer is that the strong consistency is for expectations under the filtering distribution, so Theorem \ref{thm:off-parameter-targeting} only establishes strong consistency of the gradient of the estimate to its expectation under the filtering distribution, $\nabla_\theta \eta_n^J(h_\theta)  \stackrel{a.s.}{\to} \eta_n(\nabla_\theta h_\theta)$, which is not a-priori the gradient of the estimand $\nabla_\theta \eta_n(h_\theta)$. We require an interchange of the derivative and expectation, which we show is possible when the particle estimates have two continuous uniformly bounded derivatives over all $J$ below.
-
-\begin{thm}[Off-Parameter Particle Filters Yield Strongly Consistent Estimates of Derivatives of Functionals]
-\label{thm:consistent-derivatives}
-    Let $h_\theta : \gX \to \R$ be a measurable bounded functional of particles, where $\eta_n^J(h_\theta)$ has two continuous derivatives uniformly bounded over all $J$ by $H^*$ for almost every $\omega\in\Omega$ and $\theta \in \Theta$. If it holds that $\eta_n^J(h_\theta) \stackrel{a.s.}{\to} \eta(h_\theta) = h^*_\theta$, then we also have that $\nabla_\theta \eta_n^J(h_\theta)  \stackrel{a.s.}{\to} \eta_n(\nabla_\theta h_\theta) = \nabla_\theta \eta_n(h_\theta) = \nabla_\theta h^*_\theta$. 
-\end{thm}
 \begin{proof}[Proof.]
-    Fix $\omega \in \Omega$. The sequence $(\nabla_\theta \eta_n^J(h_\theta)(\omega))_{J \in \mathbb{N}}$ is uniformly bounded over all $J$, by assumption. The sequence is also uniformly equicontinuous. To see this, by assumption, the second derivative of $\eta_n^J(h_\theta)(\omega)|_{\theta=\theta'}$ is also uniformly bounded over all $J$ for almost every $\omega\in \Omega$ and every $\theta' \in \Theta$. A set of functions with derivatives bounded by the same constant is uniformly Lipschitz, and therefore uniformly equicontinuous. So the sequence $(\eta_n^J(h_\theta)\omega))_{J \in \mathbb{N}}$ is uniformly equicontinuous over $\theta$ for almost every $\omega \in \Omega$. 
-    Explicitly, for almost every $\omega \in \Omega$ and every $\epsilon>0$, there exists some $\delta(\omega)>0$ such that for every $||\theta - \theta'||_{\infty}<\delta$ and every $J \in \mathbb{N}$ we have that
-    \begin{equation}
-    \big||\eta_n^J(h_\theta)(\omega)-\eta_n^J(h_{\theta'})(\omega)\big||_\infty < \epsilon.
-    \end{equation}
-    Then, by Arzela-Ascoli, there exists a uniformly convergent subsequence. We claim that there is only one subsequential limit. When the gradient is bounded, we can treat the gradient as a bounded functional. So by Theorem \ref{thm:off-parameter-targeting} the sequence $(\eta_n^J(h_\theta)(\omega))_{J \in \mathbb{N}}$ converges pointwise for $\theta=\phi$ and almost every $\omega \in \Omega$, and there is therefore only one subsequential limit. The sequence therefore converges uniformly to its limit $\lim_{J \to \infty} \eta_n^J(h_\theta)(\omega).$ Therefore, with uniform convergence for the derivatives established, we can swap the limit and derivative, and obtain that for almost every $\omega \in \Omega$, 
-    \begin{equation}
-    \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega) = \nabla_\theta \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega).
-    \end{equation}
-Again from Theorem \ref{thm:off-parameter-targeting}, we know that
-    \begin{equation}\eta_n^J(h_\theta)(\omega) \to \eta_n(h_\theta) = h^*_\theta\end{equation} for almost every $\omega\in\Omega$.
-    We then have that for almost every $\omega \in \Omega$, 
-    \begin{equation}
-    \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega) = \nabla_\theta \eta_n(h_\theta) = \nabla_\theta h^*_\theta,
-    \end{equation}
-    as we wanted. 
-    \end{proof}
-Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:consistent-derivatives}, where we apply $\eta_n^J (h_\theta) = \hat\lik^1_J(\theta)$, $\eta_n(h_\theta) = \lik(\theta) = h_\theta^*$, and then use the continuous mapping theorem. 
+Since $U$ is open, there is an $h_0>0$ such that
+$\phi+h e_i\in U$ for $0\leq h\leq h_0$ and every $i$. Fix a deterministic
+sequence $h_r\downarrow0$ with $h_r\leq h_0$. For each pair $(i,r)$,
+Equation~(\ref{eq:pointwise-function-convergence}) holds almost surely at
+both $\phi$ and $\phi+h_re_i$. There are only countably many such pairs, so
+the intersection of these probability-one events also has probability one.
+We work on this intersection together with the probability-one event in
+Equation~(\ref{eq:uniform-coordinate-hessian-bound}).
+
+Fix $i$ and $r$. Taylor's theorem applied to the one-dimensional function
+$t\mapsto F_J(\phi+te_i)$ gives a point $\xi_{J,i,r}$ on the line segment
+between $\phi$ and $\phi+h_re_i$ such that
+\begin{equation}
+\frac{F_J(\phi+h_re_i)-F_J(\phi)}{h_r}
+=
+\frac{\partial}{\partial\theta_i}F_J(\phi)
++\frac{h_r}{2}
+\frac{\partial^2}{\partial\theta_i^2}F_J(\xi_{J,i,r}).
+\end{equation}
+It follows from Equation~(\ref{eq:uniform-coordinate-hessian-bound}) that
+\begin{align}
+&\left|
+\frac{\partial}{\partial\theta_i}F_J(\phi)
+-\frac{F(\phi+h_re_i)-F(\phi)}{h_r}
+\right|                                                        \notag\\
+&\quad\leq
+\frac{H^*h_r}{2}
++\frac{|F_J(\phi+h_re_i)-F(\phi+h_re_i)|}{h_r}
++\frac{|F_J(\phi)-F(\phi)|}{h_r}.
+\label{eq:finite-difference-derivative-bound}
+\end{align}
+For fixed $r$, the last two terms converge to zero as $J\to\infty$.
+Therefore,
+\begin{align}
+&\limsup_{J\to\infty}
+\left|
+\frac{\partial}{\partial\theta_i}F_J(\phi)
+-\frac{\partial}{\partial\theta_i}F(\phi)
+\right|                                                        \notag\\
+&\quad\leq
+\frac{H^*h_r}{2}
++\left|
+\frac{F(\phi+h_re_i)-F(\phi)}{h_r}
+-\frac{\partial}{\partial\theta_i}F(\phi)
+\right|.
+\end{align}
+The right hand side converges to zero as $r\to\infty$ because $F$ is
+differentiable at $\phi$. This proves convergence of every coordinate.
+Since $p$ is finite, Equation~(\ref{eq:derivative-convergence}) follows.
+\end{proof}
+
+We now apply Lemma~\ref{lem:consistent-derivatives}. Fix $N$, the baseline
+parameter $\phi$, and the random seed. Thus the first-pass resampling
+indices are held fixed while the evaluation parameter varies. Take
+\begin{equation}
+F_J(\theta)=\hat\ell_J^1(\theta),
+\qquad
+F(\theta)=\ell(\theta).
+\end{equation}
+For $\alpha=1$, Theorem~\ref{thm:off-parameter-targeting} and
+Lemma~\ref{lem:lik-proper-weight} give strong consistency of
+$\hat\lik_J^1(\theta)$ for every fixed $\theta$ in a neighborhood of
+$\phi$. Assumption~{\refAssumpBoundedMeasurement} makes both the particle
+and exact likelihoods strictly positive. The continuous mapping theorem
+therefore gives
+\begin{equation}
+\hat\ell_J^1(\theta)\stackrel{a.s.}{\longrightarrow}\ell(\theta)
+\label{eq:mop-loglik-pointwise}
+\end{equation}
+for every fixed $\theta$ in this neighborhood.
+
+Assumption~{\refAssumpLocalBoundedDerivative} is used here in its local,
+fixed-baseline form: almost surely, the MOP-$1$ reconstruction is twice
+continuously differentiable in the evaluation parameter on a fixed
+neighborhood of $\phi$, and its Hessian is bounded there uniformly over
+$J$. The bound may depend on $N$ and $\phi$, which remain fixed in this
+consistency result. Assumption~(A1) gives the required differentiability
+of $\ell$. Lemma~\ref{lem:consistent-derivatives}, applied to
+Equation~(\ref{eq:mop-loglik-pointwise}), now yields
+\begin{equation}
+\nabla_\theta\hat\ell_J^1(\phi)
+\stackrel{a.s.}{\longrightarrow}
+\nabla_\theta\ell(\phi).
+\end{equation}
+By the construction of DMOP-$1$, the fixed-seed derivative on the left is
+the gradient estimate returned when the evaluation and baseline parameters
+coincide. This proves Theorem~{\thmMopGradConsistency}.
 
 
 \section{Proof of Theorem~{\thmMopBiasvar} (Bias-Variance Analysis)}
@@ -1427,24 +1522,183 @@ Squaring Equations~(\ref{eq:dmop-alpha-conservative-second}) and
 Equation~(\ref{eq:dmop-alpha-conservative-first}) proves the result.
 \end{proof}
 
+\subsection{Sharper Bias-Variance Analysis}
+\label{appendix:sharper-biasvar}
 
-Note that the bound diverges as $\alpha\uparrow1$. That singularity is caused by
-separately bounding the within-window difference and the omitted tail. We will show within the next section that this can be avoided.
+The preceding truncation argument gives a finite-$k$ bound, but it bounds
+two terms separately that cancel as $\alpha$ approaches one. We now work
+directly with the conditional-score increments. This requires a stronger
+stability condition than the mixing assumptions used above. We state the
+condition precisely before applying it.
 
-\section{Sharper Bias-Variance Analysis}
+At $\theta=\phi$, let
+\begin{equation}
+T_{m,j}^{\alpha}
+=
+\left.
+\nabla_\theta\log w_{m,j}^{P,\theta,\alpha}
+\right|_{\theta=\phi}
+\end{equation}
+denote the tangent mark carried by prediction particle $j$ at time $m$.
+The marked particle is $(X_{m,j}^{P,\phi},T_{m,j}^{\alpha})$. Let
+$\mathcal F_{m-1}^J$ be the sigma-field generated by all particles,
+tangent marks, and resampling variables through time $m-1$, immediately
+before the particles at time $m$ are generated. Under multinomial
+resampling, the $J$ marked particles at time $m$ are conditionally
+independent and identically distributed given $\mathcal F_{m-1}^J$.
 
-We now
-analyze the conditional-score bias directly. Write
-$\nabla_\theta\ell_n^\alpha(\theta)$ for the infinite-particle limit of the
-$n$th DMOP-$\alpha$ conditional-score estimate. 
+\begin{aspt}[Second-order stability of the differentiated particle flow]
+\label{aspt:dmop-differentiated-stability}
+There are constants $C<\infty$ and $\varrho\in(0,1)$, independent of
+$m,n,J$, and $\alpha$, with the following properties.
+\begin{enumerate}
+\item The normalized one-step update and its first two total derivatives
+in $\theta$ are well-defined. Their denominators are bounded away from
+zero, and the one-step tangent increments are bounded coordinatewise by
+$CG'(\theta)$.
+\item For $m\leq n$, the first and second functional derivatives of the
+deterministic differentiated flow from the marked prediction law at time
+$m$ to the conditional score at time $n$ have bounded measurable kernel
+representations. The oscillation of the first-order kernel is at most
+\begin{equation}
+CG'(\theta)\left(\alpha^{n-m}+\varrho^{n-m}\right),
+\label{eq:first-order-tangent-stability}
+\end{equation}
+and the second-order kernel is bounded by
+\begin{equation}
+CG'(\theta)\varrho^{n-m}.
+\label{eq:second-order-tangent-stability}
+\end{equation}
+The kernels obtained after future particle variables are integrated out
+are $\mathcal F_{m-1}^J$-measurable.
+\item A single ancestral collision in the path-space implementation adds
+at most $C(n-m)G'(\theta)\varrho^{n-m}$ to the corresponding second-order
+kernel bound. A replacement of one marked offspring at time $m$ changes
+the conditional expectation of the full DMOP-$\alpha$ score by at most
+\begin{equation}
+\frac{CG'(\theta)}{J}
+\sum_{r=0}^{N-m}\left(\alpha^r+\varrho^r\right)
+\leq
+\frac{CG'(\theta)}{J(1-\alpha)}
+\label{eq:one-offspring-influence}
+\end{equation}
+in each coordinate, where the constant in the last inequality may depend
+on $\varrho$.
+\item The deterministic conditional score has the lag decomposition
+\begin{equation}
+\nabla_\theta\ell_n^\alpha(\theta)
+=b_{n,0}(\theta)+\sum_{r=1}^{n}\alpha^r b_{n,r}(\theta),
+\qquad
+\|b_{n,r}(\theta)\|_2
+\leq C\sqrt p\,G'(\theta)\varrho^r,
+\label{eq:population-lag-decomposition}
+\end{equation}
+and $\nabla_\theta\ell_n^1(\theta)=\nabla_\theta\ell_n(\theta)$.
+\end{enumerate}
+\end{aspt}
+
+This is the precise supplementary form of the proposed Assumption~(A6).
+Uniform lower and upper bounds on the model densities, uniform bounds on
+their first two total derivatives, and exponential stability of the first
+two differentiated normalized semigroups are sufficient for the first,
+second, and fourth parts. These are the conditions used in the filter
+derivative arguments of \citet{delMoral15derivative} and
+\citet{tadic18}. Those papers analyze the $O(J^2)$ backward implementation.
+The collision and one-offspring bounds in the third part are the additional
+conditions needed here for the $O(J)$ genealogical implementation. In
+particular, we do not identify the two particle estimators.
+
+We begin with the one-step calculation that produces a weak error of order
+$J^{-1}$. It is stated conditionally so that it can be used at each particle
+update.
+
+\begin{lem}[Differentiated one-step weak error]
+\label{lem:differentiated-one-step-weak-error}
+Let $Z_1,\ldots,Z_J$ be conditionally independent and identically
+distributed given a sigma-field $\mathcal F$, with conditional law $Q$.
+Let $A(z;\theta)$ and $B(z;\theta)$ be scalar functions with one continuous
+derivative in $\theta$ on a neighborhood of $\phi$. Suppose that
+\begin{equation}
+0<b_*leq B(z;\theta)\leq b^*<\infty
+\end{equation}
+and that $A$, $\nabla_\theta A$, and $\nabla_\theta B$ are bounded there by
+a constant $K$. Write
+\begin{equation}
+R_J(\theta)
+=
+\frac{J^{-1}\sum_{j=1}^J A(Z_j;\theta)}
+{J^{-1}\sum_{j=1}^J B(Z_j;\theta)},
+\qquad
+R(\theta)=\frac{Q(A(\cdot;\theta))}{Q(B(\cdot;\theta))}.
+\end{equation}
+Then
+\begin{equation}
+\left\|
+\E\left[\nabla_\theta R_J(\phi)\mid\mathcal F\right]
+-\nabla_\theta R(\phi)
+\right\|_2
+\leq
+\frac{C\sqrt p}{J},
+\label{eq:differentiated-ratio-bias}
+\end{equation}
+where $C$ depends only on $b_*,b^*$, and $K$.
+\end{lem}
+
+\begin{proof}[Proof.]
+Put
+\begin{equation}
+a=Q(A),\quad b=Q(B),\quad c=Q(\nabla_\theta A),
+\quad d=Q(\nabla_\theta B),
+\end{equation}
+where all functions are evaluated at $\phi$, and use bars for the
+corresponding empirical averages. Differentiating the normalized ratio
+gives
+\begin{equation}
+\nabla_\theta R_J(\phi)
+=g(\bar a,\bar b,\bar c,\bar d),
+\qquad
+g(a,b,c,d)=\frac{c}{b}-\frac{ad}{b^2}.
+\label{eq:ratio-gradient-map}
+\end{equation}
+The function $g$ is twice continuously differentiable on the set
+$b\geq b_*$. Its second derivatives are bounded there by a constant that
+depends only on $b_*,b^*$, and $K$. Taylor's theorem with integral
+remainder therefore gives, coordinatewise,
+\begin{align}
+g(\bar a,\bar b,\bar c,\bar d)-g(a,b,c,d)
+={}&Dg(a,b,c,d)
+\begin{pmatrix}
+\bar a-a\\ \bar b-b\\ \bar c-c\\ \bar d-d
+\end{pmatrix}
++\mathcal R_J,
+\label{eq:ratio-gradient-expansion}
+\end{align}
+where
+\begin{equation}
+|\mathcal R_J|
+\leq C\left(
+|\bar a-a|^2+|\bar b-b|^2
++\|\bar c-c\|_2^2+\|\bar d-d\|_2^2
+\right).
+\end{equation}
+Every component of the linear term in
+Equation~(\ref{eq:ratio-gradient-expansion}) has conditional expectation
+zero. Conditional independence and boundedness give a conditional second
+moment of order $J^{-1}$ for each empirical average. Consequently,
+\begin{equation}
+\left\|\E(\mathcal R_J\mid\mathcal F)\right\|_2
+\leq C\sqrt p/J.
+\end{equation}
+Since $g(a,b,c,d)=\nabla_\theta R(\phi)$,
+Equation~(\ref{eq:differentiated-ratio-bias}) follows.
+\end{proof}
 
 \begin{lem}[Uniform particle bias of a DMOP conditional score]
 \label{lem:uniform-dmop-particle-bias}
-Suppose Assumptions~{\refAssumpBoundedProcess},
-{\refAssumpBoundedMeasurement}, and
-{\refAssumpTangentStability} hold and multinomial resampling is used. Then
-there is a constant $C<\infty$, independent of $n$, $J$, and
-$\alpha\in[0,1]$, such that
+Suppose $\theta=\phi$, multinomial resampling is used, and Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+\ref{aspt:dmop-differentiated-stability} hold. Then there is a constant
+$C<\infty$, independent of $n,J$, and $\alpha\in[0,1]$, such that
 \begin{equation}
 \left\|
 \E\nabla_\theta\hat\ell_n^\alpha(\theta)
@@ -1456,52 +1710,55 @@ $\alpha\in[0,1]$, such that
 \end{equation}
 \end{lem}
 
-\begin{proof}
-At $\theta=\phi$, the particles follow the ordinary bootstrap filter. At
-step $m$, for any bounded measurable $h$, its local empirical sampling
-error is
+\begin{proof}[Proof.]
+Fix $n$. For $-1\leq m\leq n$, consider a hybrid construction that uses
+the empirical marked-particle updates through time $m$ and the deterministic
+differentiated updates from time $m+1$ through time $n$. Let
+$H_{m,n}^{\alpha,J}$ be the expectation of its $n$th conditional score.
+Thus
 \begin{equation}
-V_m^J(h)
-:=
-\eta_m^J(h)-\Phi_m(\eta_{m-1}^J)(h).
-\label{eq:local-empirical-error}
-\end{equation}
-Conditional on the particle system through time $m-1$, multinomial
-resampling and propagation make the $J$ particles conditionally
-independent. Consequently,
-\begin{equation}
-\E\left[V_m^J(h)\mid\mathcal F_{m-1}^J\right]=0,
+H_{-1,n}^{\alpha,J}=\nabla_\theta\ell_n^\alpha(\theta),
 \qquad
-\E\left[|V_m^J(h)|^2\mid\mathcal F_{m-1}^J\right]
-\leq\frac{\operatorname{osc}(h)^2}{4J}.
-\label{eq:local-empirical-moments}
+H_{n,n}^{\alpha,J}=\E\nabla_\theta\hat\ell_n^\alpha(\theta).
 \end{equation}
-The initial empirical measure satisfies the same two bounds without
-conditioning.
-
-Telescope the differentiated recursion by replacing, one time at a time,
-the empirical update $\eta_m^J$ by its deterministic update
-$\Phi_m(\eta_{m-1}^J)$. Apply the second-order perturbation expansion in
-Assumption~{\refAssumpTangentStability} to each replacement. The resulting
-first-order term is linear in $V_m^J$ and has conditional expectation zero
-by Equation~(\ref{eq:local-empirical-moments}). The norm of the expected
-second-order remainder generated at time $m$ and observed in conditional
-score $n$ is bounded by
+The difference between two consecutive hybrids is a single local
+empirical update followed by deterministic propagation. Therefore,
 \begin{equation}
-\frac{C\sqrt p\,G'(\theta)}{J}\rho^{n-m}.
-\label{eq:local-second-order-remainder}
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+=
+\sum_{m=0}^{n}
+\left(H_{m,n}^{\alpha,J}-H_{m-1,n}^{\alpha,J}\right).
+\label{eq:hybrid-bias-telescope}
 \end{equation}
-This is the standard weak-error mechanism for normalized Feynman--Kac
-particle measures: the $J^{-1/2}$ first-order errors are centered, so bias
-starts at second order. The only additional point here is that the
-differentiated flow is used; precisely this flow and its second-order
-remainder are covered by Assumption~{\refAssumpTangentStability}. The
-semigroup estimates used by \citet{delMoral15derivative} and
-\citet{tadic18} establish the analogous uniform bounds for the stable
-filter derivative.
 
-Summing Equation~(\ref{eq:local-second-order-remainder}) over the possible
-insertion times gives
+Conditional on $\mathcal F_{m-1}^J$, the marked offspring used by the
+$m$th empirical update are independent and identically distributed. The
+normalized differentiated update has the form in
+Lemma~\ref{lem:differentiated-one-step-weak-error}. Assumption
+{\refAssumpBoundedMeasurement} bounds its denominator away from zero,
+and the first part of Assumption
+\ref{aspt:dmop-differentiated-stability} bounds the differentiated
+numerators. Hence the local differentiated weak defect has norm at most
+$C\sqrt p\,G'(\theta)/J$.
+
+The second part of Assumption
+\ref{aspt:dmop-differentiated-stability} propagates this defect from time
+$m$ to time $n$ with factor $\varrho^{n-m}$. In the genealogical
+implementation, a collision contributes at most an additional factor
+$(n-m)\varrho^{n-m}$. Choose any
+$\varrho_1\in(\varrho,1)$. Since
+\begin{equation}
+\sup_{r\geq0}(r+1)(\varrho/\varrho_1)^r<\infty,
+\end{equation}
+both contributions are bounded by $C\varrho_1^{n-m}$. It follows that
+\begin{equation}
+\left\|H_{m,n}^{\alpha,J}-H_{m-1,n}^{\alpha,J}\right\|_2
+\leq
+\frac{C\sqrt p\,G'(\theta)}{J}\varrho_1^{n-m}.
+\label{eq:one-step-propagated-bias}
+\end{equation}
+Substitution into Equation~(\ref{eq:hybrid-bias-telescope}) gives
 \begin{equation}
 \left\|
 \E\nabla_\theta\hat\ell_n^\alpha(\theta)
@@ -1509,24 +1766,128 @@ insertion times gives
 \right\|_2
 \leq
 \frac{C\sqrt p\,G'(\theta)}{J}
-\sum_{m=0}^{n}\rho^{n-m}
+\sum_{r=0}^{n}\varrho_1^r
 \leq
-\frac{C\sqrt p\,G'(\theta)}{J(1-\rho)}.
+\frac{C\sqrt p\,G'(\theta)}{J(1-\varrho_1)}.
 \end{equation}
-Absorbing $(1-\rho)^{-1}$ into $C$ proves the claim. Uniformity in
-$\alpha$ follows because the inherited tangent is multiplied by
-$\alpha^r\leq1$ and the constants in
-Assumption~{\refAssumpTangentStability} are uniform on $[0,1]$.
+Absorbing $(1-\varrho_1)^{-1}$ into $C$ proves the result.
 \end{proof}
 
-Two aspects of this proof are important. First, it is a weak-bias result;
-it does not imply a time-uniform variance for the genealogical estimator.
-Second, the $O(J^2)$ backward recursion studied by
-\citet{delMoral15derivative,tadic18} is not being identified with DMOP.
-Their stability estimates motivate Assumption~{\refAssumpTangentStability},
-while Equations~(\ref{eq:local-empirical-error})--
-(\ref{eq:local-second-order-remainder}) apply the weak-error expansion to
-the differentiated DMOP recursion itself.
+\begin{lem}[Variance of the discounted genealogical score]
+\label{lem:dmop-alpha-variance}
+Under the conditions of
+Lemma~\ref{lem:uniform-dmop-particle-bias}, for $\alpha\in[0,1)$,
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\lesssim
+\frac{NpG'(\theta)^2}{J(1-\alpha)^2},
+\label{eq:refined-dmop-alpha-variance}
+\end{equation}
+where $\Var(Z)=\E\|Z-\E Z\|_2^2$ for a random vector $Z$.
+\end{lem}
+
+\begin{proof}[Proof.]
+We prove the result coordinatewise. Fix $i$ and write
+$Z_i=\partial_{\theta_i}\hat\ell^\alpha(\theta)$. Let
+$\mathcal F_m^J$ now include all marked particles through time $m$, and
+put $\mathcal F_{-1}^J=\{\varnothing,\Omega\}$. The Doob martingale
+differences
+\begin{equation}
+D_{m,i}
+=
+\E(Z_i\mid\mathcal F_m^J)
+-\E(Z_i\mid\mathcal F_{m-1}^J),
+\qquad m=0,\ldots,N,
+\label{eq:dmop-doob-increments}
+\end{equation}
+are orthogonal in $L^2$, and their sum is $Z_i-\E Z_i$. Hence
+\begin{equation}
+\Var(Z_i)=\sum_{m=0}^{N}\E(D_{m,i}^2).
+\label{eq:dmop-doob-variance}
+\end{equation}
+
+Conditional on $\mathcal F_{m-1}^J$, the $J$ marked offspring at time $m$
+are independent and identically distributed. Let
+$M_{m,i}=\E(Z_i\mid\mathcal F_m^J)$, and let $M_{m,i}^{(j)}$ be the same
+conditional expectation after offspring $j$ is replaced by an independent
+copy. The conditional Efron--Stein inequality gives
+\begin{equation}
+\E(D_{m,i}^2\mid\mathcal F_{m-1}^J)
+\leq
+\frac12\sum_{j=1}^{J}
+\E\left[
+\left(M_{m,i}-M_{m,i}^{(j)}\right)^2
+\mid\mathcal F_{m-1}^J
+\right].
+\label{eq:conditional-efron-stein}
+\end{equation}
+By Equation~(\ref{eq:first-order-tangent-stability}), replacing one
+offspring changes its contribution $r$ steps later by at most
+$CG'(\theta)(\alpha^r+\varrho^r)/J$. Summing over the remaining times
+gives Equation~(\ref{eq:one-offspring-influence}), and therefore
+\begin{equation}
+|M_{m,i}-M_{m,i}^{(j)}|
+\leq
+\frac{CG'(\theta)}{J(1-\alpha)}.
+\end{equation}
+Equations~(\ref{eq:conditional-efron-stein}) and
+(\ref{eq:dmop-doob-variance}) now give
+\begin{equation}
+\Var(Z_i)
+\leq
+\sum_{m=0}^{N}\frac{CG'(\theta)^2}{J(1-\alpha)^2}
+\lesssim
+\frac{NG'(\theta)^2}{J(1-\alpha)^2}.
+\end{equation}
+Summing over $i=1,\ldots,p$ proves
+Equation~(\ref{eq:refined-dmop-alpha-variance}).
+\end{proof}
+
+\begin{lem}[Population discounting bias]
+\label{lem:dmop-population-discount-bias}
+Under Assumption~\ref{aspt:dmop-differentiated-stability},
+\begin{equation}
+\left\|
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\|_2
+\leq
+C\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\label{eq:dmop-population-discount-bias}
+\end{equation}
+\end{lem}
+
+\begin{proof}[Proof.]
+Equation~(\ref{eq:population-lag-decomposition}) gives
+\begin{equation}
+\nabla_\theta\ell_n(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+=
+\sum_{r=1}^{n}(1-\alpha^r)b_{n,r}(\theta).
+\end{equation}
+Therefore,
+\begin{align}
+\left\|
+\nabla_\theta\ell_n(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\|_2
+&\leq
+C\sqrt p\,G'(\theta)
+\sum_{r=1}^{n}(1-\alpha^r)\varrho^r                         \notag\\
+&\leq
+C\sqrt p\,G'(\theta)
+\left(
+\frac{\varrho}{1-\varrho}
+-\frac{\alpha\varrho}{1-\alpha\varrho}
+\right)                                                       \notag\\
+&=
+C\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\end{align}
+\end{proof}
 
 \begin{thm}[Refined MSE bound for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
@@ -1534,10 +1895,6 @@ Under the conditions of
 Lemma~\ref{lem:uniform-dmop-particle-bias}, for
 $\alpha\in[0,1)$ and $\theta=\phi$,
 \begin{align}
-&\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\lesssim
-\frac{NpG'(\theta)^2}{J(1-\alpha)^2},
-\label{eq:refined-dmop-alpha-variance}\\
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
@@ -1548,7 +1905,8 @@ pG'(\theta)^2
 \frac{N}{J(1-\alpha)^2}
 +N^2
 \left\{
-\frac{\rho(1-\alpha)}{(1-\rho)(1-\alpha\rho)}
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
 +\frac{1}{J}
 \right\}^2
 \right].
@@ -1556,117 +1914,143 @@ pG'(\theta)^2
 \end{align}
 \end{thm}
 
-\begin{proof}
-The same local expansion as in the preceding lemma gives the centered
-fluctuation bound. A sampling error introduced at one time has conditional
-second moment $O(pG'(\theta)^2/J)$. Its total influence on all subsequent
-discounted conditional scores is at most
+\begin{proof}[Proof.]
+For a square-integrable random vector $Z$ and a deterministic vector $z$,
 \begin{equation}
-\sum_{r=0}^{\infty}\alpha^r=\frac{1}{1-\alpha}.
+\E\|Z-z\|_2^2
+=
+\E\|Z-\E Z\|_2^2+\|\E Z-z\|_2^2.
+\label{eq:vector-bias-variance-identity}
 \end{equation}
-The first-order local errors are martingale differences, so their
-cross-products vanish before the influences are summed. Adding their
-squared influences over the $N$ insertion times gives
-\begin{equation}
-\E\left\|
-\nabla_\theta\hat\ell^\alpha(\theta)
--\E\nabla_\theta\hat\ell^\alpha(\theta)
-\right\|_2^2
-\lesssim
-\frac{NpG'(\theta)^2}{J(1-\alpha)^2}.
-\label{eq:dmop-centered-score-bound}
-\end{equation}
-The centered second-order remainders are smaller by another factor
-$J^{-1}$ and are absorbed in this bound. This proves
-Equation~(\ref{eq:refined-dmop-alpha-variance}).
-
-It remains to bound the systematic bias. Unrolling the differentiated MOP
-recursion shows that a score contribution inherited over $r$ steps has
-coefficient one for DMOP-$1$ and $\alpha^r$ for DMOP-$\alpha$.
-Assumption~{\refAssumpTangentStability} bounds the effect of that
-contribution on the current conditional score by
-$C\sqrt p\,G'(\theta)\rho^r$. Therefore the per-time population
-discounting bias is at most
+The first term is bounded by
+Lemma~\ref{lem:dmop-alpha-variance}. For the second term, insert the
+population DMOP-$\alpha$ score and use the triangle inequality:
 \begin{align}
-C\sqrt p\,G'(\theta)
-\sum_{r=1}^{\infty}(1-\alpha^r)\rho^r
-&=
-C\sqrt p\,G'(\theta)
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2                                                   \notag\\
+&\quad\leq
+\sum_{n=1}^{N}
+\left\|
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\|_2                                                   \notag\\
+&\qquad+
+\sum_{n=1}^{N}
+\left\|
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\|_2                                                   \notag\\
+&\quad\leq
+CN\sqrt p\,G'(\theta)
 \left\{
-\frac{\rho}{1-\rho}-\frac{\alpha\rho}{1-\alpha\rho}
-\right\}                                                       \notag\\
-&=
-C\sqrt p\,G'(\theta)
-\frac{\rho(1-\alpha)}{(1-\rho)(1-\alpha\rho)}.
-\label{eq:dmop-population-discount-bias}
+\frac{1}{J}
++\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\},
 \end{align}
-Lemma~\ref{lem:uniform-dmop-particle-bias} adds at most
-$C\sqrt p\,G'(\theta)/J$ of finite-particle bias per conditional score.
-Summing these two biases over the $N$ observation times and squaring gives
-the second term in Equation~(\ref{eq:refined-dmop-alpha-mse}). Combining
-it with Equation~(\ref{eq:dmop-centered-score-bound}) proves the result.
+where the last line follows from
+Lemmas~\ref{lem:uniform-dmop-particle-bias} and
+\ref{lem:dmop-population-discount-bias}. Squaring this bound and using
+Equation~(\ref{eq:vector-bias-variance-identity}) proves the theorem.
 \end{proof}
 
-For fixed $\rho<1$ and $\alpha$ near one, the leading terms in
-Equation~(\ref{eq:refined-dmop-alpha-mse}) are
-\begin{equation}
-\frac{N}{J(1-\alpha)^2}
-+N^2(1-\alpha)^2
-+\frac{N^2}{J^2}.
-\label{eq:dmop-leading-tradeoff}
-\end{equation}
-Balancing the first two gives
-\begin{equation}
-1-\alpha\asymp(NJ)^{-1/4}
-\label{eq:dmop-interior-alpha}
-\end{equation}
-and hence
+To make the resulting tradeoff explicit, put $\delta=1-\alpha$. Since
+$1-\alpha\varrho\geq1-\varrho$, the preceding theorem implies
 \begin{equation}
 \operatorname{MSE}_{\alpha}
 \lesssim
 pG'(\theta)^2
-\left(\frac{N^{3/2}}{\sqrt J}+\frac{N^2}{J^2}\right).
+\left\{
+\frac{N}{J\delta^2}
++N^2\delta^2
++\frac{N^2}{J^2}
+\right\},
+\label{eq:dmop-leading-tradeoff}
+\end{equation}
+where $\operatorname{MSE}_{\alpha}$ denotes the expectation on the left
+of Equation~(\ref{eq:refined-dmop-alpha-mse}). The cross term is absorbed
+using $2ab\leq a^2+b^2$. If $NJ\geq1$, the choice
+\begin{equation}
+\delta=(NJ)^{-1/4}
+\label{eq:dmop-interior-alpha}
+\end{equation}
+balances the first two terms and yields
+\begin{equation}
+\operatorname{MSE}_{\alpha}
+\lesssim
+pG'(\theta)^2
+\left(
+\frac{N^{3/2}}{\sqrt J}+\frac{N^2}{J^2}
+\right).
 \label{eq:dmop-interior-mse}
 \end{equation}
 
-\begin{cor}[A regime with a strict interior advantage]
+\begin{cor}[Comparison with the endpoint estimators]
 \label{cor:dmop-interior-advantage}
-In addition to the conditions of
-Theorem~\ref{thm:refined-dmop-alpha-mse}, suppose the nondegeneracy
-condition of \citet{poyiadjis11} gives
-$\operatorname{MSE}_1\gtrsim N^2/J$ uniformly in the joint limit, and
-suppose the omitted historical score for DMOP-$0$ does not cancel, so that
-$\operatorname{MSE}_0\gtrsim N^2$. If $1\ll J\ll N$ and
-$1-\alpha\asymp(NJ)^{-1/4}$, then
+Suppose the conditions of
+Theorem~\ref{thm:refined-dmop-alpha-mse} hold along a joint sequence
+$N,J\to\infty$. Suppose, in addition, that there are constants
+$c_0,c_1>0$ such that along this sequence
+\begin{equation}
+\operatorname{MSE}_0\geq c_0N^2,
+\qquad
+\operatorname{MSE}_1\geq c_1\frac{N^2}{J}.
+\label{eq:endpoint-lower-bound-assumptions}
+\end{equation}
+If $1\ll J\ll N$ and $1-\alpha=(NJ)^{-1/4}$, then
 \begin{equation}
 \operatorname{RMSE}_{\alpha}
 =o(\operatorname{RMSE}_0),
 \qquad
 \operatorname{RMSE}_{\alpha}
-=o(\operatorname{RMSE}_1).
+=o(\operatorname{RMSE}_1),
 \end{equation}
+where $\operatorname{RMSE}_a=\operatorname{MSE}_a^{1/2}$.
 \end{cor}
 
-\begin{proof}
-Relative to the DMOP-$1$ MSE lower bound, the two terms in
+\begin{proof}[Proof.]
+Relative to the second lower bound in
+Equation~(\ref{eq:endpoint-lower-bound-assumptions}), the two terms in
 Equation~(\ref{eq:dmop-interior-mse}) have ratios $\sqrt{J/N}$ and
-$1/J$, respectively. Relative to the DMOP-$0$ MSE lower bound, their
-ratios are $1/\sqrt{NJ}$ and $1/J^2$. All four ratios vanish under
-$1\ll J\ll N$.
+$1/J$. Relative to the first lower bound, their ratios are
+$1/\sqrt{NJ}$ and $1/J^2$. All four ratios converge to zero when
+$1\ll J\ll N$. Taking square roots proves the result.
 \end{proof}
 
-Finally, the normalization issue does not by itself create a quartic
-rate. A current-state result stated for $\operatorname{osc}(h)\leq1$
-scales by homogeneity to RMSE $O(N/\sqrt J)$, and hence MSE
-$O(N^2/J)$, for an $O(N)$ functional. The generic $O(N^4/J)$ upper
-bound arises only when a path-space expansion contributes another factor
-$N$ in RMSE. By contrast, \citet{poyiadjis11} prove a quadratic
-\emph{lower} bound on the path estimator's asymptotic variance under a
-nondegeneracy condition; they do not prove that the quartic generic upper
-bound is a sharp variance law.
+The two endpoint lower bounds in
+Equation~(\ref{eq:endpoint-lower-bound-assumptions}) are assumptions on the
+joint sequence, not consequences of the upper bound in
+Theorem~\ref{thm:refined-dmop-alpha-mse}. The first formalizes the absence
+of cancellation in the DMOP-$0$ population bias. The quadratic lower bound
+on the path estimator's asymptotic variance in \citet{poyiadjis11}
+motivates the second, but their fixed-horizon central limit theorem does not
+by itself establish the uniform finite-$J$ lower bound used here.
 
+\begin{remark}[Oscillation normalization and the path-space factor]
+Suppose a current-state particle theorem gives
+\begin{equation}
+\left\|\eta_N^J(h)-\eta_N(h)\right\|_{L^2}
+\leq \frac{C\operatorname{osc}(h)}{\sqrt J}.
+\end{equation}
+For an additive score $H_N$ with
+$\operatorname{osc}(H_N)=O(N)$, homogeneity gives RMSE
+$O(N/\sqrt J)$ and MSE $O(N^2/J)$. Thus removing an
+$\operatorname{osc}(h)\leq1$ normalization contributes one factor $N^2$
+to the MSE, not two.
 
-
+A path-space bound can contain a separate horizon factor,
+\begin{equation}
+\left\|\rho_N^J(H_N)-\rho_N(H_N)\right\|_{L^2}
+\leq \frac{CN\operatorname{osc}(H_N)}{\sqrt J}.
+\end{equation}
+Substituting $\operatorname{osc}(H_N)=O(N)$ gives RMSE
+$O(N^2/\sqrt J)$ and MSE $O(N^4/J)$. One factor $N$ in RMSE therefore
+comes from the scale of the unnormalized additive score and the other from
+the path-space stability constant. The quadratic lower bound of
+\citet{poyiadjis11} does not assert that this quartic upper bound is sharp.
+\end{remark}
 
 \section{Figures for Bayesian Inference}
 \label{appendix:bayes}
