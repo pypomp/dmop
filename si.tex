@@ -1425,19 +1425,18 @@ $\alpha^{k+1}$, and hence
 Squaring Equations~(\ref{eq:dmop-alpha-conservative-second}) and
 (\ref{eq:dmop-alpha-conservative-third}) and combining them with
 Equation~(\ref{eq:dmop-alpha-conservative-first}) proves the result.
-The divergence of this bound as $\alpha\uparrow1$ is caused by
-separately bounding the within-window difference and the omitted tail;
-the next theorem preserves their cancellation.
 \end{proof}
+
+
+Note that the bound diverges as $\alpha\uparrow1$. That singularity is caused by
+separately bounding the within-window difference and the omitted tail. We will show within the next section that this can be avoided.
 
 \section{Sharper Bias-Variance Analysis}
 
-The truncation proof above treats two cancelling pieces separately. We now
+We now
 analyze the conditional-score bias directly. Write
 $\nabla_\theta\ell_n^\alpha(\theta)$ for the infinite-particle limit of the
-$n$th DMOP-$\alpha$ conditional-score estimate. This is the only additional
-quantity required below; in particular, we do not introduce a separate
-lag-indexed score process.
+$n$th DMOP-$\alpha$ conditional-score estimate. 
 
 \begin{lem}[Uniform particle bias of a DMOP conditional score]
 \label{lem:uniform-dmop-particle-bias}
