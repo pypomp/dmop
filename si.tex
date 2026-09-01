@@ -17,7 +17,8 @@
 \newcommand\refAssumpBoundedProcess{(A2)} %% \label{assump:local-bounded-derivative}
 \newcommand\refAssumpBoundedMeasurement{(A3)} %% \label{assump:bounded-measurement}
 \newcommand\refAssumpLocalBoundedDerivative{(A4)} %% \label{assump:local-bounded-derivative}
-\newcommand\refAssumpTangentStability{(A6)} %% \label{assump:tangent-stability}
+\newcommand\refAssumpDifferentiableSimulator{(A5)} %% \label{assump:diff-meas-and-sim}
+\newcommand\refAssumpPrimitiveInnovation{(A6)}
 \newcommand\refAlgIfad{3}
 \newcommand\refFigNutsEb{6} %% \ref{fig:nuts-eb}
                       
@@ -38,7 +39,6 @@
 \theoremstyle{thmstylethree}%
 \newtheorem{definition}{Definition}
 \newtheorem*{assumptionA6}{Assumption (A6)}
-\newtheorem*{assumptionA7}{Assumption (A7)}
 %\usepackage[doublespacing]{setspace}
 
 \usepackage[inline]{enumitem}
@@ -1332,7 +1332,8 @@ Since this holds for every \(k\le N\), the result follows by minimizing over \(k
 \label{thm:dmop-alpha-truncation-mse}
 Suppose $\alpha\in[0,1)$, $\theta=\phi$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
-{\refAssumpTangentStability} hold, Assumption~(A7) in
+{\refAssumpDifferentiableSimulator} hold, Assumption
+{\refAssumpPrimitiveInnovation} in
 Section~\ref{appendix:sharper-biasvar} holds, and multinomial resampling is
 used.
 Then, for a constant independent of $N,J$, and $\alpha$,
@@ -1413,122 +1414,73 @@ Throughout this section, the observations are fixed. Expectations and
 variances are over the simulator and particle-filter random variables,
 conditional on those observations.
 
-\begin{assumptionA6}[First-Order Model Regularity]
-For every fixed collection of simulator random numbers, the simulated state
-path and the log measurement densities are continuously differentiable in a
-neighborhood of $\phi$. Differentiation may be interchanged with the
-expectations defining the filtering recursion. In addition to the partial
-derivative bound in Assumption {\refAssumpBoundedMeasurement}, the total
-pathwise derivative used by DMOP satisfies, uniformly in $n,j$,
+We use Assumptions {\refAssumpBoundedMeasurement} and
+{\refAssumpDifferentiableSimulator} in the precise pathwise sense already
+required by the differentiated MOP construction. For fixed simulator random
+numbers and fixed resampling indices, Assumption
+{\refAssumpDifferentiableSimulator} says that the recursively simulated
+state path and the composed log measurement densities are continuously
+differentiable in $\theta$ near $\phi$, and that the joint law of the base
+simulator random numbers does not depend on $\theta$. The derivative in the
+last clause of Assumption {\refAssumpBoundedMeasurement} is the resulting
+total derivative:
+uniformly in $n,j$ and in a neighborhood of $\phi$, after enlarging
+$G'(\theta)$ to bound that neighborhood if necessary,
 \begin{equation}
 \left\|
-\left.\nabla_\theta\log g_{n,j}^{A,F,\theta}
-\right|_{\theta=\phi}
+\nabla_\theta\log g_{n,j}^{A,F,\theta}
 \right\|_\infty
-\leq B_1G'(\theta).
+\leq G'(\theta).
 \label{eq:bounded-realized-measurement-mark}
 \end{equation}
-\end{assumptionA6}
-
-We first give sufficient conditions for the two requirements in (A6).
-Suppose a simulator step can be written as
+These two existing assumptions also justify differentiation under the
+finite-horizon simulator expectations used below. Indeed, the product rule
+and Equation~(\ref{eq:bounded-realized-measurement-mark}) give, pathwise,
+\begin{align}
+&\left\|
+\nabla_\theta\prod_{s=1}^t G_s(X_s)
+\right\|_\infty                                                   \notag\\
+&\quad=
+\left\|
+\prod_{s=1}^t G_s(X_s)
+\sum_{s=1}^t\nabla_\theta\log G_s(X_s)
+\right\|_\infty                                                   \notag\\
+&\leq
+\prod_{s=1}^t G_s(X_s)
+\sum_{s=1}^t
+\left\|\nabla_\theta\log G_s(X_s)\right\|_\infty                  \notag\\
+&\leq
+t\bar G^tG'(\theta).
+\label{eq:finite-horizon-product-derivative-bound}
+\end{align}
+The final expression is deterministic and finite for each fixed $t$. For
+each coordinate of $\theta$, the mean-value theorem therefore bounds every
+difference quotient about $\phi$ by the same quantity
+$t\bar G^tG'(\theta)$. The dominated convergence theorem gives
 \begin{equation}
-X_n=\process_n(X_{n-1},U_n;\theta),
-\label{eq:reparameterized-simulator-step}
-\end{equation}
-where the distribution of $U_n$ does not depend on $\theta$. For a
-differentiable test function $q_\theta$ whose derivative is dominated by an
-integrable function, differentiation under the integral and the chain rule
-give
-\begin{align}
-&\nabla_\theta
-\E\{q_\theta(\process_n(x,U_n;\theta))\}                       \notag\\
-&\quad=
 \nabla_\theta
-\int q_\theta(\process_n(x,u;\theta))\,\nu(du)                \notag\\
-&\quad=
-\int
-\nabla_\theta\{q_\theta(\process_n(x,u;\theta))\}\,\nu(du) \notag\\
-&\quad=
-\int
-\left[
-\partial_\theta q_\theta(\process_n(x,u;\theta))
-+
-\nabla_xq_\theta(\process_n(x,u;\theta))
-\nabla_\theta\process_n(x,u;\theta)
-\right]\nu(du)                                               \notag\\
-&\quad=
-\E\left[
-\partial_\theta q_\theta(X_n)
-+\nabla_xq_\theta(X_n)\nabla_\theta X_n
-\mid X_{n-1}=x
+\E_U\left[\prod_{s=1}^tG_s(X_s)\right]
+=
+\E_U\left[
+\nabla_\theta\prod_{s=1}^tG_s(X_s)
 \right].
-\label{eq:pathwise-density-derivative-identity}
-\end{align}
-Applying Equation~(\ref{eq:pathwise-density-derivative-identity})
-successively to the unnormalized filtering numerator and denominator, and
-then applying the quotient rule, identifies the differentiated population
-recursion with the conditional expectation of the pathwise derivative used
-by DMOP. Thus this identification need not be imposed as a separate
-stability assumption; domination sufficient for the displayed interchange
-is enough.
-
-It remains to give primitive conditions for the uniform bound in
-Equation~(\ref{eq:bounded-realized-measurement-mark}). Suppose that, for
-every fixed random seed, the simulator Jacobian with respect to its parent
-state has operator norm at most $\kappa<1$, its parameter Jacobian and the
-derivative of the initial simulated state have norm at most $B_1$, and the
-state and parameter derivatives of the log measurement density have norm at
-most $B_1G'(\theta)$. Here and in the following display, vector norms are
-Euclidean and matrix norms are the induced operator norms. Differentiating
-one simulation step gives
-\begin{align}
-\left\|\nabla_\theta X_{n,j}^{P,\theta}\right\|
-&\leq
-\kappa
-\left\|\nabla_\theta X_{n-1,j}^{F,\theta}\right\|+B_1             \notag\\
-&\leq
-B_1\sum_{s=0}^{n}\kappa^s
-\leq
-\frac{B_1}{1-\kappa}.
-\label{eq:simulator-tangent-geometric-bound}
-\end{align}
-The middle inequality follows by induction from the bound on the initial
-derivative. Multinomial resampling copies the selected state derivative, so
-the same bound holds after resampling. The measurement-density chain rule
-then gives
-\begin{align}
-\left\|\nabla_\theta\log g_{n,j}^{A,F,\theta}\right\|
-&\leq
-\left\|\partial_\theta\log
-f_{Y_n\mid X_n}(y_n^*\mid X_{n,j}^{F,\theta};\theta)\right\|          \notag\\
-&\quad+
-\left\|\nabla_x\log
-f_{Y_n\mid X_n}(y_n^*\mid X_{n,j}^{F,\theta};\theta)\right\|
-\left\|\nabla_\theta X_{n,j}^{F,\theta}\right\|                    \notag\\
-&\leq
-B_1G'(\theta)
-\left(1+\frac{B_1}{1-\kappa}\right).
-\label{eq:primitive-mark-bound}
-\end{align}
-Thus the stated primitive conditions imply
-Equation~(\ref{eq:bounded-realized-measurement-mark}) after enlarging
-$B_1$. They are sufficient, not necessary; the proofs below use only
-Equation~(\ref{eq:bounded-realized-measurement-mark}).
-
-Assumption~{\refAssumpTangentStability} supplies the first-order simulation
-regularity used below. Geometric population forgetting follows from the
-backward-kernel contraction under Assumption
-{\refAssumpBoundedProcess}, and the particle weak-error bound follows from
-the full-genealogy argument in Lemma~\ref{lem:lagwise-weak-error}.
+\label{eq:finite-horizon-differentiation-under-expectation}
+\end{equation}
+Thus the required interchange follows from the clarified Assumptions
+{\refAssumpBoundedMeasurement} and
+{\refAssumpDifferentiableSimulator}; it is not an additional assumption.
+Geometric population forgetting follows from the backward-kernel
+contraction under Assumption {\refAssumpBoundedProcess}, and the particle
+weak-error bound follows from the full-genealogy argument in
+Lemma~\ref{lem:lagwise-weak-error}.
 
 For the path functionals below, evaluated at $\theta=\phi$, we use the
 existing posterior path measure $\rho_t$ on its canonical simulator
 extension. More precisely, let
 $U_0,\ldots,U_t$ be the independent base simulator random variables, let
-$X_0$ be the simulated initial state, generate $X_s$ recursively by
-Equation~(\ref{eq:reparameterized-simulator-step}), and carry the resulting
-pathwise derivatives. For every integrable functional $h$ of these
+$X_0$ be the simulated initial state, generate $X_s$ recursively using the
+manuscript's simulator, and carry the resulting pathwise derivatives. For
+every integrable functional $h$ of these
 quantities, define
 \begin{equation}
 \rho_t(h)
@@ -1648,21 +1600,61 @@ Consequently, define
 \quad 1\leq r<n.
 \label{eq:lag-coefficient-definitions}
 \end{align}
-The simulator-compatibility and differentiation-under-the-integral clauses
-of Assumption {\refAssumpTangentStability} identify the right-hand
-population quantities with the lag coefficients of the deterministic
-differentiated recursion. Thus
-\begin{equation}
+We now verify that the right-hand population quantities are the lag
+coefficients of the deterministic differentiated recursion. Equations~
+(\ref{eq:finite-horizon-differentiation-under-expectation}) and
+(\ref{eq:actual-path-mark}) give, at $\theta=\phi$,
+\begin{align}
+&\nabla_\theta
+\log\E_U\left[\prod_{s=1}^nG_s(X_s)\right]                       \notag\\
+&\quad=
+\frac{
+\E_U\left[
+\prod_{s=1}^nG_s(X_s)\sum_{s=1}^nh_s
+\right]
+}
+{
+\E_U\left[\prod_{s=1}^nG_s(X_s)\right]
+}                                                               \notag\\
+&\quad=
+\sum_{s=1}^n\rho_n(h_s).
+\label{eq:full-population-score-path-average}
+\end{align}
+Subtracting the same identity at time $n-1$ gives
+\begin{align}
+\nabla_\theta\ell_n(\theta)
+&=
+\sum_{s=1}^n\rho_n(h_s)-\sum_{s=1}^{n-1}\rho_{n-1}(h_s)          \notag\\
+&=
+\rho_n(h_n)
++\sum_{r=1}^{n-1}
+\left\{\rho_n(h_{n-r})-\rho_{n-1}(h_{n-r})\right\}               \notag\\
+&=
+\sum_{r=0}^{n-1}\Delta_{n,r}.
+\label{eq:exact-population-conditional-score-path-decomposition}
+\end{align}
+Finally, differentiating the two population weighted averages in the
+deterministic MOP-$\alpha$ recursion and using
+Equation~(\ref{eq:finite-horizon-differentiation-under-expectation}) gives
+\begin{align}
 \nabla_\theta\ell_n^\alpha(\theta)
-=
+&=
+\sum_{r=0}^{n-1}\alpha^r\rho_n(h_{n-r})
+-\sum_{r=1}^{n-1}\alpha^r\rho_{n-1}(h_{n-r})                   \notag\\
+&=
+\rho_n(h_n)
++\sum_{r=1}^{n-1}\alpha^r
+\left\{\rho_n(h_{n-r})-\rho_{n-1}(h_{n-r})\right\}             \notag\\
+&=
 \sum_{r=0}^{n-1}\alpha^r\Delta_{n,r}.
 \label{eq:population-conditional-score-path-decomposition}
-\end{equation}
+\end{align}
 
 \begin{lem}[Lagwise first-derivative forgetting]
 \label{lem:derivative-measure-forgetting}
 Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
-{\refAssumpBoundedMeasurement}, and {\refAssumpTangentStability}, there are
+{\refAssumpBoundedMeasurement}, and {\refAssumpDifferentiableSimulator},
+there are
 constants $C<\infty$ and $\varrho\in(0,1)$ such that, for
 $0\leq r<n$,
 \begin{equation}
@@ -1683,7 +1675,7 @@ Equation~(\ref{eq:bounded-realized-measurement-mark}),
 \begin{equation}
 |h_{k,i}|
 \leq
-B_1G'(\theta).
+G'(\theta).
 \label{eq:population-forgetting-mark-bound}
 \end{equation}
 Because \(h_{k,i}\) is measurable with respect to the canonical extended
@@ -1852,7 +1844,7 @@ Equation~(\ref{eq:population-forgetting-mark-bound}) gives
 &\leq
 2\|H_k\|_\infty                                               \notag\\
 &\leq
-2B_1G'(\theta).
+2G'(\theta).
 \label{eq:conditional-past-mark-oscillation}
 \end{align}
 If \(r=1\), Equation~(\ref{eq:iterated-backward-conditioning}) contains no
@@ -1863,7 +1855,7 @@ backward kernel. If \(r\geq2\), applying Equation~
 \E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=\mathord\cdot\}
 \right]                                                       \notag\\
 &\qquad\leq
-2B_1G'(\theta)
+2G'(\theta)
 \begin{cases}
 1, & r=1,\\
 (1-\epsilon)^{r-1}, & r\geq2.
@@ -1939,7 +1931,7 @@ Equation~(\ref{eq:conditional-past-mark-forgetting}), yields
 }
 {\underbar G}                                                 \notag\\
 &\leq
-\frac{2B_1(\bar G-\underbar G)}{\underbar G}
+\frac{2(\bar G-\underbar G)}{\underbar G}
 G'(\theta)
 \begin{cases}
 1, & r=1,\\
@@ -1980,7 +1972,7 @@ Finally, when \(r=0\), Equation~
 &\leq
 \rho_n(\|h_n\|_2)                                            \notag\\
 &\leq
-\sqrt p\,B_1G'(\theta)                                      \notag\\
+\sqrt p\,G'(\theta)                                         \notag\\
 &\leq
 C\sqrt p\,G'(\theta)\varrho^0.
 \label{eq:current-lag-vector-bound}
@@ -1994,7 +1986,8 @@ Equation~(\ref{eq:derivative-measure-forgetting}).
 \begin{lem}[Full-genealogy bias of a lag coefficient]
 \label{lem:lagwise-weak-error}
 Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
-{\refAssumpBoundedMeasurement}, and {\refAssumpTangentStability}, with
+{\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator}, with
 multinomial resampling, there is a constant independent of \(n,r,J\) such
 that, for \(0\leq r<n\),
 \begin{equation}
@@ -2038,7 +2031,7 @@ such path,
 \leq
 \|h_k\|_\infty
 \leq
-B_1G'(\theta).
+G'(\theta).
 \label{eq:bounded-single-lag-path-functional}
 \end{equation}
 
@@ -2159,14 +2152,13 @@ Equation~(\ref{eq:bounded-single-lag-path-functional}), gives
 &\leq
 C\frac{t+1}{J}\rho_t(|h_{k,i}|)                             \notag\\
 &\leq
-C\frac{t+1}{J}\rho_t\{B_1G'(\theta)\}                    \notag\\
+C\frac{t+1}{J}\rho_t\{G'(\theta)\}                         \notag\\
 &=
-\frac{CB_1G'(\theta)(t+1)}{J}                               \notag\\
+\frac{CG'(\theta)(t+1)}{J}                                 \notag\\
 &\leq
 \frac{CG'(\theta)n}{J},
 \label{eq:chan-one-path-average-bias}
 \end{align}
-where the last line absorbs \(B_1\) into \(C\).
 
 When \(r=0\), we have \(k=n\). The first line of
 Equation~(\ref{eq:lag-coefficient-definitions}) and
@@ -2202,11 +2194,11 @@ Equation~(\ref{eq:chan-one-path-average-bias}) at the two times gives
 +
 \left|\E m(\xi_{n-1})(h_{k,i})-\rho_{n-1}(h_{k,i})\right|   \notag\\
 &\leq
-\frac{CB_1G'(\theta)n}{J}
+\frac{CG'(\theta)n}{J}
 +
-\frac{CB_1G'(\theta)(n-1)}{J}                               \notag\\
+\frac{CG'(\theta)(n-1)}{J}                                  \notag\\
 &\leq
-\frac{2CB_1G'(\theta)n}{J}                                  \notag\\
+\frac{2CG'(\theta)n}{J}                                     \notag\\
 &\leq
 \frac{CG'(\theta)n}{J},
 \label{eq:chan-path-bias-coordinate}
@@ -2234,36 +2226,36 @@ for every admissible \(t\) that
 &\leq
 m(\xi_t)(|h_{k,i}|)
 \leq
-B_1G'(\theta),
+G'(\theta),
 \label{eq:small-j-empirical-bound}
 \\
 |\rho_t(h_{k,i})|
 &\leq
 \rho_t(|h_{k,i}|)
 \leq
-B_1G'(\theta).
+G'(\theta).
 \label{eq:small-j-population-bound}
 \end{align}
 Thus, for \(r=0\),
 \begin{equation}
 \left|\E\Delta_{n,0,i}^J-\Delta_{n,0,i}\right|
 \leq
-2B_1G'(\theta),
+2G'(\theta),
 \end{equation}
 whereas, for \(1\leq r<n\), Equation~
 (\ref{eq:chan-lag-bias-identity}) gives
 \begin{equation}
 \left|\E\Delta_{n,r,i}^J-\Delta_{n,r,i}\right|
 \leq
-4B_1G'(\theta).
+4G'(\theta).
 \end{equation}
 The latter bound is valid in both cases. Therefore
 \begin{align}
 \left\|\E\Delta_{n,r}^J-\Delta_{n,r}\right\|_2
 &\leq
-4B_1\sqrt p\,G'(\theta)                                     \notag\\
+4\sqrt p\,G'(\theta)                                        \notag\\
 &<
-4CB_1\sqrt p\,G'(\theta)\frac{n}{J}                         \notag\\
+4C\sqrt p\,G'(\theta)\frac{n}{J}                            \notag\\
 &\leq
 \frac{C\sqrt p\,G'(\theta)n}{J},
 \label{eq:chan-small-particle-case}
@@ -2344,7 +2336,7 @@ n\frac{C\sqrt p\,G'(\theta)n}{J}
 \end{align}
 which proves Equation~(\ref{eq:undiscounted-dmop-particle-bias}).
 \end{proof}
-\begin{assumptionA7}[Primitive-Innovation Continuation Stability]
+\begin{assumptionA6}[Primitive-Innovation Continuation Stability]
 Suppose $\theta=\phi$, $\alpha\in[0,1)$, and multinomial resampling is used.
 Represent the particle randomness, in chronological order, by independent
 primitive blocks $\mathcal U_1,\ldots,\mathcal U_K$, where
@@ -2396,10 +2388,11 @@ almost surely,
 \frac{CG'(\theta)}{J(1-\alpha)}.
 \label{eq:finite-particle-continuation-stability}
 \end{equation}
-\end{assumptionA7}
+\end{assumptionA6}
 
-Assumption~(A7) concerns the finite-$J$, $O(J)$ interacting genealogy and
-separates the two sources of randomness within each filtering time: the
+Assumption {\refAssumpPrimitiveInnovation} concerns the finite-$J$, $O(J)$
+interacting genealogy and separates the two sources of randomness within
+each filtering time: the
 independent propagation variables and the independent multinomial-resampling
 uniforms. In particular, it does not treat the after-resampling particles as
 conditionally independent before the shared random prediction cloud has
@@ -2408,17 +2401,19 @@ Lemmas~\ref{lem:derivative-measure-forgetting}--
 \ref{lem:discounted-dmop-particle-bias} derive deterministic forgetting,
 full-genealogy weak bias, and discounted particle bias under Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
-{\refAssumpTangentStability}. The time-uniform results of
+{\refAssumpDifferentiableSimulator}. The time-uniform results of
 \citet{delMoral15derivative,tadic18} establish error and stability bounds for
-their $O(J^2)$ backward derivative estimator; they do not imply (A7) for
-DMOP. Assumption~(A7) is used only for the variance bound below.
+their $O(J^2)$ backward derivative estimator; they do not imply Assumption
+{\refAssumpPrimitiveInnovation} for DMOP. Assumption
+{\refAssumpPrimitiveInnovation} is used only for the variance bound below.
 
 \begin{lem}[Variance of the discounted genealogical score]
 \label{lem:dmop-alpha-variance}
 Suppose $\theta=\phi$, $\alpha\in[0,1)$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement},
-{\refAssumpTangentStability}, and (A7) hold, and multinomial resampling is
-used. Then
+{\refAssumpDifferentiableSimulator}, and
+{\refAssumpPrimitiveInnovation} hold, and multinomial resampling is used.
+Then
 \begin{equation}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
 \lesssim
@@ -2430,7 +2425,8 @@ where $\Var(Z)=\E\|Z-\E Z\|_2^2$ for a random vector $Z$.
 
 \begin{proof}[Proof.]
 We prove the result coordinatewise. Fix $i$ and use the primitive blocks,
-filtration, and conditional expectations in Assumption~(A7). Equations~
+filtration, and conditional expectations in Assumption
+{\refAssumpPrimitiveInnovation}. Equations~
 (\ref{eq:conditional-score-path-decomposition}) and
 (\ref{eq:bounded-realized-measurement-mark}) give
 \begin{align}
@@ -2438,11 +2434,11 @@ filtration, and conditional expectations in Assumption~(A7). Equations~
 &\leq
 \sum_{n=1}^N
 \left\{
-B_1G'(\theta)
-+2B_1G'(\theta)\sum_{r=1}^{n-1}\alpha^r
+G'(\theta)
++2G'(\theta)\sum_{r=1}^{n-1}\alpha^r
 \right\}                                                       \notag\\
 &\leq
-NB_1G'(\theta)
+NG'(\theta)
 \left\{1+\frac{2}{1-\alpha}\right\}
 <\infty.
 \label{eq:dmop-coordinate-square-integrability}
@@ -2501,7 +2497,8 @@ and using Equation~(\ref{eq:dmop-doob-orthogonality}) give
 \label{eq:dmop-doob-variance}
 \end{equation}
 
-We next relate each increment to the replacement in Assumption~(A7).
+We next relate each increment to the replacement in Assumption
+{\refAssumpPrimitiveInnovation}.
 Conditional on $\mathcal H_{q-1}^J$, the original block $\mathcal U_q$ and
 its copy $\mathcal U_q'$ are independent and have the same distribution.
 Since all later blocks are integrated out in the definitions of
@@ -2556,7 +2553,8 @@ Equations~(\ref{eq:replacement-cross-term-zero})--
 2\E(D_{q,i}^2\mid\mathcal H_{q-1}^J).
 \label{eq:replacement-doob-identity}
 \end{align}
-Assumption~(A7) and Equation~(\ref{eq:replacement-doob-identity}) therefore
+Assumption {\refAssumpPrimitiveInnovation} and
+Equation~(\ref{eq:replacement-doob-identity}) therefore
 imply, almost surely,
 \begin{align}
 \E(D_{q,i}^2\mid\mathcal H_{q-1}^J)
@@ -2670,8 +2668,9 @@ C\sqrt p\,G'(\theta)
 \label{thm:refined-dmop-alpha-mse}
 Suppose the observations are fixed, $\theta=\phi$, $\alpha\in[0,1)$,
 Assumptions {\refAssumpBoundedProcess},
-{\refAssumpBoundedMeasurement}, {\refAssumpTangentStability}, and (A7)
-hold, and multinomial resampling is used. Then there are
+{\refAssumpBoundedMeasurement}, {\refAssumpDifferentiableSimulator}, and
+{\refAssumpPrimitiveInnovation} hold, and multinomial resampling is used.
+Then there are
 \(\varrho\in(0,1)\) and \(C<\infty\), independent of \(N,J\), and
 \(\alpha\), such that
 \begin{align}
@@ -2830,7 +2829,8 @@ Suppose the conditions of
 Theorem~\ref{thm:refined-dmop-alpha-mse} hold along a joint sequence
 $N,J\to\infty$. Suppose also that the constants in Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement},
-{\refAssumpTangentStability}, and (A7), and the constant in Equation~
+{\refAssumpDifferentiableSimulator}, and
+{\refAssumpPrimitiveInnovation}, and the constant in Equation~
 (\ref{eq:conditional-integrated-genealogy-bound}), can be chosen uniformly
 along this sequence, with
 \begin{equation}
@@ -2929,8 +2929,9 @@ $1\ll J\ll N$. Taking square roots proves the result.
 \end{proof}
 
 Equation~(\ref{eq:conditional-integrated-genealogy-bound}) is not a
-consequence of Assumption~{\refAssumpTangentStability}. The deterministic
-filter-derivative stability theorem of \citet{tadicHigher20} and the
+consequence of Assumptions {\refAssumpBoundedMeasurement} and
+{\refAssumpDifferentiableSimulator}. The deterministic filter-derivative
+stability theorem of \citet{tadicHigher20} and the
 time-uniform results for the $O(J^2)$ backward derivative estimator
 \citep{delMoral15derivative,tadic18} do not establish it for the $O(J)$
 DMOP genealogy. The finite-horizon result of \citet{chanDelMoral18} gives
@@ -2941,7 +2942,8 @@ depends on the earlier genealogy. In particular, that result does not give
 the geometrically decreasing factor in
 Equation~(\ref{eq:conditional-integrated-genealogy-bound}). Consequently,
 the corollary records precisely the additional particle-level estimate
-needed for the sharper regime; it is not claimed under (A6)--(A7) alone.
+needed for the sharper regime; it is not claimed under Assumptions
+{\refAssumpBoundedProcess}--{\refAssumpPrimitiveInnovation} alone.
 
 The two endpoint lower bounds in
 Equation~(\ref{eq:endpoint-lower-bound-assumptions}) are assumptions on the
