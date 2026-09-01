@@ -889,8 +889,8 @@ Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:co
 
 
 In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
-The earlier truncation argument is retained below in the source only for
-comparison. A differentiable particle includes its location and tangent,
+The earlier truncation argument is retained below for comparison. A
+differentiable particle includes its location and tangent,
 so the particle-system forgetting result applies to the score functionals
 carried by that particle. With the manuscript's convention that
 $\lesssim$ suppresses the particle-system mixing-time factor, this gives
@@ -899,7 +899,6 @@ the $N/J$-times-an-$\alpha$-factor variance bound in Theorem~
 \ref{appendix:sharper-biasvar} gives the complete proof, together with a
 historical direct bound that remains useful at $\alpha=1$.
 
-\iffalse
 First, we note the following relation between the Dobrushin contraction coefficient and the alpha-mixing coefficients in our context below.
 \begin{lem}
     \label{lem:dobrushin-implies-alpha-mixing}
@@ -1336,10 +1335,6 @@ Since this holds for every \(k\le N\), the result follows by minimizing over \(k
 % \Var\big(\nabla_\theta \hat\ell^\alpha(\theta)\big) \lesssim \min_{k\leq N} \left(\frac{k^2 \, G'(\theta)^2Np}{(1-\alpha)^2J} + \frac{\alpha^{2k}}{(1-\alpha)^2}N^2 p \, G'(\theta)^2 \right).\end{equation}
 \end{proof}
 
-
-\fi
-\addtocounter{lem}{1}
-\addtocounter{thm}{2}
 
 \begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
 \label{thm:dmop-alpha-truncation-mse}
@@ -2051,10 +2046,10 @@ Consequently, the terminal path-particle empirical measure is pathwise equal
 to \(m(\xi_t)\), not merely equal to it in distribution.
 
 We verify Assumption A1 of \citet{chanDelMoral18} for this particle model.
-Let \(0\leq a\leq b\leq t+1\), and let \(z\) and \(z'\) be two extended
-path prefixes whose last physical states are \(x_a\) and \(x'_a\),
+Let \(0\leq a\leq b\leq t+1\), and let \(z\) and \(z'\) be two
+path prefixes whose last particle states are \(x_a\) and \(x'_a\),
 respectively. As noted above, the future normalizer depends on each prefix
-only through that last physical state.
+only through that last particle state.
 If \(a=b\), then
 \begin{equation}
 Q_{a,a}(1)(z)=Q_{a,a}(1)(z')=1.
@@ -2507,18 +2502,22 @@ It remains to prove the sharper $\alpha$-dependent form. The time-uniform
 first-order weak-bias expansion for a bootstrap particle filter under
 strong mixing \citep[Section~7.4.3]{delMoral04} gives, for every bounded
 real function $f$ of a current differentiable particle and every $t$,
-\begin{equation}
+\begin{align}
 \left|
-\E\eta_t^J(f)-\eta_t(f)
+\E m(\xi_t)(f)-\rho_t(f)
 \right|
-\leq
+&\leq
+\frac{C\operatorname{osc}(f)}{J}
+\sum_{l=0}^{t}\varrho^l                                      \notag\\
+&\leq
 \frac{C}{J}\operatorname{osc}(f).
 \label{eq:uniform-current-particle-weak-bias}
-\end{equation}
-The uniformity in $t$ can be seen directly in the cited first-order
-expansion. Assumption~{\refAssumpBoundedProcess} bounds the contribution
-of a one-step sampling error inserted $l$ steps in the past by
-$C\varrho^l\operatorname{osc}(f)/J$. Hence
+\end{align}
+The first inequality is the cited first-order telescoping expansion:
+Assumption~{\refAssumpBoundedProcess} bounds the contribution of a
+one-step sampling error inserted $l$ steps in the past by
+$C\varrho^l\operatorname{osc}(f)/J$. The second inequality follows from
+the explicit geometric sum
 \begin{align}
 \sum_{l=0}^{t}
 \frac{C\varrho^l}{J}\operatorname{osc}(f)
@@ -2995,11 +2994,11 @@ of \citet{chanDelMoral18} follows from the explicit calculation
 \label{eq:chan-mixing-sum}
 \end{align}
 
-It remains to verify the other hypotheses of that result.  Let $z$ and
-$z'$ be two seed--state--tangent path prefixes through time $a$, with last
-physical states $x_a$ and $x'_a$.  Future potentials and physical-state
-transitions depend on these prefixes only through their last physical
-states, so, for $a\leq b\leq t+1$,
+It remains to verify the other hypotheses of that result. Let $z$ and
+$z'$ be two particle-path prefixes through time $a$, with last particle
+states $x_a$ and $x'_a$. Future potentials and transitions depend on these
+prefixes only through their last particle states, so, for
+$a\leq b\leq t+1$,
 \begin{align}
 Q_{a,b}(1)(z)
 &=Q_{a,b}(1)(x_a),
@@ -3027,8 +3026,8 @@ Assumption {\refAssumpBoundedMeasurement} gives, at every selection time,
 \end{equation}
 Thus Equations~(\ref{eq:chan-conditional-terminal-contraction})--
 (\ref{eq:historical-uniform-potential-bounds}) verify Assumptions~(A1)--
-(A2) of \citet{chanDelMoral18} for the physical model.  For
-$q\in\{1,2\}$ and every $0\leq F\leq1$ on $q$ extended paths, positivity
+(A2) of \citet{chanDelMoral18} for the particle model. For
+$q\in\{1,2\}$ and every $0\leq F\leq1$ on $q$ particle paths, positivity
 and Equation~(\ref{eq:historical-extended-normalizer-identity}) give
 \begin{align}
 0
@@ -3045,8 +3044,8 @@ Markov kernels, and hence are positive and send $1$ to $1$.  Equation~
 (\ref{eq:marked-historical-termwise-bound}) therefore remains valid after
 every coalescence pattern, term by term.  Together with Equation~
 (\ref{eq:historical-uniform-normalizer-ratio}), this shows that every bound
-in their Lemma~C.1 and Proposition~C.2 is unchanged by the seed and tangent
-marks; no total-variation contraction of those marks is invoked.
+in their Lemma~C.1 and Proposition~C.2 is unchanged when the bounded
+tangent functional is evaluated on the particle paths.
 
 Apply the coalescent proof of Theorem~3.5 of \citet{chanDelMoral18} to
 this marked historical model at the appended horizon $t+1$.  Replacing
@@ -3378,7 +3377,9 @@ differentiable particle clouds at times $n-1$ and $n$. Theorem~3 of
 \citet{karjalainen23}, together with the elementary fact that passing to
 a measurable functional can only reduce the generated $\sigma$-algebra
 and hence cannot increase a strong-mixing coefficient, therefore gives,
-for $l\geq1$,
+for some $\epsilon\in(0,1)$ and $c<\infty$ depending only on the bounds
+in Assumptions~{\refAssumpBoundedProcess}--
+{\refAssumpBoundedMeasurement}, and for $l\geq1$,
 \begin{equation}
 a(l)
 \leq
@@ -4293,27 +4294,26 @@ pG'(\theta)^2
 \right\}^2
 \right],
 \label{eq:direct-dmop-alpha-mse-sharp}
-\\
+\end{align}
+For $\alpha<1$, this gives
+\begin{align}
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
 \right\|_2^2                                                   \notag\\
-&\quad\leq
-CpG'(\theta)^2
-\min\left[
-N^2,
-\frac{N^3}{J}
+&\quad\lesssim
+pG'(\theta)^2\left[
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 \right\}^2
 \right].
-\label{eq:direct-dmop-alpha-mse}
+\label{eq:direct-dmop-alpha-mse-simplified}
 \end{align}
-Thus Equation~(\ref{eq:direct-dmop-alpha-mse-sharp}) gives the sharper
-$N/J$-times-an-$\alpha$-factor argument, while Equation~
-(\ref{eq:direct-dmop-alpha-mse}) retains the historical direct cap near
-$\alpha=1$.
+In particular, the variance contribution is
+$N/[J(1-\alpha)^2]$ for fixed $\alpha<1$.
 \end{prop}
 
 \begin{proof}[Proof.]
@@ -4376,7 +4376,14 @@ $(a+b+c)^2\leq3(a^2+b^2+c^2)$. Squaring Equation~
 (\ref{eq:direct-sharp-l2-three-bounds}) and applying this inequality
 proves Equation~(\ref{eq:direct-dmop-alpha-mse-sharp}).
 
-For completeness, we next prove the historical direct cap. Summing
+Applying the geometric-sum bounds in Equation~
+(\ref{eq:refined-mse-geometric-simplifications}) proves Equation~
+(\ref{eq:direct-dmop-alpha-mse-simplified}).
+\end{proof}
+
+\begin{remark}[Coarse historical direct cap]
+For comparison, the historical occupation-measure argument gives a
+weaker endpoint-safe cap. Summing
 Equation~(\ref{eq:historical-coordinate-mse}) over the $p$ coordinates
 gives
 \begin{equation}
@@ -4528,8 +4535,28 @@ give, exactly as in Equation~
 \end{equation}
 Combining Equations~(\ref{eq:direct-dmop-alpha-mse-before-cap}) and
 (\ref{eq:direct-total-deterministic-cap}), and enlarging $C$, proves
-Equation~(\ref{eq:direct-dmop-alpha-mse}).
-\end{proof}
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\leq
+CpG'(\theta)^2
+\min\left[
+N^2,
+\frac{N^3}{J}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:direct-dmop-alpha-mse}
+\end{equation}
+This is not the rate asserted by Proposition~
+\ref{prop:direct-dmop-alpha-mse}; it is retained only as a coarse
+historical comparison, particularly at the singular endpoint
+$\alpha=1$.
+\end{remark}
 
 \begin{remark}[Relation to the direct historical bound of Del Moral and
 Doucet]
@@ -4555,20 +4582,20 @@ assumptions.  By contrast, Equations~
 (\ref{eq:historical-particle-second-moment}) give RMSE
 $O(N^{3/2}/\sqrt J)$ for the present bounded score functional and hence
 the sharper $O(N^3/J)$ direct MSE in Proposition~
-\ref{prop:direct-dmop-alpha-mse}.  The direct proof removes the redundant
-$N^4/J^2$ term, but it does not remove the remaining historical factor
-$N$: that improvement still requires signed cross-time covariance control
-or stability of the inherited tangent.
+\ref{prop:direct-dmop-alpha-mse}. The current-particle argument in the
+first part of that proposition is sharper for $\alpha<1$ and agrees with
+the $N^3/J$ historical order at $\alpha=1$. Improving its
+$(1-\alpha)^{-2}$ factor to $(1-\alpha)^{-1}$ requires the signed
+two-time covariance control described next; it is not a separate
+tangent-stability question.
 \end{remark}
 
-\begin{remark}[Why the generic historical bound is cubic]
-The factor $N^3/J$ in Theorem~\ref{thm:refined-dmop-alpha-mse} is a
-generic upper bound, not a claim that the variance is always cubic.  The
+\begin{remark}[Why the endpoint historical bound is cubic]
+The factor $N^3/J$ is the $\alpha=1$ endpoint, not the variance order for
+every $\alpha$. The
 historical occupation-measure theorem gives variance $O(N/J)$ for a
 norm-one path functional.  At $\alpha=1$, the terminal score is one path
-functional with norm $O(NG'(\theta))$; for general $\alpha$, the
-summation-by-parts calculation gives the same uniform order.
-Homogeneity therefore gives
+functional with norm $O(NG'(\theta))$. Homogeneity therefore gives
 \begin{equation}
 \frac{N}{J}\{NG'(\theta)\}^2
 =
@@ -4580,47 +4607,29 @@ constant.  This is the same calculation carried out explicitly in
 Equations~(\ref{eq:full-score-historical-l2-before-sum})--
 (\ref{eq:historical-vector-variance}).
 
-The population result in Lemma~\ref{lem:derivative-measure-forgetting}
-does not remove the historical factor.  It proves geometric decay of the
-deterministic coefficient $\Delta_{n,r}$, whereas the required variance
-calculation concerns centered finite-particle coefficients
-$\Delta_{n,r}^J$.  The particle-cloud contraction of
-\citet{karjalainen23} cannot be substituted: it acts on the current
-physical cloud, not on the inherited simulator derivative, and its
-displayed blocks have length $O(\{\log J\})$.
-
-The current-cloud covariance calculation elsewhere in this supplement
-therefore supplies a useful template but not the missing result.  Even
-if the centered DMOP-$0$ increment were a function of the current physical
-cloud and its fourth centered moment had the usual particle order,
-Davydov's inequality and the displayed contraction of
-\citet{karjalainen23} would give, for $J\geq2$,
+For the differentiable particle, the tangent and score accumulator are
+measurable particle functionals. The centered particle $L^4$ bound,
+Davydov's inequality, and particle-system mixing therefore give the
+stronger finite-$\alpha$ result already proved in Equation~
+(\ref{eq:conditional-score-variance-with-mixing-time}):
 \begin{align}
-\left|\Cov\left(
-\partial_{\theta_i}\hat\ell_m^0(\theta),
-\partial_{\theta_i}\hat\ell_n^0(\theta)
-\right)\right|
-&\leq
-\frac{CG'(\theta)^2}{J}
-(1-\epsilon)^{\frac12\left\lfloor
-|n-m|/\{c\log J\}\right\rfloor},                            \notag\\
-\sum_{m,n=1}^{N}
-\left|\Cov\left(
-\partial_{\theta_i}\hat\ell_m^0(\theta),
-\partial_{\theta_i}\hat\ell_n^0(\theta)
-\right)\right|
-&\leq
-\frac{CNG'(\theta)^2\{1+\min(N,\log J)\}}{J}.
-\label{eq:current-cloud-covariance-with-mixing-time}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+&\lesssim
+\frac{pG'(\theta)^2}{J}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\label{eq:current-particle-variance-summary}
 \end{align}
-Thus the covariance sum retains the particle-system mixing time; it is
-not $O(N/J)$ uniformly in $J$.  For the actual DMOP mark there is a
-prior obstruction: the total fixed-random-number derivative carries the
-inherited simulator tangent and is not a function of the current physical
-cloud.  Truncating the discounted weights does not truncate that inherited
-tangent.  Hence neither the current-cloud calculation nor its truncated
-version proves geometric covariance for $\Delta_{n,r}^J$ under the
-present assumptions.
+At $\alpha=0$, the sum on the right is $N$. For fixed $\alpha<1$, it is
+at most $N/(1-\alpha)^2$. At $\alpha=1$, it is exactly
+\begin{equation}
+\sum_{n=1}^{N}n^2
+=
+\frac{N(N+1)(2N+1)}6,
+\label{eq:dmop-one-exact-squared-sum}
+\end{equation}
+which recovers the cubic endpoint. The particle-system mixing-time factor
+is the factor intentionally suppressed by $\lesssim$.
 
 A genuinely sharper result would follow from a two-lineage covariance
 estimate for the existing lag coefficients.  For example, if, for each
