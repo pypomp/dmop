@@ -890,13 +890,14 @@ Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:co
 
 In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
 The earlier truncation argument is retained below in the source only for
-comparison, but is not used: the particle-system forgetting theorem invoked
-there acts on the current physical particle cloud, whereas a realized DMOP
-mark also carries its ancestral simulator derivative.  In addition, summing
-the displayed particle-system mixing bound costs a factor of order
-$\log J$.  The proof of Theorem~\ref{thm:dmop-alpha-truncation-mse} is
-therefore given in Section~\ref{appendix:sharper-biasvar} from historical
-particle estimates that apply directly to the complete ancestral path.
+comparison. A differentiable particle includes its location and tangent,
+so the particle-system forgetting result applies to the score functionals
+carried by that particle. With the manuscript's convention that
+$\lesssim$ suppresses the particle-system mixing-time factor, this gives
+the $N/J$-times-an-$\alpha$-factor variance bound in Theorem~
+\ref{thm:dmop-alpha-truncation-mse}. Section~
+\ref{appendix:sharper-biasvar} gives the complete proof, together with a
+historical direct bound that remains useful at $\alpha=1$.
 
 \iffalse
 First, we note the following relation between the Dobrushin contraction coefficient and the alpha-mixing coefficients in our context below.
@@ -1351,30 +1352,61 @@ $N,J$, and $\alpha$, such that
 &\E\left\|
 \nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
 \right\|_2^2                                                    \notag\\
-&\quad\leq
-CpG'(\theta)^2
+&\quad\lesssim
+pG'(\theta)^2
 \left[
-\min\left\{N^2,\frac{N^3}{J}\right\}
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
++\frac1{J^2}
+\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\right)^2
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 \right\}^2
-+\frac{N^4}{J^2}
 \right],
 \label{eq:dmop-alpha-conservative-mse}
 \\
 &\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\leq
-CpG'(\theta)^2
-\min\left\{N^2,\frac{N^3}{J}\right\}.
+\lesssim
+pG'(\theta)^2
+\min\left\{
+N^2,
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\right\}.
 \label{eq:dmop-alpha-conservative-variance}
 \end{align}
-In particular, the right side of Equation~
-(\ref{eq:dmop-alpha-conservative-mse}) is at most
+In addition, the historical direct argument gives
 \begin{equation}
+\E\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2
+\leq
 CpG'(\theta)^2
+\min\left[
+N^2,
+\frac{N^3}{J}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:dmop-alpha-historical-direct-mse}
+\end{equation}
+For $0\leq\alpha<1$, Equation~
+(\ref{eq:dmop-alpha-conservative-mse}) implies
+\begin{equation}
+\E\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2
+\lesssim
+pG'(\theta)^2
 \left\{
-\frac{N^3}{J}+N^2(1-\alpha)^2+\frac{N^4}{J^2}
+\frac{N}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2(1-\alpha)^2}
 \right\}.
 \label{eq:dmop-alpha-conservative-mse-simplified}
 \end{equation}
@@ -1383,18 +1415,13 @@ CpG'(\theta)^2
 \begin{proof}[Proof.]
 Theorem~\ref{thm:refined-dmop-alpha-mse}, proved in
 Section~\ref{appendix:sharper-biasvar}, gives
-Equations~(\ref{eq:dmop-alpha-conservative-mse}) and
-(\ref{eq:dmop-alpha-conservative-variance}).  Also,
-\begin{align}
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
-&\leq
-\frac{\varrho}{(1-\varrho)^2}(1-\alpha),
-\label{eq:population-bias-conservative-factor}
-\end{align}
-because $1-\alpha\varrho\geq1-\varrho$. Substitution in
-Equation~(\ref{eq:dmop-alpha-conservative-mse}) and enlargement of $C$
-give Equation~(\ref{eq:dmop-alpha-conservative-mse-simplified}).
+Equation~(\ref{eq:dmop-alpha-conservative-mse}). Lemma~
+\ref{lem:dmop-alpha-variance} gives Equation~
+(\ref{eq:dmop-alpha-conservative-variance}), and Proposition~
+\ref{prop:direct-dmop-alpha-mse} gives Equation~
+(\ref{eq:dmop-alpha-historical-direct-mse}). Finally, Equation~
+(\ref{eq:refined-mse-geometric-simplifications}) gives Equation~
+(\ref{eq:dmop-alpha-conservative-mse-simplified}).
 \end{proof}
 
 \section{Sharper Bias-Variance Analysis}
@@ -1406,9 +1433,11 @@ $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
 conditional score produced by the deterministic differentiated population
 recursion. At $\theta=\phi$, its $\alpha=1$ version is the exact
 conditional score $\nabla_\theta\ell_n(\theta)$. A differentiated
-prediction particle at time $m$ is the pair consisting of
-$X_{m,j}^{P,\phi}$ and
-$\left.\nabla_\theta\log w_{m,j}^{P,\theta}\right|_{\theta=\phi}$.
+particle is the particle carried by the differentiated algorithm: it
+includes its location and the corresponding simulator and weight tangents.
+Thus the particle-state bounds and mixing statements below apply directly
+to the differentiable particles used by DMOP; there is no separate
+``physical particle'' whose tangent must be treated afterward.
 Throughout this section, the observations are fixed. Expectations and
 variances are over the simulator and particle-filter random variables,
 conditional on those observations.
@@ -1473,36 +1502,28 @@ contraction under Assumption {\refAssumpBoundedProcess}, and the particle
 weak-error bound follows from the full-genealogy argument in
 Lemma~\ref{lem:lagwise-weak-error}.
 
-For the path functionals below, evaluated at $\theta=\phi$, we use the
-existing posterior path measure $\rho_t$ on its canonical simulator
-extension. More precisely, let
-$U_0,\ldots,U_t$ be the independent base simulator random variables, let
-$X_0$ be the simulated initial state, generate $X_s$ recursively using the
-manuscript's simulator, and carry the resulting pathwise derivatives. For
-every integrable functional $h$ of these
-quantities, define
+For the path functionals below, evaluated at $\theta=\phi$, let $\rho_t$
+be the posterior path measure of the differentiable particle. Thus, for
+every integrable path functional $h$,
 \begin{equation}
 \rho_t(h)
 =
 \frac{
-\E_U\left[
-h\left(U_{0:t},X_{0:t},
-\left.\nabla_\theta X_{0:t}\right|_{\theta=\phi}\right)
+\E\left[
+h(X_{0:t})
 \prod_{s=1}^t G_s(X_s)
 \right]
 }
 {
-\E_U\left[\prod_{s=1}^t G_s(X_s)\right]
+\E\left[\prod_{s=1}^t G_s(X_s)\right]
 }.
 \label{eq:canonical-extended-posterior-path-law}
 \end{equation}
-If $h$ depends only on the physical state path, integrating out the base
-simulator variables gives the manuscript's original $\rho_t(h)$. The
-auxiliary variables carry no potential, so the denominator in
-Equation~(\ref{eq:canonical-extended-posterior-path-law}) is the same
-likelihood normalizing constant. Thus Equation~
-(\ref{eq:canonical-extended-posterior-path-law}) extends the existing
-notation rather than defining a different target measure.
+Here $X_s$ already includes its tangent, as stipulated above, while
+$G_s(X_s)$ is the existing measurement potential. Equation~
+(\ref{eq:canonical-extended-posterior-path-law}) is therefore the usual
+posterior path measure on the state used by the differentiated particle
+filter, not an additional extension of it.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -1810,38 +1831,20 @@ Taking the supremum over \(x_s,x'_s\) gives
 \label{eq:posterior-backward-oscillation-contraction}
 \end{equation}
 
-Define, only in this proof,
-\begin{equation}
-H_k(x_k)
-=
-\E_{\rho_k}\{h_{k,i}\mid X_k=x_k\}.
-\label{eq:conditional-past-mark-at-k}
-\end{equation}
-All auxiliary simulator seeds and pathwise derivatives through time \(k\)
-are measurable with respect to the past through time \(k\). At
-\(\theta=\phi\), conditional on \(X_k\), the future physical states,
-observations, and simulator seeds are independent of this past. Hence
-\begin{equation}
-\E_{\rho_{n-1}}\{h_{k,i}\mid X_k=x_k\}
-=
-\E_{\rho_k}\{h_{k,i}\mid X_k=x_k\}
-=
-H_k(x_k).
-\label{eq:past-mark-future-conditional-independence}
-\end{equation}
-Repeated conditioning through the backward kernels gives
+The mark $h_{k,i}$ is a bounded function of the differentiable particle
+$X_k$. Repeated conditioning through the backward kernels therefore gives
 \begin{align}
-\E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=x_{n-1}\}
+\E_{\rho_{n-1}}\{h_{k,i}(X_k)\mid X_{n-1}=x_{n-1}\}
 &=
-(B_{n-1}B_{n-2}\cdots B_{k+1}H_k)(x_{n-1}).
+(B_{n-1}B_{n-2}\cdots B_{k+1}h_{k,i})(x_{n-1}).
 \label{eq:iterated-backward-conditioning}
 \end{align}
 There are \(n-1-k=r-1\) backward kernels in this display. Moreover,
 Equation~(\ref{eq:population-forgetting-mark-bound}) gives
 \begin{align}
-\operatorname{osc}(H_k)
+\operatorname{osc}(h_{k,i})
 &\leq
-2\|H_k\|_\infty                                               \notag\\
+2\|h_{k,i}\|_\infty                                          \notag\\
 &\leq
 2G'(\theta).
 \label{eq:conditional-past-mark-oscillation}
@@ -2001,8 +2004,8 @@ that, for \(0\leq r<n\),
 
 \begin{proof}[Proof.]
 At \(\theta=\phi\), resampling is multinomial with the ordinary bootstrap
-filter probabilities, so the particle locations together with their parent
-indices form the bootstrap particle genealogy. Fix \(0\leq r<n\), put
+filter probabilities, so the differentiable particles together with their
+parent indices form the bootstrap particle genealogy. Fix \(0\leq r<n\), put
 \(k=n-r\), and fix a parameter coordinate \(i\in\{1,\ldots,p\}\).
 For any ancestral path through a time \(t\geq k\), let \(h_{k,i}\) denote
 the \(i\)th coordinate of the existing mark \(h_k\) in
@@ -2014,15 +2017,10 @@ m(\xi_t)(h_{k,i})
 \frac1J\sum_{j=1}^J h_{k,i}(\xi_t^j).
 \label{eq:lag-functional-particle-average}
 \end{equation}
-Its population counterpart is \(\rho_t(h_{k,i})\), with \(\rho_t\)
-understood on the canonical simulator extension in Equation~
-(\ref{eq:canonical-extended-posterior-path-law}).
-If the simulator stores random seeds or pathwise derivatives, these are
-included in the ancestral path. Their base law is independent of \(\theta\)
-in the reparameterized simulator representation, so, at \(\theta=\phi\),
-they do not alter the transition law of the physical state or the potential
-\(G_a\). Hence the future normalizer below depends on a path prefix only
-through its last physical state. Equation~
+Its population counterpart is \(\rho_t(h_{k,i})\) in Equation~
+(\ref{eq:canonical-extended-posterior-path-law}). Since a tangent is a
+functional of the differentiable particle, the future normalizer below
+depends on a path prefix only through its last particle state. Equation~
 (\ref{eq:bounded-realized-measurement-mark}) implies, pointwise on every
 such path,
 \begin{equation}
@@ -2052,7 +2050,7 @@ after deleting its repeated endpoint, its $j$th path is exactly \(\xi_t^j\).
 Consequently, the terminal path-particle empirical measure is pathwise equal
 to \(m(\xi_t)\), not merely equal to it in distribution.
 
-We verify Assumption A1 of \citet{chanDelMoral18} for this augmented model.
+We verify Assumption A1 of \citet{chanDelMoral18} for this particle model.
 Let \(0\leq a\leq b\leq t+1\), and let \(z\) and \(z'\) be two extended
 path prefixes whose last physical states are \(x_a\) and \(x'_a\),
 respectively. As noted above, the future normalizer depends on each prefix
@@ -2342,15 +2340,24 @@ which proves Equation~(\ref{eq:undiscounted-dmop-particle-bias}).
 \label{lem:dmop-full-particle-bias}
 Suppose $\theta=\phi$. Under the conditions of
 Lemma~\ref{lem:lagwise-weak-error}, for every $\alpha\in[0,1]$,
-\begin{equation}
+\begin{align}
 \left\|
 \E\nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell^\alpha(\theta)
 \right\|_2
-\leq
-\frac{C\sqrt p\,G'(\theta)N^2}{J}.
+&\leq
+\frac{C\sqrt p\,G'(\theta)N^2}{J},
 \label{eq:dmop-full-particle-bias}
-\end{equation}
+\\
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+&\lesssim
+\frac{\sqrt p\,G'(\theta)}{J}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r.
+\label{eq:dmop-full-particle-bias-alpha}
+\end{align}
 The constant depends only on
 $\bar M,\underbar M,\bar G,\underbar G$ and is independent of
 $N,J$, and $\alpha$.
@@ -2495,6 +2502,112 @@ Therefore
 \end{equation}
 Squaring this inequality, summing it over $i=1,\ldots,p$, and taking a
 square root proves Equation~(\ref{eq:dmop-full-particle-bias}).
+
+It remains to prove the sharper $\alpha$-dependent form. The time-uniform
+first-order weak-bias expansion for a bootstrap particle filter under
+strong mixing \citep[Section~7.4.3]{delMoral04} gives, for every bounded
+real function $f$ of a current differentiable particle and every $t$,
+\begin{equation}
+\left|
+\E\eta_t^J(f)-\eta_t(f)
+\right|
+\leq
+\frac{C}{J}\operatorname{osc}(f).
+\label{eq:uniform-current-particle-weak-bias}
+\end{equation}
+The uniformity in $t$ can be seen directly in the cited first-order
+expansion. Assumption~{\refAssumpBoundedProcess} bounds the contribution
+of a one-step sampling error inserted $l$ steps in the past by
+$C\varrho^l\operatorname{osc}(f)/J$. Hence
+\begin{align}
+\sum_{l=0}^{t}
+\frac{C\varrho^l}{J}\operatorname{osc}(f)
+&\leq
+\frac{C\operatorname{osc}(f)}{J}
+\sum_{l=0}^{\infty}\varrho^l                              \notag\\
+&=
+\frac{C}{J(1-\varrho)}\operatorname{osc}(f)                \notag\\
+&\leq
+\frac{C}{J}\operatorname{osc}(f),
+\label{eq:uniform-current-particle-bias-geometric-sum}
+\end{align}
+where the last line enlarges $C$ by the fixed factor
+$(1-\varrho)^{-1}$. This proves the uniform $O(J^{-1})$ weak-bias
+estimate used here; no horizon-dependent path-space constant remains.
+
+Equation~(\ref{eq:unrolled-filtered-weight}) and the bounded-mark
+condition give
+\begin{align}
+\left\|
+\left.\partial_{\theta_i}\log w_{n,j}^{F,\theta}
+\right|_{\theta=\phi}
+\right\|_\infty
+&\leq
+G'(\theta)\sum_{r=0}^{n-1}\alpha^r,
+&
+\left\|
+\left.\partial_{\theta_i}\log w_{n,j}^{P,\theta}
+\right|_{\theta=\phi}
+\right\|_\infty
+&\leq
+G'(\theta)\sum_{r=1}^{n-1}\alpha^r.
+\label{eq:weight-tangent-bounds-for-bias}
+\end{align}
+Apply Equation~(\ref{eq:uniform-current-particle-weak-bias}) to these two
+weight-tangent coordinate functions in Equation~
+(\ref{eq:conditional-score-weight-difference}). Equation~
+(\ref{eq:weight-tangent-bounds-for-bias}), together with
+$\operatorname{osc}(f)\leq2\|f\|_\infty$, gives
+\begin{align}
+&\left|
+\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\partial_{\theta_i}\ell_n^\alpha(\theta)
+\right|                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{J}
+\left(
+\sum_{r=0}^{n-1}\alpha^r+
+\sum_{r=1}^{n-1}\alpha^r
+\right)                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{J}
+\sum_{r=0}^{n-1}\alpha^r.
+\label{eq:uniform-conditional-score-particle-bias}
+\end{align}
+Summing Equation~
+(\ref{eq:uniform-conditional-score-particle-bias}) over
+$n=1,\ldots,N$ gives
+\begin{align}
+&\left|
+\E\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|                                                       \notag\\
+&\quad\leq
+\sum_{n=1}^{N}
+\left|
+\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\partial_{\theta_i}\ell_n^\alpha(\theta)
+\right|                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{J}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r.
+\label{eq:uniform-full-score-particle-bias-coordinate}
+\end{align}
+Squaring Equation~
+(\ref{eq:uniform-full-score-particle-bias-coordinate}), summing over the
+$p$ coordinates, and taking square roots proves Equation~
+(\ref{eq:dmop-full-particle-bias-alpha}). Finally,
+\begin{align}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+&\leq
+N\sum_{r=0}^{N-1}\alpha^r                                  \notag\\
+&=
+N\frac{1-\alpha^N}{1-\alpha},
+\label{eq:full-score-particle-bias-geometric-sum}
+\end{align}
+with the ratio interpreted as $N$ at $\alpha=1$. Thus Equation~
+(\ref{eq:dmop-full-particle-bias-alpha}) also implies Equation~
+(\ref{eq:dmop-full-particle-bias}) after the hidden constant is enlarged.
 \end{proof}
 
 \iffalse
@@ -2768,70 +2881,232 @@ which proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
 Suppose $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Then
-\begin{equation}
+used. Then
+\begin{align}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\leq
+&\leq
 CpG'(\theta)^2
 \min\left\{N^2,\frac{N^3}{J}\right\},
 \label{eq:refined-dmop-alpha-variance}
+\\
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+&\lesssim
+pG'(\theta)^2
+\min\left\{
+N^2,
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\right\}.
+\label{eq:dmop-alpha-current-particle-variance}
+\end{align}
+Here, as elsewhere in the supplement, $\lesssim$ suppresses the
+particle-system mixing-time factor. In particular,
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\lesssim
+\frac{NpG'(\theta)^2}{J}
+\left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
+\label{eq:dmop-alpha-n-over-j-variance}
 \end{equation}
-where $C$ is independent of $N,J$, and $\alpha$, and
+where the ratio is interpreted as $N$ at $\alpha=1$. The constant $C$
+is independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
 \end{lem}
 
 \begin{proof}[Proof.]
-We first record the historical-particle estimate that will be applied.
-Assumptions {\refAssumpBoundedProcess} and
-{\refAssumpBoundedMeasurement} first give the uniform normalizer-ratio
-bound verified in Equations~(\ref{eq:chan-zero-step-normalizer})--
-(\ref{eq:chan-terminal-normalizer-ratio}).  The one-lineage estimate has
-already been proved in Equation~(\ref{eq:chan-signed-path-bias}).  For two
-lineages, we use the $q=2$ coalescent expansion underlying
-\citet[Theorem~3.5]{chanDelMoral18}, written out in their Appendix~C,
-Lemma~C.1 and Proposition~C.2; see also
-\citet[Corollary~8.5.1]{delMoral04}.  That expansion is for the occupation
-measure of the complete particle genealogy and explicitly permits a
-function of the complete path.  At every possible generation it either
-inserts or does not insert the displayed coalescence operator.  Each
-insertion has coefficient $J^{-1}$, and Appendix~C bounds the surrounding
-terms by powers of the uniform future-normalizer ratio.  The latter ratio
-is exactly what was verified above, including on the extended paths; no
-contraction of the extended coordinates is used.  Summing the finitely many
-coalescence patterns as in Proposition~C.2, and absorbing its fixed
-constants and finite-$J$ factor, therefore gives, for two distinct
-terminal particle labels, $J\geq C(t+1)$, and every $[0,1]$-valued path
-functional $g$, Equation~(\ref{eq:chan-signed-path-bias}) and the $q=2$
-expansion, respectively, yield
+We first prove the historical-particle estimate that will be applied.
+For $0\leq a<b\leq t$, the one-step normalized kernel in the
+factorization used by \citet{chanDelMoral18} assigns a measurable set $A$
+the probability
+\begin{equation}
+\frac{
+\displaystyle\int_A
+f_{X_{a+1}\mid X_a}(u\mid x_a;\theta)
+Q_{a+1,b}(1)(u)\,du
+}{
+\displaystyle\int
+f_{X_{a+1}\mid X_a}(u\mid x_a;\theta)
+Q_{a+1,b}(1)(u)\,du
+}.
+\label{eq:chan-normalized-one-step-kernel}
+\end{equation}
+The potential at time $a$ cancels between the numerator and denominator.
+Assumption {\refAssumpBoundedProcess} gives, for every $x_a$ and $A$,
 \begin{align}
-\left|\E g(\xi_t^1)-\rho_t(g)\right|
+&\frac{
+\displaystyle\int_A
+f_{X_{a+1}\mid X_a}(u\mid x_a;\theta)
+Q_{a+1,b}(1)(u)\,du
+}{
+\displaystyle\int
+f_{X_{a+1}\mid X_a}(u\mid x_a;\theta)
+Q_{a+1,b}(1)(u)\,du
+}                                                               \notag\\
+&\quad\geq
+\frac{
+\underbar M\displaystyle\int_A Q_{a+1,b}(1)(u)\,du
+}{
+\bar M\displaystyle\int Q_{a+1,b}(1)(u)\,du
+}                                                               \notag\\
+&\quad=
+\frac{\underbar M}{\bar M}
+\frac{
+\displaystyle\int_A Q_{a+1,b}(1)(u)\,du
+}{
+\displaystyle\int Q_{a+1,b}(1)(u)\,du
+}.
+\label{eq:chan-normalized-kernel-minorization}
+\end{align}
+The probability measure in the last line does not depend on $x_a$.
+Consequently, the Dobrushin coefficient of each kernel in
+Equation~(\ref{eq:chan-normalized-one-step-kernel}) is at most
+\begin{equation}
+1-\frac{\underbar M}{\bar M}.
+\label{eq:chan-normalized-kernel-contraction}
+\end{equation}
+Writing $\eta_{a,b}^{x_a}$ for the corresponding conditional terminal
+law, as in \citet{chanDelMoral18}, composition of the $b-a$ kernels gives
+\begin{equation}
+\sup_{x_a,x'_a}
+\left\|
+\eta_{a,b}^{x_a}-\eta_{a,b}^{x'_a}
+\right\|_{\rm TV}
+\leq
+2\left(1-\frac{\underbar M}{\bar M}\right)^{b-a}.
+\label{eq:chan-conditional-terminal-contraction}
+\end{equation}
+The appended identity mutation at horizon $t+1$ can remove at most one
+contraction factor.  Hence the summability condition in Assumption~(A2)
+of \citet{chanDelMoral18} follows from the explicit calculation
+\begin{align}
+&\sum_{d=0}^{\infty}
+2\left(1-\frac{\underbar M}{\bar M}\right)^{\max\{d-1,0\}}
+                                                               \notag\\
+&\quad=
+4+
+2\sum_{d=2}^{\infty}
+\left(1-\frac{\underbar M}{\bar M}\right)^{d-1}              \notag\\
+&\quad=
+4+
+2\frac{1-\underbar M/\bar M}{\underbar M/\bar M}            \notag\\
+&\quad=
+2+2\frac{\bar M}{\underbar M}
+<\infty.
+\label{eq:chan-mixing-sum}
+\end{align}
+
+It remains to verify the other hypotheses of that result.  Let $z$ and
+$z'$ be two seed--state--tangent path prefixes through time $a$, with last
+physical states $x_a$ and $x'_a$.  Future potentials and physical-state
+transitions depend on these prefixes only through their last physical
+states, so, for $a\leq b\leq t+1$,
+\begin{align}
+Q_{a,b}(1)(z)
+&=Q_{a,b}(1)(x_a),
+&
+Q_{a,b}(1)(z')
+&=Q_{a,b}(1)(x'_a).
+\label{eq:historical-extended-normalizer-identity}
+\end{align}
+Equations~(\ref{eq:chan-zero-step-normalizer}),
+(\ref{eq:chan-normalizer-ratio}), and
+(\ref{eq:chan-terminal-normalizer-ratio}) therefore imply
+\begin{equation}
+Q_{a,b}(1)(z)
+\leq
+\max\left\{1,
+\frac{\bar M\bar G}{\underbar M\underbar G}
+\right\}
+Q_{a,b}(1)(z').
+\label{eq:historical-uniform-normalizer-ratio}
+\end{equation}
+Assumption {\refAssumpBoundedMeasurement} gives, at every selection time,
+\begin{equation}
+0<\underbar G\leq G_a\leq\bar G<\infty.
+\label{eq:historical-uniform-potential-bounds}
+\end{equation}
+Thus Equations~(\ref{eq:chan-conditional-terminal-contraction})--
+(\ref{eq:historical-uniform-potential-bounds}) verify Assumptions~(A1)--
+(A2) of \citet{chanDelMoral18} for the physical model.  For
+$q\in\{1,2\}$ and every $0\leq F\leq1$ on $q$ extended paths, positivity
+and Equation~(\ref{eq:historical-extended-normalizer-identity}) give
+\begin{align}
+0
 &\leq
+Q_{a,b}^{\otimes q}(F)(z_1,\ldots,z_q)                       \notag\\
+&\leq
+Q_{a,b}^{\otimes q}(1)(z_1,\ldots,z_q)                       \notag\\
+&=
+\prod_{l=1}^{q}Q_{a,b}(1)(x_a^l).
+\label{eq:marked-historical-termwise-bound}
+\end{align}
+The coalescence operators in Appendix~C of \citet{chanDelMoral18} are
+Markov kernels, and hence are positive and send $1$ to $1$.  Equation~
+(\ref{eq:marked-historical-termwise-bound}) therefore remains valid after
+every coalescence pattern, term by term.  Together with Equation~
+(\ref{eq:historical-uniform-normalizer-ratio}), this shows that every bound
+in their Lemma~C.1 and Proposition~C.2 is unchanged by the seed and tangent
+marks; no total-variation contraction of those marks is invoked.
+
+Apply the coalescent proof of Theorem~3.5 of \citet{chanDelMoral18} to
+this marked historical model at the appended horizon $t+1$.  Replacing
+their particle count by $J$ and enlarging one constant $C\geq2$ so that it
+applies to $q=1$ and $q=2$, for
+$0\leq g\leq1$ and $J>C(t+1)$ the theorem gives
+\begin{align}
+\left(1-C\frac{t+1}{J}\right)\rho_t(g)
+&\leq
+\E g(\xi_t^1)
+\leq
+\left(1+C\frac{t+1}{J}\right)\rho_t(g),
+\label{eq:historical-one-lineage-two-sided}
+\\
+\left(1-C\frac{t+1}{J}\right)\rho_t(g)^2
+&\leq
+\E\{g(\xi_t^1)g(\xi_t^2)\}                                  \notag\\
+&\leq
+\rho_t(g)^2+C\frac{t+1}{J}\rho_t(g^2),
+\label{eq:historical-two-lineage-two-sided}
+\end{align}
+where the terminal labels $1$ and $2$ are distinct.  Since
+$0\leq\rho_t(g),\rho_t(g^2)\leq1$, the first line gives
+\begin{equation}
+\left|\E g(\xi_t^1)-\rho_t(g)\right|
+\leq
 C\frac{t+1}{J},
 \label{eq:historical-one-lineage-bound}
-\\
-\left|\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2\right|
+\end{equation}
+and subtracting $\rho_t(g)^2$ in the second line gives
+\begin{align}
+-C\frac{t+1}{J}\rho_t(g)^2
+&\leq
+\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2                     \notag\\
+&\leq
+C\frac{t+1}{J}\rho_t(g^2),                                  \notag\\
+\left|
+\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2
+\right|
 &\leq
 C\frac{t+1}{J}.
 \label{eq:historical-two-lineage-bound}
 \end{align}
-These estimates apply to the augmented seed--state--tangent paths:
-those decorations affect the bounded terminal functional, but not the
-potential, resampling probability, physical propagation, or future
-normalizer used in the coalescent expansion.  Thus no contraction of the
-augmented tangent is invoked.
 
-We next derive the required second moment from Equations~
-(\ref{eq:historical-one-lineage-bound})--
-(\ref{eq:historical-two-lineage-bound}).  If $\|f\|_\infty=0$, the result
-is immediate.  Otherwise put
+Let $f$ be a bounded real path functional.  If $\|f\|_\infty=0$, the
+claim is immediate.  Otherwise set
 \begin{equation}
 g=\frac{f+\|f\|_\infty}{2\|f\|_\infty},
 \qquad 0\leq g\leq1.
 \label{eq:rescaled-historical-functional}
 \end{equation}
-Since $f-\rho_t(f)=2\|f\|_\infty\{g-\rho_t(g)\}$, Equations~
-(\ref{eq:historical-one-lineage-bound})--
-(\ref{eq:historical-two-lineage-bound}) give
+For $j\in\{1,2\}$,
+\begin{equation}
+f(\xi_t^j)-\rho_t(f)
+=
+2\|f\|_\infty\{g(\xi_t^j)-\rho_t(g)\}.
+\label{eq:historical-centering-rescaling}
+\end{equation}
+Exchangeability and Equations~(\ref{eq:historical-one-lineage-bound})--
+(\ref{eq:historical-two-lineage-bound}) therefore give
 \begin{align}
 &\left|\E\left[
 \{f(\xi_t^1)-\rho_t(f)\}
@@ -2839,24 +3114,36 @@ Since $f-\rho_t(f)=2\|f\|_\infty\{g-\rho_t(g)\}$, Equations~
 \right]\right|                                               \notag\\
 &\quad=
 4\|f\|_\infty^2
-\left|\E\{g(\xi_t^1)g(\xi_t^2)\}
--2\rho_t(g)\E g(\xi_t^1)+\rho_t(g)^2\right|                \notag\\
+\left|
+\E\{g(\xi_t^1)g(\xi_t^2)\}
+-\rho_t(g)\E g(\xi_t^1)
+-\rho_t(g)\E g(\xi_t^2)
++\rho_t(g)^2
+\right|                                                       \notag\\
 &\quad\leq
 4\|f\|_\infty^2
 \left[
 \left|\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2\right|
-+2\rho_t(g)\left|\E g(\xi_t^1)-\rho_t(g)\right|
++\rho_t(g)\left|\E g(\xi_t^1)-\rho_t(g)\right|
++\rho_t(g)\left|\E g(\xi_t^2)-\rho_t(g)\right|
 \right]                                                       \notag\\
 &\quad\leq
-C\frac{t+1}{J}\|f\|_\infty^2,
+C\frac{t+1}{J}\|f\|_\infty^2.
 \label{eq:centered-two-lineage-bound}
 \end{align}
-where $0\leq\rho_t(g)\leq1$ is used in the final line.
 
-Finally, exchangeability of the $J$ terminal paths gives the exact
-identity
+For $J>C(t+1)$, exchangeability of the $J$ terminal paths gives
 \begin{align}
 &\E\left|m(\xi_t)(f)-\rho_t(f)\right|^2                     \notag\\
+&\quad=
+\frac1{J^2}\sum_{j=1}^{J}
+\E\left|f(\xi_t^j)-\rho_t(f)\right|^2                       \notag\\
+&\qquad+
+\frac1{J^2}\sum_{\substack{1\leq j,l\leq J\\j\ne l}}
+\E\left[
+\{f(\xi_t^j)-\rho_t(f)\}
+\{f(\xi_t^l)-\rho_t(f)\}
+\right]                                                       \notag\\
 &\quad=
 \frac1J\E\left|f(\xi_t^1)-\rho_t(f)\right|^2
 +\frac{J-1}{J}
@@ -2866,15 +3153,37 @@ identity
 \right]                                                       \notag\\
 &\quad\leq
 \frac{4}{J}\|f\|_\infty^2
++\frac{J-1}{J}
+\left|
+\E\left[
+\{f(\xi_t^1)-\rho_t(f)\}
+\{f(\xi_t^2)-\rho_t(f)\}
+\right]
+\right|                                                       \notag\\
+&\quad\leq
+\frac{4}{J}\|f\|_\infty^2
 +C\frac{t+1}{J}\|f\|_\infty^2                             \notag\\
 &\quad\leq
 C\frac{t+1}{J}\|f\|_\infty^2.
-\label{eq:historical-particle-second-moment}
+\label{eq:historical-particle-second-moment-large-j}
 \end{align}
-The first inequality uses
-$|f(\xi_t^1)-\rho_t(f)|\leq2\|f\|_\infty$ and Equation~
-(\ref{eq:centered-two-lineage-bound}).  Taking square roots in Equation~
-(\ref{eq:historical-particle-second-moment}) gives
+For $J\leq C(t+1)$,
+\begin{align}
+\E\left|m(\xi_t)(f)-\rho_t(f)\right|^2
+&\leq
+4\|f\|_\infty^2                                            \notag\\
+&\leq
+4C\frac{t+1}{J}\|f\|_\infty^2.
+\label{eq:historical-particle-second-moment-small-j}
+\end{align}
+After enlarging $C$, the two cases prove, for every $J\geq1$,
+\begin{equation}
+\E\left|m(\xi_t)(f)-\rho_t(f)\right|^2
+\leq
+C\frac{t+1}{J}\|f\|_\infty^2.
+\label{eq:historical-particle-second-moment}
+\end{equation}
+Taking square roots gives
 \begin{equation}
 \left\{
 \E\left|m(\xi_t)(f)-\rho_t(f)\right|^2
@@ -2883,18 +3192,6 @@ $|f(\xi_t^1)-\rho_t(f)|\leq2\|f\|_\infty$ and Equation~
 C\sqrt{\frac{t+1}{J}}\,\|f\|_\infty.
 \label{eq:historical-particle-l2}
 \end{equation}
-If $J<C(t+1)$, then
-\begin{align}
-\left|m(\xi_t)(f)-\rho_t(f)\right|
-&\leq
-|m(\xi_t)(f)|+|\rho_t(f)|                                    \notag\\
-&\leq
-2\|f\|_\infty                                                 \notag\\
-&\leq
-C\sqrt{\frac{t+1}{J}}\,\|f\|_\infty,
-\end{align}
-after enlarging $C$.  Thus Equation~(\ref{eq:historical-particle-l2})
-holds for all $J\geq1$.
 
 Fix a coordinate $i$.  Subtract
 Equation~(\ref{eq:population-full-score-summation-by-parts}) from
@@ -2981,6 +3278,229 @@ coordinates gives
 \label{eq:historical-vector-variance}
 \end{equation}
 
+We next use the fact that the weight tangent is part of the
+differentiable particle.  Equation~
+(\ref{eq:unrolled-filtered-weight}) and
+Equation~(\ref{eq:bounded-realized-measurement-mark}) give, for every
+coordinate $i$,
+\begin{align}
+\left|
+\left.\partial_{\theta_i}\log w_{n,j}^{F,\theta}
+\right|_{\theta=\phi}
+\right|
+&\leq
+\sum_{r=0}^{n-1}\alpha^r
+\left|
+\left.\partial_{\theta_i}\log
+g_{n-r,j}^{A,F,\theta}\right|_{\theta=\phi}
+\right|                                                     \notag\\
+&\leq
+G'(\theta)\sum_{r=0}^{n-1}\alpha^r,
+\label{eq:filtered-weight-tangent-bound}
+\\
+\left|
+\left.\partial_{\theta_i}\log w_{n,j}^{P,\theta}
+\right|_{\theta=\phi}
+\right|
+&=
+\alpha
+\left|
+\left.\partial_{\theta_i}\log w_{n-1,j}^{F,\theta}
+\right|_{\theta=\phi}
+\right|                                                     \notag\\
+&\leq
+G'(\theta)\sum_{r=1}^{n-1}\alpha^r.
+\label{eq:prediction-weight-tangent-bound}
+\end{align}
+The two terms in Equation~
+(\ref{eq:conditional-score-weight-difference}) are empirical averages of
+the bounded coordinate functions in Equations~
+(\ref{eq:filtered-weight-tangent-bound}) and
+(\ref{eq:prediction-weight-tangent-bound}) of the differentiable
+particle state.  The time-uniform $L^4$ particle bound in Lemma~2 of
+\citet{karjalainen23}, applied to these two functions, gives
+\begin{align}
+&\left\|
+\frac1J\sum_{j=1}^{J}
+\left.\partial_{\theta_i}\log w_{n,j}^{F,\theta}
+\right|_{\theta=\phi}
+-
+\E\left[
+\frac1J\sum_{j=1}^{J}
+\left.\partial_{\theta_i}\log w_{n,j}^{F,\theta}
+\right|_{\theta=\phi}
+\right]
+\right\|_{L^4}
+\leq
+\frac{CG'(\theta)}{\sqrt J}
+\sum_{r=0}^{n-1}\alpha^r,
+\label{eq:filtered-weight-centered-l4}
+\\
+&\left\|
+\frac1J\sum_{j=1}^{J}
+\left.\partial_{\theta_i}\log w_{n,j}^{P,\theta}
+\right|_{\theta=\phi}
+-
+\E\left[
+\frac1J\sum_{j=1}^{J}
+\left.\partial_{\theta_i}\log w_{n,j}^{P,\theta}
+\right|_{\theta=\phi}
+\right]
+\right\|_{L^4}
+\leq
+\frac{CG'(\theta)}{\sqrt J}
+\sum_{r=1}^{n-1}\alpha^r.
+\label{eq:prediction-weight-centered-l4}
+\end{align}
+Minkowski's inequality in $L^4$, Equations~
+(\ref{eq:conditional-score-weight-difference}),
+(\ref{eq:filtered-weight-centered-l4}), and
+(\ref{eq:prediction-weight-centered-l4}) imply
+\begin{align}
+&\left\|
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right\|_{L^4}                                               \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{\sqrt J}
+\left(
+\sum_{r=0}^{n-1}\alpha^r+
+\sum_{r=1}^{n-1}\alpha^r
+\right)                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{\sqrt J}
+\sum_{r=0}^{n-1}\alpha^r.
+\label{eq:conditional-score-centered-l4}
+\end{align}
+
+The conditional score at time $n$ is a measurable function of the
+differentiable particle clouds at times $n-1$ and $n$. Theorem~3 of
+\citet{karjalainen23}, together with the elementary fact that passing to
+a measurable functional can only reduce the generated $\sigma$-algebra
+and hence cannot increase a strong-mixing coefficient, therefore gives,
+for $l\geq1$,
+\begin{equation}
+a(l)
+\leq
+(1-\epsilon)^{\left\lfloor
+(l-1)/[c\{1+\log J\}]\right\rfloor}.
+\label{eq:conditional-score-alpha-mixing}
+\end{equation}
+For $m<n$, Davydov's inequality, applied to the centered variables in
+Equation~(\ref{eq:conditional-score-centered-l4}), gives
+\begin{align}
+&\left|
+\Cov\left(
+\partial_{\theta_i}\hat\ell_m^\alpha(\theta),
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right)
+\right|                                                       \notag\\
+&\quad\leq
+C a(n-m)^{1/2}
+\left\|
+\partial_{\theta_i}\hat\ell_m^\alpha(\theta)
+-\E\partial_{\theta_i}\hat\ell_m^\alpha(\theta)
+\right\|_{L^4}
+\left\|
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right\|_{L^4}                                               \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+a(n-m)^{1/2}
+\left(\sum_{r=0}^{m-1}\alpha^r\right)
+\left(\sum_{r=0}^{n-1}\alpha^r\right)                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{2J}
+a(n-m)^{1/2}
+\left\{
+\left(\sum_{r=0}^{m-1}\alpha^r\right)^2
++
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\right\},
+\label{eq:conditional-score-davydov-covariance}
+\end{align}
+where the last line uses $2xy\leq x^2+y^2$.  Equation~
+(\ref{eq:conditional-score-centered-l4}) also gives
+\begin{equation}
+\Var\left(
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right)
+\leq
+\frac{CG'(\theta)^2}{J}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\label{eq:conditional-score-one-time-variance}
+\end{equation}
+
+Put $q=(1-\epsilon)^{1/2}<1$.  Directly summing the blocked geometric
+series in Equation~(\ref{eq:conditional-score-alpha-mixing}) gives
+\begin{align}
+\sum_{l=1}^{N-1}a(l)^{1/2}
+&\leq
+\sum_{l=1}^{N-1}
+q^{\left\lfloor(l-1)/\{c\log J\}\right\rfloor}             \notag\\
+&\leq
+\min\left\{
+N-1,
+\lceil c\{1+\log J\}\rceil\sum_{u=0}^{\infty}q^u
+\right\}                                                     \notag\\
+&\leq
+C\{1+\min(N,\log J)\}.
+\label{eq:conditional-score-mixing-sum}
+\end{align}
+Expanding the variance of the sum, using Equations~
+(\ref{eq:conditional-score-davydov-covariance})--
+(\ref{eq:conditional-score-mixing-sum}), and observing that for each
+lag $l$ every squared term occurs at most twice, we obtain
+\begin{align}
+&\Var\left(
+\partial_{\theta_i}\hat\ell^\alpha(\theta)
+\right)                                                       \notag\\
+&\quad=
+\sum_{n=1}^{N}
+\Var\left(
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right)
++2\sum_{1\leq m<n\leq N}
+\Cov\left(
+\partial_{\theta_i}\hat\ell_m^\alpha(\theta),
+\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\right)                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
++
+\frac{CG'(\theta)^2}{J}
+\sum_{l=1}^{N-1}a(l)^{1/2}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2                    \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\{1+\min(N,1+\log J)\}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\label{eq:conditional-score-variance-with-mixing-time}
+\end{align}
+Summing Equation~
+(\ref{eq:conditional-score-variance-with-mixing-time}) over the $p$
+coordinates and then using the stated convention for $\lesssim$ gives
+the stochastic term in Equation~
+(\ref{eq:dmop-alpha-current-particle-variance}). Moreover,
+\begin{align}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+&\leq
+N\left(\sum_{r=0}^{N-1}\alpha^r\right)^2                  \notag\\
+&=
+N\left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
+\label{eq:conditional-score-geometric-sum-bound}
+\end{align}
+with the last expression interpreted by continuity at $\alpha=1$.
+Equations~(\ref{eq:conditional-score-variance-with-mixing-time}) and
+(\ref{eq:conditional-score-geometric-sum-bound}) prove
+Equation~(\ref{eq:dmop-alpha-n-over-j-variance}).
+
 It remains to obtain the other term in the minimum.  Taking absolute
 values in Equation~(\ref{eq:full-score-summation-by-parts}) and using
 Equation~(\ref{eq:discounted-mark-supremum}) give, pathwise,
@@ -3012,8 +3532,199 @@ N^2G'(\theta)^2.
 \end{align}
 Summing over coordinates and combining this bound with
 Equation~(\ref{eq:historical-vector-variance}) proves
-Equation~(\ref{eq:refined-dmop-alpha-variance}).
+Equation~(\ref{eq:refined-dmop-alpha-variance}). Combining the same
+deterministic bound with Equation~
+(\ref{eq:conditional-score-variance-with-mixing-time}), summing over
+coordinates, and applying the $\lesssim$ convention proves Equation~
+(\ref{eq:dmop-alpha-current-particle-variance}).
 \end{proof}
+
+\begin{remark}[DMOP-$0$ and the fixed-lag variance calculation]
+The earlier DMOP-$0$ and DMOP-$(\alpha,k)$ calculations can be retained,
+but the covariance premise must be stated explicitly.  For
+$0\leq k\leq N-1$, define the fixed-lag score by truncating the existing
+lag decomposition:
+\begin{equation}
+\partial_{\theta_i}\hat s_k^\alpha(\theta)
+=
+\sum_{n=1}^{N}
+\sum_{r=0}^{\min\{k,n-1\}}
+\alpha^r\Delta_{n,r,i}^J.
+\label{eq:fixed-lag-score-existing-coefficients}
+\end{equation}
+Thus $\hat s_0^\alpha=\hat\ell^0$, independently of $\alpha$, and
+$\hat s_{N-1}^\alpha=\hat\ell^\alpha$.
+
+We first record the original DMOP-$0$ argument in its intended
+$\lesssim$ convention.  If the strong-mixing estimate is understood to
+apply to the differentiated particle state, consisting of the physical
+particle together with its simulator tangent, Davydov's inequality and the
+centered fourth-moment particle bound give
+\begin{equation}
+\left|
+\Cov\left(\Delta_{n,0,i}^J,\Delta_{m,0,i}^J\right)
+\right|
+\leq
+\frac{CG'(\theta)^2}{J}
+(1-\epsilon)^{\frac12\left\lfloor
+|n-m|/\{c\log J\}\right\rfloor}.
+\label{eq:dmop-zero-original-covariance}
+\end{equation}
+Therefore
+\begin{align}
+\Var\left(\partial_{\theta_i}\hat\ell^0(\theta)\right)
+&=
+\sum_{n,m=1}^{N}
+\Cov\left(\Delta_{n,0,i}^J,\Delta_{m,0,i}^J\right)            \notag\\
+&\leq
+\frac{CNG'(\theta)^2}{J}
+\{1+\min(N,\log J)\},
+\label{eq:dmop-zero-variance-with-mixing-time}
+\end{align}
+after summing the blocked geometric series.  Thus, with the manuscript's
+convention that $\lesssim$ suppresses this particle-system mixing-time
+factor,
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^0(\theta)\right)
+\lesssim
+\frac{NpG'(\theta)^2}{J}.
+\label{eq:dmop-zero-variance-restored}
+\end{equation}
+
+For the fixed-lag and full-$\alpha$ extensions, first suppose that there
+are $C<\infty$ and $\kappa\in(0,1)$, independent
+of $N,J,n,m,r$, such that, for $0\leq r\leq k$ and $r<n,m\leq N$,
+\begin{equation}
+\left|
+\Cov\left(\Delta_{n,r,i}^J,\Delta_{m,r,i}^J\right)
+\right|
+\leq
+\frac{CG'(\theta)^2}{J}\kappa^{|n-m|}.
+\label{eq:fixed-lag-same-lag-covariance}
+\end{equation}
+For each fixed $r$, summing the covariance matrix entries gives
+\begin{align}
+&\Var\left(
+\sum_{n=r+1}^{N}\Delta_{n,r,i}^J
+\right)                                                       \notag\\
+&\quad=
+\sum_{n,m=r+1}^{N}
+\Cov\left(\Delta_{n,r,i}^J,\Delta_{m,r,i}^J\right)           \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\sum_{n,m=r+1}^{N}\kappa^{|n-m|}                             \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}(N-r)
+\left(1+2\sum_{l=1}^{\infty}\kappa^l\right)                 \notag\\
+&\quad=
+\frac{CG'(\theta)^2}{J}(N-r)
+\frac{1+\kappa}{1-\kappa}.
+\label{eq:fixed-lag-one-block-variance}
+\end{align}
+Centering Equation~(\ref{eq:fixed-lag-score-existing-coefficients}), using
+Minkowski's inequality in $L^2$, and then applying Equation~
+(\ref{eq:fixed-lag-one-block-variance}) yield
+\begin{align}
+&\Var\left(
+\partial_{\theta_i}\hat s_k^\alpha(\theta)
+\right)^{1/2}                                                \notag\\
+&\quad\leq
+\sum_{r=0}^{k}\alpha^r
+\Var\left(
+\sum_{n=r+1}^{N}\Delta_{n,r,i}^J
+\right)^{1/2}                                                \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{\sqrt J}
+\sum_{r=0}^{k}\alpha^r\sqrt{N-r}                            \notag\\
+&\quad\leq
+C G'(\theta)\sqrt{\frac{N}{J}}
+\sum_{r=0}^{k}\alpha^r.
+\label{eq:fixed-lag-minkowski-variance}
+\end{align}
+Squaring Equation~(\ref{eq:fixed-lag-minkowski-variance}) and summing over
+the $p$ coordinates give the finite, endpoint-continuous bound
+\begin{align}
+\Var\left(\nabla_\theta\hat s_k^\alpha(\theta)\right)
+&\leq
+\frac{CNpG'(\theta)^2}{J}
+\left(\sum_{r=0}^{k}\alpha^r\right)^2                       \notag\\
+&=
+\frac{CNpG'(\theta)^2}{J}
+\begin{cases}
+\left\{(1-\alpha^{k+1})/(1-\alpha)\right\}^2,
+&0\leq\alpha<1,\\
+(k+1)^2,&\alpha=1.
+\end{cases}
+\label{eq:fixed-lag-variance-same-lag-control}
+\end{align}
+In particular, $k=0$ gives the non-polylogarithmic form of the earlier
+DMOP-$0$ conclusion whenever the uniform covariance bound in Equation~
+(\ref{eq:fixed-lag-same-lag-covariance}) is available:
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^0(\theta)\right)
+\leq
+\frac{CNpG'(\theta)^2}{J}.
+\label{eq:dmop-zero-variance-from-covariance}
+\end{equation}
+For $k=N-1$, Equation~
+(\ref{eq:fixed-lag-variance-same-lag-control}) gives
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\leq
+\frac{CNpG'(\theta)^2}{J}
+\left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
+\label{eq:dmop-alpha-variance-same-lag-control}
+\end{equation}
+where the ratio is interpreted as $N$ at $\alpha=1$.  Thus separate
+fixed-lag covariance control gives the requested $N/J$ factor multiplied
+by a finite function of $\alpha$, but for fixed $\alpha<1$ that function
+has order $(1-\alpha)^{-2}$.
+
+The sharper power $(1-\alpha)^{-1}$ requires covariance control jointly
+across the observation time and the injection time.  Under Equation~
+(\ref{eq:needed-two-lineage-covariance}) below, the two-dimensional
+convolution calculation in Equation~
+(\ref{eq:two-lineage-geometric-convolution}) instead gives
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\leq
+\frac{CpG'(\theta)^2}{J}
+\sum_{r=0}^{N-1}(N-r)\alpha^{2r}.
+\label{eq:dmop-alpha-variance-joint-lag-control}
+\end{equation}
+For $0\leq\alpha<1$, the finite sum is
+\begin{align}
+\sum_{r=0}^{N-1}(N-r)\alpha^{2r}
+&=
+\frac{N-(N+1)\alpha^2+\alpha^{2N+2}}
+{(1-\alpha^2)^2}                                             \notag\\
+&\leq
+N\min\left\{N,\frac1{1-\alpha^2}\right\}.
+\label{eq:finite-alpha-variance-sum}
+\end{align}
+Its continuous value at $\alpha=1$ is $N(N+1)/2$.  Hence Equation~
+(\ref{eq:dmop-alpha-variance-joint-lag-control}) recovers $O(N/J)$ at
+$\alpha=0$, gives $O\{N/[J(1-\alpha)]\}$ for fixed $\alpha<1$, and gives
+$O(N^2/J)$ at $\alpha=1$.
+
+The simulator tangent is a function of the differentiated particle state,
+so Equations~(\ref{eq:dmop-zero-original-covariance})--
+(\ref{eq:dmop-zero-variance-restored}) are exactly the original argument
+when the quoted strong-mixing estimate is understood for that augmented
+state.  The bounded-density assumptions directly establish the quoted
+mixing theorem for the physical cloud; applying it to the augmented
+state--tangent cloud is the remaining scope condition, because the tangent
+is not generally recoverable from the physical locations alone.  The
+$O(\log J)$ factor is not a separate objection under the manuscript's
+$\lesssim$ convention.  Truncating the discounted weights does not itself
+truncate the tangent, so the uniform fixed-lag and joint-lag covariance
+bounds are recorded separately.  Equations~
+(\ref{eq:fixed-lag-variance-same-lag-control}) and
+(\ref{eq:dmop-alpha-variance-joint-lag-control}) therefore restore the
+valid variance implications of the earlier argument, while Lemma~
+\ref{lem:dmop-alpha-variance} remains the unconditional result under the
+present assumptions.
+\end{remark}
 
 \begin{lem}[Population discounting bias]
 \label{lem:dmop-population-discount-bias}
@@ -3419,18 +4130,40 @@ $N,J$, and $\alpha$, such that
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
 \right\|_2^2                                                   \notag\\
-&\quad\leq
-CpG'(\theta)^2
+&\quad\lesssim
+pG'(\theta)^2
 \left[
-\min\left\{N^2,\frac{N^3}{J}\right\}
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 \right\}^2
-+\frac{N^4}{J^2}
++\frac1{J^2}
+\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\right)^2
 \right].
 \label{eq:refined-dmop-alpha-mse}
 \end{align}
+Consequently, for $0\leq\alpha<1$,
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left\{
+\frac{N}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2(1-\alpha)^2}
+\right\}.
+\label{eq:refined-dmop-alpha-mse-simplified}
+\end{align}
+Both displays are finite at $\alpha=1$ when the finite sums in Equation~
+(\ref{eq:refined-dmop-alpha-mse}) are used; the three terms then have
+orders $N^3/J$, $0$, and $N^4/J^2$, respectively.
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -3452,16 +4185,20 @@ because $\E(Z-\E Z)=0$.
 
 Apply Equation~(\ref{eq:vector-bias-variance-identity}) with
 $Z=\nabla_\theta\hat\ell^\alpha(\theta)$ and
-$z=\nabla_\theta\ell(\theta)$.  Lemma~
+$z=\nabla_\theta\ell(\theta)$. Lemma~
 \ref{lem:dmop-alpha-variance} gives
 \begin{equation}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\leq
-CpG'(\theta)^2
-\min\left\{N^2,\frac{N^3}{J}\right\}.
+\lesssim
+\frac{pG'(\theta)^2}{J}
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
 \label{eq:refined-theorem-variance-term}
 \end{equation}
-For the bias, add and subtract the full population DMOP-$\alpha$ score:
+For the bias, add and subtract the full population DMOP-$\alpha$ score.
+The triangle inequality, Lemma~
+\ref{lem:dmop-full-particle-bias}, and Lemma~
+\ref{lem:dmop-population-discount-bias} give
 \begin{align}
 &\left\|
 \E\nabla_\theta\hat\ell^\alpha(\theta)
@@ -3479,24 +4216,13 @@ For the bias, add and subtract the full population DMOP-$\alpha$ score:
 -\nabla_\theta\ell_n(\theta)\}
 \right\|_2                                                    \notag\\
 &\quad\leq
-\frac{C\sqrt p\,G'(\theta)N^2}{J}
-+\sum_{n=1}^{N}
-\left\|
-\nabla_\theta\ell_n^\alpha(\theta)
--\nabla_\theta\ell_n(\theta)
-\right\|_2                                                    \notag\\
-&\quad\leq
-C\sqrt p\,G'(\theta)
-\left[
-\frac{N^2}{J}
-+N\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
-\right].
+\frac{C\sqrt p\,G'(\theta)}{J}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
++CN\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
 \label{eq:refined-theorem-full-bias}
 \end{align}
-The penultimate line uses Lemma~\ref{lem:dmop-full-particle-bias} and the
-triangle inequality; the final line applies
-Lemma~\ref{lem:dmop-population-discount-bias} to each of the $N$ terms.
 Using $(a+b)^2\leq2a^2+2b^2$ in
 Equation~(\ref{eq:refined-theorem-full-bias}) gives
 \begin{align}
@@ -3507,7 +4233,10 @@ Equation~(\ref{eq:refined-theorem-full-bias}) gives
 &\quad\leq
 CpG'(\theta)^2
 \left[
-\frac{N^4}{J^2}
+\frac1{J^2}
+\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\right)^2
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
@@ -3518,8 +4247,319 @@ CpG'(\theta)^2
 Substitution of Equations~(\ref{eq:refined-theorem-variance-term}) and
 (\ref{eq:refined-theorem-bias-squared}) into
 Equation~(\ref{eq:vector-bias-variance-identity}) proves
-Equation~(\ref{eq:refined-dmop-alpha-mse}).
+Equation~(\ref{eq:refined-dmop-alpha-mse}). For $\alpha<1$,
+\begin{align}
+\sum_{r=0}^{n-1}\alpha^r
+&\leq\frac1{1-\alpha},                                      \notag\\
+\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+&\leq\frac{N}{(1-\alpha)^2},                               \notag\\
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+&\leq\frac{N}{1-\alpha},                                   \notag\\
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+&\leq
+\frac{\varrho}{(1-\varrho)^2}(1-\alpha).
+\label{eq:refined-mse-geometric-simplifications}
+\end{align}
+Substitution of Equation~
+(\ref{eq:refined-mse-geometric-simplifications}) into Equation~
+(\ref{eq:refined-dmop-alpha-mse}), with the fixed factors in $\varrho$
+absorbed by $\lesssim$, proves Equation~
+(\ref{eq:refined-dmop-alpha-mse-simplified}).
 \end{proof}
+
+\begin{prop}[Direct MSE companion bound]
+\label{prop:direct-dmop-alpha-mse}
+Under the conditions of
+Theorem~\ref{thm:refined-dmop-alpha-mse},
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left[
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
++\frac1{J^2}
+\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\right)^2
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right],
+\label{eq:direct-dmop-alpha-mse-sharp}
+\\
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\quad\leq
+CpG'(\theta)^2
+\min\left[
+N^2,
+\frac{N^3}{J}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:direct-dmop-alpha-mse}
+\end{align}
+Thus Equation~(\ref{eq:direct-dmop-alpha-mse-sharp}) gives the sharper
+$N/J$-times-an-$\alpha$-factor argument, while Equation~
+(\ref{eq:direct-dmop-alpha-mse}) retains the historical direct cap near
+$\alpha=1$.
+\end{prop}
+
+\begin{proof}[Proof.]
+We first prove the sharper direct bound. Minkowski's inequality in $L^2$
+gives
+\begin{align}
+&\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\right\}^{1/2}                                                \notag\\
+&\quad\leq
+\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\E\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2
+\right\}^{1/2}                                                \notag\\
+&\qquad+
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                    \notag\\
+&\qquad+
+\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2.
+\label{eq:direct-sharp-minkowski-three-terms}
+\end{align}
+The three terms on the right of Equation~
+(\ref{eq:direct-sharp-minkowski-three-terms}) are bounded by Lemma~
+\ref{lem:dmop-alpha-variance}, Lemma~
+\ref{lem:dmop-full-particle-bias}, and Lemma~
+\ref{lem:dmop-population-discount-bias}, respectively. Hence
+\begin{align}
+&\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\right\}^{1/2}                                                \notag\\
+&\quad\lesssim
+\sqrt p\,G'(\theta)
+\left[
+\left\{
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\right\}^{1/2}
++\frac1J
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
++N\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right].
+\label{eq:direct-sharp-l2-three-bounds}
+\end{align}
+For nonnegative $a,b,c$,
+$(a+b+c)^2\leq3(a^2+b^2+c^2)$. Squaring Equation~
+(\ref{eq:direct-sharp-l2-three-bounds}) and applying this inequality
+proves Equation~(\ref{eq:direct-dmop-alpha-mse-sharp}).
+
+For completeness, we next prove the historical direct cap. Summing
+Equation~(\ref{eq:historical-coordinate-mse}) over the $p$ coordinates
+gives
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
+\leq
+\frac{CpG'(\theta)^2N^3}{J}.
+\label{eq:direct-particle-l2-n-three}
+\end{equation}
+There is also a deterministic bound.  Equation~
+(\ref{eq:full-score-deterministic-bound}) gives, for every coordinate $i$,
+\begin{equation}
+\left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|
+\leq NG'(\theta).
+\label{eq:direct-particle-score-deterministic}
+\end{equation}
+The identical calculation applied to Equation~
+(\ref{eq:population-full-score-summation-by-parts}), with $m(\xi_t)$
+replaced by $\rho_t$, gives
+\begin{equation}
+\left|\partial_{\theta_i}\ell^\alpha(\theta)\right|
+\leq NG'(\theta).
+\label{eq:direct-population-score-deterministic}
+\end{equation}
+The scalar triangle inequality, Equations~
+(\ref{eq:direct-particle-score-deterministic})--
+(\ref{eq:direct-population-score-deterministic}), and then summation over
+coordinates give
+\begin{align}
+&\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2                                                \notag\\
+&\quad=
+\sum_{i=1}^{p}
+\left|
+\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|^2                                                   \notag\\
+&\quad\leq
+\sum_{i=1}^{p}
+\left\{
+\left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|
++\left|\partial_{\theta_i}\ell^\alpha(\theta)\right|
+\right\}^2                                                  \notag\\
+&\quad\leq
+4pN^2G'(\theta)^2.
+\label{eq:direct-particle-l2-deterministic}
+\end{align}
+Combining Equations~(\ref{eq:direct-particle-l2-n-three}) and
+(\ref{eq:direct-particle-l2-deterministic}), and taking square roots,
+yields
+\begin{equation}
+\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
+\right\}^{1/2}
+\leq
+C\sqrt p\,G'(\theta)
+\min\left\{N,\frac{N^{3/2}}{\sqrt J}\right\}.
+\label{eq:direct-particle-l2-minimum}
+\end{equation}
+
+We next add the deterministic population discount error.  The triangle
+inequality followed by
+Lemma~\ref{lem:dmop-population-discount-bias} gives
+\begin{align}
+&\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2                                                   \notag\\
+&\quad\leq
+\sum_{n=1}^{N}
+\left\|
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\|_2                                                   \notag\\
+&\quad\leq
+CN\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\label{eq:direct-full-population-discount-error}
+\end{align}
+Minkowski's inequality in $L^2$, followed by Equations~
+(\ref{eq:direct-particle-l2-minimum}) and
+(\ref{eq:direct-full-population-discount-error}), now gives
+\begin{align}
+&\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\right\}^{1/2}                                              \notag\\
+&\quad\leq
+\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
+\right\}^{1/2}
++\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2                                                   \notag\\
+&\quad\leq
+C\sqrt p\,G'(\theta)
+\left[
+\min\left\{N,\frac{N^{3/2}}{\sqrt J}\right\}
++N\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right].
+\label{eq:direct-total-l2-before-square}
+\end{align}
+Squaring Equation~(\ref{eq:direct-total-l2-before-square}) and using
+$(a+b)^2\leq2a^2+2b^2$ proves
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\quad\leq
+CpG'(\theta)^2
+\left[
+\min\left\{N^2,\frac{N^3}{J}\right\}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:direct-dmop-alpha-mse-before-cap}
+\end{align}
+Finally, Equation~(\ref{eq:direct-particle-score-deterministic}) at the
+given $\alpha$ and
+Equation~(\ref{eq:direct-population-score-deterministic}) at $\alpha=1$
+give, exactly as in Equation~
+(\ref{eq:direct-particle-l2-deterministic}),
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\leq
+4pN^2G'(\theta)^2.
+\label{eq:direct-total-deterministic-cap}
+\end{equation}
+Combining Equations~(\ref{eq:direct-dmop-alpha-mse-before-cap}) and
+(\ref{eq:direct-total-deterministic-cap}), and enlarging $C$, proves
+Equation~(\ref{eq:direct-dmop-alpha-mse}).
+\end{proof}
+
+\begin{remark}[Relation to the direct historical bound of Del Moral and
+Doucet]
+The proof of Proposition~\ref{prop:direct-dmop-alpha-mse} follows the
+direct-$L^2$ strategy of \citet[Lemma~4]{delMoral03}, but uses the sharper
+two-lineage historical estimate already proved in Lemma~
+\ref{lem:dmop-alpha-variance}.  Applied literally to a norm-one bounded
+path functional, the generic inequality of \citet{delMoral03} has a sum of
+$N$ uniformly bounded future-normalizer ratios and therefore gives RMSE
+$O(N/\sqrt J)$.  The unnormalized score has norm
+$O\{NG'(\theta)\}$, so homogeneity would give
+\begin{equation}
+\operatorname{RMSE}=O\left\{\frac{N^2G'(\theta)}{\sqrt J}\right\},
+\qquad
+\operatorname{MSE}=O\left\{\frac{N^4G'(\theta)^2}{J}\right\}.
+\label{eq:del-moral-doucet-direct-generic-rate}
+\end{equation}
+This is the generic historical rate recalled by \citet{poyiadjis11}.
+The time-homogeneous specialization in Theorem~4 of \citet{delMoral03}
+uses their additional condition~(23), which is not one of the present
+assumptions.  By contrast, Equations~
+(\ref{eq:historical-one-lineage-bound})--
+(\ref{eq:historical-particle-second-moment}) give RMSE
+$O(N^{3/2}/\sqrt J)$ for the present bounded score functional and hence
+the sharper $O(N^3/J)$ direct MSE in Proposition~
+\ref{prop:direct-dmop-alpha-mse}.  The direct proof removes the redundant
+$N^4/J^2$ term, but it does not remove the remaining historical factor
+$N$: that improvement still requires signed cross-time covariance control
+or stability of the inherited tangent.
+\end{remark}
 
 \begin{remark}[Why the generic historical bound is cubic]
 The factor $N^3/J$ in Theorem~\ref{thm:refined-dmop-alpha-mse} is a
