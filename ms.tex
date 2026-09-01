@@ -542,7 +542,25 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
-\kevin{Suggested clarifications to the existing assumptions, rather than a new assumption. In (A3), specify that the displayed derivative is the total fixed-random-number derivative $\nabla_\theta\log g_{n,j}^{A,F,\theta}$ through the reparameterized simulated state, uniformly in $n,j$ and in a neighborhood of $\phi$; enlarge $G'(\theta)$ to a finite bound on that neighborhood if necessary. In (A5), specify that, for fixed base simulator random numbers and fixed reference-filter resampling indices, the complete recursively simulated path and the composed log measurement densities have the stated continuous derivatives in $\theta$, and that the base random-number law does not depend on $\theta$. The product rule then gives $\|\nabla_\theta\prod_{s=1}^nG_s(X_s)\|_\infty\leq n\bar G^nG'(\theta)$, so dominated convergence justifies differentiation under every finite-horizon simulator expectation. No primitive-innovation continuation assumption is needed for the revised theorem. Assumption (A2) gives geometric forgetting of the population lag coefficients through the posterior backward kernels, but it does not imply geometric mixing of the inherited simulator tangent. The finite-particle proof therefore uses the historical path-space bounds of \citet{delMoral04,chanDelMoral18}, which apply to the actual bounded ancestral mark. The resulting generic variance is $O(N^3pG'(\theta)^2/J)$ and the full particle bias is $O(N^2\sqrt p\,G'(\theta)/J)$. The proof uses multinomial resampling; systematic resampling remains the practical default.}
+\kevin{Suggested clarifications to the existing assumptions, rather than a new assumption.
+In (A3), specify that the displayed derivative is the total fixed-random-number derivative
+$\nabla_\theta\log g_{n,j}^{A,F,\theta}$ through the reparameterized simulated state,
+uniformly in $n,j$ and near $\phi$.
+In (A5), specify that, for fixed simulator random numbers and reference-filter resampling
+indices, the recursively simulated path and composed log measurement densities have the
+stated derivatives, and that the base random-number law does not depend on $\theta$.
+The product rule then gives
+$\|\nabla_\theta\prod_{s=1}^nG_s(X_s)\|_\infty\leq n\bar G^nG'(\theta)$,
+so dominated convergence justifies differentiation under finite-horizon expectations.
+No new primitive-innovation or tangent-stability assumption is needed: a differentiable
+particle includes its location and simulator and weight tangents.
+Under (A2)--(A3), a first-principles particle-update telescoping calculation gives
+time-uniform weak bias $C\operatorname{osc}(f)/J$ for bounded current-particle
+functionals.
+The finite-particle variance proof uses the centered $L^4$ particle bound and
+particle-system mixing; as elsewhere, $\lesssim$ hides its mixing-time factor.
+The proof requires multinomial resampling and, for the quoted particle-system theorem,
+$J\geq2$; systematic resampling remains the practical default.}
 
 
 %\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
@@ -618,7 +636,37 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 \end{thm}
 \arxiv{}{\vspace*{-1ex}}
 
-\kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}, under (A2), the clarified total-derivative form of (A3), the clarified fixed-random-number form of (A5), multinomial resampling, $\theta=\phi$, and $\alpha\in[0,1]$: there are $C<\infty$ and $\varrho\in(0,1)$, independent of $N,J$, and $\alpha$, such that $\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell\|_2^2\leq CpG'(\theta)^2\big[\min\{N^2,N^3/J\}+N^2\{\varrho(1-\alpha)/((1-\varrho)(1-\alpha\varrho))\}^2+N^4/J^2\big]$ and $\Var(\nabla_\theta\hat\ell^\alpha)\leq CpG'(\theta)^2\min\{N^2,N^3/J\}$. In particular, the MSE is at most $CpG'(\theta)^2\{N^3/J+N^2(1-\alpha)^2+N^4/J^2\}$. For each fixed $N$, setting $\alpha=1$ recovers the ordinary $O(J^{-1})$ MSE rate. The $N^3/J$ term is the generic historical path-space upper bound, not a sharp Poyiadjis rate.}
+\kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}.
+Under (A2), the clarified forms of (A3) and (A5), fixed observations,
+multinomial resampling, $J\geq2$, $\theta=\phi$, and $\alpha\in[0,1]$,
+there are $C<\infty$ and $\varrho\in(0,1)$, independent of $N,J,\alpha$, such that
+\[
+\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell\|_2^2
+\lesssim pG'(\theta)^2\left[
+J^{-1}\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
++J^{-2}\left(\sum_{n=1}^N\sum_{r=0}^{n-1}\alpha^r\right)^2
++N^2\left\{\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}\right\}^2
+\right],
+\]
+and
+\[
+\Var(\nabla_\theta\hat\ell^\alpha)
+\lesssim pG'(\theta)^2
+\min\left\{N^2,\,
+J^{-1}\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2\right\}.
+\]
+For fixed $\alpha<1$, the variance contribution is
+$O\{NpG'(\theta)^2/[J(1-\alpha)^2]\}$ and the MSE is bounded by
+\[
+pG'(\theta)^2\left\{
+\frac{N}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2(1-\alpha)^2}
+\right\}.
+\]
+At $\alpha=1$, the finite sums give orders $N^3/J$ and $N^4/J^2$ for
+the variance and squared particle-bias terms.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
@@ -627,8 +675,45 @@ The covariance of the derivative of MOP-$(\alpha,k)$ are controlled with Davydov
 The MSE bound considers the error between the target derivative and DMOP-$(1,k)$, and the error between DMOP-$(1,k)$ and DMOP-$\alpha$. 
 The latter can be shown to be $\tilde{O}\big(Np \, G'(\theta)^2(k+\psi_k(\alpha))\big)$, and the former can be controlled with a result on the the forgetting of the particle filter from \cite{karjalainen23} and the very same $L^p$ error bound mentioned above. 
 
-\kevin{Suggested replacement proof outline: the clarified (A3) and (A5) justify differentiation under each finite-horizon simulator expectation and identify the population recursion with posterior averages of the realized marks. Under (A2), the posterior backward kernels contract in oscillation by $1-\underbar M/\bar M$, which gives the displayed population discount bias. Sum the conditional-score decomposition over time and perform summation by parts. This writes the full DMOP-$\alpha$ score as $(1-\alpha)$ times historical particle averages at times $1,\ldots,N-1$, plus one terminal historical average. The $O(n/J)$ historical weak-bias estimate of \citet{chanDelMoral18} then gives full particle bias $O(N^2\sqrt p\,G'(\theta)/J)$ uniformly in $\alpha$. The historical occupation-measure variance bound of \citet{delMoral04} gives $L^2$ error $O(\sqrt{n/J})$ for a norm-one path functional; after the same summation-by-parts calculation and the $O(N)$ scale of the unnormalized score, this gives variance $O(N^3pG'(\theta)^2/J)$. Combining variance, particle bias, and population discount bias proves the theorem. Section~S7 also records the precise additional centered two-lineage covariance estimate that would improve the variance to $O\{N/[J(1-\alpha)]\}$ and yield the conditional interior rate $O\{N^{4/3}/J^{2/3}+N^2/J^2\}$, but (A2)--(A5) do not prove that estimate for inherited simulator tangents. Replace the preceding reference to Section~\suppSecProofBiasVar by a reference to Section~S7, where the full replacement proof is given.}
-\kevin{Audit of the other SI variance arguments: the current-cloud covariance calculation does not establish the missing finite-particle lag covariance. The particle-system contraction used there has blocks of order $\log J$, so the covariance sum retains a factor $1+\min(N,\log J)$ even for a genuinely current-cloud mark. More importantly, the total fixed-random-number derivative carries the inherited simulator tangent, and truncating the discounted weights does not truncate that tangent. Thus neither the DMOP-$0$ calculation nor the truncated-score calculation can be reused for the general theorem under (A2)--(A5). The uniform filter-derivative stability theorem of \citet{delMoral15derivative} concerns the distinct $O(J^2)$ backward derivative estimator and likewise does not prove this covariance for the $O(J)$ DMOP genealogy.}
+\kevin{Suggested replacement proof outline.
+The clarified (A3) and (A5) justify differentiation under each finite-horizon
+simulator expectation.
+Posterior backward-kernel contraction gives geometric decay of the population lag
+coefficients and hence the population discount bias.
+For the particle bias, telescope the local empirical updates.
+After centering the empirical numerator, the one-update bias is the expectation of
+the product of a numerator fluctuation and a random-normalizer fluctuation; each is
+$O(J^{-1/2})$, so the bias is $O(J^{-1})$.
+Geometric filter contraction makes the sum of these local weak biases uniform in time.
+Applying this result to the current filtered-weight tangent gives full particle bias
+\[
+\frac{\sqrt p\,G'(\theta)}{J}
+\sum_{n=1}^N\sum_{r=0}^{n-1}\alpha^r.
+\]
+For the variance, the current differentiable particle includes the accumulated
+weight tangent.
+The centered $L^4$ particle bound, Davydov's inequality, and particle-system mixing
+give
+\[
+\Var(\nabla_\theta\hat\ell^\alpha)
+\lesssim
+\frac{pG'(\theta)^2}{J}
+\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\]
+Combining these two bounds with the population discount bias proves the theorem.
+Section~S7 contains the full proof; it does not claim the stronger
+$(1-\alpha)^{-1}$ variance factor.}
+\kevin{Audit of the other SI variance arguments.
+The original DMOP-$0$ and fixed-lag calculations are retained in the supplement.
+Their use of $\lesssim$ intentionally suppresses the particle-system mixing-time
+factor.
+Once particle is read in the differentiated sense used by the
+algorithm---location, simulator tangent, and weight tangent---the current-particle
+covariance argument applies directly; there is no separate augmented-state or
+tangent-stability gap.
+The full DMOP-$\alpha$ calculation yields
+$N/[J(1-\alpha)^2]$ for fixed $\alpha<1$.
+No stronger $(1-\alpha)^{-1}$ factor is asserted.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -649,7 +734,21 @@ DMOP-$\alpha$ achieves a lower MSE than DMOP-$1$, as $\alpha, k$ can be as large
 We also show that DMOP-$0$ achieves a MSE of $\tilde{O}\big(NpG'(\theta)^2(J^{-1}+(1-\epsilon)^{\lfloor1/c\log(J)\rfloor})\big)$, where the second term corresponds to uncontrolled mixing error.
 Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to reduce said mixing error, leading to uncontrolled asymptotic bias. 
 
-\kevin{Suggested correction to this endpoint discussion: under their mixing and nondegeneracy conditions, Theorem~1 of \citet{poyiadjis11} gives a quadratic lower bound for the central-limit asymptotic variance of their already unnormalized additive path estimator. In fixed-$N$, large-$J$ asymptotics the leading variance of the unscaled particle error corresponding to that central limit theorem is of order at least $N^2/J$; no additional $N^2$ normalization factor should be applied. The separate generic path-space $L^p$ upper bound cited there is $O(N^2/\sqrt J)$ in error, hence $O(N^4/J)$ after squaring, but it is not established as a sharp variance law. DMOP-$1$'s pathwise reparameterization marks are not generally identical particle by particle to the complete-data likelihood-ratio marks of \citet{poyiadjis11}, which include initial- and transition-density scores. Agreement of their population score targets therefore does not transfer the Poyiadjis lower bound to DMOP-$1$; a separate estimator-level asymptotic-variance argument is required. There is also no DMOP-$0$ MSE lower bound under the present assumptions, since its conditional population biases may cancel or vanish. Consequently, the proved and conditional upper bounds in Section~S7 do not establish that an interior $\alpha$ has lower MSE than either endpoint.}
+\kevin{Suggested correction to this endpoint discussion.
+Theorem~1 of \citet{poyiadjis11} gives a quadratic lower bound for the
+central-limit asymptotic variance of their already unnormalized additive path
+estimator; no additional $N^2$ normalization factor should be applied.
+A separate generic norm-one path-space RMSE bound of order $N/\sqrt J$ becomes
+$N^2/\sqrt J$, and hence $N^4/J$ in MSE, after rescaling by the
+$O(N)$ oscillation of the full unnormalized score.
+That quartic quantity is a generic upper bound, not the Poyiadjis lower-bound rate.
+DMOP-$1$'s reparameterization marks are not generally particlewise identical to the
+complete-data likelihood-ratio marks of \citet{poyiadjis11}, so their lower bound
+does not automatically transfer to DMOP-$1$.
+There is also no DMOP-$0$ MSE lower bound under the present assumptions.
+The finite-sum upper envelope displays opposing $\alpha$ directions, but hidden
+constants and one-sided bounds do not prove that the actual MSE has an interior
+minimizer.}
 
 
 
