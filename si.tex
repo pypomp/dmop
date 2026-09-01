@@ -3846,14 +3846,31 @@ absorbed by $\lesssim$, proves Equation~
 The finite-sum bound in Equation~
 (\ref{eq:refined-dmop-alpha-mse}) can be minimized directly over
 $\alpha\in[0,1]$ for given $N,J$, and $\varrho$.  There is no general
-closed form for that finite-sum minimizer.  The simplified display gives
-its rate in the regime where the geometric sums have not saturated at the
-horizon.  Omitting the fixed factors in $\varrho$, the implicit constants,
-and the particle-system mixing-time factor suppressed by $\lesssim$, its
-$\alpha$-dependent part is
+closed form for that finite-sum minimizer.  In the particle-rich regime
+$J\geq N$, Cauchy--Schwarz gives
+\begin{align}
+&\frac1{J^2}
+\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\right)^2                                                     \notag\\
+&\quad\leq
+\frac{N}{J}
+\left\{
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\right\}                                                     \notag\\
+&\quad\leq
+\frac1J\sum_{n=1}^{N}
+\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\label{eq:particle-bias-absorbed-when-j-exceeds-n}
+\end{align}
+Thus the squared particle-bias term is absorbed into the particle-variance
+term whenever $J\geq N$.  For $\alpha<1$, after omitting the fixed factors
+in $\varrho$, the implicit constants, and the particle-system mixing-time
+factor suppressed by $\lesssim$, the resulting $\alpha$-dependent envelope
+is
 \begin{equation}
-\left(\frac{N}{J}+\frac{N^2}{J^2}\right)(1-\alpha)^{-2}
-+N^2(1-\alpha)^2.
+\frac{N}{J(1-\alpha)^2}+N^2(1-\alpha)^2.
 \label{eq:simplified-alpha-envelope}
 \end{equation}
 Differentiating Equation~(\ref{eq:simplified-alpha-envelope}) with respect
@@ -3861,32 +3878,18 @@ to $1-\alpha$ gives the rate-balancing choice
 \begin{equation}
 1-\alpha
 \asymp
-\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4}.
+(NJ)^{-1/4}.
 \label{eq:rate-balancing-alpha-choice}
 \end{equation}
 At this choice, Equation~(\ref{eq:simplified-alpha-envelope}) is of order
 \begin{equation}
-\frac{N^{3/2}}{\sqrt J}
-\left(1+\frac NJ\right)^{1/2}.
+\frac{N^{3/2}}{\sqrt J}.
 \label{eq:rate-balanced-mse-envelope}
 \end{equation}
-Thus, up to the common factor $pG'(\theta)^2$ and the suppressed factors,
-the rate-balancing choice and resulting envelope are
-\begin{equation}
-1-\alpha\asymp
-\begin{cases}
-J^{-1/2}, & J\lesssim N,\\[3pt]
-(NJ)^{-1/4}, & N\lesssim J\lesssim N^3,
-\end{cases}
-\qquad
-\operatorname{MSE}\lesssim
-pG'(\theta)^2
-\begin{cases}
-N^2/J, & J\lesssim N,\\[3pt]
-N^{3/2}/\sqrt J, & N\lesssim J\lesssim N^3.
-\end{cases}
-\label{eq:rate-balanced-alpha-regimes}
-\end{equation}
+At the choice in Equation~(\ref{eq:rate-balancing-alpha-choice}),
+$N(1-\alpha)\asymp N^{3/4}J^{-1/4}$.  Hence this balance applies before
+the geometric sums saturate at the horizon when
+$N\lesssim J\lesssim N^3$.
 
 For $J\gg N^3$, the geometric upper bounds used in
 Equation~(\ref{eq:refined-dmop-alpha-mse-simplified}) are no longer sharp
@@ -3900,8 +3903,8 @@ n-\frac{n(n-1)}2(1-\alpha)
 \end{equation}
 Substitution into the exact finite-sum envelope shows that its first-order
 decrease away from $\alpha=1$ is of order
-$\{N^4/J+N^5/J^2\}(1-\alpha)$, whereas the population-discount term is of
-order $N^2(1-\alpha)^2$.  For $J\gg N^3$, balancing these terms gives
+$N^4(1-\alpha)/J$, whereas the population-discount term is of order
+$N^2(1-\alpha)^2$.  For $J\gg N^3$, balancing these terms gives
 \begin{equation}
 1-\alpha\asymp\frac{N^2}{J},
 \qquad
@@ -3909,11 +3912,10 @@ order $N^2(1-\alpha)^2$.  For $J\gg N^3$, balancing these terms gives
 \frac{pG'(\theta)^2N^3}{J}.
 \label{eq:finite-horizon-alpha-choice}
 \end{equation}
-Combining the regimes gives the rate summary
+Combining the two particle-rich regimes gives the rate summary
 \begin{equation}
 1-\alpha\asymp
 \begin{cases}
-J^{-1/2}, & J\lesssim N,\\
 (NJ)^{-1/4}, & N\lesssim J\lesssim N^3,\\
 N^2/J, & J\gtrsim N^3,
 \end{cases}
@@ -3921,15 +3923,20 @@ N^2/J, & J\gtrsim N^3,
 \operatorname{MSE}\lesssim
 pG'(\theta)^2
 \begin{cases}
-N^2/J, & J\lesssim N,\\
 N^{3/2}/\sqrt J, & N\lesssim J\lesssim N^3,\\
 N^3/J, & J\gtrsim N^3.
 \end{cases}
 \label{eq:finite-horizon-alpha-regimes}
 \end{equation}
+When $J<N$, Equation~
+(\ref{eq:particle-bias-absorbed-when-j-exceeds-n}) does not absorb the
+squared particle-bias term.  Minimizing the unabsorbed simplified envelope
+then gives $1-\alpha\asymp J^{-1/2}$ and MSE at most of order $N^2/J$, up
+to the same common and suppressed factors.
 
-The exact envelope also gives a ridge-type endpoint calculation.  For
-$N>1$, the left derivative at $\alpha=1$ is
+For completeness, the unabsorbed finite-sum envelope also gives a
+ridge-type endpoint calculation.  For $N>1$, the left derivative at
+$\alpha=1$ is
 \begin{equation}
 \frac1J\sum_{n=1}^{N}n^2(n-1)
 +\frac{N^2(N+1)^2(N-1)}{6J^2}
@@ -3958,38 +3965,6 @@ upper envelope.  The hidden constants, suppressed mixing-time factor, and
 one-sided inequalities prevent them from identifying the minimizer of the
 actual MSE or proving that the actual MSE is smaller than at both
 endpoints.
-\end{remark}
-
-\begin{remark}[Equivalent direct $L^2$ argument]
-The direct argument does not give a different rate. Minkowski's inequality
-gives
-\begin{align}
-&\left\{
-\E\left\|
-\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2^2
-\right\}^{1/2}                                                \notag\\
-&\quad\leq
-\left\{
-\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\right\}^{1/2}
-+\left\|
-\E\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell^\alpha(\theta)
-\right\|_2
-+\left\|
-\nabla_\theta\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2.
-\label{eq:direct-sharp-minkowski-three-terms}
-\end{align}
-Substituting Lemmas~\ref{lem:dmop-alpha-variance},
-\ref{lem:dmop-full-particle-bias}, and
-\ref{lem:dmop-population-discount-bias}, then using
-$(a+b+c)^2\leq3(a^2+b^2+c^2)$, recovers Equation~
-(\ref{eq:refined-dmop-alpha-mse}). Thus no separate direct-MSE
-proposition is needed.
 \end{remark}
 
 \begin{remark}[Endpoint rates and oscillation normalization]
