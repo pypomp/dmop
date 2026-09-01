@@ -331,13 +331,17 @@ Numerical results are provided in Section~\ref{sec:cholera}.
 	    \textbf{Input:} Number of particles $J$, timesteps $N$, IF2 cooling schedule $a_m$, AD step size $\eta$, MOP-$\alpha$ discount parameter $\alpha$, spectral bounds $0<c\leq C$, gradient tolerance $\epsilon$, stopping multiplier $\sigma$, maximum AD iterations $M$, and initial value $\theta_0$.\newline
         Run the initial IF2 search under cooling schedule $a_m$ to obtain $\{\Theta_j, j=1,...,J\}$, and set $\theta_0 := J^{-1}\sum_{j=1}^J \Theta_j.$\newline
 		\textbf{For} $m=0,\ldots,M-1$: \newline
-		\hspace*{4mm} Using fresh random numbers, run Algorithm \ref{alg:mop} to obtain $\hat\loglik(\theta_m)$ and set $g_m := \nabla_{\theta}(-\hat\loglik(\theta_m))$ (for Theorem~\ref{thm:linear}, use $\alpha=1$, the after-resampling estimate, and multinomial resampling). \newline
+		\hspace*{4mm} Using fresh random numbers, run Algorithm \ref{alg:mop} to obtain $\hat\loglik(\theta_m)$ and set $g_m := \nabla_{\theta}(-\hat\loglik(\theta_m))$. \newline
 		\hspace*{4mm} \textbf{If} $\|g_m\|_2\leq\sigma\epsilon$, \textbf{return} $\hat\theta:=\theta_m$. \newline
 		\hspace*{4mm} Choose a symmetric raw curvature estimate $\widetilde B_m$ and clip its eigenvalues to $[c,C]$ to obtain $B_m$. \newline
 		\hspace*{4mm} Update $\theta_{m+1} := \theta_m - \eta B_m^{-1} g_m$. \newline
 		\textbf{Return} $\hat{\theta} := \theta_M.$
 \end{algorithm}
 
+The result below analyzes the specialization of Algorithm~\ref{alg:ifad} that
+uses $\alpha=1$, the after-resampling likelihood estimate, and multinomial
+resampling.  These restrictions are needed for the stated finite-sample
+probability bound.
 
 The convergence of IF2 (and so the first stage of IFAD) to a neighborhood of the MLE happens rapidly in practice. 
 %% In the case of the Dhaka cholera model of \cite{king08}, when an aggressive geometric cooling multiplier of 0.95 and initial random walk standard deviation of 0.02 is used, we require no more than 40 iterations of IF2 to obtain an acceptable warm-start. 
@@ -350,50 +354,77 @@ convergence rate up to a neighborhood of the MLE that shrinks as the particle
 gradient accuracy improves, under the usual smoothness and strong convexity
 assumptions, as shown below.
 
-\begin{thm}[Finite-horizon Linear Convergence of IFAD] \label{thm:linear}
-Let $f=-\ell$ and suppose that, on a convex region containing the iterates and
-the minimizer $\theta^*$,
-\(
-\gamma I_p\preceq\nabla^2 f(\theta)\preceq\Gamma I_p
-\)
-with $0<\gamma\leq\Gamma$.  Fix a maximum number
-$M\in\mathbb N$, $M\geq1$, of second-stage iterations,
-$\delta\in(0,1)$, and $\epsilon>0$.  At iteration $m$, use a fresh
-particle-randomness block to compute the after-resampling DMOP-$1$ gradient
-\(
-g_m=-\nabla_\theta\hat\ell^1(\theta_m)
-\)
-with $J$ particles and multinomial resampling, and use a curvature matrix satisfying
-\(
-cI_p\preceq B_m\preceq CI_p
-\)
-for fixed $0<c\leq C$.  Assume the constants in the gradient-concentration
-lemma of Section~\suppSecProofOptimizationConvergence{} are uniform on this
-region, and choose $J$ according to that lemma with $\delta$ replaced by
-$\delta/M$.
-
-For any $\beta\in(0,1)$, choose
-\begin{equation}\nonumber
-0<\eta\leq \frac{c(1-\beta)}{\Gamma},
+\begin{thm}[Finite-horizon Linear Convergence of IFAD]
+\label{thm:linear}\label{thm:mop-convergence}\normalfont
+Condition on the IF2 output $\theta_0$, and write $f=-\ell$.  Let
+$\mathcal D$ be a deterministic convex region, and let
+$\theta^*\in\operatorname{int}(\mathcal D)$ be the unique minimizer of $f$ on
+$\mathcal D$ (equivalently, the maximizer of $\ell$).  Assume that
+$\mathcal D$ contains every second-stage iterate and every trial point produced
+before stopping, and suppose that, for all $\theta\in\mathcal D$,
+\[
+\gamma I_p\preceq\nabla^2f(\theta)\preceq\Gamma I_p,
+\qquad 0<\gamma\leq\Gamma.
+\]
+Assume (A3) and (A5) uniformly on $\mathcal D$, and define the explicit
+constants
+\[
+R_G=\frac{\bar G}{\underbar G},\qquad
+K_N^{\rm pf}=32\sum_{r=0}^N R_G^{3r},\qquad
+G'_{\mathcal D}=\sup_{\theta\in\mathcal D}G'(\theta)<\infty.
+\]
+Fix $M\geq1$, $\delta\in(0,1)$, and $\epsilon>0$.  Let $\mathcal F_m$ contain
+the history before the $m$th particle-filter call.  Conditionally on
+$\mathcal F_m$, draw the particle-randomness block independently from the
+parameter-independent base law, and use multinomial resampling to compute the
+after-resampling DMOP-$1$ gradient
+$g_m=-\nabla_\theta\hat\ell_J^{A,1}(\theta_m)$.  Choose the integer particle
+count to satisfy
+\[
+J\geq\left\lceil
+K_N^{\rm pf}\log\!\left(\frac{6pM}{\delta}\right)
+\max\left\{4,
+\frac{4pN^2(G'_{\mathcal D})^2}{\epsilon^2}
+\right\}\right\rceil.
+\]
+Let $B_m$ be obtained by clipping the eigenvalues of any symmetric raw
+curvature estimate to $[c,C]$, where $0<c\leq C$, and update
+$\theta_{m+1}=\theta_m-\eta B_m^{-1}g_m$.  For $\beta\in(0,1)$, choose
+\[
+0<\eta\leq\frac{c(1-\beta)}{\Gamma},
 \qquad
-\sigma\geq \frac{2C}{c(1-\beta)},
-\end{equation}
-and stop when $\|g_m\|_2\leq\sigma\epsilon$.  Then, with probability at least
-$1-\delta$, simultaneously for every executed iteration $m<M$, either the algorithm
-has stopped and
-\begin{equation}\nonumber
-\ell(\theta^*)-\ell(\theta_m)
-\leq \frac{(\sigma+1)^2\epsilon^2}{2\gamma},
-\end{equation}
-or its next step satisfies
-\begin{equation}\nonumber
-\ell(\theta^*)-\ell(\theta_{m+1})
-\leq
-\left\{1-\frac{2\eta\beta\gamma}{C}
-\left(\frac{\sigma}{\sigma+1}\right)^2\right\}
-\big\{\ell(\theta^*)-\ell(\theta_m)\big\}.
-\end{equation}
-\label{thm:mop-convergence}
+\sigma\geq\frac{2C}{c(1-\beta)}.
+\]
+Define the stopping time, with the convention that $\min\varnothing=M$, by
+\[
+\tau=\min\big\{m\in\{0,\ldots,M-1\}:\|g_m\|_2\leq\sigma\epsilon\big\},
+\]
+and define the simultaneous gradient event
+\[
+\mathcal E_M=
+\bigcap_{m=0}^{\min\{\tau,M-1\}}
+\big\{\|g_m-\nabla f(\theta_m)\|_2\leq\epsilon\big\}.
+\]
+Then $\Pr(\mathcal E_M\mid\theta_0)\geq1-\delta$.  On $\mathcal E_M$, set
+\[
+q=1-\frac{2\eta\beta\gamma}{C}
+\left(\frac{\sigma}{\sigma+1}\right)^2,
+\qquad \frac12<q<1,
+\]
+and $\Delta_m=\ell(\theta^*)-\ell(\theta_m)$.  The following conclusions hold:
+\begin{enumerate}[label=(\roman*),leftmargin=7mm,itemsep=1mm]
+\item For every $m<\tau$,
+$\Delta_{m+1}\leq q\Delta_m$; hence
+$\Delta_m\leq q^m\Delta_0$ for $0\leq m\leq\tau$.
+\item If $\tau<M$, Algorithm~\ref{alg:ifad} returns $\theta_\tau$ and
+\[
+\|\nabla f(\theta_\tau)\|_2\leq(\sigma+1)\epsilon,
+\qquad
+\Delta_\tau\leq\frac{(\sigma+1)^2\epsilon^2}{2\gamma}.
+\]
+\item If $\tau=M$, Algorithm~\ref{alg:ifad} returns $\theta_M$ and
+$\Delta_M\leq q^M\Delta_0$.
+\end{enumerate}
 \end{thm}
 The proof of Theorem~\ref{thm:linear} is a finite-horizon inexact-gradient
 argument.  It retains the two-sided spectral control and the per-iteration
@@ -588,40 +619,13 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 \begin{enumerate}[label=(A\arabic*),itemsep=-1ex, , font=\small] 
     \item \textbf{Continuity of the Likelihood.} $\ell(\theta)$ has more than two continuous derivatives in a neighborhood $\left\{\theta: \ell(\theta)>\lambda_1\right\}$ for some $\lambda_1<\sup _{\varphi} \ell(\varphi)$.\label{assump:conti-lik}
     \item \textbf{Bounded Process Model.} There exist $\underbar{M}, \bar{M}$ such that $0 < \underbar{M} \leq f_{X_n|X_{n-1}}(x_n | x_{n-1};\theta) \leq \bar{M} < \infty$.\label{assump:bounded-process}
-    \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$.  In a neighborhood of the parameter under consideration, the total fixed-random-number derivative through the reparameterized simulated state is uniformly bounded: for every $n,j$ and every realization of the fixed simulator variables and reference-filter resampling indices, $\|\nabla_\theta^{\mathrm{tot}}\log g_{n,j}^{A,F,\theta}\|_\infty\leq G'(\theta)<\infty$.\label{assump:bounded-measurement}
+    \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$.  In a neighborhood of the parameter under consideration, the total fixed-random-number derivatives through the reparameterized simulated state are uniformly bounded: for every $n,j$, every realization of the fixed simulator variables and reference-filter resampling indices, and all $1\leq a,b\leq p$, $|\partial_{\theta_a}^{\mathrm{tot}}\log g_{n,j}^{A,F,\theta}|\leq G'(\theta)<\infty$ and $|\partial_{\theta_a\theta_b}^{2,\mathrm{tot}}\log g_{n,j}^{A,F,\theta}|\leq G''(\theta)<\infty$.\label{assump:bounded-measurement}
     \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, such that the MOP-$\alpha$ derivatives at $\theta=\phi$ satisfy $\|\nabla_\theta\hat\ell^\alpha(\theta)\|_2\leq G(\theta)$ and $\|\nabla_\theta^2\hat\ell^\alpha(\theta)\|_{\mathrm{op}}\leq H(\theta)$ almost surely for all $\alpha$.\label{assump:local-bounded-derivative}
     \item \textbf{Differentiable Density Ratios and Simulator.} The base random-number law of the reparameterized simulator does not depend on $\theta$.  For fixed base simulator variables and fixed reference-filter resampling indices, the complete recursively simulated path and its composed log measurement densities have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
 \end{enumerate}
 \arxiv{}{\vspace*{-3ex}}
 
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
-
-\kevin{Suggested clarifications to the existing assumptions, rather than a new assumption.
-In (A3), specify that the displayed derivative is the total fixed-random-number derivative
-$\nabla_\theta\log g_{n,j}^{A,F,\theta}$ through the reparameterized simulated state,
-uniformly in $n,j$ and near $\phi$.
-In (A5), specify that, for fixed simulator random numbers and reference-filter resampling
-indices, the recursively simulated path and composed log measurement densities have the
-stated derivatives, and that the base random-number law does not depend on $\theta$.
-The product rule then gives
-$\|\nabla_\theta\prod_{s=1}^nG_s(X_s)\|_\infty\leq n\bar G^nG'(\theta)$,
-so dominated convergence justifies differentiation under finite-horizon expectations.
-No new primitive-innovation or tangent-stability assumption is needed: a differentiable
-particle includes its location and simulator and weight tangents.
-Under (A2)--(A3), a first-principles particle-update telescoping calculation gives
-time-uniform weak bias $C\operatorname{osc}(f)/J$ for bounded current-particle
-functionals.
-The finite-particle variance proof uses Lemma~2.3 of \citet{karjalainen23}
-for the prediction empirical measure.  For the filtered empirical average,
-the supplement separately adds the conditional multinomial-resampling error
-and the Bayes-ratio error
-$\Psi_n(\eta_n^J)(f)-\Psi_n(\eta_n)(f)$; both are
-$O\{\operatorname{osc}(f)/\sqrt J\}$ in $L^4$.
-Particle-system mixing then controls the covariance sum; as elsewhere,
-$\lesssim$ hides its mixing-time factor.
-The proof requires multinomial resampling and, for the quoted particle-system theorem,
-$J\geq2$; systematic resampling remains the practical default.}
-
 
 %\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
 
