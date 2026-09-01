@@ -557,8 +557,14 @@ particle includes its location and simulator and weight tangents.
 Under (A2)--(A3), a first-principles particle-update telescoping calculation gives
 time-uniform weak bias $C\operatorname{osc}(f)/J$ for bounded current-particle
 functionals.
-The finite-particle variance proof uses the centered $L^4$ particle bound and
-particle-system mixing; as elsewhere, $\lesssim$ hides its mixing-time factor.
+The finite-particle variance proof uses Lemma~2.3 of \citet{karjalainen23}
+for the prediction empirical measure.  For the filtered empirical average,
+the supplement separately adds the conditional multinomial-resampling error
+and the Bayes-ratio error
+$\Psi_n(\eta_n^J)(f)-\Psi_n(\eta_n)(f)$; both are
+$O\{\operatorname{osc}(f)/\sqrt J\}$ in $L^4$.
+Particle-system mixing then controls the covariance sum; as elsewhere,
+$\lesssim$ hides its mixing-time factor.
 The proof requires multinomial resampling and, for the quoted particle-system theorem,
 $J\geq2$; systematic resampling remains the practical default.}
 
