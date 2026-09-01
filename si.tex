@@ -227,252 +227,429 @@ where we use the log-derivative trick in the second equality, observe that $\sum
 \section{Proof of Theorem~{\thmMopConvergence} (Optimization Convergence Analysis)}
 \label{appendix:convergence}
 
-Write $f=-\ell$.  The analysis is local to a convex region on which
-$f$ is $\gamma$-strongly convex and $\Gamma$-smooth and which contains all
-second-stage iterates.  The first lemma supplies a pointwise particle bound.
-The theorem applies it conditionally at the adaptively chosen iterates and uses
-a union bound over a prespecified finite iteration budget.
-
-At $\theta=\phi$, let $Z_{N,j}$ denote the complete augmented ancestral state
-of the $j$th after-resampling particle, including the simulator tangents carried
-by automatic differentiation, and define the total path-score functional
-\begin{equation}
+All derivatives in this section are evaluated at the common filtering and
+evaluation parameter $\theta=\phi$.  Let $Z_n$ contain the complete ancestral
+path through time $n$, the parameter-independent simulator variables, and the
+first- and second-order tangents propagated by automatic differentiation.  Set
+\begin{align}
+G_n^\theta(Z_n)
+  &=f_{Y_n\mid X_n}(y_n^*\mid X_n^\theta;\theta),
+&W_\theta(Z_N)&=\prod_{n=1}^N G_n^\theta(Z_n),                 \label{eq:s2-weight}\\
 \psi_\theta(Z_N)
- =\nabla_\theta\log f_{Y_{1:N}\mid X_{1:N}}
-   (y_{1:N}^*\mid X_{1:N}^{\theta};\theta).
-\label{eq:path-score-functional}
-\end{equation}
-The derivative in Equation~\eqref{eq:path-score-functional} is the total
-fixed-random-number derivative through the simulated path.  To identify its
-population target, write $U$ for the parameter-independent base simulator
-variables and
-\begin{equation}
-W_\theta(U)=\prod_{n=1}^N
-f_{Y_n\mid X_n}(y_n^*\mid X_n^\theta(U);\theta).
-\end{equation}
-Then $\lik(\theta)=\E\{W_\theta(U)\}$ and
-$\nabla_\theta W_\theta=W_\theta\psi_\theta$.  Assumptions~
-{\refAssumpBoundedMeasurement} and {\refAssumpDifferentiableSimulator}
-provide a finite-horizon dominating function: coordinatewise,
-$|\partial_{\theta_i}W_\theta(U)|\leq
-N\bar G^N G'(\theta)$.  Therefore
-\begin{equation}
-\nabla_\theta\ell(\theta)
-=\frac{\E\{W_\theta(U)\psi_\theta(U)\}}
-       {\E\{W_\theta(U)\}}.
-\label{eq:path-score-target}
-\end{equation}
-If $\rho_N^J$ is the empirical measure of the augmented genealogical particles
-and $\rho_N$ is its Feynman--Kac limit, the right side of
-Equation~\eqref{eq:path-score-target} is $\rho_N(\psi_\theta)$.  Lemma~
-\ref{lem:mop-1-formula} therefore gives
-\begin{equation}
-\nabla_\theta\hat\ell^1(\theta)=\rho_N^J(\psi_\theta),
-\qquad
-\nabla_\theta\ell(\theta)=\rho_N(\psi_\theta).
-\label{eq:path-score-empirical}
-\end{equation}
+  &=\nabla_\theta^{\rm tot}\log W_\theta(Z_N),
+&\Xi_\theta(Z_N)&=\nabla_\theta^{2,{\rm tot}}
+                         \log W_\theta(Z_N).                  \label{eq:s2-score-curvature}
+\end{align}
+The superscript ``tot'' means that the derivative passes through the
+reparameterized simulated path while the base random numbers and the discrete
+resampling indices are held fixed.
 
-\begin{lem}[Concentration for the after-resampling DMOP-$1$ gradient]
+Write $\rho_N^J=J^{-1}\sum_{j=1}^J\delta_{Z_{N,j}}$ for the empirical measure
+of the after-resampling genealogical particles, and define the normalized
+Feynman--Kac path measure by
+\begin{equation}
+\rho_N(F)=\frac{\E\{W_\theta(Z_N)F(Z_N)\}}
+                 {\E\{W_\theta(Z_N)\}}.
+\label{eq:s2-rho-definition}
+\end{equation}
+Assumptions~{\refAssumpBoundedMeasurement} and
+{\refAssumpDifferentiableSimulator} give
+$|\partial_{\theta_i}W_\theta|\leq N\bar G^NG'(\theta)$, so dominated
+convergence and the log-derivative identity yield
+\begin{equation}
+\nabla_\theta\ell(\theta)=\rho_N(\psi_\theta),
+\qquad
+\nabla_\theta\hat\ell_J^{A,1}(\theta)=\rho_N^J(\psi_\theta).
+\label{eq:s2-gradient-identities}
+\end{equation}
+The second equality is Lemma~\ref{lem:mop-1-formula}; importantly, it is one
+terminal empirical average of the complete path score, not a sum of empirical
+filtering expectations at the individual observation times.
+
+For completeness, multinomial resampling gives the required genetic
+Feynman--Kac particle system explicitly.  For semigroup indexing, let
+$\mathsf Z_0$ be the augmented prediction path at observation $1$; for
+$q=1,\ldots,N-1$, let $\mathsf Z_q$ be the prediction path at observation
+$q+1$; and let $\mathsf Z_N$ be the terminal path after the final resampling.
+For $0\leq q\leq N$, write
+$\rho_q^J=J^{-1}\sum_{j=1}^J\delta_{\mathsf Z_{q,j}}$, where the
+$\mathsf Z_{0,j}$ are independent draws from the unweighted prediction law of
+$\mathsf Z_0$ and $\mathsf Z_{N,j}=Z_{N,j}$.
+Write $V_q^\theta(\mathsf Z_q)=G_{q+1}^\theta(\mathsf Z_q)$ for
+$q=0,\ldots,N-1$.  Let the locally indexed augmented kernel
+$\mathcal M_{q+1}^\theta$ append the next independent simulator innovation and
+its tangents for $0\leq q\leq N-2$, and put
+$\mathcal M_N^\theta=\operatorname{Id}$ for the final selection.  The one-step
+population map is
+\begin{equation}
+\Phi_{q+1}^\theta(\mu)(dz')
+=\frac{\int\mu(dz)V_q^\theta(z)\mathcal M_{q+1}^\theta(z,dz')}
+       {\mu(V_q^\theta)},\qquad 0\leq q<N.                    \label{eq:s2-fk-update}
+\end{equation}
+Conditionally on the current cloud, the $J$ children are independent with
+common law $\Phi_{q+1}^\theta(\rho_q^J)$.  The final observation is handled by
+the $q=N-1$ transition, namely multinomial selection with potential
+$V_{N-1}^\theta=G_N^\theta$ followed by the identity mutation.  Thus
+$\rho_N^J$ is exactly the terminal empirical measure of this augmented
+historical system.  Systematic resampling does not have this
+conditional-independence property and is not covered by the calculation.
+
+We next write out the particle concentration constant used below.  For
+$0\leq q\leq N$, let
+\begin{align}
+Q_{q,N}^\theta F(z_q)
+ &=\E\left[
+   F(\mathsf Z_N)\prod_{r=q}^{N-1}V_r^\theta(\mathsf Z_r)
+   \,\middle|\,\mathsf Z_q=z_q
+   \right],                                                     \label{eq:s2-q-semigroup}\\
+P_{q,N}^\theta F
+ &=\frac{Q_{q,N}^\theta F}{Q_{q,N}^\theta1},\qquad
+g_{q,N}=\sup_{z,z'}
+ \frac{Q_{q,N}^\theta1(z)}{Q_{q,N}^\theta1(z')},\qquad
+b_{q,N}=\sup_{\operatorname{osc}(F)\leq1}
+ \operatorname{osc}(P_{q,N}^\theta F),                         \label{eq:s2-semigroup-constants}
+\end{align}
+where $Q_{N,N}^\theta F=F$ and
+$\operatorname{osc}(F)=\sup_{z,z'}|F(z)-F(z')|$.  Thus
+$0\leq b_{q,N}\leq1$.  With
+\begin{equation}
+R_G=\frac{\bar G}{\underbar G},\qquad
+S_N=\sum_{q=0}^Ng_{q,N}^3b_{q,N},\qquad K_N=32S_N,\qquad
+K_N^{\rm pf}=32\sum_{r=0}^NR_G^{3r},                           \label{eq:s2-explicit-constant}
+\end{equation}
+the potential bounds give, term by term,
+\begin{equation}
+\underbar G^{N-q}\leq Q_{q,N}^\theta1(z_q)
+ \leq\bar G^{N-q},\qquad
+g_{q,N}\leq R_G^{N-q},\qquad K_N\leq K_N^{\rm pf}.             \label{eq:s2-explicit-constant-bound}
+\end{equation}
+In particular, the constant used in the theorem is the closed-form quantity
+\begin{equation}
+K_N^{\rm pf}=
+\begin{cases}
+32(N+1),&R_G=1,\\[1mm]
+\displaystyle 32\frac{R_G^{3(N+1)}-1}{R_G^3-1},&R_G>1.
+\end{cases}                                                     \label{eq:s2-explicit-constant-closed}
+\end{equation}
+Here is the constant calculation behind the tail bound used below.  Let
+$r_N^{\rm DM}$ and $\beta_N^{\rm DM}$ denote the second- and first-order
+coefficients in Theorem~1.2 of \citet{delMoral11}.  The Feynman--Kac bounds in
+their Appendix~A.3 give
+\begin{equation}
+r_N^{\rm DM}\leq4S_N,
+\qquad
+(\beta_N^{\rm DM})^2
+ \leq4\sum_{q=0}^Ng_{q,N}^2b_{q,N}^2
+ \leq4S_N,                                                       \label{eq:s2-dm-coefficient-bounds}
+\end{equation}
+where the last inequality uses $g_{q,N}\geq1$ and $0\leq b_{q,N}\leq1$.
+If $S_N=0$, the particle error is identically zero.  Hence suppose $S_N>0$.
+For $u\in(0,1/2]$, set $x=Ju^2/(32S_N)$.  If $x\leq\log6$, then
+$6e^{-x}\geq1$ and the desired probability bound is trivial.  If
+$x>\log6$, use
+$h^{-1}(x)\leq2x+2\sqrt x$ for
+$h(t)=\{t-\log(1+t)\}/2$ and
+$1+2x+2\sqrt x\leq8x$ to obtain
+\begin{align*}
+\frac{r_N^{\rm DM}}J\{1+h^{-1}(x)\}
+&\leq\frac{u^2}{8x}\{1+2x+2\sqrt x\}
+ \leq u^2\leq\frac u2,\\
+\beta_N^{\rm DM}\sqrt{\frac{2x}{J}}
+&\leq2\sqrt{S_N}\sqrt{\frac{2x}{J}}=\frac u2.
+\end{align*}
+Theorem~1.2 applied to both $F$ and $-F$, after centering and scaling $F$ to
+oscillation one, therefore gives the explicit Feynman--Kac corollary
+\begin{equation}
+\Pr\left(
+ |(\rho_N^J-\rho_N)(F)|>\operatorname{osc}(F)u
+ \right)
+\leq6\exp\left(-\frac{Ju^2}{K_N}\right)
+\leq6\exp\left(-\frac{Ju^2}{K_N^{\rm pf}}\right).             \label{eq:s2-scalar-concentration}
+\end{equation}
+for every $F$ with $\operatorname{osc}(F)>0$ and every $u\in(0,1/2]$.
+If $F$ is constant, $(\rho_N^J-\rho_N)(F)=0$ identically.
+Equations~\ref{eq:s2-explicit-constant}--
+\ref{eq:s2-scalar-concentration} replace all unnamed model-dependent
+concentration constants.
+
+\begin{lem}[Explicit concentration of the DMOP-$1$ gradient]
 \label{lemma:grad_bound}
-Assume multinomial resampling.  For $i=1,\ldots,p$, let
+Assume multinomial resampling and let
 \begin{equation}
 A_N(\theta)=\max_{1\leq i\leq p}
-\operatorname{osc}(\psi_{\theta,i}),
+ \operatorname{osc}(\psi_{\theta,i}),
 \qquad
-\operatorname{osc}(u)=\sup_{z,z'}|u(z)-u(z')|.
+u_g(J,\delta)=
+ \sqrt{\frac{K_N^{\rm pf}}{J}\log\frac{6p}{\delta}}.
+\label{eq:s2-gradient-constants}
 \end{equation}
-Under Assumptions~{\refAssumpBoundedMeasurement} and
-{\refAssumpDifferentiableSimulator}, $A_N(\theta)<\infty$; in particular,
-$A_N(\theta)\leq2NG'(\theta)$ under the displayed bound in
-Assumption~{\refAssumpBoundedMeasurement}.  Let $r_N(\theta)$ and
-$\beta_N(\theta)$ be the finite, $J$-independent constants in Theorem~1.2 of
-\citet{delMoral11} for the full augmented historical mutation--selection
-mean-field system, and abbreviate them as $r_N$ and $\beta_N$ below.  Set
-$h(u)=\{u-\log(1+u)\}/2$.  Then, for every $\delta\in(0,1)$, with probability
-at least $1-\delta$,
-\begin{align}
-\|\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)\|_2
-\leq A_N(\theta)\sqrt p\left[
-\frac{r_N}{J}\left\{1+h^{-1}\!\left(\log\frac{2p}{\delta}\right)\right\}
-+\beta_N\sqrt{\frac{2\log(2p/\delta)}{J}}
-\right].
-\label{eq:correct-gradient-concentration}
-\end{align}
-Consequently, the right side is at most $\epsilon$ if
-\begin{align}
-J\geq\max\Bigg\{
-&\frac{2A_N(\theta)r_N\sqrt p}{\epsilon}
- \left\{1+h^{-1}\!\left(\log\frac{2p}{\delta}\right)\right\},
-\frac{8A_N(\theta)^2\beta_N^2p\log(2p/\delta)}{\epsilon^2}
-\Bigg\}.
-\label{eq:correct-gradient-particle-count}
-\end{align}
+If $J\geq4K_N^{\rm pf}\log(6p/\delta)$, then, with probability at least
+$1-\delta$,
+\begin{equation}
+\|\nabla_\theta\hat\ell_J^{A,1}(\theta)
+      -\nabla_\theta\ell(\theta)\|_2
+\leq A_N(\theta)\sqrt p\,u_g(J,\delta).                        \label{eq:s2-gradient-concentration}
+\end{equation}
+Moreover, Assumption~{\refAssumpBoundedMeasurement} gives
+$A_N(\theta)\leq2NG'(\theta)$.  Consequently, the explicit condition
+\begin{equation}
+J\geq K_N^{\rm pf}\log\frac{6p}{\delta}
+ \max\left\{4,\frac{4pN^2G'(\theta)^2}{\epsilon^2}\right\}     \label{eq:s2-gradient-particle-count}
+\end{equation}
+implies that the left side of \eqref{eq:s2-gradient-concentration} is at most
+$\epsilon$ with probability at least $1-\delta$.
 \end{lem}
 
-\begin{proof}[Proof.]
-If $A_N(\theta)=0$, every coordinate of $\psi_\theta$ is constant on the
-augmented state space, so the left side of
-Equation~\eqref{eq:correct-gradient-concentration} is zero.  Suppose henceforth
-that $A_N(\theta)>0$.
-Fix a coordinate $i$.  Apply Theorem~1.2 of \citet{delMoral11} to the
-single terminal path-space test function
-$\psi_{\theta,i}/A_N(\theta)$ and to its negative.  Equation~
-\eqref{eq:path-score-empirical} then gives, with probability at least
-$1-2e^{-t}$,
-\begin{equation}
-|\rho_N^J(\psi_{\theta,i})-\rho_N(\psi_{\theta,i})|
-\leq A_N(\theta)\left[
-\frac{r_N}{J}\{1+h^{-1}(t)\}
-+\beta_N\sqrt{\frac{2t}{J}}
-\right].
-\end{equation}
-A union bound over the $p$ coordinates and the choice
-$t=\log(2p/\delta)$ give a simultaneous coordinatewise bound with failure
-probability at most $\delta$.  The inequality
-$\|v\|_2\leq\sqrt p\|v\|_\infty$ proves
-Equation~\eqref{eq:correct-gradient-concentration}.  Requiring each of its two
-terms to be at most $\epsilon/2$ gives
-Equation~\eqref{eq:correct-gradient-particle-count}.
+\begin{proof}
+The lower bound on $J$ makes $u_g(J,\delta)\leq1/2$.  Apply
+\eqref{eq:s2-scalar-concentration} to each normalized coordinate
+$\psi_{\theta,i}/A_N(\theta)$; a constant coordinate has zero error and needs
+no normalization.  A union bound over the $p$ coordinates gives
+\begin{equation*}
+\max_{1\leq i\leq p}
+ |(\rho_N^J-\rho_N)(\psi_{\theta,i})|
+ \leq A_N(\theta)u_g(J,\delta)
+\end{equation*}
+with probability at least $1-\delta$.  Now use
+$\|v\|_2\leq\sqrt p\|v\|_\infty$ and
+\eqref{eq:s2-gradient-identities}.  Finally,
+$|\psi_{\theta,i}|\leq NG'(\theta)$, so
+$A_N(\theta)\leq2NG'(\theta)$; substituting this inequality and solving
+$2NG'(\theta)\sqrt p\,u_g(J,\delta)\leq\epsilon$ gives
+\eqref{eq:s2-gradient-particle-count}.
 \end{proof}
 
-The concentration theorem is applied once to the complete terminal path-score
-functional.  Thus the only union bound in Lemma~\ref{lemma:grad_bound} is over
-the $p$ coordinates; a second union over the $N$ summands would both target the
-wrong filtering expectations and introduce an unnecessary factor of $N$.
+The next result treats the actual particle Hessian.  It retains the
+outer-product and empirical-mean terms created by differentiating the logarithm
+of the terminal empirical average.
 
-The next lemma supplies the deterministic spectral property needed by the
-optimization argument.  It avoids treating a particle log-likelihood Hessian
-as a sum of independent or particlewise matrices: differentiating a logarithm
-of an empirical average also produces outer-product and empirical-mean terms,
-so that decomposition is generally unavailable.
-
-\begin{lem}[Spectral regularization of a curvature estimate]
+\begin{lem}[Explicit concentration of the DMOP-$1$ particle Hessian]
 \label{lemma:hess_bound}
-Let $\widetilde B=Q\operatorname{diag}(\lambda_1,\ldots,\lambda_p)Q^T$ be
-an orthogonal eigendecomposition of any symmetric raw curvature estimate.  For
-fixed $0<c\leq C$, define
+Suppose in addition that Assumption~{\refAssumpBoundedMeasurement} gives the
+entrywise bound
+\(
+|\Xi_{\theta,ab}(Z_N)|\leq NG''(\theta)
+\)
+for $1\leq a,b\leq p$.  Define
 \begin{equation}
-B=Q\operatorname{diag}
-\big(\min\{C,\max\{c,\lambda_i\}\}:i=1,\ldots,p\big)Q^T.
-\label{eq:spectral-clipping}
+d_p=\frac{p(p+3)}2,\qquad
+H_N(\theta)=2p\{NG''(\theta)+3N^2G'(\theta)^2\},\qquad
+u_H(J,\delta)=
+ \sqrt{\frac{K_N^{\rm pf}}{J}\log\frac{6d_p}{\delta}}.         \label{eq:s2-hessian-constants}
 \end{equation}
-Then
+If $J\geq4K_N^{\rm pf}\log(6d_p/\delta)$, then, with probability at least
+$1-\delta$,
 \begin{equation}
-cI_p\preceq B\preceq CI_p,
-\qquad
-C^{-1}I_p\preceq B^{-1}\preceq c^{-1}I_p.
-\label{eq:preconditioner-bounds}
+\|\nabla_\theta^2\hat\ell_J^{A,1}(\theta)
+      -\nabla_\theta^2\ell(\theta)\|_{\rm op}
+\leq H_N(\theta)u_H(J,\delta).                                 \label{eq:s2-hessian-concentration}
 \end{equation}
-In particular, $B$ is invertible.  The same conclusions hold for the choice
-$B=I_p$ with $c=C=1$.
+Fix $0<\kappa<\gamma$.  If
+\begin{equation}
+\gamma I_p\preceq-\nabla_\theta^2\ell(\theta)\preceq\Gamma I_p
+\quad\hbox{and}\quad
+J\geq K_N^{\rm pf}\log\frac{6d_p}{\delta}
+ \max\left\{4,\frac{H_N(\theta)^2}{\kappa^2}\right\},       \label{eq:s2-hessian-particle-count}
+\end{equation}
+then, with probability at least $1-\delta$,
+\begin{equation}
+(\gamma-\kappa)I_p
+ \preceq-\nabla_\theta^2\hat\ell_J^{A,1}(\theta)
+ \preceq(\Gamma+\kappa)I_p.                                  \label{eq:s2-hessian-eigenvalues}
+\end{equation}
+In particular, the raw particle curvature is then positive definite and
+invertible.
 \end{lem}
 
-\begin{proof}[Proof.]
-Every eigenvalue in Equation~\eqref{eq:spectral-clipping} belongs to $[c,C]$.
-The first Loewner-order statement follows immediately, and inversion reverses
-the Loewner order to give the second.
+\begin{proof}
+For fixed reference-filter random numbers and resampling indices, the
+telescoping identity in the proof of Lemma~\ref{lem:mop-1-formula} gives
+\begin{equation*}
+\hat\ell_J^{A,1}(\theta)
+=C_\phi+\log\left\{\frac1J\sum_{j=1}^J\exp(a_j(\theta))\right\},
+\qquad a_j(\theta)=\log w_{N,j}^{F,\theta},\qquad a_j(\phi)=0,
+\end{equation*}
+where $C_\phi$ is constant in $\theta$.  Twice differentiating this log-sum-exp at
+$\theta=\phi$ gives the exact finite-particle identity
+\begin{equation}
+\nabla_\theta^2\hat\ell_J^{A,1}
+=\rho_N^J(\Xi_\theta+\psi_\theta\psi_\theta^T)
+ -\rho_N^J(\psi_\theta)\rho_N^J(\psi_\theta)^T.                \label{eq:s2-empirical-hessian-identity}
+\end{equation}
+Assumption~{\refAssumpBoundedMeasurement} also gives the entrywise dominating
+bound
+\begin{equation*}
+|\partial_{\theta_a\theta_b}^2W_\theta|
+=W_\theta|\Xi_{\theta,ab}+\psi_{\theta,a}\psi_{\theta,b}|
+\leq\bar G^N\{NG''(\theta)+N^2G'(\theta)^2\}.
+\end{equation*}
+Thus differentiation through second order may pass under the expectation, and
+differentiating $\log\E W_\theta$ gives the population identity
+\begin{equation}
+\nabla_\theta^2\ell
+=\rho_N(\Xi_\theta+\psi_\theta\psi_\theta^T)
+ -\rho_N(\psi_\theta)\rho_N(\psi_\theta)^T.                   \label{eq:s2-population-hessian-identity}
+\end{equation}
+
+Let $A_1=2NG'(\theta)$ and
+$A_2=2\{NG''(\theta)+N^2G'(\theta)^2\}$.  The $p$ scalar functions
+$\psi_a$ have oscillation at most $A_1$, and the symmetric entries of
+$\Xi+\psi\psi^T$ have oscillation at most $A_2$.  Apply
+\eqref{eq:s2-scalar-concentration} jointly to these functions, using
+$d_p=p+p(p+1)/2$ scalar events.  On the resulting event,
+\begin{align*}
+\|(\rho_N^J-\rho_N)(\psi)\|_2
+ &\leq A_1\sqrt p\,u_H(J,\delta),\\
+\|(\rho_N^J-\rho_N)(\Xi+\psi\psi^T)\|_{\rm op}
+ &\leq pA_2u_H(J,\delta).
+\end{align*}
+Both $\|\rho_N^J(\psi)\|_2$ and $\|\rho_N(\psi)\|_2$ are at most
+$\sqrt p\,N G'(\theta)$.  Therefore
+\begin{align*}
+&\|\rho_N^J(\psi)\rho_N^J(\psi)^T
+       -\rho_N(\psi)\rho_N(\psi)^T\|_{\rm op}\\
+&\hspace{18mm}\leq
+2\sqrt p\,N G'(\theta)\,
+ \|(\rho_N^J-\rho_N)(\psi)\|_2
+\leq4pN^2G'(\theta)^2u_H(J,\delta).
+\end{align*}
+Combining the last three displays with
+\eqref{eq:s2-empirical-hessian-identity} and
+\eqref{eq:s2-population-hessian-identity} proves
+\eqref{eq:s2-hessian-concentration}.  Condition
+\eqref{eq:s2-hessian-particle-count} makes its right side at most $\kappa$;
+Weyl's eigenvalue inequality then gives
+\eqref{eq:s2-hessian-eigenvalues}.
 \end{proof}
+
+For the optimization theorem, no stochastic Hessian claim is needed if the
+curvature is regularized deterministically.  If
+$\widetilde B=Q\operatorname{diag}(\lambda_1,\ldots,\lambda_p)Q^T$ is an
+orthogonal eigendecomposition of any symmetric raw estimate, define
+\begin{equation}
+B=Q\operatorname{diag}([\lambda_1]_c^C,\ldots,[\lambda_p]_c^C)Q^T,
+\qquad [x]_c^C=\min\{C,\max\{c,x\}\}.                          \label{eq:s2-spectral-clipping}
+\end{equation}
+For every $v\in\mathbb R^p$, direct expansion in the eigenbasis gives
+\begin{equation}
+c\|v\|_2^2\leq v^TBv\leq C\|v\|_2^2,
+\qquad
+C^{-1}\|v\|_2^2\leq v^TB^{-1}v\leq c^{-1}\|v\|_2^2.         \label{eq:s2-preconditioner-bounds}
+\end{equation}
+Thus $cI_p\preceq B\preceq CI_p$ and
+$C^{-1}I_p\preceq B^{-1}\preceq c^{-1}I_p$.  Lemma~
+\ref{lemma:hess_bound} shows that the unclipped particle Hessian has these
+properties with $c=\gamma-\kappa$ and $C=\Gamma+\kappa$ under
+\eqref{eq:s2-hessian-particle-count}; \eqref{eq:s2-spectral-clipping}
+guarantees the chosen $c,C$ bounds for every realization.
 
 \begin{proof}[Proof of Theorem~{\thmMopConvergence}.]
-Write $g_m=-\nabla_\theta\hat\ell^1(\theta_m)$ and
-$p_m=-B_m^{-1}g_m$.  At each iteration, conditional on the past, $\theta_m$
-is fixed and the fresh particle system satisfies Lemma~\ref{lemma:grad_bound}.
-Use the uniform upper bounds on $A_N(\theta)$, $r_N$, and $\beta_N$ over the
-region of interest in Equation~\eqref{eq:correct-gradient-particle-count}, with
-$\delta$ replaced by $\delta/M$.  Let $\mathcal I_M$ be the random set of
-iterations at which a particle filter is actually executed before stopping or
-reaching the cap $M$.  If $\mathcal F_m$ is the history before the $m$th call,
-then $\theta_m$ and the event $\{m\in\mathcal I_M\}$ are
-$\mathcal F_m$-measurable, and the conditional failure probability of that
-call is at most $\delta/M$.  Consequently,
-\begin{align}
-\Pr\left(\bigcup_{m\in\mathcal I_M}
-\{\|g_m-\nabla f(\theta_m)\|_2>\epsilon\}\right)
+Let $\tau$ and $\mathcal E_M$ be the stopping time and simultaneous gradient
+event defined in Theorem~{\thmMopConvergence}.  If $\mathcal F_m$ is the
+history before the $m$th particle-filter call, then $\theta_m$ and
+$\{m\leq\min(\tau,M-1)\}$ are $\mathcal F_m$-measurable.  Lemma~
+\ref{lemma:grad_bound}, with failure probability $\delta/M$, gives
+\begin{equation}
+\begin{aligned}
+\Pr(\mathcal E_M^c\mid\theta_0)
 &\leq\sum_{m=0}^{M-1}
-\E\left[\mathbf 1_{\{m\in\mathcal I_M\}}
-\Pr\{\|g_m-\nabla f(\theta_m)\|_2>\epsilon
-\mid\mathcal F_m,\,m\in\mathcal I_M\}\right]\\
-&\leq\delta.
-\label{eq:all-gradient-events}
-\end{align}
-Thus, with probability at least $1-\delta$, the required oracle bound holds on
-every executed call.  Independence across iterations is not needed for this
-conditional union bound, but fresh particle randomness ensures that the
-pointwise concentration statement applies at the adaptive iterate.
+ \E\left[\mathbf1_{\{m\leq\min(\tau,M-1)\}}
+ \Pr\left(
+ \|g_m-\nabla f(\theta_m)\|_2>\epsilon\mid\mathcal F_m
+ \right)\,\middle|\,\theta_0\right]\\
+&\leq\sum_{m=0}^{M-1}\frac{\delta}{M}=\delta.
+\end{aligned}                                                   \label{eq:s2-all-gradient-events}
+\end{equation}
+This calculation is valid at the adaptive iterates because each call uses a
+fresh particle-randomness block.
 
-Work on this success event.  If the stopping condition
-$\|g_m\|_2\leq\sigma\epsilon$ holds, then
-\begin{equation}
-\|\nabla f(\theta_m)\|_2\leq(\sigma+1)\epsilon.
-\end{equation}
-Strong convexity implies
-$f(\theta)-f(\theta^*)\leq\|\nabla f(\theta)\|_2^2/(2\gamma)$, and hence
-\begin{equation}
-f(\theta_m)-f(\theta^*)
-\leq\frac{(\sigma+1)^2\epsilon^2}{2\gamma}.
-\label{eq:stopping-neighborhood}
-\end{equation}
-
-Suppose instead that $\|g_m\|_2>\sigma\epsilon$.  Smoothness of $f$ gives
-\begin{align}
-f(\theta_m+\eta p_m)-f(\theta_m)
-&\leq \eta\nabla f(\theta_m)^Tp_m
-      +\frac{\Gamma\eta^2}{2}\|p_m\|_2^2\\
-&\leq-\eta p_m^TB_mp_m
-      +\eta\epsilon\|p_m\|_2
-      +\frac{\Gamma\eta^2}{2}\|p_m\|_2^2.
-\label{eq:correct-descent-start}
-\end{align}
-Because $g_m=-B_mp_m$ and $B_m\preceq CI_p$,
-$\|g_m\|_2\leq C\|p_m\|_2$.  The nonstopping condition therefore yields
-\begin{equation}
-\epsilon\|p_m\|_2<\frac{C}{\sigma}\|p_m\|_2^2.
-\end{equation}
-The choices
-$\sigma\geq2C/\{c(1-\beta)\}$ and
-$\eta\leq c(1-\beta)/\Gamma$, together with
-$p_m^TB_mp_m\geq c\|p_m\|_2^2$, now turn
-Equation~\eqref{eq:correct-descent-start} into
-\begin{equation}
-f(\theta_{m+1})-f(\theta_m)
-\leq-\eta\beta p_m^TB_mp_m.
-\label{eq:correct-descent}
-\end{equation}
-
-It remains to relate the decrease to the objective gap.  On a nonstopping
-iteration,
+Work on $\mathcal E_M$ and write
+$p_m=-B_m^{-1}g_m$.  If $\|g_m\|_2\leq\sigma\epsilon$, then
 \begin{equation}
 \|\nabla f(\theta_m)\|_2
-\leq\|g_m\|_2+\epsilon
-<\left(1+\frac1\sigma\right)\|g_m\|_2,
+ \leq\|g_m\|_2+\epsilon\leq(\sigma+1)\epsilon.                 \label{eq:s2-stopping-gradient}
 \end{equation}
-and Equation~\eqref{eq:preconditioner-bounds} gives
+Strong convexity implies
+$f(\theta)-f(\theta^*)\leq\|\nabla f(\theta)\|_2^2/(2\gamma)$;
+therefore
+\begin{equation}
+f(\theta_m)-f(\theta^*)
+\leq\frac{(\sigma+1)^2\epsilon^2}{2\gamma}.                   \label{eq:s2-stopping-neighborhood}
+\end{equation}
+
+Suppose instead that $\|g_m\|_2>\sigma\epsilon$.  Since
+$g_m=-B_mp_m$ and $cI_p\preceq B_m\preceq CI_p$,
+\begin{equation}
+c\|p_m\|_2\leq\|g_m\|_2\leq C\|p_m\|_2,
+\qquad
+\epsilon\|p_m\|_2<\frac{C}{\sigma}\|p_m\|_2^2.              \label{eq:s2-noise-direction-bound}
+\end{equation}
+The smoothness inequality and the gradient-error event give
+\begin{align}
+f(\theta_m+\eta p_m)-f(\theta_m)
+&\leq\eta\nabla f(\theta_m)^Tp_m
+      +\frac{\Gamma\eta^2}{2}\|p_m\|_2^2\notag\\
+&\leq-\eta p_m^TB_mp_m
+      +\eta\epsilon\|p_m\|_2
+      +\frac{\Gamma\eta^2}{2}\|p_m\|_2^2.                    \label{eq:s2-descent-start}
+\end{align}
+The choices of $\sigma$ and $\eta$ imply
+\begin{equation*}
+\frac{C}{\sigma}\|p_m\|_2^2
+ \leq\frac{c(1-\beta)}2\|p_m\|_2^2,
+\qquad
+\frac{\Gamma\eta}{2}\|p_m\|_2^2
+ \leq\frac{c(1-\beta)}2\|p_m\|_2^2.
+\end{equation*}
+Using $p_m^TB_mp_m\geq c\|p_m\|_2^2$ in
+\eqref{eq:s2-descent-start} now gives
+\begin{equation}
+f(\theta_{m+1})-f(\theta_m)
+\leq-\eta\beta p_m^TB_mp_m.                                  \label{eq:s2-descent}
+\end{equation}
+
+On a nonstopping iteration,
+\begin{equation}
+\|\nabla f(\theta_m)\|_2
+ \leq\|g_m\|_2+\epsilon
+ <\frac{\sigma+1}{\sigma}\|g_m\|_2.                          \label{eq:s2-gradient-comparison}
+\end{equation}
+Consequently, \eqref{eq:s2-preconditioner-bounds} and strong convexity give
+\begin{samepage}
 \begin{align}
 p_m^TB_mp_m
-  &=g_m^TB_m^{-1}g_m\\
-  &\geq\frac1C\left(\frac{\sigma}{\sigma+1}\right)^2
-     \|\nabla f(\theta_m)\|_2^2\\
-  &\geq\frac{2\gamma}{C}
-     \left(\frac{\sigma}{\sigma+1}\right)^2
-     \{f(\theta_m)-f(\theta^*)\}.
+ &=g_m^TB_m^{-1}g_m\notag\\
+ &\geq\frac1C\left(\frac{\sigma}{\sigma+1}\right)^2
+       \|\nabla f(\theta_m)\|_2^2\notag\\
+ &\geq\frac{2\gamma}{C}
+       \left(\frac{\sigma}{\sigma+1}\right)^2
+       \{f(\theta_m)-f(\theta^*)\}.                           \label{eq:s2-gap-direction}
 \end{align}
-Combining this inequality with Equation~\eqref{eq:correct-descent} proves
+\end{samepage}
+Combining \eqref{eq:s2-descent} and \eqref{eq:s2-gap-direction} proves
 \begin{equation}
 f(\theta_{m+1})-f(\theta^*)
-\leq\left\{1-\frac{2\eta\beta\gamma}{C}
-\left(\frac{\sigma}{\sigma+1}\right)^2\right\}
-\{f(\theta_m)-f(\theta^*)\}.
+\leq q\{f(\theta_m)-f(\theta^*)\},
+\qquad
+q=1-\frac{2\eta\beta\gamma}{C}
+       \left(\frac{\sigma}{\sigma+1}\right)^2.               \label{eq:s2-linear-rate}
 \end{equation}
-Finally substitute $f=-\ell$ and combine this result with
-Equation~\eqref{eq:stopping-neighborhood}.
+The step-size bound also verifies the claimed range of the contraction:
+\begin{equation*}
+0<1-q
+<2\beta(1-\beta)\frac{c\gamma}{C\Gamma}
+\leq\frac12,
+\qquad\text{so}\qquad \frac12<q<1.
+\end{equation*}
+Iteration gives the $q^m$ conclusion in the theorem, while
+\eqref{eq:s2-stopping-neighborhood} gives its stopping conclusion after
+substituting $f=-\ell$.
 \end{proof}
 
-The proof is deliberately stated for DMOP-$1$.  For $\alpha<1$, consistency as
-$J\to\infty$ is toward a discounted population gradient rather than directly
-toward the exact score.  Extending Theorem~{\thmMopConvergence} therefore
-requires adding a high-probability bound for that discount bias; the claim does
-not follow solely from choosing $\alpha$ sufficiently close to one.
+The result is deliberately restricted to DMOP-$1$.  For $\alpha<1$, the
+population limit is a discounted gradient.  A theorem for that case must add a
+finite-sample bound for the discount bias relative to the exact score; choosing
+$\alpha$ close to one does not by itself provide such a bound.
 
 
 
