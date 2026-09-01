@@ -3841,6 +3841,125 @@ absorbed by $\lesssim$, proves Equation~
 (\ref{eq:refined-dmop-alpha-mse-simplified}).
 \end{proof}
 
+\begin{remark}[Choice of $\alpha$ within the proved MSE envelope]
+\label{rem:alpha-envelope-choice}
+The finite-sum bound in Equation~
+(\ref{eq:refined-dmop-alpha-mse}) can be minimized directly over
+$\alpha\in[0,1]$ for given $N,J$, and $\varrho$.  There is no general
+closed form for that finite-sum minimizer.  The simplified display gives
+its rate in the regime where the geometric sums have not saturated at the
+horizon.  Omitting the fixed factors in $\varrho$, the implicit constants,
+and the particle-system mixing-time factor suppressed by $\lesssim$, its
+$\alpha$-dependent part is
+\begin{equation}
+\left(\frac{N}{J}+\frac{N^2}{J^2}\right)(1-\alpha)^{-2}
++N^2(1-\alpha)^2.
+\label{eq:simplified-alpha-envelope}
+\end{equation}
+Differentiating Equation~(\ref{eq:simplified-alpha-envelope}) with respect
+to $1-\alpha$ gives the rate-balancing choice
+\begin{equation}
+1-\alpha
+\asymp
+\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4}.
+\label{eq:rate-balancing-alpha-choice}
+\end{equation}
+At this choice, Equation~(\ref{eq:simplified-alpha-envelope}) is of order
+\begin{equation}
+\frac{N^{3/2}}{\sqrt J}
+\left(1+\frac NJ\right)^{1/2}.
+\label{eq:rate-balanced-mse-envelope}
+\end{equation}
+Thus, up to the common factor $pG'(\theta)^2$ and the suppressed factors,
+the rate-balancing choice and resulting envelope are
+\begin{equation}
+1-\alpha\asymp
+\begin{cases}
+J^{-1/2}, & J\lesssim N,\\[3pt]
+(NJ)^{-1/4}, & N\lesssim J\lesssim N^3,
+\end{cases}
+\qquad
+\operatorname{MSE}\lesssim
+pG'(\theta)^2
+\begin{cases}
+N^2/J, & J\lesssim N,\\[3pt]
+N^{3/2}/\sqrt J, & N\lesssim J\lesssim N^3.
+\end{cases}
+\label{eq:rate-balanced-alpha-regimes}
+\end{equation}
+
+For $J\gg N^3$, the geometric upper bounds used in
+Equation~(\ref{eq:refined-dmop-alpha-mse-simplified}) are no longer sharp
+at the minimizing value.  Indeed, when $N(1-\alpha)$ is small,
+\begin{equation}
+\sum_{r=0}^{n-1}\alpha^r
+=
+n-\frac{n(n-1)}2(1-\alpha)
++O\{n^3(1-\alpha)^2\}.
+\label{eq:finite-horizon-geometric-expansion}
+\end{equation}
+Substitution into the exact finite-sum envelope shows that its first-order
+decrease away from $\alpha=1$ is of order
+$\{N^4/J+N^5/J^2\}(1-\alpha)$, whereas the population-discount term is of
+order $N^2(1-\alpha)^2$.  For $J\gg N^3$, balancing these terms gives
+\begin{equation}
+1-\alpha\asymp\frac{N^2}{J},
+\qquad
+\operatorname{MSE}\lesssim
+\frac{pG'(\theta)^2N^3}{J}.
+\label{eq:finite-horizon-alpha-choice}
+\end{equation}
+Combining the regimes gives the rate summary
+\begin{equation}
+1-\alpha\asymp
+\begin{cases}
+J^{-1/2}, & J\lesssim N,\\
+(NJ)^{-1/4}, & N\lesssim J\lesssim N^3,\\
+N^2/J, & J\gtrsim N^3,
+\end{cases}
+\quad
+\operatorname{MSE}\lesssim
+pG'(\theta)^2
+\begin{cases}
+N^2/J, & J\lesssim N,\\
+N^{3/2}/\sqrt J, & N\lesssim J\lesssim N^3,\\
+N^3/J, & J\gtrsim N^3.
+\end{cases}
+\label{eq:finite-horizon-alpha-regimes}
+\end{equation}
+
+The exact envelope also gives a ridge-type endpoint calculation.  For
+$N>1$, the left derivative at $\alpha=1$ is
+\begin{equation}
+\frac1J\sum_{n=1}^{N}n^2(n-1)
++\frac{N^2(N+1)^2(N-1)}{6J^2}
+>0,
+\label{eq:mse-envelope-alpha-one-derivative}
+\end{equation}
+so moving left from $\alpha=1$ decreases the displayed envelope.  Its
+right derivative at $\alpha=0$ is
+\begin{equation}
+2\left\{
+\frac{N-1}{J}
++\frac{N(N-1)}{J^2}
+-\frac{N^2\varrho^2}{1-\varrho}
+\right\}.
+\label{eq:mse-envelope-alpha-zero-derivative}
+\end{equation}
+Consequently, if
+\begin{equation}
+\frac{N-1}{J}+\frac{N(N-1)}{J^2}
+<\frac{N^2\varrho^2}{1-\varrho},
+\label{eq:mse-envelope-interior-condition}
+\end{equation}
+neither endpoint minimizes the displayed envelope, and at least one
+minimizer lies in $(0,1)$.  These calculations optimize only the proved
+upper envelope.  The hidden constants, suppressed mixing-time factor, and
+one-sided inequalities prevent them from identifying the minimizer of the
+actual MSE or proving that the actual MSE is smaller than at both
+endpoints.
+\end{remark}
+
 \begin{remark}[Equivalent direct $L^2$ argument]
 The direct argument does not give a different rate. Minkowski's inequality
 gives
@@ -3923,6 +4042,17 @@ score estimator and does not apply to DMOP-$0$. At $\alpha=1$, DMOP has
 the same undiscounted path-space structure, but its reparameterization
 score contributions are not asserted to be particlewise identical to the
 likelihood-ratio score contributions of \citet{poyiadjis11}.
+More precisely, in the present notation, Theorem~1 of
+\citet{poyiadjis11} gives a lower bound of order $N^2$ for the asymptotic
+variance of $\sqrt J$ times the error of their $O(J)$ path-space
+estimator.  Its leading Monte Carlo MSE in the particle central-limit
+regime is therefore at least of order $N^2/J$.  The generic path-space
+$L^2$ estimate quoted there from \citet{delMoral03} gives the distinct
+upper bound $O(N^4/J)$.  These two results do not identify a single sharp
+horizon order for the MSE of that estimator; in particular, the
+$N^4/J$ quantity is an upper bound, not the Poyiadjis lower-bound rate.
+Their separate $O(J^2)$ marginal algorithm is not the path-space
+estimator covered by Theorem~1.
 \end{remark}
 
 \begin{remark}[Scope of the proved $\alpha$ dependence]
@@ -3973,48 +4103,12 @@ minimizer whose MSE is smaller than the MSE at either endpoint. The
 assumptions used here do not determine these signed covariances, so they
 do not prove either endpoint sign.
 
-The proved upper bound nevertheless displays the usual ridge-type
-competition. Its two particle terms are nondecreasing in $\alpha$:
-\begin{align}
-\frac{d}{d\alpha}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-&=
-2\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)
-\left(\sum_{r=1}^{n-1}r\alpha^{r-1}\right)
-\geq0,                                                       \notag\\
-\frac{d}{d\alpha}
-\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)^2
-&=
-2\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)
-\left(
-\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\alpha^{r-1}
-\right)
-\geq0.
-\label{eq:particle-envelope-alpha-derivatives}
-\end{align}
-The population-discount term is nonincreasing:
-\begin{align}
-&\frac{d}{d\alpha}
-N^2\left\{
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
-\right\}^2                                                   \notag\\
-&\qquad=
--\frac{2N^2\varrho^2(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)^3}
-\leq0.
-\label{eq:proved-envelope-alpha-derivative}
-\end{align}
-Thus the finite-sum envelope has opposing bias and particle-error
-directions. Because $\lesssim$ hides term-specific constants and each
-inequality is one-sided, differentiating this envelope cannot determine
-the derivative of the actual MSE or prove that its minimizer is interior.
+Remark~\ref{rem:alpha-envelope-choice} gives the corresponding calculation
+for the proved upper envelope.  That calculation can establish an interior
+minimizer of the displayed envelope under
+Equation~(\ref{eq:mse-envelope-interior-condition}), but it does not
+determine either endpoint derivative of the actual MSE in
+Equation~(\ref{eq:actual-mse-alpha-derivative}).
 \end{remark}
 
 \begin{remark}[Endpoint interpretation]
