@@ -1511,12 +1511,11 @@ Equation~(\ref{eq:bounded-realized-measurement-mark}) after enlarging
 $B_1$. They are sufficient, not necessary; the proofs below use only
 Equation~(\ref{eq:bounded-realized-measurement-mark}).
 
-Assumption~{\refAssumpTangentStability} is therefore a first-order
-simulation regularity condition, not a particle-error or filter-stability
-assumption. The geometric population forgetting used below follows from the
+Assumption~{\refAssumpTangentStability} supplies the first-order simulation
+regularity used below. Geometric population forgetting follows from the
 backward-kernel contraction under Assumption
-{\refAssumpBoundedProcess}; the particle weak-error bound is proved
-separately.
+{\refAssumpBoundedProcess}, and the particle weak-error bound follows from
+the full-genealogy argument in Lemma~\ref{lem:lagwise-weak-error}.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -1637,10 +1636,8 @@ $0\leq r<n$,
 \end{lem}
 
 \begin{proof}[Proof.]
-We prove the result directly from the posterior update and the contraction
-of the posterior backward kernels. This avoids assuming the desired
-lagwise conclusion as part of Assumption
-{\refAssumpTangentStability}.
+We derive the result from the posterior update and the contraction of the
+posterior backward kernels.
 
 First suppose that \(1\leq r<n\), and put \(k=n-r\). Fix a coordinate
 \(i\in\{1,\ldots,p\}\), and let \(h_{k,i}\) be the corresponding
@@ -1710,7 +1707,7 @@ B_s(x_s,dx_{s-1})
 \pi_{s-1}(dx_{s-1})
 f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1};\theta)
 }
-{displaystyle
+{\displaystyle
 \int
 \pi_{s-1}(du)
 f_{X_s\mid X_{s-1}}(x_s\mid u;\theta)}.
@@ -1727,7 +1724,7 @@ B_s(x_s,A)
 \pi_{s-1}(dx_{s-1})
 f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1};\theta)
 }
-{displaystyle
+{\displaystyle
 \int
 \pi_{s-1}(du)
 f_{X_s\mid X_{s-1}}(x_s\mid u;\theta)}                       \notag\\
@@ -1986,10 +1983,11 @@ m(\xi_t)(h_{k,i})
 \label{eq:lag-functional-particle-population-pair}
 \end{equation}
 If the simulator stores random seeds or pathwise derivatives, these are
-included in the ancestral path. At \(\theta=\phi\), they do not alter the
-transition law of the physical state or the potential \(G_a\); hence the
-future normalizer below depends on a path prefix only through its last
-physical state. Equation~
+included in the ancestral path. Their base law is independent of \(\theta\)
+in the reparameterized simulator representation, so, at \(\theta=\phi\),
+they do not alter the transition law of the physical state or the potential
+\(G_a\). Hence the future normalizer below depends on a path prefix only
+through its last physical state. Equation~
 (\ref{eq:bounded-realized-measurement-mark}) implies, pointwise on every
 such path,
 \begin{equation}
@@ -2001,16 +1999,23 @@ B_1G'(\theta).
 \label{eq:bounded-single-lag-path-functional}
 \end{equation}
 
-We next verify the stability condition used in Theorem 2 of
-\citet{chanDelMoral18}. Let \(0\leq a\leq b\leq t\), and let
+The Feynman--Kac convention of \citet{chanDelMoral18} places in the target
+at horizon \(q\) the potentials through time \(q-1\). To represent the
+present filtered path law \(\rho_t\), append at horizon \(t+1\) a selection
+with potential \(G_t\), followed by the identity mutation. The resulting
+target at horizon \(t+1\) is \(\rho_t\), and, after relabeling the unchanged
+paths, its path-particle empirical measure is \(m(\xi_t)\).
+
+We verify Assumption A1 of \citet{chanDelMoral18} for this augmented model.
+Let \(0\leq a\leq b\leq t+1\), and let
 \(z=(x_0,\ldots,x_a)\) and \(z'=(x'_0,\ldots,x'_a)\) be two path prefixes.
 If \(a=b\), then
 \begin{equation}
 Q_{a,a}(1)(z)=Q_{a,a}(1)(z')=1.
 \label{eq:chan-zero-step-normalizer}
 \end{equation}
-If \(a<b\), the Markov property and the definition of the Feynman--Kac
-semigroup give
+If \(a<b\) and \(a<t\), the Markov property and the definition of the
+Feynman--Kac semigroup give
 \begin{align}
 Q_{a,b}(1)(z)
 &=
@@ -2053,63 +2058,54 @@ Q_{a,b}(1)(z)
 Q_{a,b}(1)(z').
 \label{eq:chan-normalizer-ratio}
 \end{align}
+For the remaining nonzero step, \(a=t\) and \(b=t+1\), the appended identity
+mutation gives
+\begin{align}
+Q_{t,t+1}(1)(z)
+&=G_t(x_t),
+&
+Q_{t,t+1}(1)(z')
+&=G_t(x'_t),                                      \notag\\
+Q_{t,t+1}(1)(z)
+&\leq
+\frac{\bar G}{\underbar G}Q_{t,t+1}(1)(z').
+\label{eq:chan-terminal-normalizer-ratio}
+\end{align}
 Together, Equations~(\ref{eq:chan-zero-step-normalizer}) and
-(\ref{eq:chan-normalizer-ratio}) verify Assumption A1 of
+(\ref{eq:chan-normalizer-ratio})--
+(\ref{eq:chan-terminal-normalizer-ratio}) verify Assumption A1 of
 \citet{chanDelMoral18}, uniformly in \(a,b,t\), with a constant no larger
 than \(\bar M\bar G/(\underbar M\underbar G)\).
 
-Their Theorem 2, after translating their
-particle count \(N\) to the present particle count \(J\), and their
-path-space target \(\eta_t\) to the present posterior path measure
-\(\rho_t\). There is a constant \(C<\infty\), depending only on
+By Theorem 2 of \citet{chanDelMoral18}, after translating their particle
+count \(N\) to the present particle count \(J\), there is a constant
+\(C<\infty\), depending only on
 \(\bar M,\underbar M,\bar G,\underbar G\), such that, whenever
-\(J\geq Ct\), every integrable real path functional \(f\) satisfies
+\(J\geq C(t+1)\), the asserted bound holds for nonnegative path
+functionals. Applying it to \(f^+\) and \(f^-\), and using
+\(f=f^+-f^-\), gives, for every integrable real path functional \(f\),
 \begin{equation}
 \left|
 \E m(\xi_t)(f)-\rho_t(f)
 \right|
 \leq
-C\frac{t}{J}\rho_t(|f|).
+C\frac{t+1}{J}\rho_t(|f|).
 \label{eq:chan-signed-path-bias}
 \end{equation}
-The signed version follows from the nonnegative version by writing
-\begin{equation}
-f=f^+-f^- ,
-\qquad
-|f|=f^++f^- ,
-\end{equation}
-and then calculating
-\begin{align}
-\left|\E m(\xi_t)(f)-\rho_t(f)\right|
-&=
-\left|
-\{\E m(\xi_t)(f^+)-\rho_t(f^+)\}
--
-\{\E m(\xi_t)(f^-)-\rho_t(f^-)\}
-\right|                                                       \notag\\
-&\leq
-\left|\E m(\xi_t)(f^+)-\rho_t(f^+)\right|
-+
-\left|\E m(\xi_t)(f^-)-\rho_t(f^-)\right|                   \notag\\
-&\leq
-C\frac{t}{J}\{\rho_t(f^+)+\rho_t(f^-)\}                    \notag\\
-&=
-C\frac{t}{J}\rho_t(|f|).
-\label{eq:chan-signed-path-bias-derivation}
-\end{align}
 
-Suppose first that \(J\geq Cn\). Since \(t\leq n\) for
-\(t\in\{n-1,n\}\), Equation~(\ref{eq:chan-signed-path-bias}) applies at
-both times. Substituting \(f=h_{k,i}\), then using
+Suppose first that \(J\geq Cn\), with \(C\) enlarged so that the theorem's
+condition holds for \(t\in\{n-1,n\}\). Since \(t+1\leq n+1\leq2n\) at
+these two times, substituting \(f=h_{k,i}\) in
+Equation~(\ref{eq:chan-signed-path-bias}), then using
 Equation~(\ref{eq:bounded-single-lag-path-functional}), gives
 \begin{align}
 \left|\E m(\xi_t)(h_{k,i})-\rho_t(h_{k,i})\right|
 &\leq
-C\frac{t}{J}\rho_t(|h_{k,i}|)                               \notag\\
+C\frac{t+1}{J}\rho_t(|h_{k,i}|)                             \notag\\
 &\leq
-C\frac{t}{J}\rho_t\{B_1G'(\theta)\}                        \notag\\
+C\frac{t+1}{J}\rho_t\{B_1G'(\theta)\}                    \notag\\
 &=
-\frac{CB_1G'(\theta)t}{J}                                   \notag\\
+\frac{CB_1G'(\theta)(t+1)}{J}                               \notag\\
 &\leq
 \frac{CG'(\theta)n}{J},
 \label{eq:chan-one-path-average-bias}
@@ -2161,15 +2157,9 @@ Equation~(\ref{eq:chan-one-path-average-bias}) at the two times gives
 \end{align}
 where the final line again enlarges \(C\). Combining
 Equations~(\ref{eq:chan-current-lag-bias}) and
-(\ref{eq:chan-path-bias-coordinate}), and then calculating the Euclidean
-norm coordinate by coordinate, gives
+(\ref{eq:chan-path-bias-coordinate}) give
 \begin{align}
 \left\|\E\Delta_{n,r}^J-\Delta_{n,r}\right\|_2
-&=
-\left\{
-\sum_{i=1}^{p}
-\left|\E\Delta_{n,r,i}^J-\Delta_{n,r,i}\right|^2
-\right\}^{1/2}                                                \notag\\
 &\leq
 \left\{
 \sum_{i=1}^{p}
@@ -2318,16 +2308,14 @@ $\alpha\in[0,1)$ such that
 \end{equation}
 \end{assumptionA7}
 
-Assumption~(A7) concerns the finite-$J$, $O(J)$
-interacting genealogy, whereas Lemmas~\ref{lem:derivative-measure-forgetting}--
+Assumption~(A7) concerns the finite-$J$, $O(J)$ interacting genealogy.
+Lemmas~\ref{lem:derivative-measure-forgetting}--
 \ref{lem:discounted-dmop-particle-bias} derive deterministic forgetting,
-full-genealogy weak bias, and discounted particle bias from the
-primitive model conditions. The time-uniform
-results of \citet{delMoral15derivative,tadic18} establish the analogous
-stability for their $O(J^2)$ backward derivative estimator; they do not by
-themselves prove Equation~
-(\ref{eq:finite-particle-continuation-stability}) for DMOP. We therefore
-use (A7) only for the variance bound below.
+full-genealogy weak bias, and discounted particle bias from the primitive
+model conditions. The time-uniform results of
+\citet{delMoral15derivative,tadic18} establish error and stability bounds for
+their $O(J^2)$ backward derivative estimator; they do not imply (A7) for
+DMOP. Assumption~(A7) is used only for the variance bound below.
 
 \begin{lem}[Variance of the discounted genealogical score]
 \label{lem:dmop-alpha-variance}
@@ -2449,8 +2437,8 @@ which proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
 
 \begin{lem}[Population discounting bias]
 \label{lem:dmop-population-discount-bias}
-Suppose $\theta=\phi$, $\alpha\in[0,1]$, and
-Assumption~{\refAssumpTangentStability} holds. Then
+Under the conditions of Lemma~\ref{lem:derivative-measure-forgetting},
+suppose $\theta=\phi$ and $\alpha\in[0,1]$. Then
 \begin{equation}
 \left\|
 \nabla_\theta\ell_n^\alpha(\theta)
@@ -2476,7 +2464,7 @@ $\alpha$ and at $\alpha=1$ gives
 \sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r},
 \label{eq:population-discount-lag-difference}
 \end{align}
-because the $r=0$ coefficient is zero. Taking norms, applying the triangle
+because $1-\alpha^0=0$. Taking norms, applying the triangle
 inequality and Lemma~\ref{lem:derivative-measure-forgetting}, and then
 extending the nonnegative scalar sum to infinity give
 \begin{align}
