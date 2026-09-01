@@ -2772,15 +2772,15 @@ Squaring this bound and using
 Equation~(\ref{eq:vector-bias-variance-identity}) proves the theorem.
 \end{proof}
 
-To make the resulting tradeoff explicit, put $\delta=1-\alpha$. Since
-$1-\alpha\varrho=1-\varrho+\delta\varrho\geq1-\varrho$,
+To make the resulting tradeoff explicit, first observe that
+$1-\alpha\varrho\geq1-\varrho$. Therefore
 \begin{equation}
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 \leq
-\frac{\varrho}{(1-\varrho)^2}\delta
+\frac{\varrho}{(1-\varrho)^2}(1-\alpha)
 \lesssim
-\delta.
+1-\alpha.
 \label{eq:population-factor-delta-bound}
 \end{equation}
 Theorem~\ref{thm:refined-dmop-alpha-mse} and Equation~
@@ -2790,70 +2790,86 @@ Theorem~\ref{thm:refined-dmop-alpha-mse} and Equation~
 &\lesssim
 pG'(\theta)^2
 \left[
-\frac{N}{J\delta^2}
-+N^2\left\{\delta+\frac{N}{J\delta}\right\}^2
+\frac{N}{J(1-\alpha)^2}
++N^2\left\{(1-\alpha)+\frac{N}{J(1-\alpha)}\right\}^2
 \right]                                                       \notag\\
 &\leq
 CpG'(\theta)^2
 \left\{
-\frac{N}{J\delta^2}
-+N^2\delta^2
-+\frac{N^4}{J^2\delta^2}
+\frac{N}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
++\frac{N^4}{J^2(1-\alpha)^2}
+\right\}                                                     \notag\\
+&=
+CpG'(\theta)^2
+\left\{
+N^2(1-\alpha)^2
++\frac{N/J+N^4/J^2}{(1-\alpha)^2}
 \right\},
 \label{eq:dmop-leading-tradeoff}
 \end{align}
 where the last inequality uses $(a+b)^2\leq2a^2+2b^2$. Here
 $\operatorname{MSE}_{\alpha}$ denotes the expectation on the left of
-Equation~(\ref{eq:refined-dmop-alpha-mse}). If $J\geq N$, the choice
+Equation~(\ref{eq:refined-dmop-alpha-mse}). The right side of Equation~
+(\ref{eq:dmop-leading-tradeoff}) is minimized over $1-\alpha>0$ when
 \begin{equation}
-\delta=\left(\frac{N}{J}\right)^{1/2}
+1-\alpha
+=
+\left(
+\frac{1}{NJ}+\frac{N^2}{J^2}
+\right)^{1/4},
 \label{eq:dmop-interior-alpha}
 \end{equation}
-lies in $[0,1]$, balances the two squared-bias terms, and yields
+provided that the right side of Equation~
+(\ref{eq:dmop-interior-alpha}) is at most one. Indeed, differentiating the
+two terms inside braces in the final line of Equation~
+(\ref{eq:dmop-leading-tradeoff}) with respect to $1-\alpha$ gives
+\begin{align}
+&2N^2(1-\alpha)
+-2\left(\frac{N}{J}+\frac{N^4}{J^2}\right)(1-\alpha)^{-3}=0,
+\notag\\
+&\hspace{15mm}(1-\alpha)^4
+=
+\frac{N/J+N^4/J^2}{N^2}
+=
+\frac{1}{NJ}+\frac{N^2}{J^2}.
+\end{align}
+Substitution into Equation~(\ref{eq:dmop-leading-tradeoff}) gives
+\begin{align}
+&N^2(1-\alpha)^2
++\frac{N/J+N^4/J^2}{(1-\alpha)^2}                             \notag\\
+&\qquad=
+2N\left(\frac{N}{J}+\frac{N^4}{J^2}\right)^{1/2}             \notag\\
+&\qquad\leq
+2\left(\frac{N^{3/2}}{\sqrt J}+\frac{N^3}{J}\right),
+\label{eq:dmop-optimized-upper-calculation}
+\end{align}
+where the final inequality uses $\sqrt{a+b}\leq\sqrt a+\sqrt b$.
+Consequently,
 \begin{equation}
 \operatorname{MSE}_{\alpha}
 \lesssim
 pG'(\theta)^2
 \left(
-1+\frac{N^3}{J}
+\frac{N^{3/2}}{\sqrt J}
++\frac{N^3}{J}
 \right).
 \label{eq:dmop-interior-mse}
 \end{equation}
-Thus, conditionally on an $N^2$ DMOP-$0$ lower bound, the proved upper bound
-vanishes relative to that lower bound when $J/N\to\infty$. It does not, by
-itself, prove an improvement over an $N^2/J$ DMOP-$1$ rate.
+The earlier choice $1-\alpha=(N/J)^{1/2}$ gives the valid but not fully optimized bound
+$1+N^3/J$. It has the same leading order as Equation~
+(\ref{eq:dmop-interior-mse}) when $N\lesssim J\lesssim N^3$, but is loose
+when $J\gg N^3$. The term $N^3/J$ in Equation~
+(\ref{eq:dmop-interior-mse}) comes from the particle-bias term, not the
+variance in Lemma~\ref{lem:dmop-alpha-variance}: Lemma~
+\ref{lem:discounted-dmop-particle-bias} gives conditional-score bias
+$O\{n/[J(1-\alpha)]\}$, summation over $n=1,\ldots,N$ gives
+$O\{N^2/[J(1-\alpha)]\}$, and squaring gives
+$O\{N^4/[J^2(1-\alpha)^2]\}$.
 
-\begin{cor}[Conditional comparison with the endpoint estimators]
-\label{cor:dmop-interior-advantage}
-Suppose the conditions of
-Theorem~\ref{thm:refined-dmop-alpha-mse} hold along a joint sequence
-$N,J\to\infty$. Suppose also that the constants in Assumptions
-{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement},
-{\refAssumpDifferentiableSimulator}, and
-{\refAssumpPrimitiveInnovation}, and the constant in Equation~
-(\ref{eq:conditional-integrated-genealogy-bound}), can be chosen uniformly
-along this sequence, with
-\begin{equation}
-\sup_{N,J}pG'(\theta)^2<\infty.
-\label{eq:bounded-score-scale-joint-sequence}
-\end{equation}
-These uniformity conditions hold, in particular, when the model, $p$, and
-$\theta$ are fixed and the assumptions are uniform in time.
-Suppose that the \(\varrho\) in
-Equation~(\ref{eq:conditional-integrated-genealogy-bound}) is the same
-\(\varrho\) supplied by Theorem~\ref{thm:refined-dmop-alpha-mse} through
-Lemma~\ref{lem:derivative-measure-forgetting}.
-For $a\in\{0,\alpha,1\}$, define all three endpoint and interior errors
-against the same full score by
-\begin{equation}
-\operatorname{MSE}_a
-=
-\E\left\|
-\nabla_\theta\hat\ell^a(\theta)-\nabla_\theta\ell(\theta)
-\right\|_2^2.
-\label{eq:common-endpoint-mse-definition}
-\end{equation}
-Suppose, in addition, that the integrated particle
+\begin{remark}[What a uniform weak-bias estimate would change]
+Suppose, in addition to the conditions of
+Theorem~\ref{thm:refined-dmop-alpha-mse}, that the integrated particle
 genealogy satisfies
 \begin{equation}
 \left\|
@@ -2863,27 +2879,9 @@ genealogy satisfies
 \frac{C\sqrt p\,G'(\theta)}{J}\varrho^r
 \label{eq:conditional-integrated-genealogy-bound}
 \end{equation}
-uniformly in $n,r,J$, and that there are constants
-$c_0,c_1>0$ such that along this sequence
-\begin{equation}
-\operatorname{MSE}_0\geq c_0N^2,
-\qquad
-\operatorname{MSE}_1\geq c_1\frac{N^2}{J}.
-\label{eq:endpoint-lower-bound-assumptions}
-\end{equation}
-If $1\ll J\ll N$ and $1-\alpha=(NJ)^{-1/4}$, then
-\begin{equation}
-\operatorname{RMSE}_{\alpha}
-=o(\operatorname{RMSE}_0),
-\qquad
-\operatorname{RMSE}_{\alpha}
-=o(\operatorname{RMSE}_1),
-\end{equation}
-where $\operatorname{RMSE}_a=\operatorname{MSE}_a^{1/2}$.
-\end{cor}
-
-\begin{proof}[Proof.]
-Equation~(\ref{eq:conditional-integrated-genealogy-bound}) and the lag
+uniformly in $n,r,J$, with the same $\varrho$ as in Lemma~
+\ref{lem:derivative-measure-forgetting}. Equation~
+(\ref{eq:conditional-integrated-genealogy-bound}) and the lag
 decomposition in Equation~(\ref{eq:discounted-bias-lag-decomposition})
 give
 \begin{align}
@@ -2897,21 +2895,71 @@ give
 \leq
 \frac{C\sqrt p\,G'(\theta)}{J(1-\varrho)}.
 \end{align}
-Repeating the proof of
-Theorem~\ref{thm:refined-dmop-alpha-mse} with this sharper particle-bias
-bound gives
+Summing this inequality over $n=1,\ldots,N$ gives
+\begin{equation}
+\left\|
+\sum_{n=1}^N
+\left\{
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\}
+\right\|_2
+\leq
+\frac{CN\sqrt p\,G'(\theta)}{J(1-\varrho)}.
+\label{eq:conditional-full-particle-bias}
+\end{equation}
+Lemma~\ref{lem:dmop-population-discount-bias}, Equation~
+(\ref{eq:population-factor-delta-bound}), and the triangle inequality give
+\begin{align}
+&\left\|
+\sum_{n=1}^N
+\left\{
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\}
+\right\|_2                                                     \notag\\
+&\qquad\leq
+\sum_{n=1}^N
+\left\|
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\|_2                                                     \notag\\
+&\qquad\leq
+CN\sqrt p\,G'(\theta)(1-\alpha).
+\label{eq:conditional-full-population-bias}
+\end{align}
+Adding Equations~(\ref{eq:conditional-full-particle-bias}) and
+(\ref{eq:conditional-full-population-bias}), then using
+$(a+b)^2\leq2a^2+2b^2$, yields
+\begin{align}
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\qquad\leq
+CpG'(\theta)^2
+\left\{
+N^2(1-\alpha)^2+\frac{N^2}{J^2}
+\right\},
+\label{eq:conditional-full-bias-squared}
+\end{align}
+where the fixed factor $(1-\varrho)^{-2}$ is absorbed into $C$.
+Finally, the bias--variance identity in Equation~
+(\ref{eq:vector-bias-variance-identity}), Lemma~
+\ref{lem:dmop-alpha-variance}, and Equation~
+(\ref{eq:conditional-full-bias-squared}) give
 \begin{equation}
 \operatorname{MSE}_{\alpha}
 \lesssim
 pG'(\theta)^2
 \left\{
-\frac{N}{J\delta^2}
-+N^2\delta^2
+\frac{N}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
 +\frac{N^2}{J^2}
 \right\}.
 \label{eq:conditional-sharp-tradeoff}
 \end{equation}
-With $\delta=(NJ)^{-1/4}$, the right side of
+With $1-\alpha=(NJ)^{-1/4}$, the right side of
 Equation~(\ref{eq:conditional-sharp-tradeoff}) is at most
 \begin{equation}
 CpG'(\theta)^2
@@ -2920,13 +2968,8 @@ CpG'(\theta)^2
 \right).
 \label{eq:conditional-sharp-interior-mse}
 \end{equation}
-Relative to the second lower bound in
-Equation~(\ref{eq:endpoint-lower-bound-assumptions}), the two terms in
-Equation~(\ref{eq:conditional-sharp-interior-mse}) have ratios $\sqrt{J/N}$ and
-$1/J$. Relative to the first lower bound, their ratios are
-$1/\sqrt{NJ}$ and $1/J^2$. All four ratios converge to zero when
-$1\ll J\ll N$. Taking square roots proves the result.
-\end{proof}
+This is only a conditional upper bound. In particular, it does not imply
+that DMOP-$\alpha$ has smaller MSE than either endpoint.
 
 Equation~(\ref{eq:conditional-integrated-genealogy-bound}) is not a
 consequence of Assumptions {\refAssumpBoundedMeasurement} and
@@ -2941,26 +2984,45 @@ total reparameterized-simulator derivative carried at time $n-r$ already
 depends on the earlier genealogy. In particular, that result does not give
 the geometrically decreasing factor in
 Equation~(\ref{eq:conditional-integrated-genealogy-bound}). Consequently,
-the corollary records precisely the additional particle-level estimate
-needed for the sharper regime; it is not claimed under Assumptions
+the sharper bound records precisely the additional particle-level estimate
+that would be needed; it is not claimed under Assumptions
 {\refAssumpBoundedProcess}--{\refAssumpPrimitiveInnovation} alone.
+\end{remark}
 
-The two endpoint lower bounds in
-Equation~(\ref{eq:endpoint-lower-bound-assumptions}) are assumptions on the
-joint sequence, not consequences of the upper bound in
-Theorem~\ref{thm:refined-dmop-alpha-mse}. The first formalizes the absence
-of cancellation in the DMOP-$0$ population bias. The quadratic lower bound
-on the path estimator's asymptotic variance in \citet{poyiadjis11}
-motivates the second, but their fixed-horizon central limit theorem does not
-by itself establish the uniform finite-$J$ lower bound used here.
-Moreover, the pathwise DMOP-$1$ score used here is not generally identical
-particle by particle to their complete-data likelihood-ratio score, which
-also contains initial- and transition-density score terms. Under the
-differentiability conditions needed to define that complete-data score, and
-when the corresponding derivative--expectation interchanges are valid, the
-two constructions have the same population score target. The cited
-quadratic result nevertheless serves only as motivation for the endpoint
-assumption above.
+\begin{remark}[What is known at the endpoints]
+Theorem~\ref{thm:refined-dmop-alpha-mse} supplies only upper bounds. There
+is no DMOP-$0$ MSE lower bound in the present assumptions: the conditional
+population biases can cancel, and in special models the population bias can
+vanish. Therefore the displayed upper bounds cannot prove that an interior
+choice of $\alpha$ has smaller MSE than DMOP-$0$.
+
+Theorem~1 of \citet{poyiadjis11} concerns their standard path-space
+particle estimator of an unnormalized additive functional
+$\sum_{n=1}^N\varphi(X_n)$. Under their mixing and nondegeneracy
+conditions, the asymptotic variance in the $J^{1/2}$ central limit theorem
+is bounded below by $c_2N^2+c_1N+c_0$, with $c_2>0$. Thus the corresponding
+central limit theorem is a fixed-$N$, $J\to\infty$ result whose asymptotic
+variance coefficient grows at least quadratically when $N$ is subsequently
+increased. In this iterated sense, the leading variance of the unscaled
+particle error corresponding to this fixed-$N$ central limit theorem is of
+order at least $N^2/J$. They note that the quadratic growth persists when the
+latent process is independent and identically distributed. In contrast, the generic
+$L^p$ path-space upper bound cited by \citet{poyiadjis11} is
+$O(N^2/\sqrt J)$ in error, or $O(N^4/J)$ after squaring. The quartic
+quantity is therefore a generic upper bound that is not established to be
+sharp, rather than the Poyiadjis rate.
+
+The pathwise reparameterization marks in DMOP-$1$ are not generally
+identical particle by particle to the complete-data likelihood-ratio marks
+of \citet{poyiadjis11}, which include initial- and transition-density score
+terms. Equality of their population score targets does not identify their
+particle variances. Consequently, the Poyiadjis lower bound does not by
+itself give a DMOP-$1$ lower bound. Such a result would require either a
+particlewise identification under additional model conditions or a direct
+nondegenerate central limit theorem for the DMOP-$1$ marks. Theorem~
+\ref{thm:consistent-derivatives} gives fixed-$N$ consistency as
+$J\to\infty$, but no joint $N,J$ rate.
+\end{remark}
 
 \begin{remark}[Oscillation normalization and the path-space factor]
 Suppose a current-state particle theorem gives
@@ -2968,7 +3030,7 @@ Suppose a current-state particle theorem gives
 \left\|\eta_N^J(h)-\eta_N(h)\right\|_{L^2}
 \leq \frac{C\operatorname{osc}(h)}{\sqrt J}.
 \end{equation}
-For any current-state test function $h_N$ with
+For any test function $h_N$ with
 $\operatorname{osc}(h_N)=O(N)$, homogeneity gives RMSE
 $O(N/\sqrt J)$ and MSE $O(N^2/J)$. Thus removing an
 $\operatorname{osc}(h)\leq1$ normalization contributes one factor $N^2$
@@ -2984,8 +3046,11 @@ only give
 Substituting $\operatorname{osc}(H_N)=O(N)$ gives RMSE
 $O(N^2/\sqrt J)$ and MSE $O(N^4/J)$. One factor $N$ in RMSE therefore
 comes from the scale of the unnormalized additive score and the other from
-the path-space stability constant. The quadratic lower bound of
-\citet{poyiadjis11} does not assert that this quartic upper bound is sharp.
+the path-space stability constant in that particular upper bound. The
+quadratic asymptotic-variance lower bound of \citet{poyiadjis11} is already
+for an unnormalized additive functional. It must not be multiplied by a
+second normalization factor, and it does not assert that the quartic upper
+bound is sharp.
 \end{remark}
 
 \section{Figures for Bayesian Inference}
