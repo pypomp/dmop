@@ -1359,23 +1359,50 @@ pG'(\theta)^2
 Theorem~\ref{thm:refined-dmop-alpha-mse}, proved in
 Section~\ref{appendix:sharper-biasvar}, gives the sharper population-bias
 factor
-\begin{equation}
+\begin{align}
+0
+\leq
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
-\end{equation}
-Since $1-\alpha\varrho\geq1-\varrho$, this factor is at most a constant
-multiple of $1-\alpha$. Equation~(\ref{eq:dmop-alpha-conservative-mse})
-therefore follows from Equation~(\ref{eq:refined-dmop-alpha-mse}), and
-Equation~(\ref{eq:dmop-alpha-conservative-variance}) follows from
-Lemma~\ref{lem:dmop-alpha-variance}.
+{(1-\varrho)(1-\alpha\varrho)}
+&\leq
+\frac{\varrho}{(1-\varrho)^2}(1-\alpha),
+\label{eq:population-bias-conservative-factor}
+\end{align}
+because $1-\alpha\varrho\geq1-\varrho$. Substituting
+Equation~(\ref{eq:population-bias-conservative-factor}) into
+Equation~(\ref{eq:refined-dmop-alpha-mse}), while retaining its particle
+bias term, gives
+\begin{align}
+&\E\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2                                                    \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left[
+\frac{N}{J(1-\alpha)^2}
++N^2\left\{
+\frac{\varrho}{(1-\varrho)^2}(1-\alpha)
++\frac{N}{J(1-\alpha)}
+\right\}^2
+\right]                                                        \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left[
+\frac{N}{J(1-\alpha)^2}
++N^2\left\{1-\alpha+\frac{N}{J(1-\alpha)}\right\}^2
+\right],
+\end{align}
+which is Equation~(\ref{eq:dmop-alpha-conservative-mse}). Lemma~
+\ref{lem:dmop-alpha-variance} gives Equation~
+(\ref{eq:dmop-alpha-conservative-variance}) directly.
 \end{proof}
 
 \section{Sharper Bias-Variance Analysis}
 \label{appendix:sharper-biasvar}
 
-The preceding truncation argument bounds two terms separately that cancel
-as $\alpha$ approaches one. We now analyze the conditional-score increments
-directly. Write $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
+We now establish the estimates used in
+Theorem~\ref{thm:dmop-alpha-truncation-mse}. Write
+$\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
 conditional score produced by the deterministic differentiated population
 recursion. At $\theta=\phi$, its $\alpha=1$ version is the exact
 conditional score $\nabla_\theta\ell_n(\theta)$. A differentiated
@@ -1384,25 +1411,12 @@ $X_{m,j}^{P,\phi}$ and
 $\left.\nabla_\theta\log w_{m,j}^{P,\theta}\right|_{\theta=\phi}$.
 
 \begin{assumptionA6}[First-Order Model Regularity]
-The initial density and, for every $n$, the product
-\begin{equation}
-f_{X_n\mid X_{n-1}}(x_n\mid x_{n-1};\theta)
-f_{Y_n\mid X_n}(y_n^*\mid x_n;\theta)
-\label{eq:one-step-model-kernel}
-\end{equation}
-are continuously differentiable in a neighborhood of $\phi$. The norm of
-the derivative of the product in
-Equation~(\ref{eq:one-step-model-kernel}) is at most
-$B_1G'(\theta)$ times that product, uniformly in
-$n,x_{n-1},x_n$, and $\theta$ in this neighborhood; the same bound holds
-for the derivative of the initial density. Here $G'(\theta)$ in Assumption
-{\refAssumpBoundedMeasurement} may be enlarged to cover these derivative
-bounds. Differentiation may be passed under every integral
-used by the filtering recursion. The derivative obtained by differentiating
-the transition kernel agrees with the conditional expectation of the
-reparameterized-simulator derivative used by DMOP. The derivative bound in
+For every fixed collection of simulator random numbers, the simulated state
+path and the log measurement densities are continuously differentiable in a
+neighborhood of $\phi$. Differentiation may be interchanged with the
+expectations defining the filtering recursion. The derivative bound in
 Assumption {\refAssumpBoundedMeasurement} is understood as the total
-derivative actually used by DMOP: uniformly in $n,j$,
+pathwise derivative used by DMOP: uniformly in $n,j$,
 \begin{equation}
 \left\|
 \left.\nabla_\theta\log g_{n,j}^{A,F,\theta}
@@ -1413,14 +1427,56 @@ derivative actually used by DMOP: uniformly in $n,j$,
 \end{equation}
 \end{assumptionA6}
 
-Equation~(\ref{eq:bounded-realized-measurement-mark}) bounds the actual
-term in the existing differentiated-weight recursion. It follows from more
-primitive conditions, for example, if for every fixed random seed the
-simulator Jacobian with respect to its parent state has operator norm at most
-$\kappa<1$, its parameter Jacobian and the derivative of the initial
-simulated state have norm at most $B_1$, and the state and parameter
-derivatives of the log measurement density have norm at most
-$B_1G'(\theta)$. Indeed, differentiating one simulation step gives
+We first give sufficient conditions for the two requirements in (A6).
+Suppose a simulator step can be written as
+\begin{equation}
+X_n=\process_n(X_{n-1},U_n;\theta),
+\label{eq:reparameterized-simulator-step}
+\end{equation}
+where the distribution of $U_n$ does not depend on $\theta$. For a
+differentiable test function $q_\theta$ whose derivative is dominated by an
+integrable function, differentiation under the integral and the chain rule
+give
+\begin{align}
+&\nabla_\theta
+\E\{q_\theta(\process_n(x,U_n;\theta))\}                       \notag\\
+&\quad=
+\nabla_\theta
+\int q_\theta(\process_n(x,u;\theta))\,\nu(du)                \notag\\
+&\quad=
+\int
+\nabla_\theta\{q_\theta(\process_n(x,u;\theta))\}\,\nu(du) \notag\\
+&\quad=
+\int
+\left[
+\partial_\theta q_\theta(\process_n(x,u;\theta))
++
+\nabla_xq_\theta(\process_n(x,u;\theta))
+\nabla_\theta\process_n(x,u;\theta)
+\right]\nu(du)                                               \notag\\
+&\quad=
+\E\left[
+\partial_\theta q_\theta(X_n)
++\nabla_xq_\theta(X_n)\nabla_\theta X_n
+\mid X_{n-1}=x
+\right].
+\label{eq:pathwise-density-derivative-identity}
+\end{align}
+Applying Equation~(\ref{eq:pathwise-density-derivative-identity})
+successively to the unnormalized filtering numerator and denominator, and
+then applying the quotient rule, identifies the differentiated population
+recursion with the conditional expectation of the pathwise derivative used
+by DMOP. Thus this identification need not be imposed as a separate
+stability assumption; domination sufficient for the displayed interchange
+is enough.
+
+It remains to give primitive conditions for the uniform bound in
+Equation~(\ref{eq:bounded-realized-measurement-mark}). Suppose that, for
+every fixed random seed, the simulator Jacobian with respect to its parent
+state has operator norm at most $\kappa<1$, its parameter Jacobian and the
+derivative of the initial simulated state have norm at most $B_1$, and the
+state and parameter derivatives of the log measurement density have norm at
+most $B_1G'(\theta)$. Differentiating one simulation step gives
 \begin{align}
 \left\|\nabla_\theta X_{n,j}^{P,\theta}\right\|
 &\leq
@@ -1455,14 +1511,12 @@ Equation~(\ref{eq:bounded-realized-measurement-mark}) after enlarging
 $B_1$. They are sufficient, not necessary; the proofs below use only
 Equation~(\ref{eq:bounded-realized-measurement-mark}).
 
-Assumption~{\refAssumpTangentStability} is a primitive first-derivative
-model condition, not a particle-error bound. The density and derivative
-clauses of (A6) are chosen to imply the bounded-observation, first-order case of
-Assumptions 2.1--2.2 of
-\citet{tadicHigher20}; the simulator compatibility and bounded-mark clauses are
-additional conditions connecting that density calculation to DMOP. The
-transition density and its derivatives are used only in the proof; DMOP
-remains plug-and-play because the algorithm does not evaluate them.
+Assumption~{\refAssumpTangentStability} is therefore a first-order
+simulation regularity condition, not a particle-error or filter-stability
+assumption. The geometric population forgetting used below follows from the
+backward-kernel contraction under Assumption
+{\refAssumpBoundedProcess}; the particle weak-error bound is proved
+separately.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -1505,9 +1559,8 @@ averages in the definition of \(L_n^{A,\theta,\alpha}\) gives
 \label{eq:conditional-score-weight-difference}
 \end{align}
 where the second equality uses
-\(w_{n,j}^{P,\theta}=(w_{n-1,j}^{F,\theta})^\alpha\). There is no
-unrecorded ancestor index in this term. In the MOP-$\alpha$ recursion in
-the main manuscript, the discounted-weight accumulation and process
+\(w_{n,j}^{P,\theta}=(w_{n-1,j}^{F,\theta})^\alpha\). In the
+MOP-$\alpha$ recursion, the discounted-weight accumulation and process
 propagation preserve the index
 \(j\) and occur before the time-\(n\) resampling step. The resampling index
 \(k_j\) enters only afterward, through
@@ -1607,7 +1660,7 @@ The Feynman--Kac posterior update from time \(n-1\) to time \(n\) is
 \rho_{n-1}(dx_{0:n-1})
 M_n(x_{n-1},dx_n)G_n(x_n)
 }
-{ho_{n-1}M_n(G_n)}.
+{\rho_{n-1}M_n(G_n)}.
 \label{eq:posterior-path-update}
 \end{align}
 Because \(h_{k,i}\) is measurable with respect to the path through time
@@ -1619,7 +1672,7 @@ Because \(h_{k,i}\) is measurable with respect to the path through time
 \frac{
 \rho_{n-1}\{h_{k,i}M_n(G_n)\}
 }
-{ho_{n-1}M_n(G_n)},
+{\rho_{n-1}M_n(G_n)},
 \label{eq:posterior-path-update-functional}
 \end{align}
 where, using the manuscript's kernel notation,
@@ -1714,7 +1767,9 @@ B_s(f)(x_s)-B_s(f)(x'_s)
 (1-\epsilon)\operatorname{osc}(f).
 \label{eq:posterior-backward-one-step-contraction}
 \end{align}
-The same inequality holds with zero left-hand side if \(\epsilon=1\).
+If \(\epsilon=1\), Equation~
+(\ref{eq:posterior-backward-minorization}) implies
+\(B_s(x_s,\cdot)=\pi_{s-1}(\cdot)\), so the left-hand side is zero.
 Taking the supremum over \(x_s,x'_s\) gives
 \begin{equation}
 \operatorname{osc}\{B_s(f)\}
@@ -1730,9 +1785,19 @@ H_k(x_k)
 \E_{\rho_k}\{h_{k,i}\mid X_k=x_k\}.
 \label{eq:conditional-past-mark-at-k}
 \end{equation}
-The physical state process is Markov, and all auxiliary simulator seeds or
-pathwise derivatives through time \(k\) are measurable with respect to the
-past. Therefore repeated conditioning through the backward kernels gives
+All auxiliary simulator seeds and pathwise derivatives through time \(k\)
+are measurable with respect to the past through time \(k\). At
+\(\theta=\phi\), conditional on \(X_k\), the future physical states,
+observations, and simulator seeds are independent of this past. Hence
+\begin{equation}
+\E_{\rho_{n-1}}\{h_{k,i}\mid X_k=x_k\}
+=
+\E_{\rho_k}\{h_{k,i}\mid X_k=x_k\}
+=
+H_k(x_k).
+\label{eq:past-mark-future-conditional-independence}
+\end{equation}
+Repeated conditioning through the backward kernels gives
 \begin{align}
 \E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=x_{n-1}\}
 &=
@@ -1749,17 +1814,19 @@ Equation~(\ref{eq:population-forgetting-mark-bound}) gives
 2B_1G'(\theta).
 \label{eq:conditional-past-mark-oscillation}
 \end{align}
-Applying Equation~
-(\ref{eq:posterior-backward-oscillation-contraction}) successively to
-Equation~(\ref{eq:iterated-backward-conditioning}) therefore gives
+If \(r=1\), Equation~(\ref{eq:iterated-backward-conditioning}) contains no
+backward kernel. If \(r\geq2\), applying Equation~
+(\ref{eq:posterior-backward-oscillation-contraction}) successively gives
 \begin{align}
 &\operatorname{osc}\!\left[
 \E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=\mathord\cdot\}
 \right]                                                       \notag\\
 &\qquad\leq
-(1-\epsilon)^{r-1}\operatorname{osc}(H_k)                    \notag\\
-&\qquad\leq
-2B_1G'(\theta)(1-\epsilon)^{r-1}.
+2B_1G'(\theta)
+\begin{cases}
+1, & r=1,\\
+(1-\epsilon)^{r-1}, & r\geq2.
+\end{cases}
 \label{eq:conditional-past-mark-forgetting}
 \end{align}
 
@@ -1832,12 +1899,19 @@ Equation~(\ref{eq:conditional-past-mark-forgetting}), yields
 {\underbar G}                                                 \notag\\
 &\leq
 \frac{2B_1(\bar G-\underbar G)}{\underbar G}
-G'(\theta)(1-\epsilon)^{r-1}.
+G'(\theta)
+\begin{cases}
+1, & r=1,\\
+(1-\epsilon)^{r-1}, & r\geq2.
+\end{cases}
 \label{eq:lag-coordinate-geometric-bound}
 \end{align}
 Choose any \(\varrho\in(1-\epsilon,1)\). Since \(r\geq1\),
 \begin{equation}
-(1-\epsilon)^{r-1}
+\begin{cases}
+1, & r=1,\\
+(1-\epsilon)^{r-1}, & r\geq2
+\end{cases}
 \leq
 \varrho^{r-1}
 =
@@ -1927,8 +2001,8 @@ B_1G'(\theta).
 \label{eq:bounded-single-lag-path-functional}
 \end{equation}
 
-We next verify, rather than assume, the stability condition used in
-Theorem 2 of \citet{chanDelMoral18}. Let \(0\leq a\leq b\leq t\), and let
+We next verify the stability condition used in Theorem 2 of
+\citet{chanDelMoral18}. Let \(0\leq a\leq b\leq t\), and let
 \(z=(x_0,\ldots,x_a)\) and \(z'=(x'_0,\ldots,x'_a)\) be two path prefixes.
 If \(a=b\), then
 \begin{equation}
@@ -1984,7 +2058,7 @@ Together, Equations~(\ref{eq:chan-zero-step-normalizer}) and
 \citet{chanDelMoral18}, uniformly in \(a,b,t\), with a constant no larger
 than \(\bar M\bar G/(\underbar M\underbar G)\).
 
-We now record exactly what their Theorem 2 gives after translating their
+Their Theorem 2, after translating their
 particle count \(N\) to the present particle count \(J\), and their
 path-space target \(\eta_t\) to the present posterior path measure
 \(\rho_t\). There is a constant \(C<\infty\), depending only on
@@ -1998,8 +2072,7 @@ path-space target \(\eta_t\) to the present posterior path measure
 C\frac{t}{J}\rho_t(|f|).
 \label{eq:chan-signed-path-bias}
 \end{equation}
-For completeness, the signed version follows from the nonnegative version
-in that theorem by writing
+The signed version follows from the nonnegative version by writing
 \begin{equation}
 f=f^+-f^- ,
 \qquad
@@ -2180,7 +2253,10 @@ At \(\alpha=1\), the same argument gives
 
 \begin{proof}[Proof.]
 At \(\theta=\phi\), the particles and resampling indices do not depend on
-\(\alpha\). Equation~(\ref{eq:unrolled-filtered-weight}) therefore gives
+\(\alpha\). Taking expectations in
+Equation~(\ref{eq:conditional-score-path-decomposition}), subtracting
+Equation~(\ref{eq:population-conditional-score-path-decomposition}), and
+using Equation~(\ref{eq:lag-coefficient-definitions}) give
 \begin{align}
 &\E\nabla_\theta\hat\ell_n^\alpha(\theta)
 -\nabla_\theta\ell_n^\alpha(\theta)                            \notag\\
@@ -2242,8 +2318,7 @@ $\alpha\in[0,1)$ such that
 \end{equation}
 \end{assumptionA7}
 
-Assumption~(A7) is deliberately separate from Assumption
-{\refAssumpTangentStability}. It concerns the finite-$J$, $O(J)$
+Assumption~(A7) concerns the finite-$J$, $O(J)$
 interacting genealogy, whereas Lemmas~\ref{lem:derivative-measure-forgetting}--
 \ref{lem:discounted-dmop-particle-bias} derive deterministic forgetting,
 full-genealogy weak bias, and discounted particle bias from the
@@ -2282,41 +2357,94 @@ D_{m,i}
 \qquad m=0,\ldots,N,
 \label{eq:dmop-doob-increments}
 \end{equation}
-are orthogonal in $L^2$, and their sum is $Z_i-\E Z_i$. Hence
+are orthogonal in $L^2$, and their sum is $Z_i-\E Z_i$. To verify these
+claims, first note that $\mathcal F_N^J$ contains all randomness used to
+construct $Z_i$, so
+\begin{align}
+\sum_{m=0}^{N}D_{m,i}
+&=
+\E(Z_i\mid\mathcal F_N^J)
+-\E(Z_i\mid\mathcal F_{-1}^J)                                 \notag\\
+&=
+Z_i-\E Z_i.
+\label{eq:dmop-doob-telescope}
+\end{align}
+If $l<m$, then $D_{l,i}$ is $\mathcal F_{m-1}^J$-measurable and
+\begin{align}
+\E(D_{l,i}D_{m,i})
+&=
+\E\left[
+D_{l,i}\E(D_{m,i}\mid\mathcal F_{m-1}^J)
+\right]                                                       \notag\\
+&=0.
+\label{eq:dmop-doob-orthogonality}
+\end{align}
+Squaring Equation~(\ref{eq:dmop-doob-telescope}), taking expectations,
+and using Equation~(\ref{eq:dmop-doob-orthogonality}) give
 \begin{equation}
 \Var(Z_i)=\sum_{m=0}^{N}\E(D_{m,i}^2).
 \label{eq:dmop-doob-variance}
 \end{equation}
 
-Conditional on $\mathcal F_{m-1}^J$, the $J$ differentiated offspring at
-time $m$ are independent. With $M_{m,i}$ and $M_{m,i}^{(j)}$ as in
-Assumption~(A7), Equation~
-(\ref{eq:finite-particle-continuation-stability}) gives the required
-one-offspring replacement estimate. No deterministic filter-stability
-claim is being transferred here to the finite-$J$ genealogy.
-
-The conditional Efron--Stein inequality bounds the conditional second
-moment of $D_{m,i}$ by one half of the sum of these $J$ squared replacement
-changes. It therefore gives
+The tower property gives
 \begin{equation}
+\E(M_{m,i}\mid\mathcal F_{m-1}^J)
+=
+\E(Z_i\mid\mathcal F_{m-1}^J)
+=
+M_{m-1,i}.
+\label{eq:dmop-martingale-tower}
+\end{equation}
+Consequently,
+\begin{align}
 \E(D_{m,i}^2\mid\mathcal F_{m-1}^J)
-\leq
+&=
+\E\{(M_{m,i}-M_{m-1,i})^2\mid\mathcal F_{m-1}^J\}           \notag\\
+&=
+\Var(M_{m,i}\mid\mathcal F_{m-1}^J).
+\label{eq:dmop-increment-conditional-variance}
+\end{align}
+Conditional on $\mathcal F_{m-1}^J$, $M_{m,i}$ is a function of the $J$
+conditionally independent offspring at time $m$. The conditional
+Efron--Stein inequality, followed by Assumption~(A7), therefore gives
+\begin{align}
+\E(D_{m,i}^2\mid\mathcal F_{m-1}^J)
+&\leq
+\frac12\sum_{j=1}^J
+\E\{(M_{m,i}-M_{m,i}^{(j)})^2\mid\mathcal F_{m-1}^J\}       \notag\\
+&\leq
 \frac{J}{2}
-\left\{\frac{CG'(\theta)}{J(1-\alpha)}\right\}^2
-\lesssim
-\frac{G'(\theta)^2}{J(1-\alpha)^2}.
-\end{equation}
-Combining this bound with
-Equation~(\ref{eq:dmop-doob-variance}) gives
-\begin{equation}
+\left\{\frac{CG'(\theta)}{J(1-\alpha)}\right\}^2           \notag\\
+&\leq
+\frac{CG'(\theta)^2}{J(1-\alpha)^2}.
+\label{eq:dmop-one-generation-variance}
+\end{align}
+Taking expectations in Equation~(\ref{eq:dmop-one-generation-variance})
+and substituting into Equation~(\ref{eq:dmop-doob-variance}) give, for
+$N\geq1$,
+\begin{align}
 \Var(Z_i)
-\leq
-\sum_{m=0}^{N}\frac{CG'(\theta)^2}{J(1-\alpha)^2}
-\lesssim
-\frac{NG'(\theta)^2}{J(1-\alpha)^2}.
-\end{equation}
-Summing over $i=1,\ldots,p$ proves
-Equation~(\ref{eq:refined-dmop-alpha-variance}).
+&\leq
+\sum_{m=0}^{N}\frac{CG'(\theta)^2}{J(1-\alpha)^2}            \notag\\
+&=
+\frac{C(N+1)G'(\theta)^2}{J(1-\alpha)^2}                    \notag\\
+&\leq
+\frac{CNG'(\theta)^2}{J(1-\alpha)^2}.
+\label{eq:dmop-coordinate-variance}
+\end{align}
+Finally,
+\begin{align}
+\Var\{\nabla_\theta\hat\ell^\alpha(\theta)\}
+&=
+\E\left[
+\sum_{i=1}^p(Z_i-\E Z_i)^2
+\right]                                                       \notag\\
+&=
+\sum_{i=1}^p\Var(Z_i)                                        \notag\\
+&\leq
+\frac{CNpG'(\theta)^2}{J(1-\alpha)^2},
+\end{align}
+which proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
 \end{proof}
 
 \begin{lem}[Population discounting bias]
@@ -2337,29 +2465,45 @@ C\sqrt p\,G'(\theta)
 \end{lem}
 
 \begin{proof}[Proof.]
-At $\theta=\phi$, every off-parameter weight ratio equals one, so the
-deterministic differentiated recursion has the same coefficient identity as
-Equation~(\ref{eq:unrolled-filtered-weight}). Thus a contribution inherited
-through $r$ filtering updates has coefficient one
-in $\nabla_\theta\ell_n(\theta)$ and coefficient $\alpha^r$ in
-$\nabla_\theta\ell_n^\alpha(\theta)$. Lemma~
-\ref{lem:derivative-measure-forgetting} bounds the Euclidean norm of the
-undiscounted lag-$r$ contribution by
-$C\sqrt p\,G'(\theta)\varrho^r$. The triangle inequality therefore gives
+Equation~(\ref{eq:population-conditional-score-path-decomposition}) at
+$\alpha$ and at $\alpha=1$ gives
+\begin{align}
+\nabla_\theta\ell_n(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+&=
+\sum_{r=0}^{n-1}(1-\alpha^r)\Delta_{n,r}                     \notag\\
+&=
+\sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r},
+\label{eq:population-discount-lag-difference}
+\end{align}
+because the $r=0$ coefficient is zero. Taking norms, applying the triangle
+inequality and Lemma~\ref{lem:derivative-measure-forgetting}, and then
+extending the nonnegative scalar sum to infinity give
 \begin{align}
 \left\|
 \nabla_\theta\ell_n(\theta)
 -\nabla_\theta\ell_n^\alpha(\theta)
 \right\|_2
 &\leq
-C\sqrt p\,G'(\theta)
-\sum_{r=1}^{n}(1-\alpha^r)\varrho^r                         \notag\\
+\sum_{r=1}^{n-1}(1-\alpha^r)\|\Delta_{n,r}\|_2              \notag\\
 &\leq
 C\sqrt p\,G'(\theta)
-\left(
+\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r                       \notag\\
+&\leq
+C\sqrt p\,G'(\theta)
+\sum_{r=1}^{\infty}(1-\alpha^r)\varrho^r                    \notag\\
+&=
+C\sqrt p\,G'(\theta)
+\left\{
+\sum_{r=1}^{\infty}\varrho^r
+-\sum_{r=1}^{\infty}(\alpha\varrho)^r
+\right\}                                                     \notag\\
+&=
+C\sqrt p\,G'(\theta)
+\left\{
 \frac{\varrho}{1-\varrho}
 -\frac{\alpha\varrho}{1-\alpha\varrho}
-\right)                                                       \notag\\
+\right\}                                                     \notag\\
 &=
 C\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
@@ -2401,12 +2545,37 @@ For a square-integrable random vector $Z$ and a deterministic vector $z$,
 \label{eq:vector-bias-variance-identity}
 \end{equation}
 The first term is bounded by
-Lemma~\ref{lem:dmop-alpha-variance}. For the second term, insert the
-population DMOP-$\alpha$ score and use the triangle inequality:
+Lemma~\ref{lem:dmop-alpha-variance}. For the second term, use
+\begin{equation}
+\nabla_\theta\hat\ell^\alpha(\theta)
+=\sum_{n=1}^N\nabla_\theta\hat\ell_n^\alpha(\theta),
+\qquad
+\nabla_\theta\ell(\theta)
+=\sum_{n=1}^N\nabla_\theta\ell_n(\theta),
+\label{eq:full-score-conditional-sums}
+\end{equation}
+add and subtract each population DMOP-$\alpha$ conditional score, and
+apply the triangle inequality. Lemmas~
+\ref{lem:discounted-dmop-particle-bias} and
+\ref{lem:dmop-population-discount-bias} then give
 \begin{align}
 &\left\|
 \E\nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
+\right\|_2                                                   \notag\\
+&\quad=
+\left\|
+\sum_{n=1}^N
+\left\{
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\}
++
+\sum_{n=1}^N
+\left\{
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\}
 \right\|_2                                                   \notag\\
 &\quad\leq
 \sum_{n=1}^{N}
@@ -2440,28 +2609,45 @@ CN\sqrt p\,G'(\theta)
 {(1-\varrho)(1-\alpha\varrho)}
 \right\},
 \end{align}
-where the last line follows from
-Lemmas~\ref{lem:discounted-dmop-particle-bias} and
-\ref{lem:dmop-population-discount-bias}. Squaring this bound and using
+where the equality uses
+$\sum_{n=1}^Nn=N(N+1)/2$, and the last line uses $N+1\leq2N$.
+Squaring this bound and using
 Equation~(\ref{eq:vector-bias-variance-identity}) proves the theorem.
 \end{proof}
 
 To make the resulting tradeoff explicit, put $\delta=1-\alpha$. Since
-$1-\alpha\varrho\geq1-\varrho$, the preceding theorem implies
+$1-\alpha\varrho=1-\varrho+\delta\varrho\geq1-\varrho$,
 \begin{equation}
-\operatorname{MSE}_{\alpha}
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\leq
+\frac{\varrho}{(1-\varrho)^2}\delta
 \lesssim
+\delta.
+\label{eq:population-factor-delta-bound}
+\end{equation}
+Theorem~\ref{thm:refined-dmop-alpha-mse} and Equation~
+(\ref{eq:population-factor-delta-bound}) therefore give
+\begin{align}
+\operatorname{MSE}_{\alpha}
+&\lesssim
 pG'(\theta)^2
+\left[
+\frac{N}{J\delta^2}
++N^2\left\{\delta+\frac{N}{J\delta}\right\}^2
+\right]                                                       \notag\\
+&\leq
+CpG'(\theta)^2
 \left\{
 \frac{N}{J\delta^2}
 +N^2\delta^2
 +\frac{N^4}{J^2\delta^2}
 \right\},
 \label{eq:dmop-leading-tradeoff}
-\end{equation}
-where $\operatorname{MSE}_{\alpha}$ denotes the expectation on the left
-of Equation~(\ref{eq:refined-dmop-alpha-mse}). The cross term is absorbed
-using $2ab\leq a^2+b^2$. If $J\geq N$, the choice
+\end{align}
+where the last inequality uses $(a+b)^2\leq2a^2+2b^2$. Here
+$\operatorname{MSE}_{\alpha}$ denotes the expectation on the left of
+Equation~(\ref{eq:refined-dmop-alpha-mse}). If $J\geq N$, the choice
 \begin{equation}
 \delta=\left(\frac{N}{J}\right)^{1/2}
 \label{eq:dmop-interior-alpha}
@@ -2484,7 +2670,23 @@ over an $N^2/J$ DMOP-$1$ rate.
 \label{cor:dmop-interior-advantage}
 Suppose the conditions of
 Theorem~\ref{thm:refined-dmop-alpha-mse} hold along a joint sequence
-$N,J\to\infty$. Suppose, in addition, that the integrated particle
+$N,J\to\infty$, with
+\begin{equation}
+\sup_{N,J}pG'(\theta)^2<\infty.
+\label{eq:bounded-score-scale-joint-sequence}
+\end{equation}
+This condition holds, in particular, when $p$ and $\theta$ are fixed.
+For $a\in\{0,\alpha,1\}$, define all three endpoint and interior errors
+against the same full score by
+\begin{equation}
+\operatorname{MSE}_a
+=
+\E\left\|
+\nabla_\theta\hat\ell^a(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2.
+\label{eq:common-endpoint-mse-definition}
+\end{equation}
+Suppose, in addition, that the integrated particle
 genealogy satisfies
 \begin{equation}
 \left\|
