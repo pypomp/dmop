@@ -18,7 +18,6 @@
 \newcommand\refAssumpBoundedMeasurement{(A3)} %% \label{assump:bounded-measurement}
 \newcommand\refAssumpLocalBoundedDerivative{(A4)} %% \label{assump:local-bounded-derivative}
 \newcommand\refAssumpDifferentiableSimulator{(A5)} %% \label{assump:diff-meas-and-sim}
-\newcommand\refAssumpPrimitiveInnovation{(A6)}
 \newcommand\refAlgIfad{3}
 \newcommand\refFigNutsEb{6} %% \ref{fig:nuts-eb}
                       
@@ -38,7 +37,6 @@
 \newtheorem{remark}{Remark}%
 \theoremstyle{thmstylethree}%
 \newtheorem{definition}{Definition}
-\newtheorem*{assumptionA6}{Assumption (A6)}
 %\usepackage[doublespacing]{setspace}
 
 \usepackage[inline]{enumitem}
@@ -891,6 +889,16 @@ Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:co
 
 
 In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
+The earlier truncation argument is retained below in the source only for
+comparison, but is not used: the particle-system forgetting theorem invoked
+there acts on the current physical particle cloud, whereas a realized DMOP
+mark also carries its ancestral simulator derivative.  In addition, summing
+the displayed particle-system mixing bound costs a factor of order
+$\log J$.  The proof of Theorem~\ref{thm:dmop-alpha-truncation-mse} is
+therefore given in Section~\ref{appendix:sharper-biasvar} from historical
+particle estimates that apply directly to the complete ancestral path.
+
+\iffalse
 First, we note the following relation between the Dobrushin contraction coefficient and the alpha-mixing coefficients in our context below.
 \begin{lem}
     \label{lem:dobrushin-implies-alpha-mixing}
@@ -1328,74 +1336,65 @@ Since this holds for every \(k\le N\), the result follows by minimizing over \(k
 \end{proof}
 
 
+\fi
+\addtocounter{lem}{1}
+\addtocounter{thm}{2}
+
 \begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
 \label{thm:dmop-alpha-truncation-mse}
-Suppose $\alpha\in[0,1)$, $\theta=\phi$, Assumptions
+Suppose $\alpha\in[0,1]$, $\theta=\phi$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
-{\refAssumpDifferentiableSimulator} hold, Assumption
-{\refAssumpPrimitiveInnovation} in
-Section~\ref{appendix:sharper-biasvar} holds, and multinomial resampling is
-used.
-Then, for a constant independent of $N,J$, and $\alpha$,
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. There are constants $C<\infty$ and $\varrho\in(0,1)$, independent of
+$N,J$, and $\alpha$, such that
 \begin{align}
 &\E\left\|
 \nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
 \right\|_2^2                                                    \notag\\
-&\quad\lesssim
-pG'(\theta)^2
+&\quad\leq
+CpG'(\theta)^2
 \left[
-\frac{N}{J(1-\alpha)^2}
-+N^2\left\{1-\alpha+\frac{N}{J(1-\alpha)}\right\}^2
+\min\left\{N^2,\frac{N^3}{J}\right\}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
++\frac{N^4}{J^2}
 \right],
 \label{eq:dmop-alpha-conservative-mse}
 \\
 &\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\lesssim
-\frac{NpG'(\theta)^2}{J(1-\alpha)^2}.
+\leq
+CpG'(\theta)^2
+\min\left\{N^2,\frac{N^3}{J}\right\}.
 \label{eq:dmop-alpha-conservative-variance}
 \end{align}
+In particular, the right side of Equation~
+(\ref{eq:dmop-alpha-conservative-mse}) is at most
+\begin{equation}
+CpG'(\theta)^2
+\left\{
+\frac{N^3}{J}+N^2(1-\alpha)^2+\frac{N^4}{J^2}
+\right\}.
+\label{eq:dmop-alpha-conservative-mse-simplified}
+\end{equation}
 \end{thm}
 
 \begin{proof}[Proof.]
 Theorem~\ref{thm:refined-dmop-alpha-mse}, proved in
-Section~\ref{appendix:sharper-biasvar}, gives the sharper population-bias
-factor
+Section~\ref{appendix:sharper-biasvar}, gives
+Equations~(\ref{eq:dmop-alpha-conservative-mse}) and
+(\ref{eq:dmop-alpha-conservative-variance}).  Also,
 \begin{align}
-0
-\leq
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 &\leq
 \frac{\varrho}{(1-\varrho)^2}(1-\alpha),
 \label{eq:population-bias-conservative-factor}
 \end{align}
-because $1-\alpha\varrho\geq1-\varrho$. Substituting
-Equation~(\ref{eq:population-bias-conservative-factor}) into
-Equation~(\ref{eq:refined-dmop-alpha-mse}), while retaining its particle
-bias term, gives
-\begin{align}
-&\E\left\|
-\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
-\right\|_2^2                                                    \notag\\
-&\quad\lesssim
-pG'(\theta)^2
-\left[
-\frac{N}{J(1-\alpha)^2}
-+N^2\left\{
-\frac{\varrho}{(1-\varrho)^2}(1-\alpha)
-+\frac{N}{J(1-\alpha)}
-\right\}^2
-\right]                                                        \notag\\
-&\quad\lesssim
-pG'(\theta)^2
-\left[
-\frac{N}{J(1-\alpha)^2}
-+N^2\left\{1-\alpha+\frac{N}{J(1-\alpha)}\right\}^2
-\right],
-\end{align}
-which is Equation~(\ref{eq:dmop-alpha-conservative-mse}). Lemma~
-\ref{lem:dmop-alpha-variance} gives Equation~
-(\ref{eq:dmop-alpha-conservative-variance}) directly.
+because $1-\alpha\varrho\geq1-\varrho$. Substitution in
+Equation~(\ref{eq:dmop-alpha-conservative-mse}) and enlargement of $C$
+give Equation~(\ref{eq:dmop-alpha-conservative-mse-simplified}).
 \end{proof}
 
 \section{Sharper Bias-Variance Analysis}
@@ -2264,6 +2263,7 @@ after one final enlargement of \(C\). This proves
 Equation~(\ref{eq:lagwise-weak-error}) for all \(J\geq1\).
 \end{proof}
 
+\iffalse
 \begin{lem}[Particle bias of a discounted conditional score]
 \label{lem:discounted-dmop-particle-bias}
 Suppose $\theta=\phi$. Under the conditions of
@@ -2336,6 +2336,168 @@ n\frac{C\sqrt p\,G'(\theta)n}{J}
 \end{align}
 which proves Equation~(\ref{eq:undiscounted-dmop-particle-bias}).
 \end{proof}
+\fi
+
+\begin{lem}[Particle bias of the full DMOP-$\alpha$ score]
+\label{lem:dmop-full-particle-bias}
+Suppose $\theta=\phi$. Under the conditions of
+Lemma~\ref{lem:lagwise-weak-error}, for every $\alpha\in[0,1]$,
+\begin{equation}
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+\leq
+\frac{C\sqrt p\,G'(\theta)N^2}{J}.
+\label{eq:dmop-full-particle-bias}
+\end{equation}
+The constant depends only on
+$\bar M,\underbar M,\bar G,\underbar G$ and is independent of
+$N,J$, and $\alpha$.
+\end{lem}
+
+\begin{proof}[Proof.]
+Sum Equation~(\ref{eq:conditional-score-path-decomposition}) over
+$n=1,\ldots,N$ and put $k=n-r$ in the second sum.  Since all sums are
+finite, their order may be interchanged, giving
+\begin{align}
+\nabla_\theta\hat\ell^\alpha(\theta)
+&=
+\sum_{k=1}^{N}
+\left[
+m(\xi_k)(h_k)
++\sum_{t=k+1}^{N}\alpha^{t-k}
+\{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}
+\right].
+\label{eq:full-score-reindexed-by-mark}
+\end{align}
+For fixed $k$, direct collection of the coefficient of every
+$m(\xi_t)(h_k)$ gives
+\begin{align}
+&m(\xi_k)(h_k)
++\sum_{t=k+1}^{N}\alpha^{t-k}
+\{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}                         \notag\\
+&\quad=
+(1-\alpha)\sum_{t=k}^{N-1}\alpha^{t-k}m(\xi_t)(h_k)
++\alpha^{N-k}m(\xi_N)(h_k).
+\label{eq:one-mark-summation-by-parts}
+\end{align}
+Indeed, the coefficient at $t=k$ is $1-\alpha$; for $k<t<N$ it is
+$\alpha^{t-k}-\alpha^{t+1-k}=(1-\alpha)\alpha^{t-k}$; and at
+$t=N$ it is $\alpha^{N-k}$.  Substitution of
+Equation~(\ref{eq:one-mark-summation-by-parts}) into
+Equation~(\ref{eq:full-score-reindexed-by-mark}), followed by a second
+interchange of finite sums, yields
+\begin{align}
+\nabla_\theta\hat\ell^\alpha(\theta)
+&=
+(1-\alpha)\sum_{t=1}^{N-1}
+m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_k\right)
++m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_k\right).
+\label{eq:full-score-summation-by-parts}
+\end{align}
+The identical calculation, with $m(\xi_t)$ replaced by $\rho_t$ in
+Equation~(\ref{eq:population-conditional-score-path-decomposition}), gives
+\begin{align}
+\nabla_\theta\ell^\alpha(\theta)
+&=
+(1-\alpha)\sum_{t=1}^{N-1}
+\rho_t\left(\sum_{k=1}^{t}\alpha^{t-k}h_k\right)
++\rho_N\left(\sum_{k=1}^{N}\alpha^{N-k}h_k\right).
+\label{eq:population-full-score-summation-by-parts}
+\end{align}
+
+The proof of Lemma~\ref{lem:lagwise-weak-error}, in particular
+Equation~(\ref{eq:chan-signed-path-bias}), gives the following bound for
+every real bounded path functional $f$ whenever $J\geq C(t+1)$:
+\begin{equation}
+\left|\E m(\xi_t)(f)-\rho_t(f)\right|
+\leq
+C\frac{t+1}{J}\|f\|_\infty.
+\label{eq:large-j-historical-weak-bias}
+\end{equation}
+If $J<C(t+1)$, after taking $C\geq1$, then
+\begin{align}
+\left|\E m(\xi_t)(f)-\rho_t(f)\right|
+&\leq
+\E|m(\xi_t)(f)|+|\rho_t(f)|                              \notag\\
+&\leq
+2\|f\|_\infty                                             \notag\\
+&<
+2C\frac{t+1}{J}\|f\|_\infty.
+\label{eq:small-j-general-historical-weak-bias}
+\end{align}
+Combining Equations~(\ref{eq:large-j-historical-weak-bias}) and
+(\ref{eq:small-j-general-historical-weak-bias}), and enlarging $C$ once,
+shows that for every $J\geq1$,
+\begin{equation}
+\left|\E m(\xi_t)(f)-\rho_t(f)\right|
+\leq
+C\frac{t+1}{J}\|f\|_\infty,
+\label{eq:all-j-historical-weak-bias}
+\end{equation}
+Fix a coordinate $i$.  Equation~
+(\ref{eq:bounded-realized-measurement-mark}) gives
+\begin{equation}
+\left\|\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right\|_\infty
+\leq
+G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
+\label{eq:discounted-mark-supremum}
+\end{equation}
+Subtracting Equation~(\ref{eq:population-full-score-summation-by-parts})
+from Equation~(\ref{eq:full-score-summation-by-parts}), taking
+expectations, and then applying Equations~
+(\ref{eq:all-j-historical-weak-bias})--
+(\ref{eq:discounted-mark-supremum}) coordinatewise give
+\begin{align}
+&\left|
+\E\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{J}
+\left[
+(1-\alpha)\sum_{t=1}^{N-1}(t+1)
+\sum_{k=1}^{t}\alpha^{t-k}
++(N+1)\sum_{k=1}^{N}\alpha^{N-k}
+\right]                                                       \notag\\
+&\quad=
+\frac{CG'(\theta)}{J}
+\left[
+\sum_{t=1}^{N-1}(t+1)(1-\alpha^t)
++(N+1)\sum_{k=1}^{N}\alpha^{N-k}
+\right].
+\label{eq:full-particle-bias-coordinate-before-bound}
+\end{align}
+The last equality is valid at $\alpha=1$ by direct evaluation of the
+product $(1-\alpha)\sum_{k=1}^{t}\alpha^{t-k}$.  Since
+$1-\alpha^t\leq1$ and $\sum_{k=1}^{N}\alpha^{N-k}\leq N$,
+\begin{align}
+&\sum_{t=1}^{N-1}(t+1)(1-\alpha^t)
++(N+1)\sum_{k=1}^{N}\alpha^{N-k}                              \notag\\
+&\quad\leq
+\sum_{t=1}^{N-1}(t+1)+N(N+1)                                 \notag\\
+&\quad=
+\frac{(N-1)(N+2)}2+N(N+1)                                   \notag\\
+&\quad=
+\frac{3N^2+3N-2}{2}
+\leq3N^2.
+\label{eq:finite-geometric-sum-at-most-n}
+\end{align}
+Therefore
+\begin{equation}
+\left|
+\E\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|
+\leq
+\frac{CG'(\theta)N^2}{J}.
+\end{equation}
+Squaring this inequality, summing it over $i=1,\ldots,p$, and taking a
+square root proves Equation~(\ref{eq:dmop-full-particle-bias}).
+\end{proof}
+
+\iffalse
 \begin{assumptionA6}[Primitive-Innovation Continuation Stability]
 Suppose $\theta=\phi$, $\alpha\in[0,1)$, and multinomial resampling is used.
 Represent the particle randomness, in chronological order, by independent
@@ -2599,6 +2761,259 @@ Finally,
 \end{align}
 which proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
 \end{proof}
+\fi
+
+\begin{lem}[Historical-particle variance of the DMOP-$\alpha$ score]
+\label{lem:dmop-alpha-variance}
+Suppose $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used.  Then
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\leq
+CpG'(\theta)^2
+\min\left\{N^2,\frac{N^3}{J}\right\},
+\label{eq:refined-dmop-alpha-variance}
+\end{equation}
+where $C$ is independent of $N,J$, and $\alpha$, and
+$\Var(Z)=\E\|Z-\E Z\|_2^2$.
+\end{lem}
+
+\begin{proof}[Proof.]
+We first record the historical-particle estimate that will be applied.
+Assumptions {\refAssumpBoundedProcess} and
+{\refAssumpBoundedMeasurement} first give the uniform normalizer-ratio
+bound verified in Equations~(\ref{eq:chan-zero-step-normalizer})--
+(\ref{eq:chan-terminal-normalizer-ratio}).  The one-lineage estimate has
+already been proved in Equation~(\ref{eq:chan-signed-path-bias}).  For two
+lineages, we use the $q=2$ coalescent expansion underlying
+\citet[Theorem~3.5]{chanDelMoral18}, written out in their Appendix~C,
+Lemma~C.1 and Proposition~C.2; see also
+\citet[Corollary~8.5.1]{delMoral04}.  That expansion is for the occupation
+measure of the complete particle genealogy and explicitly permits a
+function of the complete path.  At every possible generation it either
+inserts or does not insert the displayed coalescence operator.  Each
+insertion has coefficient $J^{-1}$, and Appendix~C bounds the surrounding
+terms by powers of the uniform future-normalizer ratio.  The latter ratio
+is exactly what was verified above, including on the extended paths; no
+contraction of the extended coordinates is used.  Summing the finitely many
+coalescence patterns as in Proposition~C.2, and absorbing its fixed
+constants and finite-$J$ factor, therefore gives, for two distinct
+terminal particle labels, $J\geq C(t+1)$, and every $[0,1]$-valued path
+functional $g$, Equation~(\ref{eq:chan-signed-path-bias}) and the $q=2$
+expansion, respectively, yield
+\begin{align}
+\left|\E g(\xi_t^1)-\rho_t(g)\right|
+&\leq
+C\frac{t+1}{J},
+\label{eq:historical-one-lineage-bound}
+\\
+\left|\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2\right|
+&\leq
+C\frac{t+1}{J}.
+\label{eq:historical-two-lineage-bound}
+\end{align}
+These estimates apply to the augmented seed--state--tangent paths:
+those decorations affect the bounded terminal functional, but not the
+potential, resampling probability, physical propagation, or future
+normalizer used in the coalescent expansion.  Thus no contraction of the
+augmented tangent is invoked.
+
+We next derive the required second moment from Equations~
+(\ref{eq:historical-one-lineage-bound})--
+(\ref{eq:historical-two-lineage-bound}).  If $\|f\|_\infty=0$, the result
+is immediate.  Otherwise put
+\begin{equation}
+g=\frac{f+\|f\|_\infty}{2\|f\|_\infty},
+\qquad 0\leq g\leq1.
+\label{eq:rescaled-historical-functional}
+\end{equation}
+Since $f-\rho_t(f)=2\|f\|_\infty\{g-\rho_t(g)\}$, Equations~
+(\ref{eq:historical-one-lineage-bound})--
+(\ref{eq:historical-two-lineage-bound}) give
+\begin{align}
+&\left|\E\left[
+\{f(\xi_t^1)-\rho_t(f)\}
+\{f(\xi_t^2)-\rho_t(f)\}
+\right]\right|                                               \notag\\
+&\quad=
+4\|f\|_\infty^2
+\left|\E\{g(\xi_t^1)g(\xi_t^2)\}
+-2\rho_t(g)\E g(\xi_t^1)+\rho_t(g)^2\right|                \notag\\
+&\quad\leq
+4\|f\|_\infty^2
+\left[
+\left|\E\{g(\xi_t^1)g(\xi_t^2)\}-\rho_t(g)^2\right|
++2\rho_t(g)\left|\E g(\xi_t^1)-\rho_t(g)\right|
+\right]                                                       \notag\\
+&\quad\leq
+C\frac{t+1}{J}\|f\|_\infty^2,
+\label{eq:centered-two-lineage-bound}
+\end{align}
+where $0\leq\rho_t(g)\leq1$ is used in the final line.
+
+Finally, exchangeability of the $J$ terminal paths gives the exact
+identity
+\begin{align}
+&\E\left|m(\xi_t)(f)-\rho_t(f)\right|^2                     \notag\\
+&\quad=
+\frac1J\E\left|f(\xi_t^1)-\rho_t(f)\right|^2
++\frac{J-1}{J}
+\E\left[
+\{f(\xi_t^1)-\rho_t(f)\}
+\{f(\xi_t^2)-\rho_t(f)\}
+\right]                                                       \notag\\
+&\quad\leq
+\frac{4}{J}\|f\|_\infty^2
++C\frac{t+1}{J}\|f\|_\infty^2                             \notag\\
+&\quad\leq
+C\frac{t+1}{J}\|f\|_\infty^2.
+\label{eq:historical-particle-second-moment}
+\end{align}
+The first inequality uses
+$|f(\xi_t^1)-\rho_t(f)|\leq2\|f\|_\infty$ and Equation~
+(\ref{eq:centered-two-lineage-bound}).  Taking square roots in Equation~
+(\ref{eq:historical-particle-second-moment}) gives
+\begin{equation}
+\left\{
+\E\left|m(\xi_t)(f)-\rho_t(f)\right|^2
+\right\}^{1/2}
+\leq
+C\sqrt{\frac{t+1}{J}}\,\|f\|_\infty.
+\label{eq:historical-particle-l2}
+\end{equation}
+If $J<C(t+1)$, then
+\begin{align}
+\left|m(\xi_t)(f)-\rho_t(f)\right|
+&\leq
+|m(\xi_t)(f)|+|\rho_t(f)|                                    \notag\\
+&\leq
+2\|f\|_\infty                                                 \notag\\
+&\leq
+C\sqrt{\frac{t+1}{J}}\,\|f\|_\infty,
+\end{align}
+after enlarging $C$.  Thus Equation~(\ref{eq:historical-particle-l2})
+holds for all $J\geq1$.
+
+Fix a coordinate $i$.  Subtract
+Equation~(\ref{eq:population-full-score-summation-by-parts}) from
+Equation~(\ref{eq:full-score-summation-by-parts}), and use Minkowski's
+inequality in $L^2$.  Equations~(\ref{eq:historical-particle-l2}) and
+(\ref{eq:discounted-mark-supremum}) then give
+\begin{align}
+&\left\{
+\E\left|
+\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|^2
+\right\}^{1/2}                                                \notag\\
+&\quad\leq
+(1-\alpha)\sum_{t=1}^{N-1}
+\left\{
+\E\left|
+m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+-\rho_t\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+\right|^2
+\right\}^{1/2}                                                \notag\\
+&\qquad+
+\left\{
+\E\left|
+m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_{k,i}\right)
+-\rho_N\left(\sum_{k=1}^{N}\alpha^{N-k}h_{k,i}\right)
+\right|^2
+\right\}^{1/2}                                                \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{\sqrt J}
+\left[
+(1-\alpha)\sum_{t=1}^{N-1}\sqrt{t+1}
+\sum_{k=1}^{t}\alpha^{t-k}
++\sqrt{N+1}\sum_{k=1}^{N}\alpha^{N-k}
+\right]                                                       \notag\\
+&\quad=
+\frac{CG'(\theta)}{\sqrt J}
+\left[
+\sum_{t=1}^{N-1}\sqrt{t+1}(1-\alpha^t)
++\sqrt{N+1}\sum_{k=1}^{N}\alpha^{N-k}
+\right].
+\label{eq:full-score-historical-l2-before-sum}
+\end{align}
+As in Equation~(\ref{eq:full-particle-bias-coordinate-before-bound}), the
+last equality is valid at $\alpha=1$ by evaluating the product before
+using the geometric-sum formula.  Since $1-\alpha^t\leq1$,
+$\sqrt{t+1}\leq\sqrt N$ for $t<N$, and the terminal geometric sum is at
+most $N$,
+\begin{align}
+&\sum_{t=1}^{N-1}\sqrt{t+1}(1-\alpha^t)
++\sqrt{N+1}\sum_{k=1}^{N}\alpha^{N-k}                       \notag\\
+&\quad\leq
+(N-1)\sqrt N+N\sqrt{N+1}                                    \notag\\
+&\quad\leq
+(1+\sqrt2)N^{3/2}.
+\label{eq:historical-sum-n-three-halves}
+\end{align}
+Equations~(\ref{eq:full-score-historical-l2-before-sum})--
+(\ref{eq:historical-sum-n-three-halves}) imply
+\begin{equation}
+\E\left|
+\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|^2
+\leq
+\frac{CG'(\theta)^2N^3}{J}.
+\label{eq:historical-coordinate-mse}
+\end{equation}
+For every square-integrable real random variable $Y$ and deterministic
+$a$,
+\begin{align}
+\E|Y-a|^2
+&=\E|Y-\E Y|^2+|\E Y-a|^2                                   \notag\\
+&\geq\Var(Y).
+\label{eq:variance-bounded-by-error-about-constant}
+\end{align}
+Applying Equation~(\ref{eq:variance-bounded-by-error-about-constant}) to
+Equation~(\ref{eq:historical-coordinate-mse}) and summing over the $p$
+coordinates gives
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\leq
+\frac{CpG'(\theta)^2N^3}{J}.
+\label{eq:historical-vector-variance}
+\end{equation}
+
+It remains to obtain the other term in the minimum.  Taking absolute
+values in Equation~(\ref{eq:full-score-summation-by-parts}) and using
+Equation~(\ref{eq:discounted-mark-supremum}) give, pathwise,
+\begin{align}
+\left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|
+&\leq
+G'(\theta)
+\left[
+\sum_{t=1}^{N-1}(1-\alpha^t)
++\sum_{k=1}^{N}\alpha^{N-k}
+\right]                                                       \notag\\
+&=
+G'(\theta)
+\left[
+(N-1)-\sum_{t=1}^{N-1}\alpha^t
++1+\sum_{t=1}^{N-1}\alpha^t
+\right]                                                       \notag\\
+&=
+NG'(\theta).
+\label{eq:full-score-deterministic-bound}
+\end{align}
+Consequently,
+\begin{align}
+\Var\left(\partial_{\theta_i}\hat\ell^\alpha(\theta)\right)
+&\leq
+\E\left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|^2
+\leq
+N^2G'(\theta)^2.
+\end{align}
+Summing over coordinates and combining this bound with
+Equation~(\ref{eq:historical-vector-variance}) proves
+Equation~(\ref{eq:refined-dmop-alpha-variance}).
+\end{proof}
 
 \begin{lem}[Population discounting bias]
 \label{lem:dmop-population-discount-bias}
@@ -2664,6 +3079,7 @@ C\sqrt p\,G'(\theta)
 \end{align}
 \end{proof}
 
+\iffalse
 \begin{thm}[Refined MSE bound for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
 Suppose the observations are fixed, $\theta=\phi$, $\alpha\in[0,1)$,
@@ -2988,6 +3404,473 @@ the sharper bound records precisely the additional particle-level estimate
 that would be needed; it is not claimed under Assumptions
 {\refAssumpBoundedProcess}--{\refAssumpPrimitiveInnovation} alone.
 \end{remark}
+\fi
+
+\begin{thm}[Refined MSE bound for DMOP-$\alpha$]
+\label{thm:refined-dmop-alpha-mse}
+Suppose the observations are fixed, $\theta=\phi$, $\alpha\in[0,1]$,
+Assumptions {\refAssumpBoundedProcess},
+{\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used.  Then there are $C<\infty$ and $\varrho\in(0,1)$, independent of
+$N,J$, and $\alpha$, such that
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                   \notag\\
+&\quad\leq
+CpG'(\theta)^2
+\left[
+\min\left\{N^2,\frac{N^3}{J}\right\}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
++\frac{N^4}{J^2}
+\right].
+\label{eq:refined-dmop-alpha-mse}
+\end{align}
+\end{thm}
+
+\begin{proof}[Proof.]
+For a square-integrable random vector $Z$ and a deterministic vector $z$,
+expansion of the square gives
+\begin{align}
+\E\|Z-z\|_2^2
+&=
+\E\|Z-\E Z+\E Z-z\|_2^2                                    \notag\\
+&=
+\E\|Z-\E Z\|_2^2
++2\E\{(Z-\E Z)^\mathsf T(\E Z-z)\}
++\|\E Z-z\|_2^2                                             \notag\\
+&=
+\Var(Z)+\|\E Z-z\|_2^2,
+\label{eq:vector-bias-variance-identity}
+\end{align}
+because $\E(Z-\E Z)=0$.
+
+Apply Equation~(\ref{eq:vector-bias-variance-identity}) with
+$Z=\nabla_\theta\hat\ell^\alpha(\theta)$ and
+$z=\nabla_\theta\ell(\theta)$.  Lemma~
+\ref{lem:dmop-alpha-variance} gives
+\begin{equation}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\leq
+CpG'(\theta)^2
+\min\left\{N^2,\frac{N^3}{J}\right\}.
+\label{eq:refined-theorem-variance-term}
+\end{equation}
+For the bias, add and subtract the full population DMOP-$\alpha$ score:
+\begin{align}
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2                                                    \notag\\
+&\quad\leq
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                    \notag\\
+&\qquad+
+\left\|
+\sum_{n=1}^{N}
+\{\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)\}
+\right\|_2                                                    \notag\\
+&\quad\leq
+\frac{C\sqrt p\,G'(\theta)N^2}{J}
++\sum_{n=1}^{N}
+\left\|
+\nabla_\theta\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n(\theta)
+\right\|_2                                                    \notag\\
+&\quad\leq
+C\sqrt p\,G'(\theta)
+\left[
+\frac{N^2}{J}
++N\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right].
+\label{eq:refined-theorem-full-bias}
+\end{align}
+The penultimate line uses Lemma~\ref{lem:dmop-full-particle-bias} and the
+triangle inequality; the final line applies
+Lemma~\ref{lem:dmop-population-discount-bias} to each of the $N$ terms.
+Using $(a+b)^2\leq2a^2+2b^2$ in
+Equation~(\ref{eq:refined-theorem-full-bias}) gives
+\begin{align}
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                  \notag\\
+&\quad\leq
+CpG'(\theta)^2
+\left[
+\frac{N^4}{J^2}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:refined-theorem-bias-squared}
+\end{align}
+Substitution of Equations~(\ref{eq:refined-theorem-variance-term}) and
+(\ref{eq:refined-theorem-bias-squared}) into
+Equation~(\ref{eq:vector-bias-variance-identity}) proves
+Equation~(\ref{eq:refined-dmop-alpha-mse}).
+\end{proof}
+
+\begin{remark}[Why the generic historical bound is cubic]
+The factor $N^3/J$ in Theorem~\ref{thm:refined-dmop-alpha-mse} is a
+generic upper bound, not a claim that the variance is always cubic.  The
+historical occupation-measure theorem gives variance $O(N/J)$ for a
+norm-one path functional.  At $\alpha=1$, the terminal score is one path
+functional with norm $O(NG'(\theta))$; for general $\alpha$, the
+summation-by-parts calculation gives the same uniform order.
+Homogeneity therefore gives
+\begin{equation}
+\frac{N}{J}\{NG'(\theta)\}^2
+=
+\frac{N^3G'(\theta)^2}{J}.
+\end{equation}
+Thus one factor $N^2$ comes from the squared scale of the unnormalized
+score and one factor $N$ from the generic historical-particle variance
+constant.  This is the same calculation carried out explicitly in
+Equations~(\ref{eq:full-score-historical-l2-before-sum})--
+(\ref{eq:historical-vector-variance}).
+
+The population result in Lemma~\ref{lem:derivative-measure-forgetting}
+does not remove the historical factor.  It proves geometric decay of the
+deterministic coefficient $\Delta_{n,r}$, whereas the required variance
+calculation concerns centered finite-particle coefficients
+$\Delta_{n,r}^J$.  The particle-cloud contraction of
+\citet{karjalainen23} cannot be substituted: it acts on the current
+physical cloud, not on the inherited simulator derivative, and its
+displayed blocks have length $O(\{\log J\})$.
+
+The current-cloud covariance calculation elsewhere in this supplement
+therefore supplies a useful template but not the missing result.  Even
+if the centered DMOP-$0$ increment were a function of the current physical
+cloud and its fourth centered moment had the usual particle order,
+Davydov's inequality and the displayed contraction of
+\citet{karjalainen23} would give, for $J\geq2$,
+\begin{align}
+\left|\Cov\left(
+\partial_{\theta_i}\hat\ell_m^0(\theta),
+\partial_{\theta_i}\hat\ell_n^0(\theta)
+\right)\right|
+&\leq
+\frac{CG'(\theta)^2}{J}
+(1-\epsilon)^{\frac12\left\lfloor
+|n-m|/\{c\log J\}\right\rfloor},                            \notag\\
+\sum_{m,n=1}^{N}
+\left|\Cov\left(
+\partial_{\theta_i}\hat\ell_m^0(\theta),
+\partial_{\theta_i}\hat\ell_n^0(\theta)
+\right)\right|
+&\leq
+\frac{CNG'(\theta)^2\{1+\min(N,\log J)\}}{J}.
+\label{eq:current-cloud-covariance-with-mixing-time}
+\end{align}
+Thus the covariance sum retains the particle-system mixing time; it is
+not $O(N/J)$ uniformly in $J$.  For the actual DMOP mark there is a
+prior obstruction: the total fixed-random-number derivative carries the
+inherited simulator tangent and is not a function of the current physical
+cloud.  Truncating the discounted weights does not truncate that inherited
+tangent.  Hence neither the current-cloud calculation nor its truncated
+version proves geometric covariance for $\Delta_{n,r}^J$ under the
+present assumptions.
+
+A genuinely sharper result would follow from a two-lineage covariance
+estimate for the existing lag coefficients.  For example, if, for each
+coordinate $i$, one separately proved
+\begin{equation}
+\left|
+\Cov\left(\Delta_{n,r,i}^J,\Delta_{m,s,i}^J\right)
+\right|
+\leq
+\frac{CG'(\theta)^2}{J}
+\kappa^{|n-m|}\lambda^{|(n-r)-(m-s)|},
+\qquad \kappa,\lambda\in(0,1),
+\label{eq:needed-two-lineage-covariance}
+\end{equation}
+then, for $\alpha<1$, substitution in Equation~
+(\ref{eq:conditional-score-path-decomposition}) gives, coordinatewise,
+\begin{align}
+&\Var\left(
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r\Delta_{n,r,i}^J
+\right)                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\sum_{n,m=1}^{N}
+\sum_{r=0}^{n-1}\sum_{s=0}^{m-1}
+\alpha^{r+s}\kappa^{|n-m|}
+\lambda^{|(n-r)-(m-s)|}                                     \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\frac{1+\kappa}{1-\kappa}
+\frac{1+\lambda}{1-\lambda}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^{2r}                  \notag\\
+&\quad=
+\frac{CG'(\theta)^2}{J}
+\frac{1+\kappa}{1-\kappa}
+\frac{1+\lambda}{1-\lambda}
+\sum_{r=0}^{N-1}(N-r)\alpha^{2r}                            \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\frac{1+\kappa}{1-\kappa}
+\frac{1+\lambda}{1-\lambda}
+\frac{N}{1-\alpha^2}                                       \notag\\
+&\quad\leq
+\frac{CNG'(\theta)^2}{J(1-\alpha)}.
+\label{eq:two-lineage-geometric-convolution}
+\end{align}
+The second inequality is the $\ell^2$ convolution bound applied on the
+two coordinates $n$ and $n-r$: the two convolution kernels have
+$\ell^1$ norms $(1+\kappa)/(1-\kappa)$ and
+$(1+\lambda)/(1-\lambda)$, respectively.  The equality counts the
+$N-r$ occurrences of lag $r$.  The next inequality uses
+$\sum_{r=0}^{n-1}\alpha^{2r}\leq(1-\alpha^2)^{-1}$, and the last uses
+$1-\alpha^2\geq1-\alpha$.  Summing Equation~
+(\ref{eq:two-lineage-geometric-convolution}) over the $p$ coordinates
+would give the nonsingular finite-horizon bound
+\begin{align}
+\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+&\leq
+\frac{CpG'(\theta)^2}{J}
+\sum_{r=0}^{N-1}(N-r)\alpha^{2r}
+\label{eq:conditional-local-mark-variance-finite}
+\\
+&\leq
+\frac{CNpG'(\theta)^2}{J(1-\alpha)},
+\qquad \alpha<1.
+\label{eq:conditional-local-mark-variance}
+\end{align}
+If one also proved the stronger geometrically lagged particle-bias estimate
+\begin{equation}
+\left\|
+\E\Delta_{n,r}^J-\Delta_{n,r}
+\right\|_2
+\leq
+\frac{C\sqrt p\,G'(\theta)}{J}\varrho^r
+\label{eq:needed-geometric-lag-particle-bias}
+\end{equation}
+uniformly in $n,r,J$, then Equations~
+(\ref{eq:conditional-score-path-decomposition}) and
+(\ref{eq:population-conditional-score-path-decomposition}) would give
+\begin{align}
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                   \notag\\
+&\qquad\leq
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}
+\alpha^r
+\left\|\E\Delta_{n,r}^J-\Delta_{n,r}\right\|_2             \notag\\
+&\qquad\leq
+\frac{C\sqrt p\,G'(\theta)}{J}
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}(\alpha\varrho)^r             \notag\\
+&\qquad\leq
+\frac{CN\sqrt p\,G'(\theta)}{J(1-\alpha\varrho)}          \notag\\
+&\qquad\leq
+\frac{CN\sqrt p\,G'(\theta)}{J(1-\varrho)}.
+\label{eq:needed-full-particle-bias}
+\end{align}
+Combining Equation~(\ref{eq:needed-full-particle-bias}) with the
+population-bias bound in Lemma~
+\ref{lem:dmop-population-discount-bias}, and absorbing the fixed factor
+$(1-\varrho)^{-2}$ into $C$, the MSE would satisfy
+\begin{align}
+\operatorname{MSE}_\alpha
+&\leq
+CpG'(\theta)^2
+\left\{
+\frac1J\sum_{r=0}^{N-1}(N-r)\alpha^{2r}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2}
+\right\}
+\label{eq:conditional-local-mark-mse-finite}
+\\
+&\leq
+CpG'(\theta)^2
+\left\{
+\frac{N}{J(1-\alpha)}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2}
+\right\},
+\qquad \alpha<1.
+\label{eq:conditional-local-mark-mse}
+\end{align}
+Choosing $1-\alpha\asymp(NJ)^{-1/3}$ in this conditional bound gives
+\begin{equation}
+\operatorname{MSE}_\alpha
+\leq
+CpG'(\theta)^2
+\left\{
+\frac{N^{4/3}}{J^{2/3}}+\frac{N^2}{J^2}
+\right\}.
+\label{eq:conditional-local-mark-optimized-mse}
+\end{equation}
+For $1<J<N^2$, both terms in
+Equation~(\ref{eq:conditional-local-mark-optimized-mse}) are smaller than
+$N^2/J$.  Equations~(\ref{eq:needed-two-lineage-covariance})--
+(\ref{eq:conditional-local-mark-optimized-mse}) are stated only to isolate
+the possible sharper regime.  Neither the earlier SI arguments nor the
+current assumptions prove Equation~
+(\ref{eq:needed-two-lineage-covariance}) for the reparameterized DMOP
+marks.  Local physical-state marks make such a theorem plausible, but do
+not establish it; a proof still requires a two-lineage calculation.
+Alternatively, separate geometric stability of the augmented
+state--tangent recursion would address the missing dependence.  Physical-state
+Doeblin mixing alone does not imply tangent stability.
+\end{remark}
+
+\begin{remark}[Ridge-type tuning and the endpoint derivatives]
+At $\theta=\phi$, the particle genealogy in
+Equation~(\ref{eq:conditional-score-path-decomposition}) does not depend
+on $\alpha$.  Hence the actual MSE can be written, without any infinite
+series, as
+\begin{equation}
+\operatorname{MSE}_\alpha
+=
+\E\left\|
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r\Delta_{n,r}^J
+-\nabla_\theta\ell(\theta)
+\right\|_2^2.
+\label{eq:actual-mse-finite-polynomial}
+\end{equation}
+It is a polynomial in $\alpha$ of degree at most $2(N-1)$, so the actual
+MSE has no singularity at $\alpha=1$.  Differentiating the finite sum in
+Equation~(\ref{eq:actual-mse-finite-polynomial}) gives
+\begin{align}
+\frac{d}{d\alpha}\operatorname{MSE}_\alpha
+&=
+2\E\left[
+\left\{
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r\Delta_{n,r}^J
+-\nabla_\theta\ell(\theta)
+\right\}^{\!\mathsf T}
+\left\{
+\sum_{n=1}^{N}\sum_{r=1}^{n-1}
+r\alpha^{r-1}\Delta_{n,r}^J
+\right\}
+\right].
+\label{eq:actual-mse-alpha-derivative}
+\end{align}
+In particular,
+\begin{align}
+\left.\frac{d}{d\alpha}\operatorname{MSE}_\alpha\right|_{\alpha=0+}
+&=
+2\E\left[
+\left\{
+\sum_{n=1}^{N}\Delta_{n,0}^J-\nabla_\theta\ell(\theta)
+\right\}^{\!\mathsf T}
+\left\{
+\sum_{n=2}^{N}\Delta_{n,1}^J
+\right\}
+\right],
+\label{eq:actual-mse-alpha-zero-derivative}
+\\
+\left.\frac{d}{d\alpha}\operatorname{MSE}_\alpha\right|_{\alpha=1-}
+&=
+2\E\left[
+\left\{
+\sum_{n=1}^{N}\sum_{r=0}^{n-1}\Delta_{n,r}^J
+-\nabla_\theta\ell(\theta)
+\right\}^{\!\mathsf T}
+\left\{
+\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}^J
+\right\}
+\right].
+\label{eq:actual-mse-alpha-one-derivative}
+\end{align}
+Thus moving right from DMOP-$0$ lowers the actual MSE if the right side of
+Equation~(\ref{eq:actual-mse-alpha-zero-derivative}) is negative, and
+moving left from DMOP-$1$ lowers it if the right side of
+Equation~(\ref{eq:actual-mse-alpha-one-derivative}) is positive.  If both
+inequalities are strict, continuity on $[0,1]$ implies that a global MSE
+minimizer is interior and has smaller MSE than both endpoints.  Neither
+sign follows from Assumptions {\refAssumpBoundedProcess}--
+{\refAssumpDifferentiableSimulator}, or from the absolute covariance bound
+in Equation~(\ref{eq:needed-two-lineage-covariance}): lag contributions
+can be aligned or can cancel.  This is the point at which the analogy with
+the classical ridge calculation requires additional signed covariance
+structure.
+
+The proved bound in Theorem~\ref{thm:refined-dmop-alpha-mse} cannot supply
+that structure.  Its variance and particle-bias terms are independent of
+$\alpha$, while direct differentiation of its population-bias factor gives
+\begin{align}
+&\frac{d}{d\alpha}
+N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2                                                   \notag\\
+&\qquad=
+-\frac{2N^2\varrho^2(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)^3}
+\leq0.
+\label{eq:proved-envelope-alpha-derivative}
+\end{align}
+Consequently, the unconditional envelope is minimized at $\alpha=1$ and
+does not establish an interior tradeoff.
+
+There is, however, a rigorous ridge-type calculation for the conditional
+envelope in Equation~(\ref{eq:conditional-local-mark-mse-finite}).  After
+removing its common positive factor, the expression to minimize is
+\begin{equation}
+\frac1J\sum_{r=0}^{N-1}(N-r)\alpha^{2r}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2}.
+\label{eq:conditional-ridge-envelope}
+\end{equation}
+For $N\geq2$, the derivative of Equation~
+(\ref{eq:conditional-ridge-envelope}) at the two endpoints is
+\begin{align}
+\left.\frac{d}{d\alpha}\right|_{\alpha=0}
+&=-2N^2<0,
+\label{eq:conditional-ridge-zero-derivative}
+\\
+\left.\frac{d}{d\alpha}\right|_{\alpha=1}
+&=
+\frac2J\sum_{r=1}^{N-1}r(N-r)                              \notag\\
+&=
+\frac2J\left\{
+N\frac{N(N-1)}2
+-\frac{N(N-1)(2N-1)}6
+\right\}                                                    \notag\\
+&=
+\frac{N(N^2-1)}{3J}>0.
+\label{eq:conditional-ridge-one-derivative}
+\end{align}
+Its second derivative is
+\begin{equation}
+\frac2J\sum_{r=1}^{N-1}
+r(2r-1)(N-r)\alpha^{2r-2}+2N^2>0.
+\label{eq:conditional-ridge-second-derivative}
+\end{equation}
+Equations~(\ref{eq:conditional-ridge-zero-derivative})--
+(\ref{eq:conditional-ridge-second-derivative}) prove that this conditional
+envelope has a unique minimizer in $(0,1)$ and that its value there is
+strictly smaller than its values at both endpoints.  Retaining the finite
+sum is essential: at $\alpha=1$ it equals $N(N+1)/2$, so the apparent
+singularity in Equation~(\ref{eq:conditional-local-mark-mse}) is only an
+artifact of extending a finite geometric sum to infinity.
+
+When $1\ll J\ll N^2$, the minimizer is outside the width-$N^{-1}$ endpoint
+layer; balancing the first two terms in
+Equation~(\ref{eq:conditional-local-mark-mse}) gives
+$1-\alpha\asymp(NJ)^{-1/3}$ and the rate in
+Equation~(\ref{eq:conditional-local-mark-optimized-mse}).  When
+$J\gg N^2$, expansion of the finite-sum derivative at one instead gives
+$1-\alpha\asymp N/J$; the improvement over the DMOP-$1$ envelope is then
+of smaller order than its leading $N^2/J$ term.  These are comparisons of
+the conditional upper envelope, not strict orderings of the actual MSE.
+Such an ordering would require the signed endpoint conditions in
+Equations~(\ref{eq:actual-mse-alpha-zero-derivative})--
+(\ref{eq:actual-mse-alpha-one-derivative}).
+\end{remark}
 
 \begin{remark}[What is known at the endpoints]
 Theorem~\ref{thm:refined-dmop-alpha-mse} supplies only upper bounds. There
@@ -2995,6 +3878,19 @@ is no DMOP-$0$ MSE lower bound in the present assumptions: the conditional
 population biases can cancel, and in special models the population bias can
 vanish. Therefore the displayed upper bounds cannot prove that an interior
 choice of $\alpha$ has smaller MSE than DMOP-$0$.
+
+For every fixed $N$, Theorem~\ref{thm:refined-dmop-alpha-mse} gives the
+ordinary Monte Carlo rate $O(J^{-1})$ at $\alpha=1$; the term $N^4/J^2$
+is then of smaller order as $J\to\infty$.  A rate slower than $J^{-1}$
+appears only in a joint tuning argument in which $\alpha=\alpha_J<1$ is
+sent toward one while $J$ grows.  In that argument, the nonzero population
+discount bias is reduced at the price of lengthening the particle
+genealogy.  The unconditional bound proved here has variance term
+$N^3/J$ independent of $\alpha$, so it does not itself justify an interior
+choice.  The conditional $J^{-2/3}$ MSE in
+Equation~(\ref{eq:conditional-local-mark-optimized-mse}) describes what
+would follow from the additional centered two-lineage estimate; it is not
+a deterioration of the fixed-$N$ Monte Carlo rate.
 
 Theorem~1 of \citet{poyiadjis11} concerns their standard path-space
 particle estimator of an unnormalized additive functional
@@ -3036,17 +3932,21 @@ $O(N/\sqrt J)$ and MSE $O(N^2/J)$. Thus removing an
 $\operatorname{osc}(h)\leq1$ normalization contributes one factor $N^2$
 to the MSE, not two.
 
-A path-space theorem can contain a separate horizon factor. For example,
-if $\widehat H_N$ estimates the exact path expectation of $H_N$, it may
-only give
+A historical path-space theorem can contain a separate horizon factor.
+The occupation-measure estimate used in
+Equation~(\ref{eq:historical-particle-l2}) gives
 \begin{equation}
 \operatorname{RMSE}(\widehat H_N)
-\leq \frac{CN\operatorname{osc}(H_N)}{\sqrt J}.
+\leq C\sqrt{\frac{N}{J}}\operatorname{osc}(H_N).
 \end{equation}
 Substituting $\operatorname{osc}(H_N)=O(N)$ gives RMSE
-$O(N^2/\sqrt J)$ and MSE $O(N^4/J)$. One factor $N$ in RMSE therefore
-comes from the scale of the unnormalized additive score and the other from
-the path-space stability constant in that particular upper bound. The
+$O(N^{3/2}/\sqrt J)$ and MSE $O(N^3/J)$.  The factor $N^2$ in MSE
+comes from the scale of the unnormalized additive score, and the remaining
+factor $N$ comes from the generic historical occupation variance.  A still
+coarser path-space inequality with an $N$, rather than $\sqrt N$, error
+factor would give RMSE $O(N^2/\sqrt J)$ and MSE $O(N^4/J)$, but that
+quartic rate is not the bound used in Theorem~
+\ref{thm:refined-dmop-alpha-mse}.  The
 quadratic asymptotic-variance lower bound of \citet{poyiadjis11} is already
 for an unnormalized additive functional. It must not be multiplied by a
 second normalization factor, and it does not assert that the quartic upper
