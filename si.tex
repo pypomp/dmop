@@ -2830,14 +2830,22 @@ N^2,
 \end{align}
 Here $\lesssim$ suppresses the particle-system mixing-time factor. In
 particular,
-\begin{equation}
+\begin{align}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\lesssim
+&\lesssim
 \frac{NpG'(\theta)^2}{J}
-\left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2                         \notag\\
+&=
+\frac{NpG'(\theta)^2}{J}
+\begin{cases}
+\left(\dfrac{1-\alpha^N}{1-\alpha}\right)^2,
+&0\leq\alpha<1,\\[6pt]
+N^2,
+&\alpha=1.
+\end{cases}
 \label{eq:dmop-alpha-n-over-j-variance}
-\end{equation}
-where the ratio is interpreted as $N$ at $\alpha=1$. Apart from the
+\end{align}
+Apart from the
 explicitly suppressed particle-system mixing-time factor, the
 multiplicative constants are independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
@@ -3223,10 +3231,15 @@ the stochastic term in Equation~
 &\leq
 N\left(\sum_{r=0}^{N-1}\alpha^r\right)^2                  \notag\\
 &=
-N\left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
+N
+\begin{cases}
+\left(\dfrac{1-\alpha^N}{1-\alpha}\right)^2,
+&0\leq\alpha<1,\\[6pt]
+N^2,
+&\alpha=1,
+\end{cases}
 \label{eq:conditional-score-geometric-sum-bound}
 \end{align}
-with the last expression interpreted by continuity at $\alpha=1$.
 Equations~(\ref{eq:conditional-score-variance-with-mixing-time}) and
 (\ref{eq:conditional-score-geometric-sum-bound}) prove
 Equation~(\ref{eq:dmop-alpha-n-over-j-variance}).
@@ -3719,8 +3732,9 @@ pG'(\theta)^2
 \right\}.
 \label{eq:refined-dmop-alpha-mse-simplified}
 \end{align}
-Both displays are finite at $\alpha=1$ when the finite sums in Equation~
-(\ref{eq:refined-dmop-alpha-mse}) are used; the three terms then have
+The finite-sum display in Equation~
+(\ref{eq:refined-dmop-alpha-mse}) is defined directly at $\alpha=1$;
+its three terms then have
 orders $N^3/J$, $0$, and $N^4/J^2$, respectively.
 \end{thm}
 
