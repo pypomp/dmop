@@ -519,11 +519,11 @@ and the filtering measure at timestep $n$ is given by
 In a slight abuse of notation, we will identify $x_{n, 1:J}^P \equiv \eta_n^J$, and $x_{n, 1:J}^F \equiv \pi_n^J$. 
 As in \cite{karjalainen23}, one can view this as an inhomogenous Markov process evolving on $\gX^{J}$. The corresponding Markov transition kernel is then 
 \begin{equation}
-\textbf{M}_n(x_{n-1, 1:J}^P, \cdot) = \left(\Phi_{n}\left(\eta_n^J\right)\right)^{\otimes J} = \left(\Phi_{n}\left(\frac{1}{J}\sum_{j=1}^J \delta_{x_{n,j}^P}\right)\right)^{\otimes J},
+\textbf{M}_n(x_{n-1, 1:J}^P, \cdot) = \left(\Phi_{n}\left(\eta_{n-1}^J\right)\right)^{\otimes J} = \left(\Phi_{n}\left(\frac{1}{J}\sum_{j=1}^J \delta_{x_{n-1,j}^P}\right)\right)^{\otimes J},
 \end{equation}
 and the composition of Markov kernels on particles from timestep $n$ to timestep $n+k$ is written 
 \begin{equation}
-\textbf{M}_{n, n+k} = \textbf{M}_{n+k}\circ ...\circ \textbf{M}_n.
+\textbf{M}_{n, n+k} = \textbf{M}_{n+1}\cdots \textbf{M}_{n+k}.
 \end{equation}
 One may wonder why \cite{karjalainen23} require this process to evolve on $\gX^{J}$. This is because at every timestep $n$, we in fact draw $X_{n, j}^P | \{X_{n-1, 1:J}^P = x_{n-1, 1:J}^P\} \sim \textbf{M}_n(x_{n-1, 1:J}^P, \cdot) = \eta_0^{\otimes J} \textbf{M}_{0,n}$ for $j=1,...,J$. 
 
@@ -998,44 +998,42 @@ Therefore, for a given $\theta_i$ in the parameter vector $\theta$,
 \nonumber \\
     &\hspace{-20mm}= \sum_{n=1}^N \Var\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) + 2\sum_{m<n} \Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta),\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right).
 \end{align}
-Here, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} that ensure strong mixing. We know from Theorem 3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
+Here, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} that ensure strong mixing. We know from Theorem 3.1 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator,
 \begin{equation}
 \beta_{\text{TV}}(\textbf{M}_{n,n+k}) \leq (1-\epsilon)^{\floor{k/(c\log(J))}},
 \end{equation}
 i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement}. 
 
 
-By Lemma \ref{lem:dobrushin-implies-alpha-mixing}, the particle filter itself is strong mixing, with $\alpha$-mixing coefficients $a(k) \leq (1-\epsilon)^{\floor{k/(c\log(J))}}$. Therefore, functions of particles are strongly mixing as well, with $\alpha$-mixing coefficients bounded by the original (to see this, observe that the $\sigma$-algebra of the functionals is contained within the original $\sigma$-algebra). Therefore, by Davydov's inequality, noting that $\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\leq G'(\theta)$ by Assumption~{\refAssumpBoundedMeasurement}, and without loss of generality labeling $m$ and $n$ such that $\E\big[(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta))^4\big]^{1/4}\leq\E\big[(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta))^4\big]^{1/4}$, we see that
+The precise prediction-to-filter $L^4$ bridge and the passage from
+Theorem~3.1 of \citet{karjalainen23} to the score mixing coefficients are
+written in Equations~(\ref{eq:karjalainen-predictor-l4})--
+(\ref{eq:conditional-score-alpha-mixing}) below. At $\alpha=0$, they give
 \begin{align}
-    \Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta), \frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) 
-    &\leq a(n-m)^{1/2} \, \E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta)\right)^4\right]^{1/4}
-    \,
-    \E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4\right]^{1/4}\\
-    &\leq a(n-m)^{1/2}\, \E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4\right]^{1/2}.
+\left\|
+\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)
+-\E\left[
+\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)
+\right]
+\right\|_{L^4}
+&\leq
+\frac{CG'(\theta)}{\sqrt J},                                \notag\\
+a(k)
+&\leq
+(1-\epsilon)^{\floor{(k-1)/[c\{1+\log J\}]}}.
+\label{eq:dmop-zero-centered-l4-and-mixing}
 \end{align}
-To bound this, we use the fact that 
+Davydov's inequality must be applied to the centered variables. Since
+covariance is unchanged by centering, Equation~
+(\ref{eq:dmop-zero-centered-l4-and-mixing}) gives
 \begin{equation}
-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4\right] = \E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^2\right]^2\right]+\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^2\right]^2
-\end{equation}
-alongside Lemma 2 of \cite{karjalainen23}, which shows that
-\begin{eqnarray}
-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^2\right]^2\right] &\lesssim& \frac{G'(\theta)^4}{J^2}, 
-\\
-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)-\E\left[\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right]\right)^2\right] &\lesssim& \frac{G'(\theta)^2}{J}.
-\end{eqnarray}
-It follows that 
-\begin{equation}
-\E\left[\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)^4\right]^{1/2} \lesssim  \sqrt{\frac{G'(\theta)^4}{J^2}+\left(\frac{G'(\theta)^2}{J}\right)^2} = \frac{G'(\theta)^2}{J},
-\end{equation}
-and we conclude that 
-\begin{equation}
-\Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta), \frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) \leq (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|}{c\log(J)}}}\frac{G'(\theta)^2}{J}.
+\Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta), \frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) \leq (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|-1}{c\{1+\log(J)\}}}}\frac{G'(\theta)^2}{J}.
 \end{equation}
 Putting it all together, we see that
 \begin{align}
     \Var\left(\frac{\partial}{\partial_{\theta_i}} \hat\ell^\alpha(\theta)\right) &= \sum_{n=1}^N \Var\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) + 2\sum_{m<n} \Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta),\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)\\
-    &\leq \frac{NG'(\theta)^2}{J} + 2\sum_{n=1}^{N-1} (N-n)(1-\epsilon)^{\frac{1}{2}\floor{\frac{n}{c\log(J)}}}\frac{G'(\theta)^2}{J} \\
-    &\leq \frac{G'(\theta)^2}{J} \left(N + 2\sum_{n=1}^{N-1} (N-n) (1-\epsilon)^{\frac{1}{2}\floor{\frac{n}{c\log(J)}}}\right) \\
+    &\leq \frac{NG'(\theta)^2}{J} + 2\sum_{n=1}^{N-1} (N-n)(1-\epsilon)^{\frac{1}{2}\floor{\frac{n-1}{c\{1+\log(J)\}}}}\frac{G'(\theta)^2}{J} \\
+    &\leq \frac{G'(\theta)^2}{J} \left(N + 2\sum_{n=1}^{N-1} (N-n) (1-\epsilon)^{\frac{1}{2}\floor{\frac{n-1}{c\{1+\log(J)\}}}}\right) \\
     &\lesssim \frac{G'(\theta)^2N}{J}.
 \end{align}
 It then follows that as $\theta \in \Theta \subseteq \R^p$, 
@@ -1165,7 +1163,14 @@ Note that
 \end{equation} 
 is a function bounded by $C\frac{G'(\theta)(1-\alpha^k)}{1-\alpha} =: CG'(\theta)r$ in each coordinate for some constant $C$ (by Assumption~{\refAssumpBoundedMeasurement}) that depends only on $k$ timesteps, and not $n$. 
 Subsequently, we suppress vector and matrix notation for the coordinates of $\theta$ and its derivatives, and their variances and covariances, with the variance of a vector interpreted as the sum of the variance of its components.
-We invoke Lemma 2 of \cite{karjalainen23} to bound the $L_2$ error of each of the $k$ (from time $n-k$ to time $n$) functionals from its expectation under the posterior by $Cr\sqrt{p}G'(\theta)J^{-1/2}k$. 
+Lemma~2.3 of \cite{karjalainen23} gives the required prediction-empirical
+$L^4$ bound.  For a filtered empirical average, the conditional
+multinomial-resampling and Bayes-ratio calculation in
+Equations~(\ref{eq:conditional-filter-resampling-fourth-moment})--
+(\ref{eq:filtered-particle-l4}) gives the same order.  After centering by
+Equation~(\ref{eq:l4-centering-bridge}), the $L^2$ error of each of the
+$k$ functionals from time $n-k$ to time $n$ is therefore bounded by
+$Cr\sqrt{p}G'(\theta)J^{-1/2}k$.
 That is, we have that
 \begin{equation}\E\left[\|\nabla_\theta \hat s_{n,k}^\alpha(\theta) - \E_{\pi}\nabla_\theta \hat s_{n,k}^\alpha(\theta)\|_2^2\right]^{1/2} \leq \frac{Cr\sqrt{p}G'(\theta) k}{\sqrt{J}}.\end{equation}
 
@@ -1182,38 +1187,37 @@ We decompose
     &\lesssim \frac{r^2k^2p \, G'(\theta)^2N}{J} + 2\sum_{m<n}\Cov\big(\nabla_\theta \hat s_{m,k}^\alpha(\theta), \nabla_\theta \hat s_{n,k}^\alpha(\theta)\big).
 \end{align}
 
-Similarly to the proof of the MOP-$0$ case, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} that ensure strong mixing. We know from Theorem 3 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator, 
+Similarly to the proof of the MOP-$0$ case, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} that ensure strong mixing. We know from Theorem 3.1 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator,
 \begin{equation}
 \beta_{\text{TV}}(\textbf{M}_{n,n+k}) \leq (1-\epsilon)^{\floor{k/(c\log(J))}},
 \end{equation}
 i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement}. By Lemma \ref{lem:dobrushin-implies-alpha-mixing}, the particle filter itself is strongly mixing, with $\alpha$-mixing coefficients $a(l) \leq (1-\epsilon)^{\floor{l/(c\log(J))}}$. Therefore, functions of particles are strongly mixing as well, with $\alpha$-mixing coefficients bounded by the original (to see this, observe that the $\sigma$-algebra of the functionals is contained within the original $\sigma$-algebra).
 
 We now derive the $\alpha$-mixing coefficients of $(\nabla_\theta \hat s_{n,k}^\alpha(\theta))_{n=1}^N$. Observe that $\nabla_\theta \hat s_{n,k}^\alpha$ is strong mixing at lag $k+1$, as all weights beyond $k$ timesteps are truncated. We therefore have that the mixing time of $\nabla_\theta \hat s_{n,k}^\alpha(\theta)$ is $O(1+k+\log(J))$, and that the $\alpha$-mixing coefficients for $(\nabla_\theta \hat s_{n,k}^\alpha(\theta))_{n=1}^N$ are given by $a(l) \leq (1-\epsilon)^{\floor{l/(c(1+k+\log(J)))}}$.
-Therefore, by Davydov's inequality and Lemma 2 of \cite{karjalainen23}, and noting that $\nabla_\theta \hat s_{n,k}^\alpha(\theta) \leq CrG'(\theta)$ by Assumption~{\refAssumpBoundedMeasurement}, by a similar argument to the MOP-0 case, we find that 
+Therefore, by Davydov's inequality and the centered $L^4$ bound just
+described, we find that
 \begin{equation}
 \Cov\big(\nabla_\theta \hat s_{m,k}^\alpha(\theta), \nabla_\theta \hat s_{n,k}^\alpha(\theta)\big) \lesssim (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|}{c(1+k+\log(J))}}}\frac{r^2p \, G'(\theta)^2}{J}.
 \end{equation}
-Concretely, noting that $\nabla_\theta\hat s_{n,k}^\alpha(\theta)\leq CrG'(\theta)$ by Assumption~{\refAssumpBoundedMeasurement}, and, without loss of generality, assuming $\E[(\nabla_\theta\hat s_{m,k}^\alpha(\theta))^4]^{1/4}\leq\E[(\nabla_\theta\hat s_{n,k}^\alpha(\theta))^4]^{1/4}$, we apply Davydov's inequality to see that
+Concretely, Davydov's inequality, applied to the centered variables,
+gives
 \begin{align}
-    \Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta), \nabla_\theta\hat s_{n,k}^\alpha(\theta)\big) 
-    &\leq a(n-m)^{1/2} \, \E\big[(\nabla_\theta\hat s_{m,k}^\alpha(\theta))^4\big]^{1/4} \, \E\big[(\nabla_\theta\hat s_{n,k}^\alpha(\theta))^4\big]^{1/4}\\
-    &\leq a(n-m)^{1/2} \, \E\big[(\nabla_\theta\hat s_{n,k}^\alpha(\theta))^4\big]^{1/2}.
+    &\left|\Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta),
+    \nabla_\theta\hat s_{n,k}^\alpha(\theta)\big)\right| \\
+    &\quad\leq C a(n-m)^{1/2}
+    \left\|\nabla_\theta\hat s_{m,k}^\alpha(\theta)
+    -\E\nabla_\theta\hat s_{m,k}^\alpha(\theta)\right\|_{L^4}
+    \left\|\nabla_\theta\hat s_{n,k}^\alpha(\theta)
+    -\E\nabla_\theta\hat s_{n,k}^\alpha(\theta)\right\|_{L^4}.
 \end{align}
-To bound this, we use the fact that 
+The predictor-to-filtered calculation cited above and
+Equation~(\ref{eq:l4-centering-bridge}) give, for $q=m,n$,
 \begin{equation}
-\E\big[(\nabla_\theta\hat s_{n,k}^\alpha(\theta))^4\big] = \E\Big[\big(\nabla_\theta\hat s_{n,k}^\alpha(\theta)-\E\big[\nabla_\theta\hat s_{n,k}^\alpha(\theta)]\big)^4\Big]+\E\big[(\nabla_\theta\hat s_{n,k}^\alpha(\theta))^2\big]^2
+\left\|\nabla_\theta\hat s_{q,k}^\alpha(\theta)
+-\E\nabla_\theta\hat s_{q,k}^\alpha(\theta)\right\|_{L^4}
+\lesssim \frac{r\sqrt p\,G'(\theta)}{\sqrt J}.
 \end{equation}
-alongside Lemma 2 of \cite{karjalainen23}, which alongside the fact that
-\begin{eqnarray}
-\E\Big[\big(\nabla_\theta\hat s_{n,k}^\alpha(\theta)-\E[\nabla_\theta\hat s_{n,k}^\alpha(\theta)]\big)^4\Big] &\lesssim& \frac{r^4p^2G'(\theta)^4}{J^2}, 
-\\
-\E\Big[\big(\nabla_\theta\hat s_{n,k}^\alpha(\theta)-\E[\nabla_\theta\hat s_{n,k}^\alpha(\theta)]\big)^2\Big] &\lesssim& \frac{r^2p \, G'(\theta)^2}{J},
-\end{eqnarray}
-allows us to find that 
-\begin{equation}
-\E\Big[\big(\nabla_\theta\hat s_{n,k}^\alpha(\theta)\big)^4\Big]^{1/2} \lesssim  \sqrt{\frac{r^4p^2G'(\theta)^4}{J^2}+\left(\frac{r^2p \, G'(\theta)^2}{J}\right)^2} = \frac{r^2p \, G'(\theta)^2}{J},
-\end{equation}
-and conclude that 
+Substitution in Davydov's inequality gives
 \begin{equation}\Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta), \nabla_\theta\hat s_{n,k}^\alpha(\theta)\big) \leq (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|}{c(1+k+\log(J))}}}\frac{r^2p \, G'(\theta)^2}{J}.\end{equation}
 Putting it all together, we see that
 \begin{align}
@@ -1984,9 +1988,9 @@ Equation~(\ref{eq:derivative-measure-forgetting}).
 \label{lem:lagwise-weak-error}
 Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
-{\refAssumpDifferentiableSimulator}, with multinomial resampling, there
-are $C<\infty$ and $\varrho\in(0,1)$ such that, for every bounded real
-function $f$ of a current differentiable particle and every $t\geq0$,
+{\refAssumpDifferentiableSimulator}, with multinomial resampling, there is
+$C<\infty$ such that, for every bounded real function $f$ of the current
+differentiable particle and every $t\geq1$,
 \begin{equation}
 \left|
 \E m(\xi_t)(f)-\rho_t(f)
@@ -1995,122 +1999,162 @@ function $f$ of a current differentiable particle and every $t\geq0$,
 \frac{C}{J}\operatorname{osc}(f).
 \label{eq:uniform-current-particle-weak-bias}
 \end{equation}
-The constants are independent of $t$ and $J$.
+The constant is independent of $t$ and $J$.
 \end{lem}
 
 \begin{proof}[Proof.]
-We prove the estimate by telescoping the local particle updates. For
-$0\leq p\leq t$, define the unnormalized semigroup by
+The predictor cloud consists of the differentiable particles themselves:
+their locations, simulator tangents, and weight tangents are coordinates of
+the particle state, rather than an external process appended to the cloud.
+Thus $f$ is a current-state functional in the Feynman--Kac model already
+defined in Section~\ref{appendix:feynman}.  The current-state marginal of
+$\rho_t$ is the filtering distribution, and hence
 \begin{equation}
-Q_{p,t}(f)(x)
-=
-\E\left[
-\left.
-f(X_t)\prod_{s=p+1}^{t}G_s(X_s)
-\right|X_p=x
-\right],
-\qquad
-Q_{t,t}(f)=f.
-\label{eq:weak-bias-semigroup-definition}
+\rho_t(f)=\pi_t(f)=\Psi_t(\eta_t)(f).
+\label{eq:current-state-posterior-filter-identity}
 \end{equation}
-Thus, for every probability measure $\mu$,
+Conditionally on the prediction cloud $\eta_t^J$, multinomial resampling
+draws the filtering particles independently from $\Psi_t(\eta_t^J)$.
+Therefore
+\begin{align}
+\E\{m(\xi_t)(f)\mid\eta_t^J\}
+&=
+\frac1J\sum_{j=1}^J
+\E\{f(x_{t,j}^F)\mid\eta_t^J\}                              \notag\\
+&=
+\frac1J\sum_{j=1}^J\Psi_t(\eta_t^J)(f)                     \notag\\
+&=
+\Psi_t(\eta_t^J)(f).
+\label{eq:terminal-resampling-unbiased}
+\end{align}
+
+Take $\Phi_{t,t}$ to be the identity. For $1\leq p\leq t$, define
+\begin{align}
+Q_{t,t}(f)(x)
+&=G_t(x)f(x),                                                \notag\\
+Q_{p,t}(f)(x)
+&=G_p(x)M_{p+1}\{Q_{p+1,t}(f)\}(x),
+\qquad p<t.
+\label{eq:weak-bias-semigroup-definition}
+\end{align}
+The definitions of $\Phi_{p,t}$ and $\Psi_t$ give, for every probability
+measure $\mu$,
 \begin{equation}
-\Phi_{p,t}(\mu)(f)
+\Psi_t\{\Phi_{p,t}(\mu)\}(f)
 =
 \frac{\mu Q_{p,t}(f)}{\mu Q_{p,t}(1)}.
 \label{eq:normalized-feynman-kac-semigroup}
 \end{equation}
-For $p<t$, the Markov property gives
+
+For $p<t$,
 \begin{equation}
 Q_{p,t}(1)(x)
 =
-\int
+G_p(x)\int
 f_{X_{p+1}\mid X_p}(u\mid x;\theta)
-G_{p+1}(u)Q_{p+1,t}(1)(u)\,du.
+Q_{p+1,t}(1)(u)\,du.
 \label{eq:weak-bias-future-normalizer}
 \end{equation}
-Consequently, for every $x,x'$,
+Thus, for every $x,x'$,
 \begin{align}
 \frac{Q_{p,t}(1)(x)}{Q_{p,t}(1)(x')}
 &\leq
 \frac{
-\bar M\int G_{p+1}(u)Q_{p+1,t}(1)(u)\,du
+\bar G\bar M\int Q_{p+1,t}(1)(u)\,du
 }{
-\underbar M\int G_{p+1}(u)Q_{p+1,t}(1)(u)\,du
+\underbar G\underbar M\int Q_{p+1,t}(1)(u)\,du
 }                                                        \notag\\
 &=
-\frac{\bar M}{\underbar M}.
+\frac{\bar G\bar M}{\underbar G\underbar M}.
 \label{eq:weak-bias-normalizer-ratio}
 \end{align}
-For $p=t$, $Q_{t,t}(1)=1$, so the ratio is one.
+For $p=t$, the same ratio is at most $\bar G/\underbar G$. Put
+\begin{equation}
+R=\frac{\bar G\bar M}{\underbar G\underbar M}\geq1.
+\label{eq:weak-bias-normalizer-constant}
+\end{equation}
+Then
+\begin{equation}
+\sup_{x,x'}
+\frac{Q_{p,t}(1)(x)}{Q_{p,t}(1)(x')}
+\leq R,
+\qquad 1\leq p\leq t.
+\label{eq:weak-bias-uniform-normalizer-ratio}
+\end{equation}
 
-We next prove the required forward contraction. For
-$p\leq s<t$, the one-step normalized kernel in the factorization of
-$\Phi_{p,t}$ is
+For $p\leq s<t$, the normalized forward kernel is
 \begin{equation}
 P_{s,s+1}^{(t)}(x,A)
 =
 \frac{
 \displaystyle\int_A
 f_{X_{s+1}\mid X_s}(u\mid x;\theta)
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+Q_{s+1,t}(1)(u)\,du
 }{
 \displaystyle\int
 f_{X_{s+1}\mid X_s}(u\mid x;\theta)
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+Q_{s+1,t}(1)(u)\,du
 }.
 \label{eq:weak-bias-forward-normalized-kernel}
 \end{equation}
-Define, only for this proof,
+Define, only within this proof,
 \begin{equation}
 \nu_{s,t}(A)
 =
 \frac{
-\displaystyle\int_A
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+\displaystyle\int_AQ_{s+1,t}(1)(u)\,du
 }{
-\displaystyle\int
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+\displaystyle\int Q_{s+1,t}(1)(u)\,du
 }.
 \label{eq:weak-bias-forward-minorizing-measure}
 \end{equation}
-Assumption~{\refAssumpBoundedProcess} gives, for every $x$ and $A$,
+Assumption~{\refAssumpBoundedProcess} gives
 \begin{align}
 P_{s,s+1}^{(t)}(x,A)
 &\geq
 \frac{
-\underbar M\displaystyle\int_A
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+\underbar M\displaystyle\int_AQ_{s+1,t}(1)(u)\,du
 }{
-\bar M\displaystyle\int
-G_{s+1}(u)Q_{s+1,t}(1)(u)\,du
+\bar M\displaystyle\int Q_{s+1,t}(1)(u)\,du
 }                                                        \notag\\
 &=
 \frac{\underbar M}{\bar M}\nu_{s,t}(A).
 \label{eq:weak-bias-forward-minorization}
 \end{align}
-Hence the Dobrushin coefficient of
-$P_{s,s+1}^{(t)}$ is at most
-$1-\underbar M/\bar M$. Composition of the $t-p$ one-step kernels gives
-\begin{align}
+Consequently, with
+\begin{equation}
+\varrho=1-\frac{\underbar M}{2\bar M}\in(0,1),
+\end{equation}
+the Dobrushin coefficient of every kernel in Equation~
+(\ref{eq:weak-bias-forward-normalized-kernel}) is at most $\varrho$.
+The factor $G_s(x)$ cancels from the normalized conditional
+expectation, and hence
+\begin{equation}
+\frac{Q_{p,t}(f)}{Q_{p,t}(1)}
+=
+P_{p,p+1}^{(t)}P_{p+1,p+2}^{(t)}\cdots
+P_{t-1,t}^{(t)}f.
+\label{eq:weak-bias-forward-kernel-factorization}
+\end{equation}
+It follows that
+\begin{equation}
 \operatorname{osc}
 \left\{
 \frac{Q_{p,t}(f)}{Q_{p,t}(1)}
 \right\}
-&\leq
-\left(1-\frac{\underbar M}{\bar M}\right)^{t-p}
-\operatorname{osc}(f)                                      \notag\\
-&\leq
-\varrho^{t-p}\operatorname{osc}(f),
-\qquad
-\varrho=1-\frac{\underbar M}{2\bar M}\in(0,1).
+\leq
+\varrho^{t-p}\operatorname{osc}(f).
 \label{eq:weak-bias-normalized-semigroup-contraction}
-\end{align}
+\end{equation}
 
-Fix one time $p$ in the particle-update telescoping decomposition and
-condition on the particle cloud immediately before the $p$th multinomial
-sampling. Let $\mu$ be the resulting conditional law of each of the $J$
-conditionally independent particles. Within this calculation only, put
+We next bound one complete selection--mutation update. For $p=1$, put
+$\mu=\eta_1=\pi_0M_1$. For $p\geq2$, condition on $\eta_{p-1}^J$ and put
+\begin{equation}
+\mu=\Phi_p(\eta_{p-1}^J).
+\label{eq:weak-bias-local-conditional-law}
+\end{equation}
+In either case, the particles forming $\eta_p^J$ are conditionally
+independent with common law $\mu$. Within this calculation, put
 \begin{align}
 q
 &=
@@ -2132,106 +2176,141 @@ Then
 \end{equation}
 and Equation~(\ref{eq:normalized-feynman-kac-semigroup}) gives
 \begin{align}
-\Phi_{p,t}\{m(\xi_p)\}(f)-\Phi_{p,t}(\mu)(f)
-&=
-\frac{m(\xi_p)Q_{p,t}(f)}{m(\xi_p)Q_{p,t}(1)}-a              \notag\\
-&=
-\frac{m(\xi_p)Q_{p,t}(f-a)}{m(\xi_p)Q_{p,t}(1)}              \notag\\
-&=
-\frac{m(\xi_p)(d)}{m(\xi_p)(q)}.
+&\Psi_t\{\Phi_{p,t}(\eta_p^J)\}(f)
+-\Psi_t\{\Phi_{p,t}(\mu)\}(f)                              \notag\\
+&\quad=
+\frac{\eta_p^JQ_{p,t}(f)}{\eta_p^JQ_{p,t}(1)}-a             \notag\\
+&\quad=
+\frac{\eta_p^JQ_{p,t}(f-a)}{\eta_p^JQ_{p,t}(1)}             \notag\\
+&\quad=
+\frac{\eta_p^J(d)}{\eta_p^J(q)}.
 \label{eq:weak-bias-local-ratio}
 \end{align}
-Equations~(\ref{eq:weak-bias-normalizer-ratio}) and
-(\ref{eq:weak-bias-normalized-semigroup-contraction}) imply
+
+Equation~(\ref{eq:weak-bias-uniform-normalizer-ratio}) implies
+\begin{equation}
+R^{-1}\leq q(x)\leq R,
+\qquad
+\eta_p^J(q)\geq R^{-1},
+\qquad
+\|q-1\|_\infty\leq R.
+\label{eq:weak-bias-q-bounds}
+\end{equation}
+Writing
+\begin{equation}
+F=\frac{Q_{p,t}(f)}{Q_{p,t}(1)},
+\end{equation}
+we have $a=\mu(qF)$ and $\mu(q)=1$. Thus $a$ is an average of
+$F$ under the probability measure $q\,d\mu$, so
+\begin{equation}
+\inf F\leq a\leq\sup F.
+\label{eq:weak-bias-a-range}
+\end{equation}
+Since $d=q(F-a)$, Equations~(\ref{eq:weak-bias-q-bounds}),
+(\ref{eq:weak-bias-a-range}), and
+(\ref{eq:weak-bias-normalized-semigroup-contraction}) give
 \begin{align}
-m(\xi_p)(q)
-&\geq C^{-1},                                                &
-\|q-1\|_\infty
-&\leq C,                                                     &
 \|d\|_\infty
 &\leq
-C\varrho^{t-p}\operatorname{osc}(f).
-\label{eq:weak-bias-local-bounds}
+R\operatorname{osc}(F)                                    \notag\\
+&\leq
+R\varrho^{t-p}\operatorname{osc}(f).
+\label{eq:weak-bias-d-bound}
 \end{align}
 
-Conditional independence and Equation~
-(\ref{eq:weak-bias-local-centering}) give
+Conditional independence and $\mu(d)=0$ give
 \begin{align}
-\E\{m(\xi_p)(d)\mid\mu\}
-&=0,                                                         \notag\\
-\E\left\{
+\E\{\eta_p^J(d)\mid\mu\}
+&=0,                                                       \notag\\
+\E\{\eta_p^J(d)^2\mid\mu\}
+&=\frac1J\mu(d^2),                                        \notag\\
+\E\{(\eta_p^J(q)-1)^2\mid\mu\}
+&=\frac1J\mu\{(q-1)^2\}.
+\label{eq:weak-bias-empirical-second-moments}
+\end{align}
+Consequently,
+\begin{align}
+&\E\left\{
 \left.
-\frac{m(\xi_p)(d)}{m(\xi_p)(q)}
+\frac{\eta_p^J(d)}{\eta_p^J(q)}
 \right|\mu
-\right\}
-&=
+\right\}                                                    \notag\\
+&\quad=
 -\E\left\{
 \left.
-\frac{m(\xi_p)(d)\{m(\xi_p)(q)-1\}}
-{m(\xi_p)(q)}
+\frac{\eta_p^J(d)\{\eta_p^J(q)-1\}}
+{\eta_p^J(q)}
 \right|\mu
 \right\}.
 \label{eq:weak-bias-local-cancellation}
 \end{align}
-Conditional Cauchy--Schwarz, Equation~
-(\ref{eq:weak-bias-local-bounds}), and the variance formula for an average
-of $J$ conditionally independent variables yield
+Conditional Cauchy--Schwarz and Equations~
+(\ref{eq:weak-bias-q-bounds})--
+(\ref{eq:weak-bias-empirical-second-moments}) yield
 \begin{align}
 &\left|
 \E\left\{
 \left.
-\frac{m(\xi_p)(d)}{m(\xi_p)(q)}
+\frac{\eta_p^J(d)}{\eta_p^J(q)}
 \right|\mu
 \right\}
 \right|                                                       \notag\\
 &\quad\leq
-C
+R
 \left[
-\E\{m(\xi_p)(d)^2\mid\mu\}
-\E\{(m(\xi_p)(q)-1)^2\mid\mu\}
+\E\{\eta_p^J(d)^2\mid\mu\}
+\E\{(\eta_p^J(q)-1)^2\mid\mu\}
 \right]^{1/2}                                                \notag\\
 &\quad=
-\frac{C}{J}
+\frac{R}{J}
 \left[
-\mu(d^2)\{\mu(q^2)-\mu(q)^2\}
+\mu(d^2)\mu\{(q-1)^2\}
 \right]^{1/2}                                                \notag\\
 &\quad\leq
-\frac{C}{J}\|d\|_\infty\|q-1\|_\infty                        \notag\\
-&\quad\leq
 \frac{C}{J}\varrho^{t-p}\operatorname{osc}(f).
-\label{eq:weak-bias-one-update}
+\label{eq:weak-bias-one-complete-update}
 \end{align}
 
-Replacing the particle update by its conditional law one time at a time
-gives the exact telescoping identity
-\begin{equation}
-\E m(\xi_t)(f)-\rho_t(f)
-=
-\sum_{p=0}^{t}
+It remains to write the exact full-update telescope. Since
+$\eta_t=\Phi_{1,t}(\eta_1)$,
+\begin{align}
+&\E\Psi_t(\eta_t^J)(f)-\Psi_t(\eta_t)(f)                    \notag\\
+&\quad=
 \E\left[
-\Phi_{p,t}\{m(\xi_p)\}(f)-\Phi_{p,t}(\mu)(f)
-\right],
-\label{eq:weak-bias-telescoping}
+\Psi_t\{\Phi_{1,t}(\eta_1^J)\}(f)
+-\Psi_t\{\Phi_{1,t}(\eta_1)\}(f)
+\right]                                                     \notag\\
+&\qquad+
+\sum_{p=2}^t
+\E\left[
+\Psi_t\{\Phi_{p,t}(\eta_p^J)\}(f)
+-\Psi_t\{\Phi_{p,t}(\Phi_p(\eta_{p-1}^J))\}(f)
+\right].
+\label{eq:weak-bias-full-update-telescope}
+\end{align}
+Indeed, for $2\leq p\leq t$,
+\begin{equation}
+\Phi_{p,t}\circ\Phi_p=\Phi_{p-1,t},
+\label{eq:weak-bias-composition-identity}
 \end{equation}
-where, in the $p$th summand, $\mu$ is the conditional law used above.
-Taking absolute values, applying Equation~
-(\ref{eq:weak-bias-one-update}), and summing the geometric series give
+so consecutive terms cancel. The only terms left are
+$\Psi_t(\eta_t^J)(f)$ and $-\Psi_t(\eta_t)(f)$.
+
+Apply Equation~(\ref{eq:weak-bias-one-complete-update}) to every
+summand in Equation~(\ref{eq:weak-bias-full-update-telescope}). Then
 \begin{align}
 \left|
-\E m(\xi_t)(f)-\rho_t(f)
+\E\Psi_t(\eta_t^J)(f)-\Psi_t(\eta_t)(f)
 \right|
 &\leq
 \frac{C\operatorname{osc}(f)}{J}
-\sum_{p=0}^{t}\varrho^{t-p}                                  \notag\\
+\sum_{p=1}^t\varrho^{t-p}                                  \notag\\
 &\leq
-\frac{C\operatorname{osc}(f)}{J}
-\sum_{l=0}^{\infty}\varrho^l                                 \notag\\
-&=
-\frac{C}{J(1-\varrho)}\operatorname{osc}(f)                  \notag\\
-&\leq
-\frac{C}{J}\operatorname{osc}(f),
+\frac{C}{J(1-\varrho)}\operatorname{osc}(f).
 \end{align}
-after enlarging $C$ by the fixed factor $(1-\varrho)^{-1}$.
+Absorb $(1-\varrho)^{-1}$ into $C$ and combine this display with
+Equations~(\ref{eq:current-state-posterior-filter-identity}) and
+(\ref{eq:terminal-resampling-unbiased}).
 \end{proof}
 
 \iffalse
@@ -2757,8 +2836,9 @@ particular,
 \left(\frac{1-\alpha^N}{1-\alpha}\right)^2,
 \label{eq:dmop-alpha-n-over-j-variance}
 \end{equation}
-where the ratio is interpreted as $N$ at $\alpha=1$. The constants are
-independent of $N,J$, and $\alpha$, and
+where the ratio is interpreted as $N$ at $\alpha=1$. Apart from the
+explicitly suppressed particle-system mixing-time factor, the
+multiplicative constants are independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
 \end{lem}
 
@@ -2803,10 +2883,121 @@ The two terms in Equation~
 the bounded coordinate functions in Equations~
 (\ref{eq:filtered-weight-tangent-bound}) and
 (\ref{eq:prediction-weight-tangent-bound}) of the differentiable
-particle state. Lemma~2.2 of \citet{karjalainen23} bounds the $L^4$
-distance of either empirical average $Y$ from its deterministic filter
-target $y$. Jensen's inequality and the triangle inequality give the
-required centered form:
+particle state. We now apply the precise form of the particle result and
+write out the filtering step that it does not cover directly.
+Lemma~2.3 of \citet{karjalainen23}, with $p=4$, states that for every
+bounded real function $f$ of a prediction particle,
+\begin{equation}
+\left\|\eta_n^J(f)-\eta_n(f)\right\|_{L^4}
+\leq
+\frac{c(4)}{\sqrt J}\operatorname{osc}(f).
+\label{eq:karjalainen-predictor-l4}
+\end{equation}
+This applies directly to the prediction-weight tangent.
+
+For completeness, consider the corresponding filtered average
+\begin{equation}
+Y=\frac1J\sum_{j=1}^Jf(x_{n,j}^F).
+\end{equation}
+Conditionally on $\eta_n^J$, multinomial resampling makes the
+$x_{n,j}^F$ independent with common law
+$\pi_n^J=\Psi_n(\eta_n^J)$. If a filtered tangent coordinate is obtained
+by a deterministic post-selection update, $f$ denotes its composition
+with that update as a function of the selected prediction particle. Put
+\begin{equation}
+Z_j=f(x_{n,j}^F)-\pi_n^J(f).
+\end{equation}
+Then, conditionally on $\eta_n^J$, the $Z_j$ are independent,
+$\E(Z_j\mid\eta_n^J)=0$, and
+$|Z_j|\leq\operatorname{osc}(f)$. Expanding the fourth power and using
+conditional independence gives
+\begin{align}
+&\E\left[
+\left.
+\left|Y-\pi_n^J(f)\right|^4
+\right|\eta_n^J
+\right]                                                     \notag\\
+&\quad=
+\frac1{J^4}
+\left\{
+\sum_{j=1}^J\E(Z_j^4\mid\eta_n^J)
++6\sum_{1\leq j<k\leq J}
+\E(Z_j^2\mid\eta_n^J)
+\E(Z_k^2\mid\eta_n^J)
+\right\}                                                    \notag\\
+&\quad\leq
+\frac{J+3J(J-1)}{J^4}\operatorname{osc}(f)^4               \notag\\
+&\quad\leq
+\frac{3}{J^2}\operatorname{osc}(f)^4.
+\label{eq:conditional-filter-resampling-fourth-moment}
+\end{align}
+Taking expectations and fourth roots yields
+\begin{equation}
+\left\|Y-\pi_n^J(f)\right\|_{L^4}
+\leq
+\frac{3^{1/4}}{\sqrt J}\operatorname{osc}(f).
+\label{eq:conditional-filter-resampling-l4}
+\end{equation}
+
+It remains to compare the random weighted prediction measure with the
+deterministic filter.  Since $\pi_n=\Psi_n(\eta_n)$,
+\begin{align}
+\pi_n^J(f)-\pi_n(f)
+&=
+\frac{\eta_n^J(G_nf)}{\eta_n^J(G_n)}-\pi_n(f)              \notag\\
+&=
+\frac{
+\eta_n^J\left[G_n\{f-\pi_n(f)\}\right]
+}{
+\eta_n^J(G_n)
+}                                                           \notag\\
+&=
+\frac{
+(\eta_n^J-\eta_n)\left[G_n\{f-\pi_n(f)\}\right]
+}{
+\eta_n^J(G_n)
+},
+\label{eq:filter-bayes-ratio-centered}
+\end{align}
+where the last equality uses
+\begin{equation}
+\eta_n\left[G_n\{f-\pi_n(f)\}\right]
+=
+\eta_n(G_nf)-\pi_n(f)\eta_n(G_n)
+=0.
+\end{equation}
+Assumption~{\refAssumpBoundedMeasurement} gives
+\begin{align}
+\eta_n^J(G_n)
+&\geq\underbar G,                                           \notag\\
+\operatorname{osc}\left[G_n\{f-\pi_n(f)\}\right]
+&\leq
+2\bar G\operatorname{osc}(f).
+\end{align}
+Applying Equation~(\ref{eq:karjalainen-predictor-l4}) to the
+centered function in Equation~(\ref{eq:filter-bayes-ratio-centered})
+therefore gives
+\begin{equation}
+\left\|\pi_n^J(f)-\pi_n(f)\right\|_{L^4}
+\leq
+\frac{2c(4)\bar G}{\underbar G\sqrt J}
+\operatorname{osc}(f).
+\label{eq:filter-bayes-ratio-l4}
+\end{equation}
+Minkowski's inequality and Equations~
+(\ref{eq:conditional-filter-resampling-l4})--
+(\ref{eq:filter-bayes-ratio-l4}) now give the filtered analogue of
+Karjalainen et al.'s predictor bound:
+\begin{equation}
+\left\|Y-\pi_n(f)\right\|_{L^4}
+\leq
+\frac{C}{\sqrt J}\operatorname{osc}(f).
+\label{eq:filtered-particle-l4}
+\end{equation}
+
+For either the prediction or filtered average, let $y$ denote the
+corresponding deterministic target. Jensen's inequality and the triangle
+inequality give the required centered form:
 \begin{align}
 \|Y-\E Y\|_{L^4}
 &\leq
@@ -2815,7 +3006,8 @@ required centered form:
 2\|Y-y\|_{L^4}.
 \label{eq:l4-centering-bridge}
 \end{align}
-Applying this result to the two functions, with
+Applying Equations~(\ref{eq:karjalainen-predictor-l4}) and
+(\ref{eq:filtered-particle-l4}) to the two tangent functions, and using
 $\operatorname{osc}(f)\leq2\|f\|_\infty$, gives
 \begin{align}
 &\left\|
@@ -2873,12 +3065,48 @@ Minkowski's inequality in $L^4$, Equations~
 
 The conditional score at time $n$ is a measurable function of the
 differentiable particle clouds at times $n-1$ and $n$. Theorem~3.1 of
-\citet{karjalainen23}, together with the elementary fact that passing to
-a measurable functional can only reduce the generated $\sigma$-algebra
-and hence cannot increase a strong-mixing coefficient, therefore gives,
+\citet{karjalainen23} applies to this predictor-cloud chain. We spell out
+the passage from its Dobrushin bound to the score mixing coefficient.
+Let $A$ be an event generated by the score history through time $m$, and
+let $B$ be an event generated by scores from time $m+l$ onward. Let
+$\mathcal F_{m+1}^P$ be the sigma-field generated by all variables through
+the production of the prediction cloud $X_{m+1,1:J}^P$. The time-$m$
+resampling indices enter both the time-$m$ score and the construction of
+$X_{m+1,1:J}^P$, so $A\in\mathcal F_{m+1}^P$. Conditional on this
+sigma-field, the Markov property gives, for a suitable future-tail kernel
+$K$,
+\begin{equation}
+\Pr(B\mid\mathcal F_{m+1}^P)
+=
+K(X_{m+1,1:J}^P,B).
+\label{eq:score-future-markov-kernel}
+\end{equation}
+Consequently,
+\begin{align}
+&\left|\Pr(A\cap B)-\Pr(A)\Pr(B)\right|                     \notag\\
+&\quad=
+\left|
+\E\left[
+1_A\left\{
+K(X_{m+1,1:J}^P,B)-\E K(X_{m+1,1:J}^P,B)
+\right\}
+\right]
+\right|                                                     \notag\\
+&\quad\leq
+\sup_{\mathbf x,\mathbf x'}
+\left|K(\mathbf x,B)-K(\mathbf x',B)\right|                \notag\\
+&\quad\leq
+\beta_{\mathrm{TV}}\left(\textbf{M}_{m+1,m+l}\right).
+\label{eq:score-events-dobrushin-bound}
+\end{align}
+The kernel from the prediction cloud at time $m+1$ to the prediction
+cloud at time $m+l$ has $l-1$ particle-filter steps; postcomposition with
+terminal resampling and the future-tail kernel cannot increase its
+Dobrushin coefficient. Passing to a measurable functional can only reduce
+the generated $\sigma$-algebra. Therefore,
 for some $\epsilon\in(0,1)$ and $c<\infty$ depending only on the bounds
 in Assumptions~{\refAssumpBoundedProcess}--
-{\refAssumpBoundedMeasurement}, and for $l\geq1$,
+{\refAssumpBoundedMeasurement}, Theorem~3.1 gives, for $l\geq2$,
 \begin{equation}
 a(l)
 \leq
@@ -2886,6 +3114,7 @@ a(l)
 (l-1)/[c\{1+\log J\}]\right\rfloor}.
 \label{eq:conditional-score-alpha-mixing}
 \end{equation}
+For $l=1$, the same display follows from $a(1)\leq1$.
 For $m<n$, Davydov's inequality, applied to the centered variables in
 Equation~(\ref{eq:conditional-score-centered-l4}), gives
 \begin{align}
