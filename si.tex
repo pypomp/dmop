@@ -167,8 +167,8 @@ Finally, observing that $\theta=\phi$ implies $w_{N,j}^{F,\theta}=1$, we obtain
 \end{equation}
 This has the same undiscounted path-space score target as the estimators of
 \cite{poyiadjis11, scibior21} for the bootstrap filter.  The
-reparameterization mark need not equal their complete-data
-likelihood-ratio mark particle by particle.
+reparameterization score contribution need not equal their complete-data
+likelihood-ratio score contribution particle by particle.
 \end{proof}
 
 Note that the variance of the DMOP-$\alpha$ log-likelihood derivative estimate scales poorly with $N$ when $\theta\neq\phi$. 
@@ -1458,11 +1458,11 @@ $G'(\theta)$ to bound that neighborhood if necessary,
 \nabla_\theta\log g_{n,j}^{A,F,\theta}
 \right\|_\infty
 \leq G'(\theta).
-\label{eq:bounded-realized-measurement-mark}
+\label{eq:bounded-realized-measurement-score}
 \end{equation}
 These two existing assumptions also justify differentiation under the
 finite-horizon simulator expectations used below. Indeed, the product rule
-and Equation~(\ref{eq:bounded-realized-measurement-mark}) give, pathwise,
+and Equation~(\ref{eq:bounded-realized-measurement-score}) give, pathwise,
 \begin{align}
 &\left\|
 \nabla_\theta\prod_{s=1}^t G_s(X_s)
@@ -1533,12 +1533,12 @@ Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \label{eq:unrolled-filtered-weight}
 \end{equation}
 For a complete ancestral path, write \(h_k\), only in this section, for the
-actual vector mark
+measurement-score contribution
 \begin{equation}
 h_k
 =
 \left.\nabla_\theta\log g_k^{A,F,\theta}\right|_{\theta=\phi}
-\label{eq:actual-path-mark}
+\label{eq:actual-path-score}
 \end{equation}
 carried on that path. In the path-space notation of
 \citet{chanDelMoral18}, \(m(\xi_t)(h_k)\) is its empirical average among
@@ -1622,7 +1622,7 @@ Consequently, define
 We now verify that the right-hand population quantities are the lag
 coefficients of the deterministic differentiated recursion. Equations~
 (\ref{eq:finite-horizon-differentiation-under-expectation}) and
-(\ref{eq:actual-path-mark}) give, at $\theta=\phi$,
+(\ref{eq:actual-path-score}) give, at $\theta=\phi$,
 \begin{align}
 &\nabla_\theta
 \log\E_U\left[\prod_{s=1}^nG_s(X_s)\right]                       \notag\\
@@ -1689,13 +1689,13 @@ posterior backward kernels.
 
 First suppose that \(1\leq r<n\), and put \(k=n-r\). Fix a coordinate
 \(i\in\{1,\ldots,p\}\), and let \(h_{k,i}\) be the corresponding
-coordinate of the mark in Equation~(\ref{eq:actual-path-mark}). By
-Equation~(\ref{eq:bounded-realized-measurement-mark}),
+coordinate of $h_k$ in Equation~(\ref{eq:actual-path-score}). By
+Equation~(\ref{eq:bounded-realized-measurement-score}),
 \begin{equation}
 |h_{k,i}|
 \leq
 G'(\theta).
-\label{eq:population-forgetting-mark-bound}
+\label{eq:population-forgetting-score-bound}
 \end{equation}
 Because \(h_{k,i}\) is measurable with respect to the canonical extended
 path through time \(k\leq n-1\), Equation~
@@ -1830,7 +1830,7 @@ Taking the supremum over \(x_s,x'_s\) gives
 \label{eq:posterior-backward-oscillation-contraction}
 \end{equation}
 
-The mark $h_{k,i}$ is a bounded function of the differentiable particle
+The function $h_{k,i}$ is a bounded function of the differentiable particle
 $X_k$. Repeated conditioning through the backward kernels therefore gives
 \begin{align}
 \E_{\rho_{n-1}}\{h_{k,i}(X_k)\mid X_{n-1}=x_{n-1}\}
@@ -1839,14 +1839,14 @@ $X_k$. Repeated conditioning through the backward kernels therefore gives
 \label{eq:iterated-backward-conditioning}
 \end{align}
 There are \(n-1-k=r-1\) backward kernels in this display. Moreover,
-Equation~(\ref{eq:population-forgetting-mark-bound}) gives
+Equation~(\ref{eq:population-forgetting-score-bound}) gives
 \begin{align}
 \operatorname{osc}(h_{k,i})
 &\leq
 2\|h_{k,i}\|_\infty                                          \notag\\
 &\leq
 2G'(\theta).
-\label{eq:conditional-past-mark-oscillation}
+\label{eq:conditional-past-score-oscillation}
 \end{align}
 If \(r=1\), Equation~(\ref{eq:iterated-backward-conditioning}) contains no
 backward kernel. If \(r\geq2\), applying Equation~
@@ -1861,26 +1861,26 @@ backward kernel. If \(r\geq2\), applying Equation~
 1, & r=1,\\
 (1-\epsilon)^{r-1}, & r\geq2.
 \end{cases}
-\label{eq:conditional-past-mark-forgetting}
+\label{eq:conditional-past-score-forgetting}
 \end{align}
 
 To finish, abbreviate the conditional expectation on the left of
-Equation~(\ref{eq:conditional-past-mark-forgetting}) by \(H\), only for
+Equation~(\ref{eq:conditional-past-score-forgetting}) by \(H\), only for
 the next calculation. Since the \(X_{n-1}\)-marginal of \(\rho_{n-1}\)
 is \(\pi_{n-1}\), the tower property gives
 \begin{align}
 \rho_{n-1}(h_{k,i})
 &=
 \pi_{n-1}(H),
-\label{eq:tower-past-mark}
+\label{eq:tower-past-score}
 \\
 \rho_{n-1}\{h_{k,i}M_n(G_n)\}
 &=
 \pi_{n-1}\{H M_n(G_n)\}.
-\label{eq:tower-past-mark-potential}
+\label{eq:tower-past-score-potential}
 \end{align}
-Substituting Equations~(\ref{eq:tower-past-mark})--
-(\ref{eq:tower-past-mark-potential}) into
+Substituting Equations~(\ref{eq:tower-past-score})--
+(\ref{eq:tower-past-score-potential}) into
 Equation~(\ref{eq:posterior-path-update-functional}) and then subtracting
 \(\rho_{n-1}(h_{k,i})\) gives the exact covariance identity
 \begin{align}
@@ -1922,7 +1922,7 @@ Taking absolute values in Equation~
 (\ref{eq:lag-coefficient-covariance-identity}), using
 Equations~(\ref{eq:centered-function-oscillation-bound})--
 (\ref{eq:predictive-potential-oscillation}), and then using
-Equation~(\ref{eq:conditional-past-mark-forgetting}), yields
+Equation~(\ref{eq:conditional-past-score-forgetting}), yields
 \begin{align}
 |\Delta_{n,r,i}|
 &\leq
@@ -1965,7 +1965,8 @@ C\sqrt p\,G'(\theta)\varrho^r,
 \end{align}
 
 Finally, when \(r=0\), Equation~
-(\ref{eq:lag-coefficient-definitions}) and the bounded-mark condition give
+(\ref{eq:lag-coefficient-definitions}) and
+Equation~(\ref{eq:bounded-realized-measurement-score}) give
 \begin{align}
 \|\Delta_{n,0}\|_2
 &=
@@ -2426,7 +2427,7 @@ m(\xi_k)(h_k)
 +\sum_{t=k+1}^{N}\alpha^{t-k}
 \{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}
 \right].
-\label{eq:full-score-reindexed-by-mark}
+\label{eq:full-score-reindexed-by-contribution}
 \end{align}
 For each fixed $k$, collecting the coefficient of every
 $m(\xi_t)(h_k)$ gives
@@ -2437,7 +2438,7 @@ $m(\xi_t)(h_k)$ gives
 &\quad=
 (1-\alpha)\sum_{t=k}^{N-1}\alpha^{t-k}m(\xi_t)(h_k)
 +\alpha^{N-k}m(\xi_N)(h_k).
-\label{eq:one-mark-summation-by-parts}
+\label{eq:one-score-summation-by-parts}
 \end{align}
 Indeed, the coefficients are $1-\alpha$ at $t=k$,
 $\alpha^{t-k}-\alpha^{t+1-k}=(1-\alpha)\alpha^{t-k}$ for
@@ -2462,14 +2463,14 @@ Equation~(\ref{eq:population-conditional-score-path-decomposition}) gives
 \label{eq:population-full-score-summation-by-parts}
 \end{align}
 For every coordinate $i$, Equation~
-(\ref{eq:bounded-realized-measurement-mark}) gives
+(\ref{eq:bounded-realized-measurement-score}) gives
 \begin{equation}
 \left\|
 \sum_{k=1}^{t}\alpha^{t-k}h_{k,i}
 \right\|_\infty
 \leq
 G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
-\label{eq:discounted-mark-supremum}
+\label{eq:discounted-score-supremum}
 \end{equation}
 
 We now prove the bias bound directly from the two terms of the conditional
@@ -2847,7 +2848,7 @@ $\Var(Z)=\E\|Z-\E Z\|_2^2$.
 We next use the fact that the weight tangent is part of the
 differentiable particle.  Equation~
 (\ref{eq:unrolled-filtered-weight}) and
-Equation~(\ref{eq:bounded-realized-measurement-mark}) give, for every
+Equation~(\ref{eq:bounded-realized-measurement-score}) give, for every
 coordinate $i$,
 \begin{align}
 \left|
@@ -3232,7 +3233,7 @@ Equation~(\ref{eq:dmop-alpha-n-over-j-variance}).
 
 It remains to obtain the other term in the minimum.  Taking absolute
 values in Equation~(\ref{eq:full-score-summation-by-parts}) and using
-Equation~(\ref{eq:discounted-mark-supremum}) give, pathwise,
+Equation~(\ref{eq:discounted-score-supremum}) give, pathwise,
 \begin{align}
 \left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|
 &\leq
@@ -3906,8 +3907,8 @@ proved here.
 The lower-bound result of \citet{poyiadjis11} concerns their path-space
 score estimator and does not apply to DMOP-$0$. At $\alpha=1$, DMOP has
 the same undiscounted path-space structure, but its reparameterization
-marks are not asserted to be particlewise identical to the
-likelihood-ratio marks of \citet{poyiadjis11}.
+score contributions are not asserted to be particlewise identical to the
+likelihood-ratio score contributions of \citet{poyiadjis11}.
 \end{remark}
 
 \begin{remark}[Scope of the proved $\alpha$ dependence]
@@ -4017,8 +4018,9 @@ confused with joint limits in which $N$ and $J$ grow together.
 The quadratic asymptotic-variance lower bound of
 \citet{poyiadjis11} is already stated for an unnormalized additive
 functional. It must not be multiplied by another $N^2$ normalization
-factor. Moreover, the DMOP-$1$ reparameterization marks are not generally
-particlewise identical to their likelihood-ratio marks, so their lower
+factor. Moreover, the DMOP-$1$ reparameterization score contributions are
+not generally particlewise identical to their likelihood-ratio score
+contributions, so their lower
 bound is not automatically a DMOP-$1$ lower bound.
 \end{remark}
 
