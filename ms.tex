@@ -252,6 +252,10 @@ Our approach bypasses these issues -- the first since the reparameterization tri
 
 The resampling indices, which we write as $k_j \sim \text{Categorical}(g^{\phi}_{n,1},...,g^{\phi}_{n,J})$, are a function of $\phi$ for any value of $\theta$.
 For the categorical distribution, we use systematic resampling \citep{arulampalam02,king16} which usually outperforms multinomial resampling.
+The finite-sample concentration result used for Theorem~\ref{thm:linear},
+however, is stated for multinomial resampling; it does not assert the same
+guarantee for the systematic-resampling implementation used in our numerical
+work.
 
 In Algorithm~\ref{alg:mop}, the conditional likelihoods are reweighted by a correction factor $w^{P,\theta}_{n,j}$ that accumulates over filtering steps to account for the resampling under $\phi$. 
 Writing $g^{\theta}_{n,j}={f}_{{Y}_{n}|{X}_{n}}(y_{n}^{*}|{X}_{n,j}^{P,\theta}\giventh{\theta})$ for the measurement density and $L_n^{\phi} = \frac{1}{J}\sum_{m=1}^{J}g^{\phi}_{n,m}$ for the conditional likelihood estimate under $\phi$, we obtain two estimates of the conditional likelihood under $\theta$,
@@ -313,7 +317,10 @@ As such, the use of the stop-gradient in \cite{scibior21} can be seen as the MOP
 
 To design an effective procedure for likelihood maximization using DMOP-$\alpha$, we carry out iterated filtering then automatic differentiation (IFAD). 
 A basic IFAD approach is presented in Algorithm~\ref{alg:ifad}.
-This requires  a Hessian estimate $H(\theta)$ with minimum eigenvalue no smaller than $c$, but we allow for the possibility of a trivial estiamte, $H=I_p$, in which case the AD search becomes stochastic gradient descent (SGD).
+The second stage uses a symmetric positive-definite curvature matrix $B_m$ whose
+eigenvalues are kept in a fixed interval $[c,C]$.  A raw particle Hessian or a
+quasi-Newton matrix may be spectrally clipped to this interval; the choice
+$B_m=I_p$ gives stochastic gradient descent (SGD).
 Algorithm~\ref{alg:ifad} is convenient for theoretical analysis, but two further modifications are helpful in practice.
 Our best numerical results were obtained by putting the gradient estimate into the Adam optimizer \citep{kingma15} together with learning rate decay. 
 Numerical results are provided in Section~\ref{sec:cholera}.
@@ -321,13 +328,14 @@ Numerical results are provided in Section~\ref{sec:cholera}.
 \begin{algorithm}[htbp!]
 	\caption{IFAD}
     \label{alg:ifad}
-	    \textbf{Input:} Number of particles $J$, timesteps $N$, IF2 and MOP-$\alpha$ cooling schedules $\eta_m$, MOP-$\alpha$ discounting parameter $\alpha$, $\theta_0$, $m=0.$\newline
-        Run initial IF2 search under cooling schedule $\eta_m$ to obtain $\{\Theta_j, j=1,...,J\}$, set $\theta_m := \frac{1}{J}\sum_{j=1}^J \Theta_j.$\newline
-		\textbf{While} procedure not converged: \newline
-		\hspace*{4mm} Run Algorithm \ref{alg:mop} to obtain $\hat\loglik(\theta_m).$ \newline
-		\hspace*{4mm} Set $g(\theta_m) := \nabla_{\theta}(-\hat\loglik(\theta_m))$, and consider any $H(\theta_m)$ s.t. $\lambda_{\min}(H(\theta_m)) \geq c$. \newline
-		\hspace*{4mm} Update $\theta_{m+1} := \theta_m - \eta_m (H(\theta_m))^{-1} g(\theta_m)$, $m:=m+1.$ \newline
-		\textbf{Return} $\hat{\theta} := \theta_m.$
+	    \textbf{Input:} Number of particles $J$, timesteps $N$, IF2 cooling schedule $a_m$, AD step size $\eta$, MOP-$\alpha$ discount parameter $\alpha$, spectral bounds $0<c\leq C$, gradient tolerance $\epsilon$, stopping multiplier $\sigma$, maximum AD iterations $M$, and initial value $\theta_0$.\newline
+        Run the initial IF2 search under cooling schedule $a_m$ to obtain $\{\Theta_j, j=1,...,J\}$, and set $\theta_0 := J^{-1}\sum_{j=1}^J \Theta_j.$\newline
+		\textbf{For} $m=0,\ldots,M-1$: \newline
+		\hspace*{4mm} Using fresh random numbers, run Algorithm \ref{alg:mop} to obtain $\hat\loglik(\theta_m)$ and set $g_m := \nabla_{\theta}(-\hat\loglik(\theta_m))$ (for Theorem~\ref{thm:linear}, use $\alpha=1$, the after-resampling estimate, and multinomial resampling). \newline
+		\hspace*{4mm} \textbf{If} $\|g_m\|_2\leq\sigma\epsilon$, \textbf{return} $\hat\theta:=\theta_m$. \newline
+		\hspace*{4mm} Choose a symmetric raw curvature estimate $\widetilde B_m$ and clip its eigenvalues to $[c,C]$ to obtain $B_m$. \newline
+		\hspace*{4mm} Update $\theta_{m+1} := \theta_m - \eta B_m^{-1} g_m$. \newline
+		\textbf{Return} $\hat{\theta} := \theta_M.$
 \end{algorithm}
 
 
@@ -337,26 +345,72 @@ However, even when applying much larger amounts of Monte Carlo effort, IF2 fails
 For this example, IF2, without assistance from AD, struggles to reach the inferentially critical region within one log-likelihood unit of the maximum, even when additional computationally intensive techniques are used, such as repeated pruning and profiling,
 
 
-The AD stage confers a linear convergence rate for IFAD, up to a small region near the MLE shrinking in $J$, under the usual smoothness and strong convexity assumptions in convex optimization theory, as we show below in Theorem \ref{thm:mop-convergence}.
+For a fixed optimization budget, the AD stage has a high-probability linear
+convergence rate up to a neighborhood of the MLE that shrinks as the particle
+gradient accuracy improves, under the usual smoothness and strong convexity
+assumptions, as shown below.
 
-\begin{thm}[Linear Convergence of IFAD] \label{thm:linear}
+\begin{thm}[Finite-horizon Linear Convergence of IFAD] \label{thm:linear}
+Let $f=-\ell$ and suppose that, on a convex region containing the iterates and
+the minimizer $\theta^*$,
+\(
+\gamma I_p\preceq\nabla^2 f(\theta)\preceq\Gamma I_p
+\)
+with $0<\gamma\leq\Gamma$.  Fix a maximum number
+$M\in\mathbb N$, $M\geq1$, of second-stage iterations,
+$\delta\in(0,1)$, and $\epsilon>0$.  At iteration $m$, use a fresh
+particle-randomness block to compute the after-resampling DMOP-$1$ gradient
+\(
+g_m=-\nabla_\theta\hat\ell^1(\theta_m)
+\)
+with $J$ particles and multinomial resampling, and use a curvature matrix satisfying
+\(
+cI_p\preceq B_m\preceq CI_p
+\)
+for fixed $0<c\leq C$.  Assume the constants in the gradient-concentration
+lemma of Section~\suppSecProofOptimizationConvergence{} are uniform on this
+region, and choose $J$ according to that lemma with $\delta$ replaced by
+$\delta/M$.
 
-Assume strongly convex and smooth $-\ell$, $\gamma I \preceq \nabla_\theta^2 (-\ell) \preceq \Gamma I$, and assumptions (A1--A5) in Section~\ref{sec:thms}.
-Choose the learning rate $\eta$ so $\eta \leq \frac{c(1-\beta)}{2\Gamma}$. Consider the second stage of IFAD (Algorithm \ref{alg:ifad}), stopping if $\|\nabla_\theta \hat\ell^\alpha(\theta_m)\| \leq (1+\sigma) \epsilon$, where $\sigma \geq \frac{4 \Gamma}{(1-\beta)}$ for some $\beta \in (0,1)$. 
-%Consider the second stage of IFAD (Algorithm \ref{alg:ifad}), stopping if $\|\nabla_\theta \hat\ell^\alpha(\theta_m)\| \leq (1+\sigma) \epsilon$, where $\sigma \geq \frac{4 \Gamma}{(1-\beta)}$ for some $\beta \in (0,1)$. Assume strongly convex and smooth $-\ell$, $\gamma I \preceq \nabla_\theta^2 (-\ell) \preceq \Gamma I$, and assumptions (A1--A5) in Section~\ref{sec:thms}. 
-Choose the learning rate $\eta$ so $\eta \leq \frac{c(1-\beta)}{2\Gamma}$. 
-Then, for $\alpha$ sufficiently close to 1 and $J$ sufficiently large (depending on $\epsilon$ and $\delta$), we have that
-$\|\nabla_\theta \hat\ell^\alpha(\theta_m) - \nabla_\theta\ell^\alpha(\theta_m)\| \leq \epsilon$ and $H(\theta_m) \succ cI_p \succ 0$ for all $m$, and that
-$$
-\ell(\theta^*) - \ell(\theta_{m+1}) \leq \Big(1-\eta\beta\, \frac{8\gamma}{9c}\Big)\big(\ell(\theta^*)-\ell(\theta_m)\big) \text{ with probability at least } 1-\delta.
-$$
+For any $\beta\in(0,1)$, choose
+\begin{equation}\nonumber
+0<\eta\leq \frac{c(1-\beta)}{\Gamma},
+\qquad
+\sigma\geq \frac{2C}{c(1-\beta)},
+\end{equation}
+and stop when $\|g_m\|_2\leq\sigma\epsilon$.  Then, with probability at least
+$1-\delta$, simultaneously for every executed iteration $m<M$, either the algorithm
+has stopped and
+\begin{equation}\nonumber
+\ell(\theta^*)-\ell(\theta_m)
+\leq \frac{(\sigma+1)^2\epsilon^2}{2\gamma},
+\end{equation}
+or its next step satisfies
+\begin{equation}\nonumber
+\ell(\theta^*)-\ell(\theta_{m+1})
+\leq
+\left\{1-\frac{2\eta\beta\gamma}{C}
+\left(\frac{\sigma}{\sigma+1}\right)^2\right\}
+\big\{\ell(\theta^*)-\ell(\theta_m)\big\}.
+\end{equation}
 \label{thm:mop-convergence}
 \end{thm}
-The proof of Theorem~\ref{thm:linear} uses results from randomized numerical linear algebra, building on Theorem~6 of \cite{mahoney16}. 
+The proof of Theorem~\ref{thm:linear} is a finite-horizon inexact-gradient
+argument.  It retains the two-sided spectral control and the per-iteration
+probability accounting that are essential in the related subsampled-Newton
+analysis of \cite{mahoney16}.
 Details are deferred to the supplement (Section~\suppSecProofOptimizationConvergence). 
-This result shows that particle estimates for the gradient can enjoy the same linear convergence rate on well-conditioned problems as gradient descent with access to the score. 
+This result shows that, over any prespecified finite optimization budget,
+particle gradient estimates can retain a linear rate until their Monte Carlo
+accuracy becomes the limiting factor.  The theorem is stated for DMOP-$1$:
+an analogous result for $\alpha<1$ additionally requires a high-probability
+bound on the discount bias relative to the exact score and is not implied merely
+by taking $\alpha$ close to one.
 
-We therefore see that the second stage of IFAD converges linearly to the MLE if (1) the log-likelihood surface is well-conditioned in a neighborhood of the MLE and (2) the first stage of IFAD successfully reaches a (high-probability) basin of attraction of the MLE.
+We therefore see that the second stage of IFAD converges linearly toward a
+Monte Carlo neighborhood of the MLE if (1) the log-likelihood surface is
+well-conditioned in a neighborhood of the MLE and (2) the first stage of IFAD
+successfully reaches a basin in which the theorem's assumptions hold.
 Within a neighborhood of the MLE that grows as more data become available \citep{ning21}, local quadratic approximations such as local asymptotic normality apply under general conditions \citep{lecam00}.
 This suggests that the linear convergence may occur often in practice.
 
@@ -534,9 +588,9 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 \begin{enumerate}[label=(A\arabic*),itemsep=-1ex, , font=\small] 
     \item \textbf{Continuity of the Likelihood.} $\ell(\theta)$ has more than two continuous derivatives in a neighborhood $\left\{\theta: \ell(\theta)>\lambda_1\right\}$ for some $\lambda_1<\sup _{\varphi} \ell(\varphi)$.\label{assump:conti-lik}
     \item \textbf{Bounded Process Model.} There exist $\underbar{M}, \bar{M}$ such that $0 < \underbar{M} \leq f_{X_n|X_{n-1}}(x_n | x_{n-1};\theta) \leq \bar{M} < \infty$.\label{assump:bounded-process}
-    \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$, and $G'(\theta)$ with $\|\nabla_\theta \log f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right)\|_\infty \leq G'(\theta)< \infty$.\label{assump:bounded-measurement}
-    \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, so the MOP-$\alpha$ gradient and Hessian estimates at $\theta=\phi$ are almost surely bounded by $G(\theta)$ and $H(\theta)$ for all $\alpha$.\label{assump:local-bounded-derivative}
-    \item \textbf{Differentiable Density Ratios and Simulator.} The measurement density, \arxiv{\\}{}$f_{Y_n|X_n}(y_n^*|x_n; \theta)$, and simulator have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
+    \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$.  In a neighborhood of the parameter under consideration, the total fixed-random-number derivative through the reparameterized simulated state is uniformly bounded: for every $n,j$ and every realization of the fixed simulator variables and reference-filter resampling indices, $\|\nabla_\theta^{\mathrm{tot}}\log g_{n,j}^{A,F,\theta}\|_\infty\leq G'(\theta)<\infty$.\label{assump:bounded-measurement}
+    \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, such that the MOP-$\alpha$ derivatives at $\theta=\phi$ satisfy $\|\nabla_\theta\hat\ell^\alpha(\theta)\|_2\leq G(\theta)$ and $\|\nabla_\theta^2\hat\ell^\alpha(\theta)\|_{\mathrm{op}}\leq H(\theta)$ almost surely for all $\alpha$.\label{assump:local-bounded-derivative}
+    \item \textbf{Differentiable Density Ratios and Simulator.} The base random-number law of the reparameterized simulator does not depend on $\theta$.  For fixed base simulator variables and fixed reference-filter resampling indices, the complete recursively simulated path and its composed log measurement densities have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
 \end{enumerate}
 \arxiv{}{\vspace*{-3ex}}
 
