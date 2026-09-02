@@ -392,10 +392,86 @@ The difference of the two exact ratio remainders is
 &=-(A_1-A_0)B_1-A_0(B_1-B_0).
 \label{eq:dmop-direct-two-remainder-products}
 \end{align}
-The identity $q_{t,n}^{1}=q_{t,n}^{0}F_{t,n}$ and
-Equation~(\ref{eq:dmop-direct-local-covariance-identity}) give a factor
-$\operatorname{osc}(F_{t,n})$ in both $A_1-A_0$ and $B_1-B_0$.
-The remaining factors have uniformly bounded oscillation.  Therefore
+For $l\in\{0,1\}$, define
+\begin{equation}
+a_l=\frac{q_{t,n}^{l}}{\mu(q_{t,n}^{l})}.
+\label{eq:dmop-direct-local-normalized-denominators}
+\end{equation}
+Then $\mu(a_l)=1$, and direct algebra gives
+\begin{align}
+A_l
+&=\frac{(\nu-\mu)(a_l)}{\nu(a_l)}
+=1-\frac1{\nu(a_l)},                                      \notag\\
+A_1-A_0
+&=
+\frac1{\nu(a_0)}-\frac1{\nu(a_1)}                         \notag\\
+&=
+\frac{\nu(a_1-a_0)}{\nu(a_0)\nu(a_1)}                    \notag\\
+&=
+\frac{(\nu-\mu)(a_1-a_0)}{\nu(a_0)\nu(a_1)}.
+\label{eq:dmop-direct-local-A-difference}
+\end{align}
+The normalization preceding
+Equation~(\ref{eq:dmop-direct-continuation-covariance-form}) and the
+identity $q_{t,n}^{1}=q_{t,n}^{0}F_{t,n}$ give
+\begin{equation}
+a_1-a_0
+=
+q_{t,n}^{0}
+\left\{
+\frac{F_{t,n}}{\bar\mu(F_{t,n})}-1
+\right\}.
+\label{eq:dmop-direct-local-normalizer-difference}
+\end{equation}
+Since $\bar\mu(F_{t,n})$ lies between the infimum and supremum of
+$F_{t,n}$, Equations~
+(\ref{eq:dmop-direct-future-function-contraction}) and
+(\ref{eq:dmop-direct-local-normalizer-difference}) imply
+\begin{equation}
+\operatorname{osc}(a_1-a_0)
+\leq C\operatorname{osc}(F_{t,n})
+\leq C\varrho^{n-t}.
+\label{eq:dmop-direct-local-normalizer-difference-bound}
+\end{equation}
+The same uniform ratio bounds give
+$\inf_l\nu(a_l)\geq C^{-1}$ and
+$\operatorname{osc}(a_0)\leq C$.  Moreover,
+\begin{align}
+B_1-B_0
+&=(\nu-\mu)
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\},                 \notag\\
+B_1
+&=(\nu-\mu)D_\mu\mathcal R_1,
+\end{align}
+where Equations~(\ref{eq:dmop-direct-ratio-derivative}) and
+(\ref{eq:dmop-direct-local-derivative-oscillation}) give
+\begin{align}
+\operatorname{osc}(D_\mu\mathcal R_1)
+&\leq CG'(\theta),                                        \notag\\
+\operatorname{osc}
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\}
+&\leq CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-local-B-factor-bounds}
+\end{align}
+Substitution into
+Equation~(\ref{eq:dmop-direct-two-remainder-products}) now gives, without
+discarding either empirical factor,
+\begin{align}
+|-A_1B_1+A_0B_0|
+&\leq
+C|(\nu-\mu)(a_1-a_0)|
+|(\nu-\mu)D_\mu\mathcal R_1|                              \notag\\
+&\quad+
+C|(\nu-\mu)(a_0)|
+|(\nu-\mu)
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\}|.
+\label{eq:dmop-direct-local-remainder-four-factors}
+\end{align}
+Centering and dividing each function in
+Equation~(\ref{eq:dmop-direct-local-remainder-four-factors}) by its
+displayed positive oscillation gives the following bound.  If a displayed
+oscillation is zero, its corresponding empirical integral is identically
+zero and that product vanishes.
 \begin{align}
 &\left|
 C_{t,n}(\nu)-C_{t,n}(\mu)
@@ -410,7 +486,8 @@ CG'(\theta)\varrho^{n-t}
 \label{eq:dmop-direct-local-quadratic-remainder}
 \end{align}
 where all $f_{1,r}$ and $f_{2,r}$ have
-oscillations bounded by a constant depending only on Assumptions
+oscillations at most one; their additive centering constants do not
+change any $(\nu-\mu)$ integral.  The constants depend only on Assumptions
 {\refAssumpBoundedProcess} and {\refAssumpBoundedMeasurement}.
 This is the specialization of Equations~(3.1)--(3.4) and
 Appendix~A.3 of \citet{delMoral11} to the difference of the two ratios
@@ -427,6 +504,11 @@ We now write the full local telescope before summing any norms.  Put
 \end{cases}
 \label{eq:dmop-direct-local-predictor-law}
 \end{equation}
+In this display, $\Phi_t$ denotes the canonical path-space lift of the
+same predictor update: the potential is evaluated at the last location,
+multinomial selection chooses a complete path, and $M_t$ appends the new
+location.  Its last-coordinate marginal is the predictor update already
+defined in Section~\ref{appendix:feynman}.
 Thus, conditionally on the preceding prediction cloud, the $J$ particles
 forming $\eta_t^J$ are independent with common law $\mu_t^J$.  For the
 current predictor term in
@@ -469,9 +551,166 @@ cancel.  At $t=1$, $\mu_1^J=\eta_1$, and the remaining endpoints are
 exactly those displayed on the left.  The same verification proves
 Equation~(\ref{eq:dmop-direct-current-predictor-telescope}).
 
-The normalized semigroup derivative and remainder bounds in Appendix~A.3
-of \citet{delMoral11}, together with the differentiable-particle
-minorization stated in the lemma, give
+We now derive the required future-current bounds from Assumption~
+{\refAssumpBoundedProcess}; no contraction condition on the pair in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}) is needed.
+For $t\leq n$, define the predictor semigroup
+\begin{equation}
+\widetilde Q_{t,n}(f)
+=
+\begin{cases}
+f,&t=n,\\
+Q_{t,n-1}\{M_n(f)\},&t<n.
+\end{cases}
+\label{eq:dmop-direct-predictor-semigroup}
+\end{equation}
+Thus, directly from the definition of $\Phi_{t,n}$,
+\begin{equation}
+\Phi_{t,n}(\mu)(f)
+=
+\frac{\mu\widetilde Q_{t,n}(f)}
+{\mu\widetilde Q_{t,n}(1)}.
+\label{eq:dmop-direct-predictor-semigroup-ratio}
+\end{equation}
+For $t\leq r<n$, put
+\begin{equation}
+\widetilde P_{r,r+1}^{(n)}(x,A)
+=
+\frac{
+\displaystyle\int_A
+M_{r+1}(x,du)\widetilde Q_{r+1,n}(1)(u)
+}{
+\displaystyle\int
+M_{r+1}(x,du)\widetilde Q_{r+1,n}(1)(u)
+},
+\label{eq:dmop-direct-predictor-forward-kernel}
+\end{equation}
+and
+\begin{equation}
+\widetilde P_{t,n}^{(n)}
+=
+\widetilde P_{t,t+1}^{(n)}
+\widetilde P_{t+1,t+2}^{(n)}\cdots
+\widetilde P_{n-1,n}^{(n)},
+\qquad
+\widetilde P_{n,n}^{(n)}=I.
+\label{eq:dmop-direct-normalized-forward-product}
+\end{equation}
+The same calculation as Equation~
+(\ref{eq:weak-bias-forward-minorization}), now with
+$\widetilde Q_{r+1,n}(1)$ in place of $Q_{r+1,n}(1)$, gives
+\begin{equation}
+\widetilde P_{r,r+1}^{(n)}(x,A)
+\geq
+\frac{\underbar M}{\bar M}
+\frac{
+\displaystyle\int_A\widetilde Q_{r+1,n}(1)(u),du
+}{
+\displaystyle\int\widetilde Q_{r+1,n}(1)(u),du
+}.
+\label{eq:dmop-direct-predictor-forward-minorization}
+\end{equation}
+Consequently, every kernel in Equation~
+(\ref{eq:dmop-direct-predictor-forward-kernel}) has Dobrushin coefficient
+at most $\varrho$, and
+\begin{equation}
+\frac{\widetilde Q_{t,n}(f)}{\widetilde Q_{t,n}(1)}
+=
+\widetilde P_{t,n}^{(n)}f.
+\label{eq:dmop-direct-predictor-kernel-factorization}
+\end{equation}
+It follows that
+\begin{align}
+\operatorname{osc}\{\widetilde P_{t,n}^{(n)}h_{n,i}\}
+&\leq
+\varrho^{n-t}\operatorname{osc}(h_{n,i})                  \notag\\
+&\leq
+2G'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-current-score-forward-contraction}
+\end{align}
+The first variation of $H_{t,n}$ is
+\begin{align}
+D_\mu H_{t,n}(x)
+&=
+\frac{\widetilde Q_{t,n}(1)(x)}
+{\mu\widetilde Q_{t,n}(1)}
+\left\{
+\widetilde P_{t,n}^{(n)}h_{n,i}(x)-H_{t,n}(\mu)
+\right\}.
+\label{eq:dmop-direct-current-score-first-variation}
+\end{align}
+Indeed, multiplying the right side by $(\nu-\mu)$ and using
+$(\nu-\mu)(1)=0$ gives the linear term obtained by direct subtraction of
+$\nu\widetilde Q_{t,n}(h_{n,i})/
+\nu\widetilde Q_{t,n}(1)$ and
+$\mu\widetilde Q_{t,n}(h_{n,i})/
+\mu\widetilde Q_{t,n}(1)$.  Since
+$\widetilde Q_{t,n}(1)=Q_{t,n-1}(1)$ for $t<n$, Equation~
+(\ref{eq:weak-bias-uniform-normalizer-ratio}) gives
+\begin{equation}
+0<
+\frac{\widetilde Q_{t,n}(1)(x)}
+{\mu\widetilde Q_{t,n}(1)}
+\leq C.
+\label{eq:dmop-direct-current-score-normalizer-bound}
+\end{equation}
+The expression in braces in Equation~
+(\ref{eq:dmop-direct-current-score-first-variation}) is centered inside
+the range of $\widetilde P_{t,n}^{(n)}h_{n,i}$.  Therefore Equations~
+(\ref{eq:dmop-direct-current-score-forward-contraction}) and
+(\ref{eq:dmop-direct-current-score-normalizer-bound}) imply
+\begin{equation}
+\operatorname{osc}\{D_\mu H_{t,n}\}
+\leq
+CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-current-score-derivative-bound}
+\end{equation}
+
+For $t<s\leq n$, put $\mu_s=\Phi_{t,s}(\mu)$ and
+\begin{equation}
+d_{s,n}=D_{\mu_s}C_{s,n}^{(s)}.
+\end{equation}
+Because $h_{s,i}=h_{s,i}(X_s)$ is current and
+$q_{s,n}^{0},q_{s,n}^{1}$ are functions of the current location at time
+$s$, Equation~(\ref{eq:dmop-direct-ratio-derivative}) shows that
+$d_{s,n}$ is also a function of that current location.
+Equation~(\ref{eq:dmop-direct-local-derivative-oscillation}), applied at
+time $s$, gives
+\begin{equation}
+\operatorname{osc}(d_{s,n})
+\leq
+CG'(\theta)\varrho^{n-s}.
+\label{eq:dmop-direct-created-score-derivative-bound}
+\end{equation}
+Differentiating the composition in Equation~
+(\ref{eq:dmop-direct-backward-continuation-definition}) gives
+\begin{align}
+D_\mu C_{t,n}^{(s)}(x)
+&=
+\frac{\widetilde Q_{t,s}(1)(x)}
+{\mu\widetilde Q_{t,s}(1)}
+\left\{
+\widetilde P_{t,s}^{(s)}d_{s,n}(x)-\mu_s(d_{s,n})
+\right\}.
+\label{eq:dmop-direct-future-score-chain-rule}
+\end{align}
+Applying the Dobrushin contraction obtained from Equations~
+(\ref{eq:dmop-direct-predictor-forward-minorization}) and
+(\ref{eq:dmop-direct-normalized-forward-product}) to $d_{s,n}$, and then
+using Equation~(\ref{eq:dmop-direct-created-score-derivative-bound}),
+gives
+\begin{align}
+\operatorname{osc}\{\widetilde P_{t,s}^{(s)}d_{s,n}\}
+&\leq
+\varrho^{s-t}\operatorname{osc}(d_{s,n})                  \notag\\
+&\leq
+CG'(\theta)\varrho^{s-t}\varrho^{n-s}                    \notag\\
+&=
+CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-future-score-two-contractions}
+\end{align}
+Using the normalizer bound once more in Equation~
+(\ref{eq:dmop-direct-future-score-chain-rule}) proves
 \begin{align}
 \operatorname{osc}\{D_\mu H_{t,n}\}
 &\leq CG'(\theta)\varrho^{n-t},                             \notag\\
@@ -480,16 +719,233 @@ minorization stated in the lemma, give
 \qquad t<s\leq n.
 \label{eq:dmop-direct-future-current-derivative-bounds}
 \end{align}
-The corresponding quadratic remainders have the same coefficients
-multiplied by a fixed finite sum of empirical products of the form in
-Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}).  The second
-line follows by first propagating the current function $h_{s,i}$ from
-time $t$ to its creation time $s$, and then applying the continuation
-calculation from $s$ to $n$; the two contraction factors are
+For the corresponding quadratic remainders, apply the exact ratio
+identity in Equation~(\ref{eq:dmop-direct-exact-ratio-expansion}) to
+$H_{t,n}$.  In detail, put
 \begin{equation}
-\varrho^{s-t}\varrho^{n-s}=\varrho^{n-t}.
-\label{eq:dmop-direct-future-score-two-contractions}
+a_H=\frac{\widetilde Q_{t,n}(1)}
+{\mu\widetilde Q_{t,n}(1)},
+\qquad
+A_H=\frac{(\nu-\mu)(a_H)}{\nu(a_H)},
+\qquad
+B_H=(\nu-\mu)D_\mu H_{t,n}.
 \end{equation}
+Direct subtraction of the two ratios gives
+\begin{equation}
+H_{t,n}(\nu)-H_{t,n}(\mu)
+-(\nu-\mu)D_\mu H_{t,n}
+=-A_HB_H.
+\label{eq:dmop-direct-current-predictor-exact-remainder}
+\end{equation}
+The uniform normalizer ratio and
+Equation~(\ref{eq:dmop-direct-current-score-derivative-bound}) give
+\begin{align}
+\operatorname{osc}(a_H)&\leq C,                            \notag\\
+\operatorname{osc}(D_\mu H_{t,n})
+&\leq CG'(\theta)\varrho^{n-t}.
+\end{align}
+Since $\mu(a_H)=1$ and $\inf\nu(a_H)\geq C^{-1}$,
+\begin{align}
+&\left|
+H_{t,n}(\nu)-H_{t,n}(\mu)
+-(\nu-\mu)D_\mu H_{t,n}
+\right|                                                     \notag\\
+&\quad\leq
+C|(\nu-\mu)(a_H)|
+|(\nu-\mu)D_\mu H_{t,n}|.
+\label{eq:dmop-direct-current-predictor-remainder-bound}
+\end{align}
+Thus this quadratic product has coefficient
+$CG'(\theta)\varrho^{n-t}$ after its two empirical factors are normalized
+by their oscillations.
+
+For $t<s$, the propagated ratios are, explicitly,
+\begin{equation}
+\mathcal R_{l,t,s}(\mu)
+=
+\frac{
+\mu\widetilde Q_{t,s}(h_{s,i}q_{s,n}^{l})
+}{
+\mu\widetilde Q_{t,s}(q_{s,n}^{l})
+},
+\qquad l\in\{0,1\},
+\label{eq:dmop-direct-propagated-ratios}
+\end{equation}
+and
+\begin{equation}
+C_{t,n}^{(s)}(\mu)
+=
+\mathcal R_{1,t,s}(\mu)-\mathcal R_{0,t,s}(\mu).
+\label{eq:dmop-direct-propagated-ratio-difference}
+\end{equation}
+Since $q_{s,n}^{1}=q_{s,n}^{0}F_{s,n}$,
+\begin{equation}
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{1})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}
+=
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{0}F_{s,n})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}.
+\label{eq:dmop-direct-propagated-future-ratio}
+\end{equation}
+The right side is a normalized forward kernel from $t$ to $s$ applied
+to $F_{s,n}$.  Repeating the minorization calculation in
+Equation~(\ref{eq:dmop-direct-predictor-forward-minorization}), with the
+terminal function $q_{s,n}^{0}$, gives
+\begin{align}
+\operatorname{osc}\left\{
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{1})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}
+\right\}
+&\leq
+\varrho^{s-t}\operatorname{osc}(F_{s,n})                 \notag\\
+&\leq
+C\varrho^{s-t}\varrho^{n-s}                              \notag\\
+&=
+C\varrho^{n-t}.
+\label{eq:dmop-direct-propagated-future-ratio-contraction}
+\end{align}
+Direct subtraction of the two ratios in
+Equation~(\ref{eq:dmop-direct-propagated-ratios}) gives
+\begin{align}
+\mathcal R_{l,t,s}(\nu)-\mathcal R_{l,t,s}(\mu)
+&=(\nu-\mu)D_\mu\mathcal R_{l,t,s}
+-A_{l,t,s}B_{l,t,s},                                      \notag\\
+A_{l,t,s}
+&=
+\frac{
+(\nu-\mu)\widetilde Q_{t,s}(q_{s,n}^{l})
+}{
+\nu\widetilde Q_{t,s}(q_{s,n}^{l})
+},                                                        \notag\\
+B_{l,t,s}
+&=(\nu-\mu)D_\mu\mathcal R_{l,t,s}.
+\label{eq:dmop-direct-propagated-exact-ratio-expansion}
+\end{align}
+Subtracting $l=0$ from $l=1$ yields the exact identity
+\begin{align}
+&C_{t,n}^{(s)}(\nu)-C_{t,n}^{(s)}(\mu)
+-(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+                                                               \notag\\
+&\quad=
+-(A_{1,t,s}-A_{0,t,s})B_{1,t,s}
+-A_{0,t,s}(B_{1,t,s}-B_{0,t,s}).
+\label{eq:dmop-direct-propagated-two-remainder-products}
+\end{align}
+Put
+\begin{align}
+a_{l,t,s}
+&=
+\frac{\widetilde Q_{t,s}(q_{s,n}^{l})}
+{\mu\widetilde Q_{t,s}(q_{s,n}^{l})},
+\qquad l\in\{0,1\},                                      \notag\\
+F_{t,s,n}
+&=
+\frac{\widetilde Q_{t,s}(q_{s,n}^{1})}
+{\widetilde Q_{t,s}(q_{s,n}^{0})}.
+\label{eq:dmop-direct-propagated-normalized-denominators}
+\end{align}
+Then $\mu(a_{l,t,s})=1$, and the definition of $F_{t,s,n}$ gives
+\begin{equation}
+a_{1,t,s}-a_{0,t,s}
+=
+a_{0,t,s}
+\left\{
+\frac{F_{t,s,n}}{\mu(a_{0,t,s}F_{t,s,n})}-1
+\right\}.
+\label{eq:dmop-direct-propagated-normalizer-difference}
+\end{equation}
+The scalar $\mu(a_{0,t,s}F_{t,s,n})$ lies between the infimum and
+supremum of $F_{t,s,n}$.  The uniform normalizer ratios and
+Equations~(\ref{eq:dmop-direct-propagated-future-ratio-contraction})--
+(\ref{eq:dmop-direct-propagated-normalizer-difference}) therefore give
+\begin{align}
+\inf_l\nu(a_{l,t,s})&\geq C^{-1},                          \notag\\
+\operatorname{osc}(a_{0,t,s})&\leq C,                     \notag\\
+\operatorname{osc}(a_{1,t,s}-a_{0,t,s})
+&\leq C\varrho^{n-t}.
+\label{eq:dmop-direct-propagated-normalizer-factor-bounds}
+\end{align}
+Exactly as in Equation~(\ref{eq:dmop-direct-local-A-difference}),
+\begin{align}
+A_{1,t,s}-A_{0,t,s}
+&=
+\frac{(\nu-\mu)(a_{1,t,s}-a_{0,t,s})}
+{\nu(a_{0,t,s})\nu(a_{1,t,s})},                           \notag\\
+A_{0,t,s}
+&=
+\frac{(\nu-\mu)(a_{0,t,s})}{\nu(a_{0,t,s})}.
+\label{eq:dmop-direct-propagated-A-factor-identities}
+\end{align}
+Also,
+\begin{align}
+B_{1,t,s}-B_{0,t,s}
+&=
+(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\},
+                                                               \notag\\
+B_{1,t,s}
+&=(\nu-\mu)D_\mu\mathcal R_{1,t,s}.
+\label{eq:dmop-direct-propagated-B-factor-identities}
+\end{align}
+Equation~(\ref{eq:dmop-direct-future-current-derivative-bounds}) and the
+single-ratio formula obtained from
+Equation~(\ref{eq:dmop-direct-propagated-ratios}) give
+\begin{align}
+\operatorname{osc}
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+&\leq CG'(\theta)\varrho^{n-t},                            \notag\\
+\operatorname{osc}(D_\mu\mathcal R_{1,t,s})
+&\leq CG'(\theta).
+\label{eq:dmop-direct-propagated-B-factor-bounds}
+\end{align}
+Substitution of Equations~
+(\ref{eq:dmop-direct-propagated-normalizer-factor-bounds})--
+(\ref{eq:dmop-direct-propagated-B-factor-bounds}) into
+Equation~(\ref{eq:dmop-direct-propagated-two-remainder-products}) gives
+\begin{align}
+&\left|
+C_{t,n}^{(s)}(\nu)-C_{t,n}^{(s)}(\mu)
+-(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+\right|                                                     \notag\\
+&\quad\leq
+C|(\nu-\mu)(a_{1,t,s}-a_{0,t,s})|
+|(\nu-\mu)D_\mu\mathcal R_{1,t,s}|                        \notag\\
+&\qquad+
+C|(\nu-\mu)(a_{0,t,s})|
+|(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}|.
+\label{eq:dmop-direct-propagated-quadratic-remainder}
+\end{align}
+The first product in
+Equation~(\ref{eq:dmop-direct-propagated-quadratic-remainder}) has
+oscillation product at most $CG'(\theta)\varrho^{n-t}$; the second has
+the same bound.  Centering and dividing the four functions by their
+displayed oscillation bounds therefore places the common coefficient
+$CG'(\theta)\varrho^{n-t}$ outside two products of empirical errors of
+functions having oscillation at most one.  This is the required
+coefficient for the quadratic remainder when $t<s$.  Together with
+Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}) for $s\leq t$
+and the direct ratio expansion for $H_{t,n}$, all quadratic remainders
+therefore have the coefficients displayed in
+Equation~(\ref{eq:dmop-direct-future-current-derivative-bounds}).
+
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}) shows why no
+additional mixing coefficient is required for the accumulated weight
+gradient: the previously accumulated component is multiplied by
+$\alpha$, while every new
+input is a bounded function $h_s(X_s)$ of the mixing location.
+The proof now sums those explicit coefficients before taking norms.
 After collecting all score contributions at their local sampling time
 $t$, those with $s\leq t\leq n$ have total coefficient
 \begin{align}
@@ -532,6 +988,104 @@ quadratic remainder, are at most
 \frac{CG'(\theta)}{1-\alpha}.
 \label{eq:dmop-direct-aggregated-local-oscillation}
 \end{equation}
+
+The same bound can be seen directly on the current location--weight-gradient
+pair.  For this calculation only, write
+\begin{equation}
+w_{t,i}
+=
+\left.\partial_{\theta_i}\log w_t^{F,\theta}\right|_{\theta=\phi}.
+\end{equation}
+Consider two pairs $(x,w_{t,i})$ and $(x',w'_{t,i})$ at time $t$.
+For each terminal time $t+r$, couple the normalized forward location
+kernels in Equation~(\ref{eq:dmop-direct-normalized-forward-product}).
+Equation~(\ref{eq:weak-bias-forward-minorization}) permits the coupling
+to be chosen so that, at every intermediate time $t+q$,
+\begin{equation}
+\Pr\{X_{t+q}\ne X'_{t+q}\}
+\leq
+\varrho^q.
+\label{eq:dmop-direct-location-coupling}
+\end{equation}
+Iteration of Equation~(\ref{eq:location-weight-gradient-pair-recursion})
+gives
+\begin{align}
+w_{t+r,i}
+&=
+\alpha^r w_{t,i}
++\sum_{q=1}^{r}\alpha^{r-q}h_{t+q,i}(X_{t+q}),             \notag\\
+w'_{t+r,i}
+&=
+\alpha^r w'_{t,i}
++\sum_{q=1}^{r}\alpha^{r-q}h_{t+q,i}(X'_{t+q}).
+\label{eq:dmop-direct-coupled-weight-gradient-iteration}
+\end{align}
+Equations~(\ref{eq:bounded-realized-measurement-score}),
+(\ref{eq:dmop-direct-location-coupling}), and
+(\ref{eq:dmop-direct-coupled-weight-gradient-iteration}) imply
+\begin{align}
+\E|w_{t+r,i}-w'_{t+r,i}|
+&\leq
+\alpha^r|w_{t,i}-w'_{t,i}|
++2G'(\theta)\sum_{q=1}^{r}\alpha^{r-q}\varrho^q.
+\label{eq:dmop-direct-coupled-weight-gradient-bound}
+\end{align}
+The remaining convolution is the finite sum
+\begin{equation}
+\sum_{q=1}^{r}\alpha^{r-q}\varrho^q
+=
+\begin{cases}
+\displaystyle
+\frac{\varrho(\alpha^r-\varrho^r)}{\alpha-\varrho},
+&\alpha\ne\varrho,\\[2mm]
+r\alpha^r,&\alpha=\varrho.
+\end{cases}
+\label{eq:dmop-direct-pair-forgetting-convolution}
+\end{equation}
+Hence the coupled pair forgets its initial condition in the bounded
+location--absolute-weight metric used in
+Equation~(\ref{eq:dmop-direct-coupled-weight-gradient-bound}), at the
+geometric rate $\max(\alpha,\varrho)^r$ apart from the factor $r$ when
+$\alpha=\varrho$.  This does not assert total-variation contraction of
+the pair: deterministic differences in the second coordinate can remain
+mutually singular even while their absolute distance contracts.
+Let $L=N-t$.  The finite identities
+\begin{align}
+(1-\alpha)\sum_{r=0}^{L-1}\alpha^r+\alpha^L&=1,
+\label{eq:dmop-direct-initial-weight-coefficient-one}
+\\
+(1-\alpha)\sum_{r=q}^{L-1}\alpha^{r-q}
++\alpha^{L-q}&=1,
+\qquad 1\leq q\leq L,
+\label{eq:dmop-direct-future-input-coefficient-one}
+\end{align}
+are exactly the coefficients in the full-score summation-by-parts identity
+(\ref{eq:full-score-summation-by-parts}).  Multiply Equation~
+(\ref{eq:dmop-direct-coupled-weight-gradient-bound}) by $1-\alpha$ for
+$r<L$, retain coefficient one for $r=L$, and sum.  Interchanging the two
+finite sums and using Equations~
+(\ref{eq:dmop-direct-initial-weight-coefficient-one})--
+(\ref{eq:dmop-direct-future-input-coefficient-one}) gives
+\begin{align}
+&(1-\alpha)\sum_{r=0}^{L-1}
+\E|w_{t+r,i}-w'_{t+r,i}|
++\E|w_{t+L,i}-w'_{t+L,i}|                                \notag\\
+&\quad\leq
+\left|w_{t,i}-w'_{t,i}\right|
++2G'(\theta)\sum_{q=1}^{L}\varrho^q                      \notag\\
+&\quad\leq
+\frac{2G'(\theta)}{1-\alpha}
++\frac{2G'(\theta)\varrho}{1-\varrho}                   \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{1-\alpha},
+\label{eq:dmop-direct-pair-full-score-continuation-bound}
+\end{align}
+where Equation~(\ref{eq:unrolled-filtered-weight}) gives
+$|w_{t,i}-w'_{t,i}|\leq2G'(\theta)/(1-\alpha)$.
+Thus the pair need not be total-variation mixing: location coupling and
+the affine contraction of its weight-gradient component give precisely
+the score-continuation bound used in Equation~
+(\ref{eq:dmop-direct-aggregated-local-oscillation}).
 
 We next define the two local terms rather than citing a fixed-terminal
 formula for their sum.  For the signed empirical error
@@ -1686,10 +2240,11 @@ Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:co
 
 
 In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
-The earlier truncation argument is retained below for comparison. A
-differentiable particle includes its location and gradient,
-but current-cloud forgetting alone does not control the accumulated
-genealogical score.  We prove the DMOP-$0$ result below and retain the
+The earlier truncation argument is retained below for comparison.  The
+current DMOP variables are the particle location and the accumulated
+weight gradient.  Forgetting of the location alone does not immediately
+control the accumulated genealogical score.  We prove the DMOP-$0$ result
+below and retain the
 former extension to $\alpha>0$ inactive for comparison.  Section~
 \ref{appendix:sharper-biasvar} gives an exact finite-$J$ genealogy audit,
 the bounds that remain valid for every $\alpha$, and the additional
@@ -2219,13 +2774,18 @@ Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1)$,
 $\theta=\phi$, Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Suppose also that the current differentiable-particle transition
-satisfies the Dobrushin contraction condition in Lemma~
-\ref{lem:dmop-alpha-variance}. Then
+used.  The bounded measurement-gradient input in Assumption~
+{\refAssumpBoundedMeasurement} is understood to be the current function
+$h_n(X_n)$ in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
 \begin{align}
 \Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
 &\lesssim
-\frac{NpG'(\theta)^2}{J(1-\alpha)^2},
+pG'(\theta)^2
+\left\{
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
+\right\},
 \label{eq:verified-theorem-five-variance}
 \\
 \E\left\|
@@ -2257,6 +2817,15 @@ CN\sqrt p\,G'(\theta)
 {(1-\varrho)(1-\alpha\varrho)}.
 \label{eq:verified-theorem-five-population-bias}
 \end{equation}
+If $J\geq N$, the second term in
+Equation~(\ref{eq:verified-theorem-five-variance}) is absorbed by the
+first, so
+\begin{equation}
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+\lesssim
+\frac{NpG'(\theta)^2}{J(1-\alpha)^2}.
+\label{eq:verified-theorem-five-variance-j-geq-n}
+\end{equation}
 Section~\ref{appendix:sharper-biasvar} gives the complete proof and an
 exact constant-weight calculation that checks the $N$ and $J$ dependence
 and explains the singularity as $\alpha\uparrow1$.
@@ -2278,12 +2847,24 @@ Theorem~\ref{thm:dmop-alpha-truncation-mse}. Write
 $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
 conditional score produced by the deterministic differentiated population
 recursion. At $\theta=\phi$, its $\alpha=1$ version is the exact
-conditional score $\nabla_\theta\ell_n(\theta)$. A differentiated
-particle is the particle carried by the differentiated algorithm: it
-includes its location and the corresponding simulator and weight gradients.
-Thus the particle-state bounds and mixing statements below apply directly
-to the differentiable particles used by DMOP; there is no separate
-``physical particle'' whose gradient must be treated afterward.
+conditional score $\nabla_\theta\ell_n(\theta)$.  The current DMOP object
+needed below is the pair consisting of the particle location and its
+accumulated weight gradient.  The location follows the ordinary particle
+transition to which Assumption~{\refAssumpBoundedProcess} applies.  Along
+each selected lineage, the second component obeys the existing recursion
+\begin{equation}
+\left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
+=
+\alpha
+\left.\nabla_\theta\log w_{n-1,k_j}^{F,\theta}\right|_{\theta=\phi}
++h_n(x_{n,j}^{F,\phi}).
+\label{eq:location-weight-gradient-pair-recursion}
+\end{equation}
+Here $h_n$ is the bounded current measurement-gradient function of the
+particle location.  We do not assume that this pair is mixing in total
+variation.  Instead, the proof expands the accumulated weight gradient
+into its single-time $h_n$ contributions, applies location
+forgetting to those contributions, and sums their powers of $\alpha$.
 Throughout this section, the observations are fixed. Expectations and
 variances are over the simulator and particle-filter random variables,
 conditional on those observations.
@@ -2351,7 +2932,7 @@ functional carried by the genealogy; that separate issue is audited
 below.
 
 For the path functionals below, evaluated at $\theta=\phi$, let $\rho_t$
-be the posterior path measure of the differentiable particle. Thus, for
+be the posterior path measure of the particle locations. Thus, for
 every integrable path functional $h$,
 \begin{equation}
 \rho_t(h)
@@ -2367,11 +2948,11 @@ h(X_{0:t})
 }.
 \label{eq:canonical-extended-posterior-path-law}
 \end{equation}
-Here $X_s$ already includes its gradient, as stipulated above, while
-$G_s(X_s)$ is the existing measurement potential. Equation~
-(\ref{eq:canonical-extended-posterior-path-law}) is therefore the usual
-posterior path measure on the state used by the differentiated particle
-filter, not an additional extension of it.
+Here $G_s(X_s)$ is the existing measurement potential.  The accumulated
+weight gradient is the second component of the current pair in Equation~
+(\ref{eq:location-weight-gradient-pair-recursion}); it is not included in
+the location variable $X_s$ or in the transition density appearing in
+Assumption~{\refAssumpBoundedProcess}.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -2402,7 +2983,7 @@ m(\xi_t)(h_k)
 \quad 1\leq k\leq t,
 \label{eq:explicit-path-empirical-measure}
 \end{equation}
-where \(\xi_{t,j}\) is the complete differentiable particle carried by
+where \(\xi_{t,j}\) is the complete ancestral particle path carried by
 particle \(j\) at time \(t\).  Thus \(h_k(\xi_{t,j})\) is the single
 time-$k$ measurement-score contribution on that particle, not an
 arbitrary functional denoted by $m$.  Equation~
@@ -2693,8 +3274,9 @@ Taking the supremum over \(x_s,x'_s\) gives
 \label{eq:posterior-backward-oscillation-contraction}
 \end{equation}
 
-The function $h_{k,i}$ is a bounded function of the differentiable particle
-$X_k$. Repeated conditioning through the backward kernels therefore gives
+The function $h_{k,i}=h_{k,i}(X_k)$ is a bounded current function of the
+particle location $X_k$. Repeated conditioning through the backward kernels
+therefore gives
 \begin{align}
 \E_{\rho_{n-1}}\{h_{k,i}(X_k)\mid X_{n-1}=x_{n-1}\}
 &=
@@ -2899,7 +3481,7 @@ Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator}, with multinomial resampling, there is
 $C<\infty$ such that, for every bounded real function $f$ of the current
-differentiable particle and every $t\geq1$,
+particle location and every $t\geq1$,
 \begin{equation}
 \left|
 \E m(\xi_t)(f)-\rho_t(f)
@@ -2909,21 +3491,21 @@ differentiable particle and every $t\geq1$,
 \label{eq:uniform-current-particle-weak-bias}
 \end{equation}
 The constant is independent of $t$ and $J$.
-Here ``current'' means measurable with respect to the time-$t$ filtering
-state to which Assumption {\refAssumpBoundedProcess} applies.  In
-particular, $h_t$ is current at time $t$.  For $s<t$, however,
+Here ``current'' means measurable with respect to the time-$t$ particle
+location to which Assumption {\refAssumpBoundedProcess} applies.  In
+particular, $h_t=h_t(X_t)$ is current at time $t$.  For $s<t$, however,
 $h_s(\xi_{t,j})$ is selected through the ancestry and is not assumed to
 be a function of the current location alone.  The lemma is therefore not
 applied directly to a historical $h_s$ at a later time.
 \end{lem}
 
 \begin{proof}[Proof.]
-The predictor cloud consists of the differentiable particles themselves,
-so a function of the current particle and its propagated simulator
-gradients is a current-state functional in the Feynman--Kac model already
-defined in Section~\ref{appendix:feynman}.  This statement does not turn
-an ancestral weight gradient into a function of the current location.
-The current-state marginal of
+The predictor cloud consists of the current particle locations.  A bounded
+function of the current location is therefore a current-state functional in
+the Feynman--Kac model already defined in Section~\ref{appendix:feynman}.
+This statement does not turn an accumulated weight gradient or an
+individual ancestral contribution into a function of the current location.
+The current-location marginal of
 $\rho_t$ is the filtering distribution, and hence
 \begin{equation}
 \rho_t(f)=\pi_t(f)=\Psi_t(\eta_t)(f).
@@ -3904,13 +4486,9 @@ which proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
 Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1)$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Suppose additionally that the Markov transition of the current
-differentiable particle, on which $h_n$ is a bounded current function,
-has Dobrushin coefficient bounded by a constant strictly smaller than one,
-uniformly in $n$.  This condition is automatic if the minorization in
-Assumption~{\refAssumpBoundedProcess} is imposed on that full Markov state,
-but is not asserted here to follow from a minorization of its
-physical-location marginal alone. Then
+used.  The bounded measurement-gradient input is the current function
+$h_n(X_n)$ in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
 \begin{equation}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -3936,8 +4514,7 @@ pG'(\theta)^2
 \label{eq:refined-dmop-alpha-variance}
 \end{equation}
 Here the multiplicative constants suppressed by $\lesssim$ depend on the
-fixed model bounds, including the differentiable-particle contraction
-rate, but are independent of $N,J$, and $\alpha$, and
+fixed model bounds, but are independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
 In particular, if $J\geq N$, the second term is absorbed by the first and
 \begin{equation}
@@ -4226,10 +4803,86 @@ The difference of the two exact ratio remainders is
 &=-(A_1-A_0)B_1-A_0(B_1-B_0).
 \label{eq:dmop-direct-two-remainder-products}
 \end{align}
-The identity $q_{t,n}^{1}=q_{t,n}^{0}F_{t,n}$ and
-Equation~(\ref{eq:dmop-direct-local-covariance-identity}) give a factor
-$\operatorname{osc}(F_{t,n})$ in both $A_1-A_0$ and $B_1-B_0$.
-The remaining factors have uniformly bounded oscillation.  Therefore
+For $l\in\{0,1\}$, define
+\begin{equation}
+a_l=\frac{q_{t,n}^{l}}{\mu(q_{t,n}^{l})}.
+\label{eq:dmop-direct-local-normalized-denominators}
+\end{equation}
+Then $\mu(a_l)=1$, and direct algebra gives
+\begin{align}
+A_l
+&=\frac{(\nu-\mu)(a_l)}{\nu(a_l)}
+=1-\frac1{\nu(a_l)},                                      \notag\\
+A_1-A_0
+&=
+\frac1{\nu(a_0)}-\frac1{\nu(a_1)}                         \notag\\
+&=
+\frac{\nu(a_1-a_0)}{\nu(a_0)\nu(a_1)}                    \notag\\
+&=
+\frac{(\nu-\mu)(a_1-a_0)}{\nu(a_0)\nu(a_1)}.
+\label{eq:dmop-direct-local-A-difference}
+\end{align}
+The normalization preceding
+Equation~(\ref{eq:dmop-direct-continuation-covariance-form}) and the
+identity $q_{t,n}^{1}=q_{t,n}^{0}F_{t,n}$ give
+\begin{equation}
+a_1-a_0
+=
+q_{t,n}^{0}
+\left\{
+\frac{F_{t,n}}{\bar\mu(F_{t,n})}-1
+\right\}.
+\label{eq:dmop-direct-local-normalizer-difference}
+\end{equation}
+Since $\bar\mu(F_{t,n})$ lies between the infimum and supremum of
+$F_{t,n}$, Equations~
+(\ref{eq:dmop-direct-future-function-contraction}) and
+(\ref{eq:dmop-direct-local-normalizer-difference}) imply
+\begin{equation}
+\operatorname{osc}(a_1-a_0)
+\leq C\operatorname{osc}(F_{t,n})
+\leq C\varrho^{n-t}.
+\label{eq:dmop-direct-local-normalizer-difference-bound}
+\end{equation}
+The same uniform ratio bounds give
+$\inf_l\nu(a_l)\geq C^{-1}$ and
+$\operatorname{osc}(a_0)\leq C$.  Moreover,
+\begin{align}
+B_1-B_0
+&=(\nu-\mu)
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\},                 \notag\\
+B_1
+&=(\nu-\mu)D_\mu\mathcal R_1,
+\end{align}
+where Equations~(\ref{eq:dmop-direct-ratio-derivative}) and
+(\ref{eq:dmop-direct-local-derivative-oscillation}) give
+\begin{align}
+\operatorname{osc}(D_\mu\mathcal R_1)
+&\leq CG'(\theta),                                        \notag\\
+\operatorname{osc}
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\}
+&\leq CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-local-B-factor-bounds}
+\end{align}
+Substitution into
+Equation~(\ref{eq:dmop-direct-two-remainder-products}) now gives, without
+discarding either empirical factor,
+\begin{align}
+|-A_1B_1+A_0B_0|
+&\leq
+C|(\nu-\mu)(a_1-a_0)|
+|(\nu-\mu)D_\mu\mathcal R_1|                              \notag\\
+&\quad+
+C|(\nu-\mu)(a_0)|
+|(\nu-\mu)
+\{D_\mu\mathcal R_1-D_\mu\mathcal R_0\}|.
+\label{eq:dmop-direct-local-remainder-four-factors}
+\end{align}
+Centering and dividing each function in
+Equation~(\ref{eq:dmop-direct-local-remainder-four-factors}) by its
+displayed positive oscillation gives the following bound.  If a displayed
+oscillation is zero, its corresponding empirical integral is identically
+zero and that product vanishes.
 \begin{align}
 &\left|
 C_{t,n}(\nu)-C_{t,n}(\mu)
@@ -4244,7 +4897,8 @@ CG'(\theta)\varrho^{n-t}
 \label{eq:dmop-direct-local-quadratic-remainder}
 \end{align}
 where all $f_{1,r}$ and $f_{2,r}$ have
-oscillations bounded by a constant depending only on Assumptions
+oscillations at most one; their additive centering constants do not
+change any $(\nu-\mu)$ integral.  The constants depend only on Assumptions
 {\refAssumpBoundedProcess} and {\refAssumpBoundedMeasurement}.
 This is the specialization of Equations~(3.1)--(3.4) and
 Appendix~A.3 of \citet{delMoral11} to the difference of the two ratios
@@ -4261,6 +4915,11 @@ We now write the full local telescope before summing any norms.  Put
 \end{cases}
 \label{eq:dmop-direct-local-predictor-law}
 \end{equation}
+In this display, $\Phi_t$ denotes the canonical path-space lift of the
+same predictor update: the potential is evaluated at the last location,
+multinomial selection chooses a complete path, and $M_t$ appends the new
+location.  Its last-coordinate marginal is the predictor update already
+defined in Section~\ref{appendix:feynman}.
 Thus, conditionally on the preceding prediction cloud, the $J$ particles
 forming $\eta_t^J$ are independent with common law $\mu_t^J$.  For the
 current predictor term in
@@ -4303,9 +4962,166 @@ cancel.  At $t=1$, $\mu_1^J=\eta_1$, and the remaining endpoints are
 exactly those displayed on the left.  The same verification proves
 Equation~(\ref{eq:dmop-direct-current-predictor-telescope}).
 
-The normalized semigroup derivative and remainder bounds in Appendix~A.3
-of \citet{delMoral11}, together with the differentiable-particle
-minorization stated in the lemma, give
+We now derive the required future-current bounds from Assumption~
+{\refAssumpBoundedProcess}; no contraction condition on the pair in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}) is needed.
+For $t\leq n$, define the predictor semigroup
+\begin{equation}
+\widetilde Q_{t,n}(f)
+=
+\begin{cases}
+f,&t=n,\\
+Q_{t,n-1}\{M_n(f)\},&t<n.
+\end{cases}
+\label{eq:dmop-direct-predictor-semigroup}
+\end{equation}
+Thus, directly from the definition of $\Phi_{t,n}$,
+\begin{equation}
+\Phi_{t,n}(\mu)(f)
+=
+\frac{\mu\widetilde Q_{t,n}(f)}
+{\mu\widetilde Q_{t,n}(1)}.
+\label{eq:dmop-direct-predictor-semigroup-ratio}
+\end{equation}
+For $t\leq r<n$, put
+\begin{equation}
+\widetilde P_{r,r+1}^{(n)}(x,A)
+=
+\frac{
+\displaystyle\int_A
+M_{r+1}(x,du)\widetilde Q_{r+1,n}(1)(u)
+}{
+\displaystyle\int
+M_{r+1}(x,du)\widetilde Q_{r+1,n}(1)(u)
+},
+\label{eq:dmop-direct-predictor-forward-kernel}
+\end{equation}
+and
+\begin{equation}
+\widetilde P_{t,n}^{(n)}
+=
+\widetilde P_{t,t+1}^{(n)}
+\widetilde P_{t+1,t+2}^{(n)}\cdots
+\widetilde P_{n-1,n}^{(n)},
+\qquad
+\widetilde P_{n,n}^{(n)}=I.
+\label{eq:dmop-direct-normalized-forward-product}
+\end{equation}
+The same calculation as Equation~
+(\ref{eq:weak-bias-forward-minorization}), now with
+$\widetilde Q_{r+1,n}(1)$ in place of $Q_{r+1,n}(1)$, gives
+\begin{equation}
+\widetilde P_{r,r+1}^{(n)}(x,A)
+\geq
+\frac{\underbar M}{\bar M}
+\frac{
+\displaystyle\int_A\widetilde Q_{r+1,n}(1)(u),du
+}{
+\displaystyle\int\widetilde Q_{r+1,n}(1)(u),du
+}.
+\label{eq:dmop-direct-predictor-forward-minorization}
+\end{equation}
+Consequently, every kernel in Equation~
+(\ref{eq:dmop-direct-predictor-forward-kernel}) has Dobrushin coefficient
+at most $\varrho$, and
+\begin{equation}
+\frac{\widetilde Q_{t,n}(f)}{\widetilde Q_{t,n}(1)}
+=
+\widetilde P_{t,n}^{(n)}f.
+\label{eq:dmop-direct-predictor-kernel-factorization}
+\end{equation}
+It follows that
+\begin{align}
+\operatorname{osc}\{\widetilde P_{t,n}^{(n)}h_{n,i}\}
+&\leq
+\varrho^{n-t}\operatorname{osc}(h_{n,i})                  \notag\\
+&\leq
+2G'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-current-score-forward-contraction}
+\end{align}
+The first variation of $H_{t,n}$ is
+\begin{align}
+D_\mu H_{t,n}(x)
+&=
+\frac{\widetilde Q_{t,n}(1)(x)}
+{\mu\widetilde Q_{t,n}(1)}
+\left\{
+\widetilde P_{t,n}^{(n)}h_{n,i}(x)-H_{t,n}(\mu)
+\right\}.
+\label{eq:dmop-direct-current-score-first-variation}
+\end{align}
+Indeed, multiplying the right side by $(\nu-\mu)$ and using
+$(\nu-\mu)(1)=0$ gives the linear term obtained by direct subtraction of
+$\nu\widetilde Q_{t,n}(h_{n,i})/
+\nu\widetilde Q_{t,n}(1)$ and
+$\mu\widetilde Q_{t,n}(h_{n,i})/
+\mu\widetilde Q_{t,n}(1)$.  Since
+$\widetilde Q_{t,n}(1)=Q_{t,n-1}(1)$ for $t<n$, Equation~
+(\ref{eq:weak-bias-uniform-normalizer-ratio}) gives
+\begin{equation}
+0<
+\frac{\widetilde Q_{t,n}(1)(x)}
+{\mu\widetilde Q_{t,n}(1)}
+\leq C.
+\label{eq:dmop-direct-current-score-normalizer-bound}
+\end{equation}
+The expression in braces in Equation~
+(\ref{eq:dmop-direct-current-score-first-variation}) is centered inside
+the range of $\widetilde P_{t,n}^{(n)}h_{n,i}$.  Therefore Equations~
+(\ref{eq:dmop-direct-current-score-forward-contraction}) and
+(\ref{eq:dmop-direct-current-score-normalizer-bound}) imply
+\begin{equation}
+\operatorname{osc}\{D_\mu H_{t,n}\}
+\leq
+CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-current-score-derivative-bound}
+\end{equation}
+
+For $t<s\leq n$, put $\mu_s=\Phi_{t,s}(\mu)$ and
+\begin{equation}
+d_{s,n}=D_{\mu_s}C_{s,n}^{(s)}.
+\end{equation}
+Because $h_{s,i}=h_{s,i}(X_s)$ is current and
+$q_{s,n}^{0},q_{s,n}^{1}$ are functions of the current location at time
+$s$, Equation~(\ref{eq:dmop-direct-ratio-derivative}) shows that
+$d_{s,n}$ is also a function of that current location.
+Equation~(\ref{eq:dmop-direct-local-derivative-oscillation}), applied at
+time $s$, gives
+\begin{equation}
+\operatorname{osc}(d_{s,n})
+\leq
+CG'(\theta)\varrho^{n-s}.
+\label{eq:dmop-direct-created-score-derivative-bound}
+\end{equation}
+Differentiating the composition in Equation~
+(\ref{eq:dmop-direct-backward-continuation-definition}) gives
+\begin{align}
+D_\mu C_{t,n}^{(s)}(x)
+&=
+\frac{\widetilde Q_{t,s}(1)(x)}
+{\mu\widetilde Q_{t,s}(1)}
+\left\{
+\widetilde P_{t,s}^{(s)}d_{s,n}(x)-\mu_s(d_{s,n})
+\right\}.
+\label{eq:dmop-direct-future-score-chain-rule}
+\end{align}
+Applying the Dobrushin contraction obtained from Equations~
+(\ref{eq:dmop-direct-predictor-forward-minorization}) and
+(\ref{eq:dmop-direct-normalized-forward-product}) to $d_{s,n}$, and then
+using Equation~(\ref{eq:dmop-direct-created-score-derivative-bound}),
+gives
+\begin{align}
+\operatorname{osc}\{\widetilde P_{t,s}^{(s)}d_{s,n}\}
+&\leq
+\varrho^{s-t}\operatorname{osc}(d_{s,n})                  \notag\\
+&\leq
+CG'(\theta)\varrho^{s-t}\varrho^{n-s}                    \notag\\
+&=
+CG'(\theta)\varrho^{n-t}.
+\label{eq:dmop-direct-future-score-two-contractions}
+\end{align}
+Using the normalizer bound once more in Equation~
+(\ref{eq:dmop-direct-future-score-chain-rule}) proves
 \begin{align}
 \operatorname{osc}\{D_\mu H_{t,n}\}
 &\leq CG'(\theta)\varrho^{n-t},                             \notag\\
@@ -4314,16 +5130,214 @@ minorization stated in the lemma, give
 \qquad t<s\leq n.
 \label{eq:dmop-direct-future-current-derivative-bounds}
 \end{align}
-The corresponding quadratic remainders have the same coefficients
-multiplied by a fixed finite sum of empirical products of the form in
-Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}).  The second
-line follows by first propagating the current function $h_{s,i}$ from
-time $t$ to its creation time $s$, and then applying the continuation
-calculation from $s$ to $n$; the two contraction factors are
+For the corresponding quadratic remainders, apply the exact ratio
+identity in Equation~(\ref{eq:dmop-direct-exact-ratio-expansion}) to
+$H_{t,n}$.  In detail, put
 \begin{equation}
-\varrho^{s-t}\varrho^{n-s}=\varrho^{n-t}.
-\label{eq:dmop-direct-future-score-two-contractions}
+a_H=\frac{\widetilde Q_{t,n}(1)}
+{\mu\widetilde Q_{t,n}(1)},
+\qquad
+A_H=\frac{(\nu-\mu)(a_H)}{\nu(a_H)},
+\qquad
+B_H=(\nu-\mu)D_\mu H_{t,n}.
 \end{equation}
+Direct subtraction of the two ratios gives
+\begin{equation}
+H_{t,n}(\nu)-H_{t,n}(\mu)
+-(\nu-\mu)D_\mu H_{t,n}
+=-A_HB_H.
+\label{eq:dmop-direct-current-predictor-exact-remainder}
+\end{equation}
+The uniform normalizer ratio and
+Equation~(\ref{eq:dmop-direct-current-score-derivative-bound}) give
+\begin{align}
+\operatorname{osc}(a_H)&\leq C,                            \notag\\
+\operatorname{osc}(D_\mu H_{t,n})
+&\leq CG'(\theta)\varrho^{n-t}.
+\end{align}
+Since $\mu(a_H)=1$ and $\inf\nu(a_H)\geq C^{-1}$,
+\begin{align}
+&\left|
+H_{t,n}(\nu)-H_{t,n}(\mu)
+-(\nu-\mu)D_\mu H_{t,n}
+\right|                                                     \notag\\
+&\quad\leq
+C|(\nu-\mu)(a_H)|
+|(\nu-\mu)D_\mu H_{t,n}|.
+\label{eq:dmop-direct-current-predictor-remainder-bound}
+\end{align}
+Thus this quadratic product has coefficient
+$CG'(\theta)\varrho^{n-t}$ after its two empirical factors are normalized
+by their oscillations.
+
+For $t<s$, the propagated ratios are, explicitly,
+\begin{equation}
+\mathcal R_{l,t,s}(\mu)
+=
+\frac{
+\mu\widetilde Q_{t,s}(h_{s,i}q_{s,n}^{l})
+}{
+\mu\widetilde Q_{t,s}(q_{s,n}^{l})
+},
+\qquad l\in\{0,1\},
+\label{eq:dmop-direct-propagated-ratios}
+\end{equation}
+and
+\begin{equation}
+C_{t,n}^{(s)}(\mu)
+=
+\mathcal R_{1,t,s}(\mu)-\mathcal R_{0,t,s}(\mu).
+\label{eq:dmop-direct-propagated-ratio-difference}
+\end{equation}
+Since $q_{s,n}^{1}=q_{s,n}^{0}F_{s,n}$,
+\begin{equation}
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{1})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}
+=
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{0}F_{s,n})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}.
+\label{eq:dmop-direct-propagated-future-ratio}
+\end{equation}
+The right side is a normalized forward kernel from $t$ to $s$ applied
+to $F_{s,n}$.  Repeating the minorization calculation in
+Equation~(\ref{eq:dmop-direct-predictor-forward-minorization}), with the
+terminal function $q_{s,n}^{0}$, gives
+\begin{align}
+\operatorname{osc}\left\{
+\frac{
+\widetilde Q_{t,s}(q_{s,n}^{1})
+}{
+\widetilde Q_{t,s}(q_{s,n}^{0})
+}
+\right\}
+&\leq
+\varrho^{s-t}\operatorname{osc}(F_{s,n})                 \notag\\
+&\leq
+C\varrho^{s-t}\varrho^{n-s}                              \notag\\
+&=
+C\varrho^{n-t}.
+\label{eq:dmop-direct-propagated-future-ratio-contraction}
+\end{align}
+Direct subtraction of the two ratios in
+Equation~(\ref{eq:dmop-direct-propagated-ratios}) gives
+\begin{align}
+\mathcal R_{l,t,s}(\nu)-\mathcal R_{l,t,s}(\mu)
+&=(\nu-\mu)D_\mu\mathcal R_{l,t,s}
+-A_{l,t,s}B_{l,t,s},                                      \notag\\
+A_{l,t,s}
+&=
+\frac{
+(\nu-\mu)\widetilde Q_{t,s}(q_{s,n}^{l})
+}{
+\nu\widetilde Q_{t,s}(q_{s,n}^{l})
+},                                                        \notag\\
+B_{l,t,s}
+&=(\nu-\mu)D_\mu\mathcal R_{l,t,s}.
+\label{eq:dmop-direct-propagated-exact-ratio-expansion}
+\end{align}
+Subtracting $l=0$ from $l=1$ yields the exact identity
+\begin{align}
+&C_{t,n}^{(s)}(\nu)-C_{t,n}^{(s)}(\mu)
+-(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+                                                               \notag\\
+&\quad=
+-(A_{1,t,s}-A_{0,t,s})B_{1,t,s}
+-A_{0,t,s}(B_{1,t,s}-B_{0,t,s}).
+\label{eq:dmop-direct-propagated-two-remainder-products}
+\end{align}
+The semigroup recursion gives the exact identities
+\begin{equation}
+\widetilde Q_{t,s}(q_{s,n}^{l})=q_{t,n}^{l},
+\qquad l\in\{0,1\}.
+\label{eq:dmop-direct-propagated-denominator-identity}
+\end{equation}
+Therefore $A_{l,t,s}=A_l$, where $A_l$ is the normalized denominator
+factor already calculated in
+Equations~(\ref{eq:dmop-direct-local-normalized-denominators})--
+(\ref{eq:dmop-direct-local-A-difference}).  In particular,
+\begin{align}
+A_{1,t,s}-A_{0,t,s}
+&=
+\frac{(\nu-\mu)(a_1-a_0)}
+{\nu(a_0)\nu(a_1)},                                      \notag\\
+A_{0,t,s}
+&=
+\frac{(\nu-\mu)(a_0)}{\nu(a_0)},                         \notag\\
+\operatorname{osc}(a_1-a_0)
+&\leq C\varrho^{n-t},
+\qquad
+\operatorname{osc}(a_0)\leq C,
+\qquad
+\inf_l\nu(a_l)\geq C^{-1}.
+\label{eq:dmop-direct-propagated-A-factor-bounds}
+\end{align}
+Furthermore,
+\begin{align}
+B_{1,t,s}-B_{0,t,s}
+&=
+(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\},
+                                                               \notag\\
+B_{1,t,s}
+&=(\nu-\mu)D_\mu\mathcal R_{1,t,s}.
+\label{eq:dmop-direct-propagated-B-factor-identities}
+\end{align}
+Equation~(\ref{eq:dmop-direct-future-current-derivative-bounds}) and the
+single-ratio derivative obtained directly from
+Equation~(\ref{eq:dmop-direct-propagated-ratios}) give
+\begin{align}
+\operatorname{osc}
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+&\leq CG'(\theta)\varrho^{n-t},                            \notag\\
+\operatorname{osc}(D_\mu\mathcal R_{1,t,s})
+&\leq CG'(\theta).
+\label{eq:dmop-direct-propagated-B-factor-bounds}
+\end{align}
+Substituting Equations~
+(\ref{eq:dmop-direct-propagated-A-factor-bounds})--
+(\ref{eq:dmop-direct-propagated-B-factor-bounds}) into
+Equation~(\ref{eq:dmop-direct-propagated-two-remainder-products}) gives
+\begin{align}
+&\left|
+C_{t,n}^{(s)}(\nu)-C_{t,n}^{(s)}(\mu)
+-(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}
+\right|                                                     \notag\\
+&\quad\leq
+C|(\nu-\mu)(a_1-a_0)|
+|(\nu-\mu)D_\mu\mathcal R_{1,t,s}|                        \notag\\
+&\qquad+
+C|(\nu-\mu)(a_0)|
+|(\nu-\mu)
+\{D_\mu\mathcal R_{1,t,s}-D_\mu\mathcal R_{0,t,s}\}|.
+\label{eq:dmop-direct-propagated-quadratic-remainder}
+\end{align}
+The first product in
+Equation~(\ref{eq:dmop-direct-propagated-quadratic-remainder}) has
+oscillation product at most $CG'(\theta)\varrho^{n-t}$, and the second
+has the same bound.  Centering and dividing the four functions by their
+displayed oscillation bounds therefore places the common coefficient
+$CG'(\theta)\varrho^{n-t}$ outside two products of empirical errors of
+functions having oscillation at most one.  This is the required
+coefficient for the quadratic remainder when $t<s$.  Together with
+Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}) for $s\leq t$
+and the direct ratio expansion for $H_{t,n}$, all quadratic remainders
+therefore have the coefficients displayed in
+Equation~(\ref{eq:dmop-direct-future-current-derivative-bounds}).
+
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}) shows why no
+additional mixing coefficient is required for the accumulated weight
+gradient: the previously accumulated component is multiplied by
+$\alpha$, while every new
+input is a bounded function $h_s(X_s)$ of the mixing location.
+The proof now sums those explicit coefficients before taking norms.
 After collecting all score contributions at their local sampling time
 $t$, those with $s\leq t\leq n$ have total coefficient
 \begin{align}
@@ -4366,6 +5380,104 @@ quadratic remainder, are at most
 \frac{CG'(\theta)}{1-\alpha}.
 \label{eq:dmop-direct-aggregated-local-oscillation}
 \end{equation}
+
+The same bound can be seen directly on the current location--weight-gradient
+pair.  For this calculation only, write
+\begin{equation}
+w_{t,i}
+=
+\left.\partial_{\theta_i}\log w_t^{F,\theta}\right|_{\theta=\phi}.
+\end{equation}
+Consider two pairs $(x,w_{t,i})$ and $(x',w'_{t,i})$ at time $t$.
+For each terminal time $t+r$, couple the normalized forward location
+kernels in Equation~(\ref{eq:dmop-direct-normalized-forward-product}).
+Equation~(\ref{eq:weak-bias-forward-minorization}) permits the coupling
+to be chosen so that, at every intermediate time $t+q$,
+\begin{equation}
+\Pr\{X_{t+q}\ne X'_{t+q}\}
+\leq
+\varrho^q.
+\label{eq:dmop-direct-location-coupling}
+\end{equation}
+Iteration of Equation~(\ref{eq:location-weight-gradient-pair-recursion})
+gives
+\begin{align}
+w_{t+r,i}
+&=
+\alpha^r w_{t,i}
++\sum_{q=1}^{r}\alpha^{r-q}h_{t+q,i}(X_{t+q}),             \notag\\
+w'_{t+r,i}
+&=
+\alpha^r w'_{t,i}
++\sum_{q=1}^{r}\alpha^{r-q}h_{t+q,i}(X'_{t+q}).
+\label{eq:dmop-direct-coupled-weight-gradient-iteration}
+\end{align}
+Equations~(\ref{eq:bounded-realized-measurement-score}),
+(\ref{eq:dmop-direct-location-coupling}), and
+(\ref{eq:dmop-direct-coupled-weight-gradient-iteration}) imply
+\begin{align}
+\E|w_{t+r,i}-w'_{t+r,i}|
+&\leq
+\alpha^r|w_{t,i}-w'_{t,i}|
++2G'(\theta)\sum_{q=1}^{r}\alpha^{r-q}\varrho^q.
+\label{eq:dmop-direct-coupled-weight-gradient-bound}
+\end{align}
+The remaining convolution is the finite sum
+\begin{equation}
+\sum_{q=1}^{r}\alpha^{r-q}\varrho^q
+=
+\begin{cases}
+\displaystyle
+\frac{\varrho(\alpha^r-\varrho^r)}{\alpha-\varrho},
+&\alpha\ne\varrho,\\[2mm]
+r\alpha^r,&\alpha=\varrho.
+\end{cases}
+\label{eq:dmop-direct-pair-forgetting-convolution}
+\end{equation}
+Hence the coupled pair forgets its initial condition in the bounded
+location--absolute-weight metric used in
+Equation~(\ref{eq:dmop-direct-coupled-weight-gradient-bound}), at the
+geometric rate $\max(\alpha,\varrho)^r$ apart from the factor $r$ when
+$\alpha=\varrho$.  This does not assert total-variation contraction of
+the pair: deterministic differences in the second coordinate can remain
+mutually singular even while their absolute distance contracts.
+Let $L=N-t$.  The finite identities
+\begin{align}
+(1-\alpha)\sum_{r=0}^{L-1}\alpha^r+\alpha^L&=1,
+\label{eq:dmop-direct-initial-weight-coefficient-one}
+\\
+(1-\alpha)\sum_{r=q}^{L-1}\alpha^{r-q}
++\alpha^{L-q}&=1,
+\qquad 1\leq q\leq L,
+\label{eq:dmop-direct-future-input-coefficient-one}
+\end{align}
+are exactly the coefficients in the full-score summation-by-parts identity
+(\ref{eq:full-score-summation-by-parts}).  Multiply Equation~
+(\ref{eq:dmop-direct-coupled-weight-gradient-bound}) by $1-\alpha$ for
+$r<L$, retain coefficient one for $r=L$, and sum.  Interchanging the two
+finite sums and using Equations~
+(\ref{eq:dmop-direct-initial-weight-coefficient-one})--
+(\ref{eq:dmop-direct-future-input-coefficient-one}) gives
+\begin{align}
+&(1-\alpha)\sum_{r=0}^{L-1}
+\E|w_{t+r,i}-w'_{t+r,i}|
++\E|w_{t+L,i}-w'_{t+L,i}|                                \notag\\
+&\quad\leq
+\left|w_{t,i}-w'_{t,i}\right|
++2G'(\theta)\sum_{q=1}^{L}\varrho^q                      \notag\\
+&\quad\leq
+\frac{2G'(\theta)}{1-\alpha}
++\frac{2G'(\theta)\varrho}{1-\varrho}                   \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{1-\alpha},
+\label{eq:dmop-direct-pair-full-score-continuation-bound}
+\end{align}
+where Equation~(\ref{eq:unrolled-filtered-weight}) gives
+$|w_{t,i}-w'_{t,i}|\leq2G'(\theta)/(1-\alpha)$.
+Thus the pair need not be total-variation mixing: location coupling and
+the affine contraction of its weight-gradient component give precisely
+the score-continuation bound used in Equation~
+(\ref{eq:dmop-direct-aggregated-local-oscillation}).
 
 We next define the two local terms rather than citing a fixed-terminal
 formula for their sum.  For the signed empirical error
@@ -6919,9 +8031,9 @@ Suppose the observations are fixed, $J\geq2$, $\theta=\phi$,
 $\alpha\in[0,1)$, Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Suppose also that the current differentiable-particle transition
-satisfies the Dobrushin contraction condition in Lemma~
-\ref{lem:dmop-alpha-variance}. Then
+used.  The bounded measurement-gradient input in Assumption~
+{\refAssumpBoundedMeasurement} is the current function $h_n(X_n)$ in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
 \begin{equation}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -7163,7 +8275,7 @@ finite sums should be minimized directly rather than replacing them by
 $(1-\alpha)^{-1}$.
 \end{remark}
 
-\begin{remark}[The separate weight-gradient recursion and a sharper rate]
+\begin{remark}[The current location--weight-gradient pair and a sharper rate]
 At $\theta=\phi$, the accumulated weight gradient obeys the existing
 recursions
 \begin{align}
@@ -7178,36 +8290,36 @@ recursions
 &=
 \left.\partial_{\theta_i}\log w_{n,k_j}^{P,\theta}
 \right|_{\theta=\phi}
-+h_{n,i}(\xi_{n,k_j}).
++h_{n,i}(x_{n,k_j}^{P,\phi}).
 \label{eq:separate-weight-gradient-recursion}
 \end{align}
-It is useful to view this as a recursion driven by the particle system,
-but it is not an ordinary total-variation-mixing state: two distinct
-common shifts remain distinct under multiplication by $\alpha$.
-Nevertheless, a common shift cancels from the score difference in
-Equation~(\ref{eq:conditional-score-weight-difference}).  The proof of
-Lemma~\ref{lem:dmop-alpha-variance} uses this score-level cancellation
-by collecting all lag contributions before taking norms.  Consequently,
-the memory cost is $(1-\alpha)^{-1}$ in local root mean square and
-$(1-\alpha)^{-2}$ in the displayed MSE; no additional
-$(1-\alpha)^{-1}$ mixing-time factor is introduced.
+The current object is therefore the pair consisting of the particle
+location and its accumulated weight gradient.  Only the location is
+required to mix in total variation under Assumption~
+{\refAssumpBoundedProcess}; the affine recursion for the second component
+is treated directly.  Two different common shifts in the second component
+need not mix in total variation, but a common shift cancels from the score
+difference in Equation~
+(\ref{eq:conditional-score-weight-difference}).
 
-Equivalently, the accumulated weight gradient can be regarded as a
-separate recursion driven by the current differentiable particle, but in
-the quotient that identifies common additive shifts.  Once two driving
-particle trajectories agree, their remaining centered weight-gradient
-difference is multiplied by $\alpha$ at every step.  More precisely, the
-coefficient in the proof for a contribution already created by local
-time $t$ is $\alpha^{n-s}\varrho^{n-t}$ for $s\leq t\leq n$, which is
-at most $(\alpha\varrho)^{n-t}$.  A contribution created after $t$ has
-coefficient
-$\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}$ for $t<s\leq n$.
-Summing these coefficients gives the $(1-\alpha\varrho)^{-1}$ factors
-already displayed in
-Equations~(\ref{eq:dmop-direct-past-score-coefficient-sum}) and
-(\ref{eq:dmop-direct-future-score-coefficient-sum}).  Thus its effective
-memory depends jointly on the mixing of the current particle and on
-$\alpha$; it is not a second, independent mixing penalty.
+Equations~(\ref{eq:dmop-direct-location-coupling})--
+(\ref{eq:dmop-direct-pair-full-score-continuation-bound}) give the precise
+calculation.  A previously accumulated difference is multiplied by
+$\alpha$ at each step.  A new difference in $h_{t+q}(X_{t+q})$ occurs
+only while the coupled locations differ, an event having probability at
+most $\varrho^q$.  Finally,
+\begin{equation}
+(1-\alpha)\sum_{r=q}^{L-1}\alpha^{r-q}+\alpha^{L-q}=1
+\end{equation}
+shows that full-score summation by parts counts each such difference once,
+rather than adding another factor $(1-\alpha)^{-1}$.  Consequently, the
+memory cost is $(1-\alpha)^{-1}$ in local root mean square and
+$(1-\alpha)^{-2}$ in the displayed MSE.  The factors
+$(1-\alpha\varrho)^{-1}$ in Equations~
+(\ref{eq:dmop-direct-past-score-coefficient-sum}) and
+(\ref{eq:dmop-direct-future-score-coefficient-sum}) retain the interaction
+between location mixing and discounting; there is no second independent
+mixing penalty.
 
 The $N^2/\{J^2(1-\alpha)^2\}$ term in
 Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}) comes from
