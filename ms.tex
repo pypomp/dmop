@@ -702,35 +702,51 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 
 \kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}.
 Under (A2), the clarified forms of (A3) and (A5), fixed observations,
-multinomial resampling, $J\geq2$, $\theta=\phi$, and $\alpha\in[0,1]$,
-there are $C<\infty$ and $\varrho\in(0,1)$, independent of $N,J,\alpha$, such that
+multinomial resampling, $J\geq2$, $\theta=\phi$, and $\alpha\in[0,1)$,
+suppose additionally that the Markov transition of the current
+differentiable particle has Dobrushin coefficient uniformly smaller than
+one.  This last condition is automatic if (A2) is imposed on the full
+differentiable-particle state, but it is not asserted to follow from a
+minorization of the physical-location marginal alone.  Then
 \[
-\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell\|_2^2
-\lesssim pG'(\theta)^2\left[
-J^{-1}\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-+J^{-2}\left(\sum_{n=1}^N\sum_{r=0}^{n-1}\alpha^r\right)^2
-+N^2\left\{\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}\right\}^2
-\right],
-\]
-and
-\[
-\Var(\nabla_\theta\hat\ell^\alpha)
-\lesssim pG'(\theta)^2
-\min\left\{N^2,\,
-J^{-1}\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2\right\}.
-\]
-For fixed $\alpha<1$, the variance contribution is
-$O\{NpG'(\theta)^2/[J(1-\alpha)^2]\}$ and the MSE is bounded by
-\[
+\E\|\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)\|_2^2,
+\quad
+\Var\{\nabla_\theta\hat\ell^\alpha(\theta)\}
+\lesssim
 pG'(\theta)^2\left\{
 \frac{N}{J(1-\alpha)^2}
-+N^2(1-\alpha)^2
 +\frac{N^2}{J^2(1-\alpha)^2}
 \right\}.
 \]
-At $\alpha=1$, the finite sums give orders $N^3/J$ and $N^4/J^2$ for
-the variance and squared particle-bias terms.}
+Consequently,
+\[
+\E\|\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)\|_2^2
+\lesssim pG'(\theta)^2\left[
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2\right].
+\]
+Here $\varrho\in(0,1)$ is independent of $N,J$, and $\alpha$.  The exact
+bias--variance identity also holds, and the population discount bias is
+bounded by
+\[
+\|\nabla_\theta\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2
+\leq
+CN\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\]
+The $N^2/J^2$ term is the quadratic self-normalized-ratio remainder, not
+an additional oscillation normalization of the full score.  If $J\geq N$,
+it is absorbed by the $N/J$ term.  A sharper variance upper bound of order
+$N/\{J(1-\alpha^2)\}$ before horizon saturation would require the
+centered two- and four-lineage estimate stated in Section~S7 and is not
+claimed under the displayed conditions.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
@@ -744,40 +760,30 @@ The clarified (A3) and (A5) justify differentiation under each finite-horizon
 simulator expectation.
 Posterior backward-kernel contraction gives geometric decay of the population lag
 coefficients and hence the population discount bias.
-For the particle bias, telescope the local empirical updates.
-After centering the empirical numerator, the one-update bias is the expectation of
-the product of a numerator fluctuation and a random-normalizer fluctuation; each is
-$O(J^{-1/2})$, so the bias is $O(J^{-1})$.
-Geometric filter contraction makes the sum of these local weak biases uniform in time.
-Applying this result to the current filtered-weight tangent gives full particle bias
-\[
-\frac{\sqrt p\,G'(\theta)}{J}
-\sum_{n=1}^N\sum_{r=0}^{n-1}\alpha^r.
-\]
-For the variance, the current differentiable particle includes the accumulated
-weight tangent.
-The centered $L^4$ particle bound, Davydov's inequality, and particle-system mixing
-give
-\[
-\Var(\nabla_\theta\hat\ell^\alpha)
-\lesssim
-\frac{pG'(\theta)^2}{J}
-\sum_{n=1}^N\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
-\]
-Combining these two bounds with the population discount bias proves the theorem.
-Section~S7 contains the full proof; it does not claim the stronger
-$(1-\alpha)^{-1}$ variance factor.}
+A local Del Moral--Rio perturbation expansion is then applied to each
+continuation ratio before summing over discounted observation times.  Conditional
+multinomial centering makes the first-order local fields martingale differences,
+whose squared contributions sum to $N/\{J(1-\alpha)^2\}$; the quadratic ratio
+remainders sum to $N^2/\{J^2(1-\alpha)^2\}$.  The separate accumulated
+weight-gradient recursion contracts at rate $\alpha$ modulo common additive
+shifts, and those shifts cancel from the normalized score.  Its effective memory
+therefore depends jointly on the current-particle contraction and $\alpha$,
+through the factors $1-\alpha\varrho$ already present in the proof, rather than
+through an additional independent mixing-time factor.  Uniform filter-derivative
+stability results of Tadi\'c--Doucet and Del Moral--Doucet--Singh provide standard
+sufficient conditions for the extra differentiable-particle contraction, but
+physical-location minorization alone does not prove it.  The uniform $J^{-1}$
+current-filter weak-bias lemma is not applied directly to a historical
+genealogical functional.}
 \kevin{Audit of the other SI variance arguments.
-The original DMOP-$0$ and fixed-lag calculations are retained in the supplement.
-Their use of $\lesssim$ intentionally suppresses the particle-system mixing-time
-factor.
-Once particle is read in the differentiated sense used by the
-algorithm---location, simulator tangent, and weight tangent---the current-particle
-covariance argument applies directly; there is no separate augmented-state or
-tangent-stability gap.
-The full DMOP-$\alpha$ calculation yields
-$N/[J(1-\alpha)^2]$ for fixed $\alpha<1$.
-No stronger $(1-\alpha)^{-1}$ factor is asserted.}
+The DMOP-$0$ calculation remains valid because no historical score is carried
+across resampling times.  The earlier fixed-lag calculation does not remain valid:
+in the exact constant-weight model its variance has order $N(k+1)/J$ for
+$1\ll k\ll\min(N,J)$ and order $N^2/J$ at $k=N-1$, rather than
+$\{N+(k+1)^2\}/J$.  A differentiable particle does include its location and
+gradient; the unresolved issue is not the particle's semantics, but covariance
+among score contributions that share a resampling genealogy.  Current-cloud
+mixing and suppression of its mixing-time factor do not remove that covariance.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -811,9 +817,18 @@ identical to the complete-data likelihood-ratio score contributions of
 \citet{poyiadjis11}, so their lower bound
 does not automatically transfer to DMOP-$1$.
 There is also no DMOP-$0$ MSE lower bound under the present assumptions.
-The finite-sum upper envelope displays opposing $\alpha$ directions, but hidden
-constants and one-sided bounds do not prove that the actual MSE has an interior
-minimizer.}
+For $\alpha<1$, the direct theorem above gives a finite-particle tradeoff without
+the unproved centered genealogy estimate.  Balancing its displayed upper bound
+gives
+\[
+1-\alpha\asymp\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4},
+\qquad
+\operatorname{MSE}\lesssim
+pG'(\theta)^2N\left(\frac{N}{J}+\frac{N^2}{J^2}\right)^{1/2}.
+\]
+This is only the minimizer of the proved upper bound.  The signed population
+bias can cancel, so neither this calculation nor the endpoint bounds prove that
+the actual MSE has, or lacks, an interior minimizer.}
 
 
 
