@@ -3142,6 +3142,7 @@ $0\leq r<n$,
 We derive the result from the posterior update and the contraction of the
 posterior backward kernels.
 
+\medskip\noindent\emph{Step 1: one-step posterior update.}\quad
 First suppose that \(1\leq r<n\), and put \(k=n-r\). Fix a coordinate
 \(i\in\{1,\ldots,p\}\), and let \(h_{k,i}\) be the corresponding
 coordinate of $h_k$ in Equation~(\ref{eq:actual-path-score}). By
@@ -3207,6 +3208,7 @@ M_n(G_n)(x_{n-1})
 \label{eq:predictive-potential-upper}
 \end{align}
 
+\medskip\noindent\emph{Step 2: backward-kernel contraction.}\quad
 We next control how much information about the path through time \(k\)
 can remain at time \(n-1\). For \(s\geq1\), the posterior backward kernel
 from \(X_s\) to \(X_{s-1}\), written only in this proof as \(B_s\), is
@@ -3285,6 +3287,7 @@ Taking the supremum over \(x_s,x'_s\) gives
 \label{eq:posterior-backward-oscillation-contraction}
 \end{equation}
 
+\medskip\noindent\emph{Step 3: propagate the time-$k$ contribution.}\quad
 The function $h_{k,i}=h_{k,i}(X_k)$ is a bounded current function of the
 particle location $X_k$. Repeated conditioning through the backward kernels
 therefore gives
@@ -3320,6 +3323,7 @@ backward kernel. If \(r\geq2\), applying Equation~
 \label{eq:conditional-past-score-forgetting}
 \end{align}
 
+\medskip\noindent\emph{Step 4: covariance identity and geometric bound.}\quad
 To finish, abbreviate the conditional expectation on the left of
 Equation~(\ref{eq:conditional-past-score-forgetting}) by \(H\), only for
 the next calculation. Since the \(X_{n-1}\)-marginal of \(\rho_{n-1}\)
@@ -3457,6 +3461,7 @@ C\sqrt p\,G'(\theta)\varrho^r,
 \label{eq:lag-vector-geometric-bound}
 \end{align}
 
+\medskip\noindent\emph{Step 5: the zero-lag case.}\quad
 Finally, when \(r=0\), Equation~
 (\ref{eq:lag-coefficient-definitions}) and
 Equation~(\ref{eq:bounded-realized-measurement-score}) give
@@ -3511,6 +3516,11 @@ applied directly to a historical $h_s$ at a later time.
 \end{lem}
 
 \begin{proof}[Proof.]
+The proof has four stages: reduce the filtered average to the prediction
+cloud, establish contraction of the normalized semigroup, compute the
+$J^{-1}$ bias of one particle update, and telescope those updates.
+
+\medskip\noindent\emph{Step 1: prediction-to-filtering reduction.}\quad
 The predictor cloud consists of the current particle locations.  A bounded
 function of the current location is therefore a current-state functional in
 the Feynman--Kac model already defined in Section~\ref{appendix:feynman}.
@@ -3537,6 +3547,7 @@ Therefore
 \label{eq:terminal-resampling-unbiased}
 \end{align}
 
+\medskip\noindent\emph{Step 2: normalized-semigroup contraction.}\quad
 Take $\Phi_{t,t}$ to be the identity. For $1\leq p\leq t$, define
 \begin{align}
 Q_{t,t}(f)(x)
@@ -3656,6 +3667,7 @@ It follows that
 \label{eq:weak-bias-normalized-semigroup-contraction}
 \end{equation}
 
+\medskip\noindent\emph{Step 3: one complete particle update.}\quad
 We next bound one complete selection--mutation update. For $p=1$, put
 $\mu=\eta_1=\pi_0M_1$. For $p\geq2$, condition on $\eta_{p-1}^J$ and put
 \begin{equation}
@@ -3663,7 +3675,9 @@ $\mu=\eta_1=\pi_0M_1$. For $p\geq2$, condition on $\eta_{p-1}^J$ and put
 \label{eq:weak-bias-local-conditional-law}
 \end{equation}
 In either case, the particles forming $\eta_p^J$ are conditionally
-independent with common law $\mu$. Within this calculation, put
+independent with common law $\mu$.  Here $Q_{p,t}$ propagates the local
+error to time $t$: $q$ isolates its random normalizer, while $d$ is the
+centered empirical fluctuation.  Within this calculation, put
 \begin{align}
 q
 &=
@@ -3780,6 +3794,7 @@ R
 \label{eq:weak-bias-one-complete-update}
 \end{align}
 
+\medskip\noindent\emph{Step 4: telescope over update times.}\quad
 It remains to write the exact full-update telescope. Since
 $\eta_t=\Phi_{1,t}(\eta_1)$,
 \begin{align}
@@ -3822,6 +3837,7 @@ Equations~(\ref{eq:current-state-posterior-filter-identity}) and
 (\ref{eq:terminal-resampling-unbiased}).
 \end{proof}
 
+\iffalse
 \begin{remark}[Particle bias of the DMOP-$\alpha$ score]
 \label{lem:dmop-full-particle-bias}
 Suppose $\theta=\phi$ and the model and resampling conditions of Lemma~
@@ -3920,6 +3936,7 @@ Equation~(\ref{eq:conditional-score-particle-bias-direct}).  Finally,
 \end{align}
 which proves Equation~(\ref{eq:full-score-particle-bias-direct}).
 \end{proof}
+\fi
 
 \iffalse
 \begin{proof}[Superseded proof.]
@@ -4097,6 +4114,7 @@ G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
 \end{lem}
 
 \begin{proof}[Proof.]
+\medskip\noindent\emph{Step 1: particle summation by parts.}\quad
 We first record the summation-by-parts identity used again in the variance
 proof. Sum Equation~(\ref{eq:conditional-score-path-decomposition}) over
 $n=1,\ldots,N$ and put $k=n-r$. Since the sums are finite,
@@ -4134,6 +4152,7 @@ m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_k\right)
 +m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_k\right).
 \label{eq:full-score-summation-by-parts}
 \end{align}
+\medskip\noindent\emph{Step 2: population identity and uniform bound.}\quad
 The same algebra applied to
 Equation~(\ref{eq:population-conditional-score-path-decomposition}) gives
 \begin{align}
@@ -4537,6 +4556,13 @@ In particular, if $J\geq N$, the second term is absorbed by the first and
 \end{lem}
 
 \begin{proof}[Proof.]
+The proof keeps three time indices explicit: $s$ is the time at which
+$h_{s,i}$ is created, $t$ is the local particle-sampling time, and $n$ is
+the conditional-score time.  We first separate terminal resampling, then
+control predictable contributions for $s\leq t$ and $t<s$, and only then
+sum the local particle errors over $t$.
+
+\medskip\noindent\emph{Step 1: terminal multinomial resampling.}\quad
 Fix a coordinate $i$ and write
 \begin{equation}
 Z_i^J=\partial_{\theta_i}\hat\ell^\alpha(\theta),
@@ -4610,6 +4636,7 @@ It follows that
 where the last line uses
 $\Var(Y)\leq\operatorname{osc}(Y)^2/4$.
 
+\medskip\noindent\emph{Step 2: exact predictable-score decomposition.}\quad
 We next derive the local perturbation bound for the predictable part.
 Fix $s\leq t\leq n$ and retain the manuscript's $h_{s,i}$.  Define
 \begin{align}
@@ -4697,6 +4724,7 @@ m(\xi_n)(h_{n,i})
 This proves Equation~
 (\ref{eq:dmop-direct-exact-predictor-decomposition}); the population
 identity follows by the same cancellation.
+\medskip\noindent\emph{Step 3: continuation when $s\leq t$.}\quad
 The recursion for $Q_{t,n}$ and preservation of $h_{s,i}$ after time
 $s$ give, for $s<t\leq n$,
 \begin{equation}
@@ -4915,6 +4943,7 @@ This is the specialization of Equations~(3.1)--(3.4) and
 Appendix~A.3 of \citet{delMoral11} to the difference of the two ratios
 in Equation~(\ref{eq:dmop-direct-continuation-functional}).
 
+\medskip\noindent\emph{Step 4: telescope over particle updates.}\quad
 We now write the full local telescope before summing any norms.  Put
 \begin{equation}
 \eta_t^J=m(\xi_t^P),
@@ -4973,6 +5002,7 @@ cancel.  At $t=1$, $\mu_1^J=\eta_1$, and the remaining endpoints are
 exactly those displayed on the left.  The same verification proves
 Equation~(\ref{eq:dmop-direct-current-predictor-telescope}).
 
+\medskip\noindent\emph{Step 5: continuation when $t<s$.}\quad
 We now derive the required future-current bounds from Assumption~
 {\refAssumpBoundedProcess}; no contraction condition on the pair in
 Equation~(\ref{eq:location-weight-gradient-pair-recursion}) is needed.
@@ -5343,6 +5373,7 @@ and the direct ratio expansion for $H_{t,n}$, all quadratic remainders
 therefore have the coefficients displayed in
 Equation~(\ref{eq:dmop-direct-future-current-derivative-bounds}).
 
+\medskip\noindent\emph{Step 6: sum deterministic coefficients before norms.}\quad
 Equation~(\ref{eq:location-weight-gradient-pair-recursion}) shows why no
 additional mixing coefficient is required for the accumulated weight
 gradient: the previously accumulated component is multiplied by
@@ -5392,6 +5423,7 @@ quadratic remainder, are at most
 \label{eq:dmop-direct-aggregated-local-oscillation}
 \end{equation}
 
+\iffalse
 The same bound can be seen directly on the current
 location--log-weight-gradient
 pair.  For this calculation only, write
@@ -5490,7 +5522,9 @@ Thus the pair need not be total-variation mixing: location coupling and
 the affine contraction of its log-weight-gradient component give precisely
 the score-continuation bound used in Equation~
 (\ref{eq:dmop-direct-aggregated-local-oscillation}).
+\fi
 
+\medskip\noindent\emph{Step 7: local particle errors.}\quad
 We next define the two local terms rather than citing a fixed-terminal
 formula for their sum.  For the signed empirical error
 $\eta_t^J-\mu_t^J$, put
@@ -5594,6 +5628,7 @@ Equation~(\ref{eq:dmop-direct-local-empirical-moments}) follows by
 Cauchy--Schwarz applied to two instances of
 Equation~(\ref{eq:dmop-direct-local-fourth-moment}).
 
+\medskip\noindent\emph{Step 8: martingale and remainder summation.}\quad
 Within each of the two families, the variables $R_{n,i}^J$ and
 $\Gamma_{t,i}^J$ are martingale differences in chronological order.
 The two families need not be mutually orthogonal because the selection
@@ -5647,6 +5682,104 @@ Summing this inequality over the coordinates proves
 Equation~(\ref{eq:refined-dmop-alpha-variance}).  If $J\geq N$, then
 $N^2/J^2\leq N/J$, which proves
 Equation~(\ref{eq:refined-dmop-alpha-variance-j-geq-n}).
+\end{proof}
+
+\begin{cor}[Particle bias of the DMOP-$\alpha$ score]
+\label{lem:dmop-full-particle-bias}
+Under the conditions of Lemma~\ref{lem:dmop-alpha-variance}, for
+$\alpha\in[0,1)$,
+\begin{align}
+\left\|
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\|_2
+&\leq
+\frac{C\sqrt p\,G'(\theta)}{J(1-\alpha)},
+\label{eq:conditional-score-particle-bias-direct}
+\\
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+&\leq
+\frac{CN\sqrt p\,G'(\theta)}{J(1-\alpha)}.
+\label{eq:full-score-particle-bias-direct}
+\end{align}
+\end{cor}
+
+\begin{proof}[Proof.]
+Fix a coordinate $i$ and a conditional-score time $n$.  Restrict the exact
+local decomposition in Equation~
+(\ref{eq:dmop-direct-local-error-decomposition}) to this value of $n$.
+The terminal resampling term and every first-order local field have
+conditional mean zero.  The quadratic ratio remainders are the only
+terms with nonzero expectation.  Equations~
+(\ref{eq:dmop-direct-local-quadratic-remainder}),
+(\ref{eq:dmop-direct-future-current-derivative-bounds}), and
+(\ref{eq:dmop-direct-local-empirical-moments}) therefore give
+\begin{align}
+&\left|
+\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\partial_{\theta_i}\ell_n^\alpha(\theta)
+\right|                                                     \notag\\
+&\quad\leq
+\frac{CG'(\theta)}J
+\left\{
+\sum_{t=1}^{n}\varrho^{n-t}
++\sum_{t=1}^{n}\sum_{s=1}^{t}
+\alpha^{n-s}\varrho^{n-t}
++\sum_{t=1}^{n-1}\sum_{s=t+1}^{n}
+\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}
+\right\}.
+\label{eq:conditional-score-bias-three-sums}
+\end{align}
+The three sums in Equation~
+(\ref{eq:conditional-score-bias-three-sums}) satisfy
+\begin{align}
+\sum_{t=1}^{n}\varrho^{n-t}
+&\leq \frac1{1-\varrho},                                   \notag\\
+\sum_{t=1}^{n}\sum_{s=1}^{t}
+\alpha^{n-s}\varrho^{n-t}
+&\leq
+\left\{\sum_{a=0}^{\infty}(\alpha\varrho)^a\right\}
+\left\{\sum_{b=0}^{\infty}\alpha^b\right\}
+=\frac1{(1-\alpha\varrho)(1-\alpha)},                    \notag\\
+\sum_{t=1}^{n-1}\sum_{s=t+1}^{n}
+\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}
+&\leq
+\left\{\sum_{a=1}^{\infty}\varrho^a\right\}
+\left\{\sum_{b=0}^{\infty}(\alpha\varrho)^b\right\}
+=\frac{\varrho}{(1-\varrho)(1-\alpha\varrho)}.
+\label{eq:conditional-score-bias-three-sum-bounds}
+\end{align}
+Since $1-\alpha\varrho\geq1-\varrho$, substitution into
+Equation~(\ref{eq:conditional-score-bias-three-sums}) gives
+\begin{equation}
+\left|
+\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+-\partial_{\theta_i}\ell_n^\alpha(\theta)
+\right|
+\leq
+\frac{CG'(\theta)}{J(1-\alpha)}.
+\end{equation}
+Taking the Euclidean norm over the coordinates proves
+Equation~(\ref{eq:conditional-score-particle-bias-direct}).  Finally,
+the triangle inequality gives
+\begin{align}
+&\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                 \notag\\
+&\quad\leq
+\sum_{n=1}^{N}
+\left\|
+\E\nabla_\theta\hat\ell_n^\alpha(\theta)
+-\nabla_\theta\ell_n^\alpha(\theta)
+\right\|_2
+\leq
+\frac{CN\sqrt p\,G'(\theta)}{J(1-\alpha)},
+\end{align}
+which proves Equation~(\ref{eq:full-score-particle-bias-direct}).
 \end{proof}
 
 \iffalse
@@ -6751,6 +6884,7 @@ coordinates, and applying the $\lesssim$ convention proves Equation~
 \end{proof}
 \fi
 
+\iffalse
 \begin{remark}[Exact neutral-model check]
 Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
@@ -7015,6 +7149,7 @@ summation-by-parts upper bound while remaining consistent with Lemma~
 \ref{lem:dmop-alpha-variance}; the direct conditional-score proof has
 the $N/J$ order exhibited by the example for every fixed $\alpha<1$.
 \end{remark}
+\fi
 
 \begin{lem}[Population discounting bias]
 \label{lem:dmop-population-discount-bias}
@@ -7037,6 +7172,7 @@ C\sqrt p\,G'(\theta)
 \end{lem}
 
 \begin{proof}[Proof.]
+\medskip\noindent\emph{Step 1: exact lagwise difference.}\quad
 Equation~(\ref{eq:population-conditional-score-path-decomposition}) at
 $\alpha$ and at $\alpha=1$ gives
 \begin{align}
@@ -7048,7 +7184,10 @@ $\alpha$ and at $\alpha=1$ gives
 \sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r},
 \label{eq:population-discount-lag-difference}
 \end{align}
-because $1-\alpha^0=0$. Taking norms, applying the triangle
+because $1-\alpha^0=0$.
+
+\medskip\noindent\emph{Step 2: apply forgetting and sum.}\quad
+Taking norms, applying the triangle
 inequality and Lemma~\ref{lem:derivative-measure-forgetting}, and then
 extending the nonnegative scalar sum to infinity give
 \begin{align}
@@ -8102,6 +8241,7 @@ $N,J$, and $\alpha$.
 \end{thm}
 
 \begin{proof}[Proof.]
+\medskip\noindent\emph{Step 1: exact bias--variance identity.}\quad
 For a square-integrable random vector $Z$ and a deterministic vector
 $z$, direct expansion gives
 \begin{equation}
@@ -8125,6 +8265,7 @@ $\nabla_\theta\ell^\alpha(\theta)$ inside the deterministic norm.  This
 gives Equation~
 (\ref{eq:verified-dmop-alpha-bias-variance-decomposition}).
 
+\medskip\noindent\emph{Step 2: particle error.}\quad
 Lemma~\ref{lem:dmop-alpha-variance} gives the direct particle error
 \begin{align}
 &\E\left\|
@@ -8139,6 +8280,7 @@ pG'(\theta)^2
 \right\}.
 \label{eq:mse-proof-direct-particle-error}
 \end{align}
+\medskip\noindent\emph{Step 3: population discounting error.}\quad
 Summing the first bound in Lemma~
 \ref{lem:dmop-population-discount-bias} over $n=1,\ldots,N$, using
 the triangle inequality, and interchanging the two finite sums give
@@ -8159,7 +8301,10 @@ CN\sqrt p\,G'(\theta)
 {(1-\varrho)(1-\alpha\varrho)},
 \end{align}
 which is Equation~
-(\ref{eq:verified-full-population-discount-bias}).  Pointwise,
+(\ref{eq:verified-full-population-discount-bias}).
+
+\medskip\noindent\emph{Step 4: combine the two errors.}\quad
+Pointwise,
 $(a+b)^2\leq2a^2+2b^2$ and the triangle inequality give
 \begin{align}
 &\left\|
@@ -8242,18 +8387,39 @@ Equation~(\ref{eq:verified-full-population-discount-bias}).
 \end{proof}
 \fi
 
+\begin{remark}[Neutral-model check]
+The dependence on $\alpha$ in Lemma~\ref{lem:dmop-alpha-variance} is
+conservative but cannot be replaced by a bound involving only the current
+particle cloud.  For example, take iid ${\rm Uniform}[0,1]$ states,
+constant weights at $\theta=\phi=0$, and
+\begin{equation}
+\Pr_\theta(Y_n=1\mid X_n=x)
+=\frac12+\frac\theta4(2x-1),
+\qquad y_n^*=1.
+\end{equation}
+Then $h_n=(2X_n-1)/2$ has variance $\sigma^2=1/12$, and direct
+conditional multinomial calculation gives
+\begin{equation}
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+=
+\frac{\sigma^2}{J}
+\left[
+N(2-J^{-1})
++\sum_{r=1}^{N-1}(N-r)\alpha^{2r}(1-J^{-1})^{r+1}
+\right].
+\label{eq:neutral-dmop-alpha-exact-variance}
+\end{equation}
+Thus the variance has order $N/J$ for every fixed $\alpha<1$, and its
+genealogical contribution has order $N/\{J(1-\alpha^2)\}$ before horizon
+saturation.  At $\alpha=0$, this agrees with the DMOP-$0$ bound preceding
+Theorem~\ref{thm:dmop-alpha-truncation-mse}.  The example is consistent
+with Lemma~\ref{lem:dmop-alpha-variance}, but shows why the sharper
+$N/\{J(1-\alpha^2)\}$ rate would require additional joint-lineage control.
+\end{remark}
+
 \begin{remark}[Choice of $\alpha$ in the fixed-observation upper bound]
-For every integer $r\geq1$ and every $0\leq\alpha\leq1$, the finite
-geometric-sum identity and the inequality
-$1-\alpha^q\leq q(1-\alpha)$ give
-\begin{align}
-0
-&\leq r(1-\alpha)-(1-\alpha^r)                            \notag\\
-&=(1-\alpha)\sum_{q=0}^{r-1}(1-\alpha^q)                  \notag\\
-&\leq \frac{r(r-1)}2(1-\alpha)^2.
-\label{eq:finite-population-bias-one-lag-bound}
-\end{align}
-Therefore
+The identity $1-\alpha^r=(1-\alpha)\sum_{q=0}^{r-1}\alpha^q$
+and $1-\alpha^q\leq q(1-\alpha)$ imply, uniformly in $N$,
 \begin{align}
 0
 &\leq
@@ -8266,8 +8432,8 @@ N(1-\alpha)^2\frac{\varrho^2}{(1-\varrho)^3},            \notag\\
 N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}.
 \label{eq:finite-population-bias-first-order-bound}
 \end{align}
-These inequalities are uniform in $N$; no horizon-saturation argument is
-used for the population term.  Applying the last inequality to Theorem~
+No horizon-saturation argument is used for this population term.
+Applying the last inequality to Theorem~
 \ref{thm:refined-dmop-alpha-mse} gives the following coarsening of its
 fixed-observation upper bound, with fixed model factors suppressed:
 \begin{align}
@@ -8284,49 +8450,31 @@ pG'(\theta)^2
 \right\}.
 \label{eq:direct-alpha-tuning-upper-bound}
 \end{align}
-Differentiating the expression in braces with respect to $1-\alpha$
-gives
+Differentiation gives the interior rate-balancing choice and its value:
 \begin{align}
-0
-&=
--\frac{2}{(1-\alpha)^3}
-\left(\frac{N}{J}+\frac{N^2}{J^2}\right)
-+2N^2(1-\alpha),                                           \notag\\
-(1-\alpha)^4
-&=
-\frac1{NJ}+\frac1{J^2}.
-\label{eq:direct-alpha-tuning-choice}
-\end{align}
-Thus the interior rate-balancing choice in this coarsened
-fixed-observation upper bound is
-\begin{equation}
 1-\alpha
-\asymp
-\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4}.
+&\asymp
+\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4},
 \label{eq:direct-alpha-tuning-rate}
-\end{equation}
-At this choice, Equation~
-(\ref{eq:direct-alpha-tuning-upper-bound}) has order
-\begin{equation}
+\\
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+&\lesssim
 pG'(\theta)^2
 N\left(\frac{N}{J}+\frac{N^2}{J^2}\right)^{1/2}.
 \label{eq:direct-alpha-tuned-mse-rate}
-\end{equation}
+\end{align}
 
 The factor $(1-\alpha)^{-1}$ in
 Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) enters through the
 replacement of finite sums $\sum_{q=0}^{m}\alpha^q$ in the proof of
 Lemma~\ref{lem:dmop-alpha-variance}.  Hence the effective-memory
 interpretation of Equation~(\ref{eq:direct-alpha-tuning-rate}) requires
-$(1-\alpha)^{-1}\lesssim N$.  At the choice in Equation~
-(\ref{eq:direct-alpha-tuning-rate}),
-\begin{equation}
-\{N(1-\alpha)\}^4
-\asymp
-\frac{N^3}{J}+\frac{N^4}{J^2}.
-\label{eq:direct-alpha-unsaturated-condition}
-\end{equation}
-Thus the condition holds throughout $J\leq N$, where Equation~
+$(1-\alpha)^{-1}\lesssim N$.  At the displayed choice this condition is
+equivalent, up to fixed factors, to
+$N^3/J+N^4/J^2\gtrsim1$.  It holds throughout $J\leq N$, where Equation~
 (\ref{eq:direct-alpha-tuned-mse-rate}) is of order $pG'(\theta)^2N^2/J$,
 and for $N\leq J\lesssim N^3$, where it is of order
 $pG'(\theta)^2N^{3/2}/\sqrt J$.  When $J\gg N^3$, the proposed choice has
@@ -8349,44 +8497,9 @@ Equation~(\ref{eq:direct-alpha-tuned-mse-rate}) is not a lower bound on
 the optimally tuned MSE and does not rule out an interior $\alpha$ with
 smaller MSE than both endpoints.
 
-There is a different balance after averaging over observations generated
-from the original POMP.  Under the conditions of Proposition~
-\ref{prop:dmop-alpha-data-averaged-score-discrepancy}, martingale
-orthogonality replaces the fixed-observation population contribution
-$N^2(1-\alpha)^2$ by $N(1-\alpha)^2$.  Combining that result with the
-uniform particle term in Theorem~\ref{thm:refined-dmop-alpha-mse} gives,
-up to fixed model factors, the coarsened joint data-and-particle upper
-bound
-\begin{equation}
-pG'(\theta_0)^2
-\left\{
-\frac{1}{(1-\alpha)^2}
-\left(\frac{N}{J}+\frac{N^2}{J^2}\right)
-+N(1-\alpha)^2
-\right\}.
-\label{eq:data-averaged-alpha-tuning-upper-bound}
-\end{equation}
-Its interior rate-balancing choice satisfies
-\begin{equation}
-(1-\alpha)^4
-\asymp
-\frac1J+\frac{N}{J^2},
-\label{eq:data-averaged-alpha-tuning-choice}
-\end{equation}
-and gives order
-\begin{equation}
-pG'(\theta_0)^2
-N\left(\frac1J+\frac{N}{J^2}\right)^{1/2}.
-\label{eq:data-averaged-alpha-tuned-mse-rate}
-\end{equation}
-For $J\geq N$, this is $pG'(\theta_0)^2N/\sqrt J$.  The choice in
-Equation~(\ref{eq:data-averaged-alpha-tuning-choice}) is again subject to
-$0<1-\alpha\leq1$ and $(1-\alpha)^{-1}\lesssim N$; for $J\geq N$, the
-latter condition is $J\lesssim N^4$.  Outside these conditions, the
-choice is clipped at the endpoint or the finite geometric sums must be
-used directly.
 \end{remark}
 
+\iffalse
 \begin{remark}[The location--log-weight-gradient pair and a sharper rate]
 At $\theta=\phi$, the gradient of the log weight obeys the existing
 recursions
@@ -8506,7 +8619,9 @@ proof.  They are not needed for the direct bound in Lemma~
 first-order path-space estimates of \citet{chanDelMoral18} do not by
 themselves control the required joint-time centered covariance.
 \end{remark}
+\fi
 
+\iffalse
 \begin{remark}[Fixed-lag audit]
 For $0\leq k<N$, the finite telescope for the fixed-lag score is
 \begin{equation}
@@ -8793,7 +8908,86 @@ explanation consistent with comparable empirical behavior.  The asymptotic
 gap appears when $\alpha\uparrow1$ while $\varrho$ is fixed, so that the
 discount memory spans arbitrarily many mixing times.
 \end{remark}
+\fi
 
+\begin{remark}[Fixed lag and geometric memory]
+For $0\leq k<N$, the fixed-lag score and its population truncation error
+are, respectively,
+\begin{align}
+&\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),
+\label{eq:verified-fixed-lag-telescope}
+\\
+&\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
+\label{eq:verified-fixed-lag-population-error}
+\end{align}
+Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
+\begin{equation}
+\left\|\operatorname{Bias}^{\rm pop}_k\right\|_2
+\leq
+C(N-k-1)\sqrt p\,G'(\theta)\frac{\varrho^{k+1}}{1-\varrho}.
+\label{eq:verified-fixed-lag-population-bias}
+\end{equation}
+In the neutral model of Equation~
+(\ref{eq:neutral-dmop-alpha-exact-variance}), direct multinomial
+calculation gives
+\begin{align}
+&\Var\left\{
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right)
+\right\}                                                    \notag\\
+&\quad=
+\sigma^2\left[
+(N-k-1)\{1-(1-J^{-1})^{k+2}\}
++\sum_{a=0}^{k}\{1-(1-J^{-1})^{a+2}\}
+\right].
+\label{eq:verified-fixed-lag-neutral-variance}
+\end{align}
+This has order $N(k+1)/J$ when
+$1\ll k\ll\min(N,J)$.  A general particle-variance bound of that order
+requires the joint-lineage estimate identified after Lemma~
+\ref{lem:dmop-alpha-variance} and is not asserted here.
+
+The scalar geometric-discount bias bound is an exact geometric mixture of
+the fixed-lag scalar bounds:
+\begin{align}
+\sum_{r=1}^{\infty}(1-\alpha^r)\varrho^r
+&=
+\sum_{q=0}^{\infty}(1-\alpha)\alpha^q
+\frac{\varrho^{q+1}}{1-\varrho}                            \notag\\
+&=
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\label{eq:geometric-mixture-of-fixed-lag-bounds}
+\end{align}
+If $k=\lfloor\alpha/(1-\alpha)\rfloor<N$, the ratio of this bound to
+$\varrho^{k+1}/(1-\varrho)$ satisfies
+\begin{equation}
+\frac12
+<
+\frac{(1-\alpha)\varrho^{-k}}{1-\alpha\varrho}
+\leq
+\varrho^{-k}.
+\label{eq:mixing-calibrated-geometric-fixed-lag-comparison}
+\end{equation}
+Thus the two scalar bounds are within fixed factors when
+$k|\log\varrho|=O(1)$.  This comparison does not turn geometric
+discounting into a hard cutoff: from the exact signed representation,
+\begin{equation}
+\lim_{\alpha\uparrow1}
+\frac{\nabla_\theta\ell(\theta)
+-\nabla_\theta\ell^\alpha(\theta)}{1-\alpha}
+=
+\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r},
+\label{eq:first-order-population-discount-bias}
+\end{equation}
+and the assumptions do not force the right side to vanish.  Hence the
+generic geometric-discount population bias is first order in
+$1-\alpha$, even though its coefficient contains the forgetting powers
+$\varrho^r$.
+\end{remark}
+
+\iffalse
 \bigskip
 \noindent{\rmfamily\bfseries DMOP-$\alpha$ as an estimating equation}\par
 \medskip
@@ -9218,6 +9412,7 @@ finite-particle score bias or variance bound, nor first-order equivalence
 between the particle and population roots.  Such a transfer requires
 uniform-in-parameter versions of the additional finite-particle estimates
 identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
+\fi
 
 \section{Figures for Bayesian Inference}
 \label{appendix:bayes}
