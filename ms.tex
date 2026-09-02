@@ -817,10 +817,14 @@ $k|\log\varrho|$ is bounded, meaning that discount memory spans at most a
 fixed number of mixing e-folding times.  This provides a finite-regime
 explanation consistent with comparable empirical behavior; the asymptotic
 gap appears when $\alpha\uparrow1$ with $\varrho$ fixed.
-There is also a sharper result for correctly specified random data.  The
-per-time difference between the exact and DMOP-$\alpha$ population scores
-has conditional mean zero given the previous observations.  Its cross-time
-inner products therefore vanish, and Section~S7 proves
+There is also a sharper result when expectation is taken over observations
+generated from the original POMP at $\theta_0$, so that
+$Y_n\mid X_n\sim f_{Y_n\mid X_n}(\mathord\cdot\mid X_n;\theta_0)$,
+rather than conditioning on the realized values $y_{1:N}^*$.  This
+introduces no second observation model.  The per-time difference between
+the exact and DMOP-$\alpha$ population scores then has conditional mean zero
+given the previous observations.  Its cross-time inner products therefore
+vanish, and the final remark of Section~S7 states explicitly that
 \[
 \E_{\theta_0}\|\nabla_\theta\ell^\alpha(\theta_0)
 -\nabla_\theta\ell(\theta_0)\|_2^2
@@ -835,7 +839,9 @@ Hence the third term accumulates as $N$, not $N^2$, for data-averaged score
 MSE.  Moreover, for every fixed
 $\alpha$, the population score remains an unbiased estimating equation;
 the parameter estimator retains the usual $N^{-1/2}$ rate, with a possible
-sandwich-efficiency loss rather than a loss of consistency rate.}
+sandwich-efficiency loss rather than a loss of consistency rate.  The same
+remark also displays the mixing-calibrated comparison for
+$k=\lfloor\alpha/(1-\alpha)\rfloor$.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 

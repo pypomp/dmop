@@ -8722,9 +8722,21 @@ discount memory spans arbitrarily many mixing times.
 
 The preceding MSE results condition on a fixed realized data set and
 compare DMOP-$\alpha$ with its realized exact likelihood score.  That is
-not the only criterion relevant to parameter estimation.  We now let the
-observations be random under a correctly specified model with parameter
-$\theta_0$, and evaluate the population recursion at
+not the only criterion relevant to parameter estimation.  We now take
+expectation under the original POMP law at parameter $\theta_0$:
+\begin{align}
+X_0&\sim f_{X_0}(\mathord\cdot;\theta_0),                    \notag\\
+X_n\mid X_{n-1}
+&\sim f_{X_n\mid X_{n-1}}(\mathord\cdot\mid X_{n-1};\theta_0),
+                                                                    \notag\\
+Y_n\mid X_n
+&\sim f_{Y_n\mid X_n}(\mathord\cdot\mid X_n;\theta_0).
+\label{eq:original-pomp-data-generating-law}
+\end{align}
+Thus ``taking expectation over the observations'' means integrating over
+the measurement density already specified by the POMP, rather than
+conditioning on the realized values $y_{1:N}^*$.  It introduces no second
+observation model.  We evaluate the population recursion at
 $\theta=\phi=\theta_0$.
 
 \begin{proposition}[Conditional unbiasedness]
@@ -8966,11 +8978,12 @@ is the square of the ratio in Equations~
 
 Proposition~\ref{prop:dmop-alpha-unbiased-estimating-equation} does not
 say that a realized DMOP-$\alpha$ score equals the realized likelihood
-score when $\alpha<1$.  It says that, under correct specification, the
-population conditional contributions form a martingale-difference
-estimating equation.  The usual parametric rate therefore does not
-require $\alpha\to1$, provided the estimating equation identifies
-$\theta_0$ and satisfies the regularity conditions stated next.
+score when $\alpha<1$.  It says that, under the original POMP law in
+Equation~(\ref{eq:original-pomp-data-generating-law}), the population
+conditional contributions form a martingale-difference estimating equation.
+The usual parametric rate therefore does not require $\alpha\to1$, provided
+the estimating equation identifies $\theta_0$ and satisfies the regularity
+conditions stated next.
 
 \begin{proposition}[Parametric inference for fixed $\alpha$]
 \label{prop:dmop-alpha-parametric-inference}
@@ -8984,8 +8997,8 @@ $\widehat\theta_N^\alpha$ of
 \label{eq:dmop-alpha-population-estimating-equation}
 \end{equation}
 where the reference value in the population recursion is set equal to its
-parameter argument.  Suppose also that the following limits hold under
-the correctly specified model:
+parameter argument.  Suppose also that the following limits hold under the
+POMP law in Equation~(\ref{eq:original-pomp-data-generating-law}):
 \begin{align}
 &\frac1{\sqrt N}\sum_{n=1}^{N}
 \nabla_\theta\ell_n^\alpha(\theta_0)
@@ -9047,6 +9060,73 @@ Equation~(\ref{eq:dmop-alpha-sandwich-limit}) follows from
 Equation~(\ref{eq:dmop-alpha-martingale-clt}), Slutsky's theorem, and
 Equation~(\ref{eq:dmop-alpha-asymptotic-linearization}).
 \end{proof}
+
+\begin{remark}[Mixing-calibrated discounting and parameter inference]
+The preceding results have three distinct consequences.
+
+First, suppose $0\leq\alpha<1$ and
+$k=\lfloor\alpha/(1-\alpha)\rfloor<N$.  Equations~
+(\ref{eq:mixing-calibrated-geometric-fixed-lag-comparison})--
+(\ref{eq:mixing-calibrated-geometric-fixed-lag-lower-comparison}) give
+\begin{equation}
+\frac12
+<
+\frac{
+\dfrac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+}{
+\dfrac{\varrho^{k+1}}{1-\varrho}
+}
+\leq
+\varrho^{-k}
+=exp\{k|\log\varrho|\}.
+\label{eq:summary-mixing-calibrated-comparison}
+\end{equation}
+Hence, whenever $k|\log\varrho|=O(1)$, the geometric and fixed-lag
+scalar upper bounds are within fixed factors.  Equivalently, discount
+memory spans only a fixed number of mixing e-folding times.  The same
+comparison for the squared upper bounds has fixed factors obtained by
+squaring Equation~(\ref{eq:summary-mixing-calibrated-comparison}).
+
+Second, expectation under Equation~
+(\ref{eq:original-pomp-data-generating-law}) and martingale orthogonality
+give Equation~(\ref{eq:data-averaged-population-score-bound}):
+\begin{align}
+&\E_{\theta_0}\left\|
+\nabla_\theta\ell^\alpha(\theta_0)
+-\nabla_\theta\ell(\theta_0)
+\right\|_2^2                                                \notag\\
+&\quad\leq
+CNpG'(\theta_0)^2
+\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2.
+\label{eq:summary-data-averaged-population-score-bound}
+\end{align}
+Thus, as $\alpha\uparrow1$, this contribution is
+$O\{N(1-\alpha)^2\}$ rather than the
+$O\{N^2(1-\alpha)^2\}$ fixed-observation upper bound in Theorem~
+\ref{thm:refined-dmop-alpha-mse}.  The improvement from $N^2$ to $N$
+comes from the exact vanishing of all cross-time inner products in
+Equation~(\ref{eq:data-averaged-score-cross-term-zero}); it is not an
+additional mixing assumption.
+
+Third, for every fixed $\alpha\in[0,1]$, Proposition~
+\ref{prop:dmop-alpha-parametric-inference} gives
+\begin{equation}
+\sqrt N(\widehat\theta_N^\alpha-\theta_0)
+\ \Rightarrow\
+\mathcal N\left(
+0,A_\alpha^{-1}B_\alpha A_\alpha^{-\mathsf T}
+\right).
+\label{eq:summary-fixed-alpha-parametric-rate}
+\end{equation}
+Therefore fixed $\alpha$ retains the parametric $N^{-1/2}$ rate.  When
+$\alpha<1$, the sandwich covariance may differ from the likelihood
+covariance at $\alpha=1$, so the possible cost is statistical efficiency,
+not a slower consistency rate.
+\end{remark}
 
 At $\alpha=1$, the estimating equation is the likelihood score and the
 usual information equality may reduce the sandwich covariance.  For
