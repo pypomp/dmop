@@ -8242,30 +8242,50 @@ Equation~(\ref{eq:verified-full-population-discount-bias}).
 \end{proof}
 \fi
 
-\begin{remark}[Choice of $\alpha$ in the proved upper bound]
-Put $1-\alpha>0$.  Before the finite geometric sums saturate at the
-horizon, the exact finite-horizon scalar term in the population-bias
-upper bound of Theorem~\ref{thm:refined-dmop-alpha-mse} satisfies
+\begin{remark}[Choice of $\alpha$ in the fixed-observation upper bound]
+For every integer $r\geq1$ and every $0\leq\alpha\leq1$, the finite
+geometric-sum identity and the inequality
+$1-\alpha^q\leq q(1-\alpha)$ give
 \begin{align}
-&\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r                 \notag\\
-&\quad=
-(1-\alpha)
-\sum_{r=1}^{N-1}(N-r)r\varrho^r
-+O\{N(1-\alpha)^2\}                                       \notag\\
-&\quad\leq
-N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}
-+O\{N(1-\alpha)^2\}.
+0
+&\leq r(1-\alpha)-(1-\alpha^r)                            \notag\\
+&=(1-\alpha)\sum_{q=0}^{r-1}(1-\alpha^q)                  \notag\\
+&\leq \frac{r(r-1)}2(1-\alpha)^2.
+\label{eq:finite-population-bias-one-lag-bound}
+\end{align}
+Therefore
+\begin{align}
+0
+&\leq
+(1-\alpha)\sum_{r=1}^{N-1}(N-r)r\varrho^r
+-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r              \notag\\
+&\leq
+N(1-\alpha)^2\frac{\varrho^2}{(1-\varrho)^3},            \notag\\
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+&\leq
+N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}.
 \label{eq:finite-population-bias-first-order-bound}
 \end{align}
-Consequently, up to fixed model factors, the $\alpha$-dependent part of
-the proved upper bound reduces to
-\begin{equation}
+These inequalities are uniform in $N$; no horizon-saturation argument is
+used for the population term.  Applying the last inequality to Theorem~
+\ref{thm:refined-dmop-alpha-mse} gives the following coarsening of its
+fixed-observation upper bound, with fixed model factors suppressed:
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left\{
 \frac{1}{(1-\alpha)^2}
 \left(\frac{N}{J}+\frac{N^2}{J^2}\right)
-+N^2(1-\alpha)^2.
++N^2(1-\alpha)^2
+\right\}.
 \label{eq:direct-alpha-tuning-upper-bound}
-\end{equation}
-Differentiating the right side with respect to $1-\alpha$ gives
+\end{align}
+Differentiating the expression in braces with respect to $1-\alpha$
+gives
 \begin{align}
 0
 &=
@@ -8277,7 +8297,8 @@ Differentiating the right side with respect to $1-\alpha$ gives
 \frac1{NJ}+\frac1{J^2}.
 \label{eq:direct-alpha-tuning-choice}
 \end{align}
-Thus the rate-balancing choice within this upper bound is
+Thus the interior rate-balancing choice in this coarsened
+fixed-observation upper bound is
 \begin{equation}
 1-\alpha
 \asymp
@@ -8287,14 +8308,36 @@ Thus the rate-balancing choice within this upper bound is
 At this choice, Equation~
 (\ref{eq:direct-alpha-tuning-upper-bound}) has order
 \begin{equation}
+pG'(\theta)^2
 N\left(\frac{N}{J}+\frac{N^2}{J^2}\right)^{1/2}.
 \label{eq:direct-alpha-tuned-mse-rate}
 \end{equation}
-In particular, this is $N^{3/2}/\sqrt J$ when $J\geq N$ and
-$N^2/J$ when $J\leq N$, up to the common factor $pG'(\theta)^2$.
 
-This calculation minimizes the proved norm upper bound, not the actual
-MSE.  The actual population discount bias is the signed finite sum
+The factor $(1-\alpha)^{-1}$ in
+Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) enters through the
+replacement of finite sums $\sum_{q=0}^{m}\alpha^q$ in the proof of
+Lemma~\ref{lem:dmop-alpha-variance}.  Hence the effective-memory
+interpretation of Equation~(\ref{eq:direct-alpha-tuning-rate}) requires
+$(1-\alpha)^{-1}\lesssim N$.  At the choice in Equation~
+(\ref{eq:direct-alpha-tuning-rate}),
+\begin{equation}
+\{N(1-\alpha)\}^4
+\asymp
+\frac{N^3}{J}+\frac{N^4}{J^2}.
+\label{eq:direct-alpha-unsaturated-condition}
+\end{equation}
+Thus the condition holds throughout $J\leq N$, where Equation~
+(\ref{eq:direct-alpha-tuned-mse-rate}) is of order $pG'(\theta)^2N^2/J$,
+and for $N\leq J\lesssim N^3$, where it is of order
+$pG'(\theta)^2N^{3/2}/\sqrt J$.  When $J\gg N^3$, the proposed choice has
+$(1-\alpha)^{-1}\gg N$; the finite sums in the proof of Lemma~
+\ref{lem:dmop-alpha-variance} must then be retained rather than replaced by
+$(1-\alpha)^{-1}$, and Equation~
+(\ref{eq:direct-alpha-tuned-mse-rate}) is not asserted as the optimized
+finite-horizon rate.
+
+This calculation minimizes a fixed-observation norm upper bound, not the
+actual MSE.  The actual population discount bias is the signed finite sum
 \begin{equation}
 \nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
 =
@@ -8304,9 +8347,44 @@ MSE.  The actual population discount bias is the signed finite sum
 whose first-order coefficient can cancel.  Consequently,
 Equation~(\ref{eq:direct-alpha-tuned-mse-rate}) is not a lower bound on
 the optimally tuned MSE and does not rule out an interior $\alpha$ with
-smaller MSE than both endpoints.  When the geometric sums saturate, the
-finite sums should be minimized directly rather than replacing them by
-$(1-\alpha)^{-1}$.
+smaller MSE than both endpoints.
+
+There is a different balance after averaging over observations generated
+from the original POMP.  Under the conditions of Proposition~
+\ref{prop:dmop-alpha-data-averaged-score-discrepancy}, martingale
+orthogonality replaces the fixed-observation population contribution
+$N^2(1-\alpha)^2$ by $N(1-\alpha)^2$.  Combining that result with the
+uniform particle term in Theorem~\ref{thm:refined-dmop-alpha-mse} gives,
+up to fixed model factors, the coarsened joint data-and-particle upper
+bound
+\begin{equation}
+pG'(\theta_0)^2
+\left\{
+\frac{1}{(1-\alpha)^2}
+\left(\frac{N}{J}+\frac{N^2}{J^2}\right)
++N(1-\alpha)^2
+\right\}.
+\label{eq:data-averaged-alpha-tuning-upper-bound}
+\end{equation}
+Its interior rate-balancing choice satisfies
+\begin{equation}
+(1-\alpha)^4
+\asymp
+\frac1J+\frac{N}{J^2},
+\label{eq:data-averaged-alpha-tuning-choice}
+\end{equation}
+and gives order
+\begin{equation}
+pG'(\theta_0)^2
+N\left(\frac1J+\frac{N}{J^2}\right)^{1/2}.
+\label{eq:data-averaged-alpha-tuned-mse-rate}
+\end{equation}
+For $J\geq N$, this is $pG'(\theta_0)^2N/\sqrt J$.  The choice in
+Equation~(\ref{eq:data-averaged-alpha-tuning-choice}) is again subject to
+$0<1-\alpha\leq1$ and $(1-\alpha)^{-1}\lesssim N$; for $J\geq N$, the
+latter condition is $J\lesssim N^4$.  Outside these conditions, the
+choice is clipped at the endpoint or the finite geometric sums must be
+used directly.
 \end{remark}
 
 \begin{remark}[The location--log-weight-gradient pair and a sharper rate]
