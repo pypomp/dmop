@@ -182,7 +182,7 @@ When $\theta\neq\phi$, we see that $w_{N,k_j}^{P,\theta} = O(c^N)$.
 When $\theta=\phi$, a generic normalized path-functional inequality gives
 the coarse upper bound $O(N^4/J)$ after rescaling to the full
 unnormalized score.  Section~\ref{appendix:sharper-biasvar} instead proves
-the sharper current-particle upper bound $O(N^3/J)$ at $\alpha=1$.
+the sharper current-particle upper bound $O(N^2/J)$ at $\alpha=1$.
 
 \begin{lem}
 \label{lem:mop-0-formula}
@@ -1154,8 +1154,8 @@ Note that we made Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedM
 This is used below to recover the $O(N/J)$ variance bound for DMOP-$0$
 and a fixed-lag comparison. The final active result in Section~
 \ref{appendix:sharper-biasvar} gives variance
-$O\{N/[J(1-\alpha)^2]\}$ for fixed $\alpha<1$ and $O(N^3/J)$ at
-$\alpha=1$, up to the common parameter and mixing-time factors.
+$O(N/J)$ for fixed $\alpha<1$ and $O(N^2/J)$ at $\alpha=1$, up to the
+common parameter and mixing-time factors.
 We start by decomposing the MOP-$\alpha$ estimator as follows, for the case $\theta=\phi$,
 \begin{equation}
 \hat{\mathcal{L}}(\theta):=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J w_{n, j}^{P, \theta}}=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J (w_{n-1, j}^{F, \theta})^\alpha}.
@@ -1575,12 +1575,11 @@ $N,J$, and $\alpha$, such that
 &\quad\lesssim
 pG'(\theta)^2
 \left[
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-+\frac1{J^2}
-\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)^2
+\frac1J\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}
++\frac{N^2}{J^2}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
@@ -1593,8 +1592,10 @@ pG'(\theta)^2
 pG'(\theta)^2
 \min\left\{
 N^2,
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\frac1J\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}
 \right\}.
 \label{eq:dmop-alpha-conservative-variance}
 \end{align}
@@ -1607,9 +1608,10 @@ For $0\leq\alpha<1$, Equation~
 \lesssim
 pG'(\theta)^2
 \left\{
-\frac{N}{J(1-\alpha)^2}
+\frac{N}{J}
++\frac{1}{J(1-\alpha)^2}
 +N^2(1-\alpha)^2
-+\frac{N^2}{J^2(1-\alpha)^2}
++\frac{N^2}{J^2}
 \right\}.
 \label{eq:dmop-alpha-conservative-mse-simplified}
 \end{equation}
@@ -2184,6 +2186,12 @@ C\sqrt p\,G'(\theta)\varrho^0.
 Equations~(\ref{eq:lag-vector-geometric-bound}) and
 (\ref{eq:current-lag-vector-bound}) prove
 Equation~(\ref{eq:derivative-measure-forgetting}).
+For example, the proof may take
+$\varrho=1-\underbar M/(2\bar M)$, which lies strictly between
+$1-\underbar M/\bar M$ and one in Equation~
+(\ref{eq:backward-contraction-to-varrho}). Thus $\varrho$ depends only on
+the model minorization bounds and is independent of $N,J,\alpha$, and any
+lag truncation $k$.
 
 \end{proof}
 
@@ -2601,17 +2609,8 @@ Lemma~\ref{lem:lagwise-weak-error}, for every $\alpha\in[0,1]$,
 -\nabla_\theta\ell^\alpha(\theta)
 \right\|_2
 &\lesssim
-\frac{\sqrt p\,G'(\theta)}{J}
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r,
+\frac{N\sqrt p\,G'(\theta)}{J},
 \label{eq:dmop-full-particle-bias-alpha}
-\\
-\left\|
-\E\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell^\alpha(\theta)
-\right\|_2
-&\leq
-\frac{C\sqrt p\,G'(\theta)N^2}{J}.
-\label{eq:dmop-full-particle-bias}
 \end{align}
 The constants are independent of $N,J$, and $\alpha$.
 \end{lem}
@@ -2675,76 +2674,70 @@ G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
 \label{eq:discounted-score-supremum}
 \end{equation}
 
-We now prove the bias bound directly from the two terms of the conditional
-score. Equation~(\ref{eq:unrolled-filtered-weight}) gives
+We now apply Lemma~\ref{lem:lagwise-weak-error} directly to the
+current-particle averages in Equations~
+(\ref{eq:full-score-summation-by-parts}) and
+(\ref{eq:population-full-score-summation-by-parts}).  For every
+coordinate $i$ and $t\leq N$, Equation~
+(\ref{eq:discounted-score-supremum}) and
+$\operatorname{osc}(f)\leq2\|f\|_\infty$ give
 \begin{align}
-\left\|
-\left.\partial_{\theta_i}\log w_{n,j}^{F,\theta}
-\right|_{\theta=\phi}
-\right\|_\infty
+\operatorname{osc}\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
 &\leq
-G'(\theta)\sum_{r=0}^{n-1}\alpha^r,                           \notag\\
-\alpha
-\left\|
-\left.\partial_{\theta_i}\log w_{n-1,j}^{F,\theta}
-\right|_{\theta=\phi}
-\right\|_\infty
-&\leq
-G'(\theta)\sum_{r=1}^{n-1}\alpha^r.
-\label{eq:weight-tangent-bounds-for-bias}
+2G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
+\label{eq:full-score-weighted-function-oscillation}
 \end{align}
-Apply Lemma~\ref{lem:lagwise-weak-error} to the filtered-weight tangent at
-time $n$ and, using the second equality in Equation~
-(\ref{eq:conditional-score-weight-difference}), to $\alpha$ times the
-filtered-weight tangent at time $n-1$. Since
-$\operatorname{osc}(f)\leq2\|f\|_\infty$, Equation~
-(\ref{eq:weight-tangent-bounds-for-bias}) gives
+Consequently, Lemma~\ref{lem:lagwise-weak-error} gives
 \begin{align}
 &\left|
-\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
--\partial_{\theta_i}\ell_n^\alpha(\theta)
+\E m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+-\rho_t\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
 \right|                                                       \notag\\
 &\quad\leq
 \frac{CG'(\theta)}{J}
-\left\{
-\sum_{r=0}^{n-1}\alpha^r+
-\sum_{r=1}^{n-1}\alpha^r
-\right\}                                                       \notag\\
-&\quad\leq
-\frac{CG'(\theta)}{J}
-\sum_{r=0}^{n-1}\alpha^r.
-\label{eq:uniform-conditional-score-particle-bias}
+\sum_{k=1}^{t}\alpha^{t-k}.
+\label{eq:full-score-current-average-particle-bias}
 \end{align}
-The last inequality only enlarges $C$. Summing over $n$ gives
+Subtracting Equation~
+(\ref{eq:population-full-score-summation-by-parts}) from the expectation
+of Equation~(\ref{eq:full-score-summation-by-parts}), applying the
+triangle inequality, and then using Equation~
+(\ref{eq:full-score-current-average-particle-bias}) give
 \begin{align}
 &\left|
 \E\partial_{\theta_i}\hat\ell^\alpha(\theta)
 -\partial_{\theta_i}\ell^\alpha(\theta)
 \right|                                                       \notag\\
 &\quad\leq
-\sum_{n=1}^{N}
-\left|
-\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
--\partial_{\theta_i}\ell_n^\alpha(\theta)
-\right|                                                       \notag\\
-&\quad\leq
 \frac{CG'(\theta)}{J}
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r.
+\left\{
+(1-\alpha)\sum_{t=1}^{N-1}\sum_{k=1}^{t}\alpha^{t-k}
++\sum_{k=1}^{N}\alpha^{N-k}
+\right\}                                                     \notag\\
+&\quad=
+\frac{CNG'(\theta)}{J}.
 \label{eq:uniform-full-score-particle-bias-coordinate}
 \end{align}
-Squaring, summing over $i=1,\ldots,p$, and taking square roots proves
-Equation~(\ref{eq:dmop-full-particle-bias-alpha}). Finally,
+The last equality is exact for every $\alpha\in[0,1]$.  To verify it
+without interpreting a ratio at $\alpha=1$, use the finite sums
 \begin{align}
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-&\leq
-\sum_{n=1}^{N}n
-=
-\frac{N(N+1)}2
-\leq
-N^2.
+&(1-\alpha)\sum_{t=1}^{N-1}\sum_{k=1}^{t}\alpha^{t-k}
++\sum_{k=1}^{N}\alpha^{N-k}                                  \notag\\
+&\quad=
+\sum_{t=1}^{N-1}(1-\alpha^t)
++\sum_{r=0}^{N-1}\alpha^r                                  \notag\\
+&\quad=
+(N-1)-\sum_{t=1}^{N-1}\alpha^t
++1+\sum_{r=1}^{N-1}\alpha^r
+=N.
+\label{eq:full-score-particle-bias-finite-cancellation}
 \end{align}
-Substitution in Equation~(\ref{eq:dmop-full-particle-bias-alpha}) proves
-Equation~(\ref{eq:dmop-full-particle-bias}).
+At $\alpha=1$, both sides of the first equality in Equation~
+(\ref{eq:full-score-particle-bias-finite-cancellation}) are evaluated as
+finite sums, so the equality remains valid.  Squaring Equation~
+(\ref{eq:uniform-full-score-particle-bias-coordinate}), summing over
+$i=1,\ldots,p$, and taking square roots proves Equation~
+(\ref{eq:dmop-full-particle-bias-alpha}).
 \end{proof}
 
 \iffalse
@@ -3025,8 +3018,10 @@ used. Then
 pG'(\theta)^2
 \min\left\{
 N^2,
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\frac1J\left[
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right]
 \right\}.
 \label{eq:dmop-alpha-current-particle-variance}
 \end{align}
@@ -3035,14 +3030,16 @@ particular,
 \begin{align}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
 &\lesssim
-\frac{NpG'(\theta)^2}{J}
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2                         \notag\\
+\frac{pG'(\theta)^2}{J}
+\left\{
+N+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}                                                       \notag\\
 &=
 \frac{NpG'(\theta)^2}{J}
 \begin{cases}
-\left(\dfrac{1-\alpha^N}{1-\alpha}\right)^2,
+1+\dfrac1N\left(\dfrac{1-\alpha^N}{1-\alpha}\right)^2,
 &0\leq\alpha<1,\\[6pt]
-N^2,
+1+N,
 &\alpha=1.
 \end{cases}
 \label{eq:dmop-alpha-n-over-j-variance}
@@ -3253,39 +3250,53 @@ $\operatorname{osc}(f)\leq2\|f\|_\infty$, gives
 \sum_{r=1}^{n-1}\alpha^r.
 \label{eq:prediction-weight-centered-l4}
 \end{align}
-Minkowski's inequality in $L^4$, Equations~
-(\ref{eq:conditional-score-weight-difference}),
-(\ref{eq:filtered-weight-centered-l4}), and
-(\ref{eq:prediction-weight-centered-l4}) imply
+We now use Equation~(\ref{eq:full-score-summation-by-parts}) before
+summing over time.  By Equation~(\ref{eq:unrolled-filtered-weight}), the
+$i$th coordinate of
+$m(\xi_t)(\sum_{k=1}^{t}\alpha^{t-k}h_k)$ is precisely the filtered
+weight-tangent average in Equation~
+(\ref{eq:filtered-weight-centered-l4}). Therefore
 \begin{align}
 &\left\|
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
--\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
-\right\|_{L^4}                                               \notag\\
+(1-\alpha)
+\left[
+m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+-\E m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+\right]
+\right\|_{L^4}                                                \notag\\
 &\quad\leq
 \frac{CG'(\theta)}{\sqrt J}
-\left(
-\sum_{r=0}^{n-1}\alpha^r+
-\sum_{r=1}^{n-1}\alpha^r
-\right)                                                       \notag\\
+(1-\alpha)\sum_{k=1}^{t}\alpha^{t-k}                         \notag\\
+&\quad=
+\frac{CG'(\theta)}{\sqrt J}(1-\alpha^t),
+\qquad 1\leq t<N,
+\label{eq:interior-full-score-centered-l4}
+\\
+&\left\|
+m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_{k,i}\right)
+-\E m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_{k,i}\right)
+\right\|_{L^4}                                                \notag\\
 &\quad\leq
 \frac{CG'(\theta)}{\sqrt J}
-\sum_{r=0}^{n-1}\alpha^r.
-\label{eq:conditional-score-centered-l4}
+\sum_{k=1}^{N}\alpha^{N-k}.
+\label{eq:terminal-full-score-centered-l4}
 \end{align}
+The identities in the last lines are finite-sum identities and remain
+valid at $\alpha=1$.
 
-The conditional score at time $n$ is a measurable function of the
-differentiable particle clouds at times $n-1$ and $n$. Theorem~3.1 of
-\citet{karjalainen23} applies to this predictor-cloud chain. We spell out
-the passage from its Dobrushin bound to the score mixing coefficient.
-Let $A$ be an event generated by the score history through time $m$, and
-let $B$ be an event generated by scores from time $m+l$ onward. Let
-$\mathcal F_{m+1}^P$ be the sigma-field generated by all variables through
-the production of the prediction cloud $X_{m+1,1:J}^P$. The time-$m$
-resampling indices enter both the time-$m$ score and the construction of
-$X_{m+1,1:J}^P$, so $A\in\mathcal F_{m+1}^P$. Conditional on this
-sigma-field, the Markov property gives, for a suitable future-tail kernel
-$K$,
+Each interior summand in Equation~
+(\ref{eq:full-score-summation-by-parts}) is a measurable function of the
+current differentiable particle cloud. Theorem~3.1 of
+\citet{karjalainen23} applies to this particle-cloud chain. We spell out
+the passage from its Dobrushin bound to the mixing coefficient. Let $A$
+be an event generated by these current-cloud functionals through time
+$m$, let $B$ be an event generated by the functionals from time $m+l$
+onward, and let $\mathcal F_{m+1}^P$ be the sigma-field generated by all
+variables through the production of the prediction cloud
+$X_{m+1,1:J}^P$. The time-$m$ resampling indices enter both the time-$m$
+functional and the construction of $X_{m+1,1:J}^P$, so
+$A\in\mathcal F_{m+1}^P$. Conditional on this sigma-field, the Markov
+property gives, for a suitable future-tail kernel $K$,
 \begin{equation}
 \Pr(B\mid\mathcal F_{m+1}^P)
 =
@@ -3325,51 +3336,38 @@ a(l)
 (l-1)/[c\{1+\log J\}]\right\rfloor}.
 \label{eq:conditional-score-alpha-mixing}
 \end{equation}
-For $l=1$, the same display follows from $a(1)\leq1$.
-For $m<n$, Davydov's inequality, applied to the centered variables in
-Equation~(\ref{eq:conditional-score-centered-l4}), gives
+For $l=1$, the same display follows from $a(1)\leq1$. For $m<n<N$,
+Davydov's inequality, applied to the centered interior summands in
+Equation~(\ref{eq:interior-full-score-centered-l4}), gives
 \begin{align}
 &\left|
 \Cov\left(
-\partial_{\theta_i}\hat\ell_m^\alpha(\theta),
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+(1-\alpha)m(\xi_m)\left(\sum_{k=1}^{m}\alpha^{m-k}h_{k,i}\right),
+(1-\alpha)m(\xi_n)\left(\sum_{k=1}^{n}\alpha^{n-k}h_{k,i}\right)
 \right)
 \right|                                                       \notag\\
 &\quad\leq
-C a(n-m)^{1/2}
-\left\|
-\partial_{\theta_i}\hat\ell_m^\alpha(\theta)
--\E\partial_{\theta_i}\hat\ell_m^\alpha(\theta)
-\right\|_{L^4}
-\left\|
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
--\E\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
-\right\|_{L^4}                                               \notag\\
-&\quad\leq
 \frac{CG'(\theta)^2}{J}
 a(n-m)^{1/2}
-\left(\sum_{r=0}^{m-1}\alpha^r\right)
-\left(\sum_{r=0}^{n-1}\alpha^r\right)                       \notag\\
+(1-\alpha^m)(1-\alpha^n)                                    \notag\\
 &\quad\leq
 \frac{CG'(\theta)^2}{2J}
 a(n-m)^{1/2}
 \left\{
-\left(\sum_{r=0}^{m-1}\alpha^r\right)^2
-+
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+(1-\alpha^m)^2+(1-\alpha^n)^2
 \right\},
-\label{eq:conditional-score-davydov-covariance}
+\label{eq:interior-full-score-davydov-covariance}
 \end{align}
 where the last line uses $2xy\leq x^2+y^2$.  Equation~
-(\ref{eq:conditional-score-centered-l4}) also gives
+(\ref{eq:interior-full-score-centered-l4}) also gives
 \begin{equation}
 \Var\left(
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+(1-\alpha)m(\xi_n)\left(\sum_{k=1}^{n}\alpha^{n-k}h_{k,i}\right)
 \right)
 \leq
 \frac{CG'(\theta)^2}{J}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
-\label{eq:conditional-score-one-time-variance}
+(1-\alpha^n)^2.
+\label{eq:interior-full-score-one-time-variance}
 \end{equation}
 
 Put $q=(1-\epsilon)^{1/2}<1$.  Directly summing the blocked geometric
@@ -3388,63 +3386,93 @@ N-1,
 C\{1+\min(N,\log J)\}.
 \label{eq:conditional-score-mixing-sum}
 \end{align}
-Expanding the variance of the sum, using Equations~
-(\ref{eq:conditional-score-davydov-covariance})--
-(\ref{eq:conditional-score-mixing-sum}), and observing that for each
-lag $l$ every squared term occurs at most twice, we obtain
+Expanding the variance of the interior sum, using Equations~
+(\ref{eq:interior-full-score-davydov-covariance})--
+(\ref{eq:conditional-score-mixing-sum}), and observing that for each lag
+$l$ every squared term occurs at most twice, we obtain
 \begin{align}
 &\Var\left(
-\partial_{\theta_i}\hat\ell^\alpha(\theta)
+(1-\alpha)\sum_{t=1}^{N-1}
+m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
 \right)                                                       \notag\\
 &\quad=
-\sum_{n=1}^{N}
+\sum_{n=1}^{N-1}
 \Var\left(
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+(1-\alpha)m(\xi_n)\left(\sum_{k=1}^{n}\alpha^{n-k}h_{k,i}\right)
 \right)
-+2\sum_{1\leq m<n\leq N}
+\notag\\
+&\qquad
++2\sum_{1\leq m<n<N}
 \Cov\left(
-\partial_{\theta_i}\hat\ell_m^\alpha(\theta),
-\partial_{\theta_i}\hat\ell_n^\alpha(\theta)
+\begin{aligned}
+&(1-\alpha)m(\xi_m)
+\left(\sum_{k=1}^{m}\alpha^{m-k}h_{k,i}\right),\\
+&(1-\alpha)m(\xi_n)
+\left(\sum_{k=1}^{n}\alpha^{n-k}h_{k,i}\right)
+\end{aligned}
 \right)                                                       \notag\\
 &\quad\leq
 \frac{CG'(\theta)^2}{J}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\sum_{n=1}^{N-1}(1-\alpha^n)^2
 +
 \frac{CG'(\theta)^2}{J}
 \sum_{l=1}^{N-1}a(l)^{1/2}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2                    \notag\\
+\sum_{n=1}^{N-1}(1-\alpha^n)^2                              \notag\\
 &\quad\leq
 \frac{CG'(\theta)^2}{J}
 \{1+\min(N,1+\log J)\}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
-\label{eq:conditional-score-variance-with-mixing-time}
+\sum_{n=1}^{N-1}(1-\alpha^n)^2.
+\label{eq:interior-full-score-variance-with-mixing-time}
 \end{align}
-Summing Equation~
-(\ref{eq:conditional-score-variance-with-mixing-time}) over the $p$
-coordinates and then using the stated convention for $\lesssim$ gives
-the stochastic term in Equation~
-(\ref{eq:dmop-alpha-current-particle-variance}). Moreover,
+Equation~(\ref{eq:terminal-full-score-centered-l4}) gives separately
 \begin{align}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-&\leq
-N\left(\sum_{r=0}^{N-1}\alpha^r\right)^2                  \notag\\
-&=
-N
-\begin{cases}
-\left(\dfrac{1-\alpha^N}{1-\alpha}\right)^2,
-&0\leq\alpha<1,\\[6pt]
-N^2,
-&\alpha=1,
-\end{cases}
-\label{eq:conditional-score-geometric-sum-bound}
+&\Var\left\{
+m(\xi_N)\left(\sum_{k=1}^{N}\alpha^{N-k}h_{k,i}\right)
+\right\}                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\left(\sum_{k=1}^{N}\alpha^{N-k}\right)^2.
+\label{eq:terminal-full-score-variance}
 \end{align}
-Equations~(\ref{eq:conditional-score-variance-with-mixing-time}) and
-(\ref{eq:conditional-score-geometric-sum-bound}) prove
-Equation~(\ref{eq:dmop-alpha-n-over-j-variance}).
+For any square-integrable random variables $U$ and $V$,
+\begin{align}
+\Var(U+V)
+&=\E\{(U-\E U)+(V-\E V)\}^2                              \notag\\
+&\leq
+2\Var(U)+2\Var(V),
+\label{eq:two-term-variance-bound}
+\end{align}
+where the inequality follows from $(x+y)^2\leq2x^2+2y^2$.
+Apply Equation~(\ref{eq:two-term-variance-bound}) to the two terms of
+Equation~(\ref{eq:full-score-summation-by-parts}), and then use
+Equations~(\ref{eq:interior-full-score-variance-with-mixing-time}) and
+(\ref{eq:terminal-full-score-variance}). This gives
+\begin{align}
+\Var\left\{\partial_{\theta_i}\hat\ell^\alpha(\theta)\right\}
+&\leq
+\frac{CG'(\theta)^2}{J}
+\{1+\min(N,1+\log J)\}                                    \notag\\
+&\qquad\times
+\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}.
+\label{eq:full-score-variance-with-mixing-time}
+\end{align}
+Summing Equation~(\ref{eq:full-score-variance-with-mixing-time}) over
+the $p$ coordinates and using the convention that $\lesssim$ suppresses
+the displayed particle-system mixing-time factor proves the stochastic
+term in Equation~(\ref{eq:dmop-alpha-current-particle-variance}). Since
+$(1-\alpha^t)^2\leq1$ for $\alpha\in[0,1]$,
+\begin{equation}
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
+\leq N-1\leq N.
+\label{eq:interior-full-score-sum-bound}
+\end{equation}
+Equations~(\ref{eq:full-score-variance-with-mixing-time}) and
+(\ref{eq:interior-full-score-sum-bound}), together with the finite
+geometric sum in the statement of the lemma, prove Equation~
+(\ref{eq:dmop-alpha-n-over-j-variance}).
 
 It remains to obtain the other term in the minimum.  Taking absolute
 values in Equation~(\ref{eq:full-score-summation-by-parts}) and using
@@ -3476,7 +3504,7 @@ Consequently,
 N^2G'(\theta)^2.
 \end{align}
 Combining this deterministic bound with Equation~
-(\ref{eq:conditional-score-variance-with-mixing-time}), summing over
+(\ref{eq:full-score-variance-with-mixing-time}), summing over
 coordinates, and applying the $\lesssim$ convention proves Equation~
 (\ref{eq:dmop-alpha-current-particle-variance}).
 \end{proof}
@@ -3492,10 +3520,15 @@ factor. Setting $\alpha=0$ in Lemma~\ref{lem:dmop-alpha-variance} gives
 \frac{NpG'(\theta)^2}{J},
 \end{equation}
 which agrees with that calculation. For fixed $\alpha<1$, the same lemma
-gives $N/[J(1-\alpha)^2]$ up to the common factor $pG'(\theta)^2$.
+gives
+\begin{equation}
+\frac{pG'(\theta)^2}{J}
+\left\{N+\left(\frac{1-\alpha^N}{1-\alpha}\right)^2\right\},
+\end{equation}
+so its horizon order is $N/J$.  The dependence on $\alpha$ is confined
+to the single terminal current-particle average.
 Because the differentiable particle includes its location and tangents,
-no separate augmented-state or tangent-stability assumption is used. No
-stronger factor in $1-\alpha$ is claimed here.
+no separate augmented-state or tangent-stability assumption is used.
 \end{remark}
 
 \begin{lem}[Population discounting bias]
@@ -3906,16 +3939,15 @@ $N,J$, and $\alpha$, such that
 &\quad\lesssim
 pG'(\theta)^2
 \left[
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
+\frac1J\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 \right\}^2
-+\frac1{J^2}
-\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)^2
++\frac{N^2}{J^2}
 \right].
 \label{eq:refined-dmop-alpha-mse}
 \end{align}
@@ -3928,16 +3960,17 @@ Consequently, for $0\leq\alpha<1$,
 &\quad\lesssim
 pG'(\theta)^2
 \left\{
-\frac{N}{J(1-\alpha)^2}
+\frac{N}{J}
++\frac{1}{J(1-\alpha)^2}
 +N^2(1-\alpha)^2
-+\frac{N^2}{J^2(1-\alpha)^2}
++\frac{N^2}{J^2}
 \right\}.
 \label{eq:refined-dmop-alpha-mse-simplified}
 \end{align}
 The finite-sum display in Equation~
 (\ref{eq:refined-dmop-alpha-mse}) is defined directly at $\alpha=1$;
 its three terms then have
-orders $N^3/J$, $0$, and $N^4/J^2$, respectively.
+orders $N^2/J$, $0$, and $N^2/J^2$, respectively.
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -3965,8 +3998,10 @@ $z=\nabla_\theta\ell(\theta)$. Lemma~
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
 \lesssim
 \frac{pG'(\theta)^2}{J}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}.
 \label{eq:refined-theorem-variance-term}
 \end{equation}
 For the bias, add and subtract the full population DMOP-$\alpha$ score.
@@ -3990,8 +4025,7 @@ The triangle inequality, Lemma~
 -\nabla_\theta\ell_n(\theta)\}
 \right\|_2                                                    \notag\\
 &\quad\leq
-\frac{C\sqrt p\,G'(\theta)}{J}
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
+\frac{CN\sqrt p\,G'(\theta)}{J}
 +CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}.
@@ -4007,10 +4041,7 @@ Equation~(\ref{eq:refined-theorem-full-bias}) gives
 &\quad\leq
 CpG'(\theta)^2
 \left[
-\frac1{J^2}
-\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)^2
+\frac{N^2}{J^2}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
@@ -4023,13 +4054,10 @@ Substitution of Equations~(\ref{eq:refined-theorem-variance-term}) and
 Equation~(\ref{eq:vector-bias-variance-identity}) proves
 Equation~(\ref{eq:refined-dmop-alpha-mse}). For $\alpha<1$,
 \begin{align}
-\sum_{r=0}^{n-1}\alpha^r
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
+&\leq N,                                                     \notag\\
+\sum_{r=0}^{N-1}\alpha^r
 &\leq\frac1{1-\alpha},                                      \notag\\
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-&\leq\frac{N}{(1-\alpha)^2},                               \notag\\
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-&\leq\frac{N}{1-\alpha},                                   \notag\\
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}
 &\leq
@@ -4046,127 +4074,329 @@ absorbed by $\lesssim$, proves Equation~
 \begin{remark}[Choice of $\alpha$ within the proved MSE envelope]
 \label{rem:alpha-envelope-choice}
 The finite-sum bound in Equation~
-(\ref{eq:refined-dmop-alpha-mse}) can be minimized directly over
-$\alpha\in[0,1]$ for given $N,J$, and $\varrho$.  There is no general
-closed form for that finite-sum minimizer.  In the particle-rich regime
-$J\geq N$, Cauchy--Schwarz gives
-\begin{align}
-&\frac1{J^2}
-\left(
-\sum_{n=1}^{N}\sum_{r=0}^{n-1}\alpha^r
-\right)^2                                                     \notag\\
-&\quad\leq
-\frac{N}{J}
-\left\{
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2
-\right\}                                                     \notag\\
-&\quad\leq
-\frac1J\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
-\label{eq:particle-bias-absorbed-when-j-exceeds-n}
-\end{align}
-Thus the squared particle-bias term is absorbed into the particle-variance
-term whenever $J\geq N$.  For $\alpha<1$, after omitting the fixed factors
-in $\varrho$, the implicit constants, and the particle-system mixing-time
-factor suppressed by $\lesssim$, the resulting $\alpha$-dependent envelope
-is
+(\ref{eq:refined-dmop-alpha-mse}) can be minimized numerically over the
+finite interval $\alpha\in[0,1]$ for given $N,J$, and $\varrho$.  For an
+analytic rate calculation, Equation~
+(\ref{eq:refined-dmop-alpha-mse-simplified}) separates the common terms
+$N/J+N^2/J^2$ from the $\alpha$-dependent terms
 \begin{equation}
-\frac{N}{J(1-\alpha)^2}+N^2(1-\alpha)^2.
+\frac1{J(1-\alpha)^2}+N^2(1-\alpha)^2.
 \label{eq:simplified-alpha-envelope}
 \end{equation}
-Differentiating Equation~(\ref{eq:simplified-alpha-envelope}) with respect
-to $1-\alpha$ gives the rate-balancing choice
+This replacement of the finite geometric sum by $(1-\alpha)^{-1}$ is
+appropriate only before the sum saturates at the horizon.  Differentiating
+Equation~(\ref{eq:simplified-alpha-envelope}) gives
+\begin{align}
+0
+&=
+\frac{d}{d(1-\alpha)}
+\left\{
+\frac1{J(1-\alpha)^2}+N^2(1-\alpha)^2
+\right\}                                                     \notag\\
+&=
+-\frac2{J(1-\alpha)^3}+2N^2(1-\alpha),                     \notag\\
+(1-\alpha)^4
+&=\frac1{N^2J}.
+\label{eq:rate-balancing-alpha-calculation}
+\end{align}
+Thus, with the fixed factors in $\varrho$ suppressed,
 \begin{equation}
-1-\alpha
-\asymp
-(NJ)^{-1/4}.
+1-\alpha\asymp N^{-1/2}J^{-1/4}.
 \label{eq:rate-balancing-alpha-choice}
 \end{equation}
-At this choice, Equation~(\ref{eq:simplified-alpha-envelope}) is of order
+At this choice the two terms in Equation~
+(\ref{eq:simplified-alpha-envelope}) are each of order $N/\sqrt J$.
+The full bound is therefore
 \begin{equation}
-\frac{N^{3/2}}{\sqrt J}.
+\operatorname{MSE}
+\lesssim
+pG'(\theta)^2
+\left\{
+\frac{N}{J}+\frac{N}{\sqrt J}+\frac{N^2}{J^2}
+\right\}.
 \label{eq:rate-balanced-mse-envelope}
 \end{equation}
-At the choice in Equation~(\ref{eq:rate-balancing-alpha-choice}),
-$N(1-\alpha)\asymp N^{3/4}J^{-1/4}$.  Hence this balance applies before
-the geometric sums saturate at the horizon when
-$N\lesssim J\lesssim N^3$.
+At Equation~(\ref{eq:rate-balancing-alpha-choice}),
+$N(1-\alpha)\asymp N^{1/2}J^{-1/4}$.  Hence the unsaturated calculation
+applies, up to the fixed factors in $\varrho$, when $J\lesssim N^2$.
 
-For $J\gg N^3$, the geometric upper bounds used in
-Equation~(\ref{eq:refined-dmop-alpha-mse-simplified}) are no longer sharp
-at the minimizing value.  Indeed, when $N(1-\alpha)$ is small,
+When $N(1-\alpha)$ is small, the exact terminal geometric sum instead
+satisfies
 \begin{equation}
-\sum_{r=0}^{n-1}\alpha^r
+\sum_{r=0}^{N-1}\alpha^r
 =
-n-\frac{n(n-1)}2(1-\alpha)
-+O\{n^3(1-\alpha)^2\}.
+N-\frac{N(N-1)}2(1-\alpha)
++O\{N^3(1-\alpha)^2\}.
 \label{eq:finite-horizon-geometric-expansion}
 \end{equation}
-Substitution into the exact finite-sum envelope shows that its first-order
-decrease away from $\alpha=1$ is of order
-$N^4(1-\alpha)/J$, whereas the population-discount term is of order
-$N^2(1-\alpha)^2$.  For $J\gg N^3$, balancing these terms gives
+Its squared contribution to the variance decreases to first order by
+$N^2(N-1)(1-\alpha)/J$, while the displayed population-bias bound
+increases as $N^2(1-\alpha)^2$.  Balancing these changes gives
 \begin{equation}
-1-\alpha\asymp\frac{N^2}{J},
+1-\alpha\asymp\frac{N}{J},
 \qquad
 \operatorname{MSE}\lesssim
-\frac{pG'(\theta)^2N^3}{J}.
+\frac{pG'(\theta)^2N^2}{J}
+\quad\text{when }J\gtrsim N^2,
 \label{eq:finite-horizon-alpha-choice}
 \end{equation}
-Combining the two particle-rich regimes gives the rate summary
-\begin{equation}
-1-\alpha\asymp
-\begin{cases}
-(NJ)^{-1/4}, & N\lesssim J\lesssim N^3,\\
-N^2/J, & J\gtrsim N^3,
-\end{cases}
-\quad
-\operatorname{MSE}\lesssim
-pG'(\theta)^2
-\begin{cases}
-N^{3/2}/\sqrt J, & N\lesssim J\lesssim N^3,\\
-N^3/J, & J\gtrsim N^3.
-\end{cases}
-\label{eq:finite-horizon-alpha-regimes}
-\end{equation}
-When $J<N$, Equation~
-(\ref{eq:particle-bias-absorbed-when-j-exceeds-n}) does not absorb the
-squared particle-bias term.  Minimizing the unabsorbed simplified envelope
-then gives $1-\alpha\asymp J^{-1/2}$ and MSE at most of order $N^2/J$, up
-to the same common and suppressed factors.
+again with fixed $\varrho$ factors suppressed.  The leading rate in this
+regime is the finite-horizon terminal variance at $\alpha=1$; moving left
+changes only lower-order terms.
 
-For completeness, the unabsorbed finite-sum envelope also gives a
-ridge-type endpoint calculation.  For $N>1$, the left derivative at
-$\alpha=1$ is
+The $N/\sqrt J$ term in Equation~
+(\ref{eq:rate-balanced-mse-envelope}) is a property of the proved uniform
+upper envelope, not an actual-MSE lower bound.  Indeed,
 \begin{equation}
-\frac1J\sum_{n=1}^{N}n^2(n-1)
-+\frac{N^2(N+1)^2(N-1)}{6J^2}
->0,
-\label{eq:mse-envelope-alpha-one-derivative}
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+=
+\sum_{n=1}^{N}\sum_{r=1}^{n-1}
+(1-\alpha^r)\Delta_{n,r},
+\label{eq:global-population-discount-bias}
 \end{equation}
-so moving left from $\alpha=1$ decreases the displayed envelope.  Its
-right derivative at $\alpha=0$ is
+and, for each fixed $r$,
 \begin{equation}
-2\left\{
-\frac{N-1}{J}
-+\frac{N(N-1)}{J^2}
--\frac{N^2\varrho^2}{1-\varrho}
+1-\alpha^r
+=r(1-\alpha)+O\{r^2(1-\alpha)^2\}.
+\label{eq:discount-weight-endpoint-expansion}
+\end{equation}
+Lemma~\ref{lem:derivative-measure-forgetting} and the triangle inequality
+bound Equation~(\ref{eq:global-population-discount-bias}) by a constant
+times $N(1-\alpha)$.  They do not prove that the coefficient of
+$1-\alpha$ is nonzero: the signed vector
+$\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}$ can cancel.  Therefore the
+actual population bias, and hence the actual optimally tuned MSE, can be
+smaller than this envelope.  No such cancellation is assumed in
+Theorem~\ref{thm:refined-dmop-alpha-mse}.
+\end{remark}
+
+\begin{remark}[Fixed lag and effective memory]
+Fix $0\leq k<N$ and retain only the coefficients
+$\Delta_{n,r}^J$ with $0\leq r\leq\min(k,n-1)$ in Equation~
+(\ref{eq:conditional-score-path-decomposition}). Reindexing the finite
+sums by $s=n-r$ and telescoping over $n$ give
+\begin{align}
+&\sum_{n=1}^{N}\sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}^J          \notag\\
+&\quad=
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right).
+\label{eq:fixed-lag-full-score-telescope}
+\end{align}
+Indeed, for each fixed $s$,
+\begin{align}
+&m(\xi_s)(h_s)
++\sum_{n=s+1}^{\min(N,s+k)}
+\{m(\xi_n)(h_s)-m(\xi_{n-1})(h_s)\}                         \notag\\
+&\quad=
+m(\xi_{\min(N,s+k)})(h_s),
+\end{align}
+which yields Equation~(\ref{eq:fixed-lag-full-score-telescope}) after the
+time-$N$ terms are combined. The identical population calculation gives
+\begin{equation}
+\sum_{s=1}^{N-k-1}\rho_{s+k}(h_s)
++\rho_N\left(\sum_{s=N-k}^{N}h_s\right).
+\label{eq:fixed-lag-population-telescope}
+\end{equation}
+
+For the population truncation error,
+Equations~(\ref{eq:full-population-score-path-average}) and
+(\ref{eq:fixed-lag-population-telescope}) give
+\begin{align}
+&\nabla_\theta\ell(\theta)
+-\left\{
+\sum_{s=1}^{N-k-1}\rho_{s+k}(h_s)
++\rho_N\left(\sum_{s=N-k}^{N}h_s\right)
+\right\}                                                     \notag\\
+&\quad=
+\sum_{s=1}^{N-k-1}\{\rho_N(h_s)-\rho_{s+k}(h_s)\}           \notag\\
+&\quad=
+\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
+\label{eq:fixed-lag-population-bias-telescope}
+\end{align}
+Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
+\begin{align}
+&\left\|
+\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}
+\right\|_2                                                   \notag\\
+&\quad\leq
+C\sqrt p\,G'(\theta)
+\sum_{s=1}^{N-k-1}\sum_{r=k+1}^{\infty}\varrho^r            \notag\\
+&\quad\leq
+CN\sqrt p\,G'(\theta)
+\frac{\varrho^{k+1}}{1-\varrho}.
+\label{eq:fixed-lag-full-population-bias}
+\end{align}
+Equation~(\ref{eq:fixed-lag-full-population-bias}) is a population result
+and contains no particle approximation.  We now add the particle error.
+The particle in this manuscript is differentiable, so its location,
+simulator tangent, and weight tangent are all functionals of the current
+particle.  Hence $m(\xi_{s+k})(h_s)$ and
+$m(\xi_N)(\sum_{s=N-k}^{N}h_s)$ are current differentiable-particle cloud
+averages to which Lemma~\ref{lem:lagwise-weak-error} and the current-cloud
+$L^4$ calculation in Lemma~\ref{lem:dmop-alpha-variance} apply.
+
+Applying Lemma~\ref{lem:lagwise-weak-error} coordinatewise to Equation~
+(\ref{eq:fixed-lag-full-score-telescope}) and its population counterpart
+gives
+\begin{align}
+&\left\|
+\E\left\{
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right)
+\right\}
+-\left\{
+\sum_{s=1}^{N-k-1}\rho_{s+k}(h_s)
++\rho_N\left(\sum_{s=N-k}^{N}h_s\right)
+\right\}
+\right\|_2                                                   \notag\\
+&\quad\leq
+\frac{C\sqrt p\,G'(\theta)}{J}
+\{N-k-1+(k+1)\}                                             \notag\\
+&\quad\leq
+\frac{CN\sqrt p\,G'(\theta)}{J}.
+\label{eq:fixed-lag-full-particle-bias}
+\end{align}
+The first term in braces counts the $N-k-1$ separate averages, and the
+second uses
+\begin{equation}
+\operatorname{osc}\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\leq2(k+1)G'(\theta)
+\end{equation}
+for every coordinate $i$.
+
+For the variance calculation, fix a coordinate $i$ and center every
+average.  Equations~(\ref{eq:filtered-particle-l4}) and
+(\ref{eq:l4-centering-bridge}) give
+\begin{align}
+\left\|
+m(\xi_{s+k})(h_{s,i})-\E m(\xi_{s+k})(h_{s,i})
+\right\|_{L^4}
+&\leq\frac{CG'(\theta)}{\sqrt J},
+\label{eq:fixed-lag-one-time-l4}
+\\
+\left\|
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\E m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right\|_{L^4}
+&\leq\frac{C(k+1)G'(\theta)}{\sqrt J}.
+\label{eq:fixed-lag-terminal-l4}
+\end{align}
+Let $a(l)$ be the current-cloud mixing coefficient in Equation~
+(\ref{eq:conditional-score-alpha-mixing}).  Davydov's inequality and
+Equation~(\ref{eq:fixed-lag-one-time-l4}) give, for $s<t<N-k$,
+the following bound.  Indeed, the sigma-field generated by the variables
+through index $s$ is contained in the current-cloud sigma-field through
+time $s+k$, while the variables from index $t$ onward are measurable with
+respect to the cloud tail from time $t+k$ onward.  Their separation is
+therefore $t-s$, even though the bounded current-particle functional
+$h_s$ changes with $s$.
+\begin{align}
+&\left|
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{t+k})(h_{t,i})\}
+\right|                                                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}a(t-s)^{1/2}.
+\label{eq:fixed-lag-davydov-covariance}
+\end{align}
+Therefore, using Equation~(\ref{eq:conditional-score-mixing-sum}),
+\begin{align}
+&\Var\left\{\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_{s,i})\right\}  \notag\\
+&\quad\leq
+\frac{CG'(\theta)^2}{J}
+\left\{
+N-k-1
++2\sum_{l=1}^{N-k-2}(N-k-1-l)a(l)^{1/2}
+\right\}                                                     \notag\\
+&\quad\lesssim
+\frac{NG'(\theta)^2}{J}.
+\label{eq:fixed-lag-interior-variance}
+\end{align}
+Equation~(\ref{eq:fixed-lag-terminal-l4}) also gives
+\begin{equation}
+\Var\left\{
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right\}
+\leq
+\frac{C(k+1)^2G'(\theta)^2}{J}.
+\label{eq:fixed-lag-terminal-variance}
+\end{equation}
+All sums in this calculation are finite, and an empty sum is zero; thus
+the same displays cover the boundary case $k=N-1$.
+Applying Equation~(\ref{eq:two-term-variance-bound}) to the two terms in
+Equation~(\ref{eq:fixed-lag-full-score-telescope}), summing over
+$i=1,\ldots,p$, and using the manuscript's convention that $\lesssim$
+suppresses the current-cloud mixing-time factor prove
+\begin{equation}
+\Var\left\{
+\sum_{n=1}^{N}\sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}^J
+\right\}
+\lesssim
+\frac{pG'(\theta)^2}{J}\{N+(k+1)^2\}.
+\label{eq:fixed-lag-full-variance}
+\end{equation}
+
+Combining Equations~(\ref{eq:fixed-lag-full-population-bias}),
+(\ref{eq:fixed-lag-full-particle-bias}), and
+(\ref{eq:fixed-lag-full-variance}) with the vector bias--variance
+identity gives
+\begin{align}
+&\E\left\|
+\sum_{n=1}^{N}\sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}^J
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                 \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left\{
+\frac{N+(k+1)^2}{J}
++\frac{N^2}{J^2}
++\frac{N^2\varrho^{2(k+1)}}{(1-\varrho)^2}
 \right\}.
-\label{eq:mse-envelope-alpha-zero-derivative}
-\end{equation}
-Consequently, if
+\label{eq:fixed-lag-full-mse}
+\end{align}
+Thus the factor $\varrho$ is independent of $k$: the $k$ dependence is
+the explicit power $\varrho^{k+1}$ and the explicit terminal-cloud term
+$(k+1)^2/J$.
+
+The natural effective-memory comparison is
 \begin{equation}
-\frac{N-1}{J}+\frac{N(N-1)}{J^2}
-<\frac{N^2\varrho^2}{1-\varrho},
-\label{eq:mse-envelope-interior-condition}
+k+1\asymp\sum_{r=0}^{N-1}\alpha^r
+\label{eq:fixed-lag-effective-memory-comparison}
 \end{equation}
-neither endpoint minimizes the displayed envelope, and at least one
-minimizer lies in $(0,1)$.  These calculations optimize only the proved
-upper envelope.  The hidden constants, suppressed mixing-time factor, and
-one-sided inequalities prevent them from identifying the minimizer of the
-actual MSE or proving that the actual MSE is smaller than at both
-endpoints.
+because both sides count the number of appreciably retained lags. It does
+match the particle-memory terms in the proved upper bounds:
+$(k+1)^2/J$ in Equation~(\ref{eq:fixed-lag-full-mse}) and
+$(\sum_{r=0}^{N-1}\alpha^r)^2/J$ in Theorem~
+\ref{thm:refined-dmop-alpha-mse}.  It does not match the population-bias
+terms. A hard cutoff leaves every lag through $k$ unchanged and has the
+tail bound $\varrho^{k+1}$ in Equation~
+(\ref{eq:fixed-lag-full-population-bias}), whereas exponential
+discounting changes every positive lag and has the bound of order
+$1-\alpha$ in Lemma~\ref{lem:dmop-population-discount-bias}.
+
+For example, provided $\log(NJ)=o(N)$, as when $J$ is polynomial in $N$,
+one may choose $k<N$ so that
+\begin{equation}
+\varrho^{2(k+1)}\leq\frac1{NJ}
+\end{equation}
+with $k+1\asymp\log(NJ)$.  This turns Equation~
+(\ref{eq:fixed-lag-full-mse}) into
+\begin{equation}
+\operatorname{MSE}_{\mathrm{fixed\ lag}}
+\lesssim
+pG'(\theta)^2
+\left\{
+\frac{N}{J}+\frac{\log(NJ)^2}{J}+\frac{N^2}{J^2}
+\right\}.
+\label{eq:fixed-lag-logarithmic-choice}
+\end{equation}
+This upper envelope can therefore be sharper than the tuned
+DMOP-$\alpha$ envelope.  The reason is not an extra factor of $N$ in the
+discounted particle variance: the effective-memory terms agree after
+$k+1\asymp\sum_r\alpha^r$.  The difference is that a hard cutoff has
+geometric population truncation bias, whereas discounting perturbs every
+positive lag and is bounded only linearly in $1-\alpha$ under the stated
+assumptions.  This comparison concerns the proved upper envelopes and
+does not order the actual MSEs.
 \end{remark}
 
 \begin{remark}[Endpoint rates and oscillation normalization]
@@ -4175,32 +4405,35 @@ Lemma~\ref{lem:dmop-alpha-variance} gives
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
 \lesssim
 \frac{pG'(\theta)^2}{J}
-\sum_{n=1}^{N}
-\left(\sum_{r=0}^{n-1}\alpha^r\right)^2.
+\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}.
 \label{eq:current-particle-variance-summary}
 \end{equation}
 Thus the variance orders are $N/J$ at $\alpha=0$,
-$N/[J(1-\alpha)^2]$ for fixed $\alpha<1$, and
+$N/J$ for every fixed $\alpha<1$, and
 \begin{equation}
-\frac1J\sum_{n=1}^{N}n^2
-=
-\frac{N(N+1)(2N+1)}{6J}
-=
-O\left(\frac{N^3}{J}\right)
+\frac{N^2}{J}
 \label{eq:dmop-one-exact-squared-sum}
 \end{equation}
 at $\alpha=1$, up to the common factor $pG'(\theta)^2$ and the
 mixing-time factor suppressed by $\lesssim$.
 
-This also resolves the normalization question. A theorem stated for
-$\operatorname{osc}(f)\leq1$ must be rescaled when it is applied to the
-unnormalized score. Since the score has oscillation
-$O\{NG'(\theta)\}$ at $\alpha=1$, homogeneity contributes a factor
-$N^2G'(\theta)^2$ to an MSE bound. If the norm-one path-space theorem has
-MSE order $N/J$, as in the sharp historical estimate of
-\citet{chanDelMoral18}, rescaling gives $N^3G'(\theta)^2/J$. If instead
-one starts from a generic norm-one RMSE bound of order $N/\sqrt J$, as in
-the direct path-space bound of \citet{delMoral03}, rescaling gives
+This resolves the normalization question for the present proof. At
+$\alpha=1$, Equation~(\ref{eq:full-score-summation-by-parts}) contains
+only the terminal current-particle average of
+$\sum_{k=1}^{N}h_k$. Its coordinatewise oscillation is
+$O\{NG'(\theta)\}$. A current-particle result normalized by
+$\operatorname{osc}(f)\leq1$ has one-time MSE order $J^{-1}$; rescaling
+therefore gives $N^2G'(\theta)^2/J$, not $N^3/J$.
+
+Larger powers can still arise if one begins from a less specialized
+path-space theorem. A norm-one historical estimate with MSE order $N/J$,
+such as the finite-horizon estimate of \citet{chanDelMoral18}, becomes
+$N^3G'(\theta)^2/J$ after the additional $N^2G'(\theta)^2$ rescaling. A
+generic norm-one RMSE bound of order $N/\sqrt J$, as in the direct
+path-space bound of \citet{delMoral03}, similarly gives
 \begin{equation}
 \operatorname{RMSE}
 =
@@ -4210,9 +4443,9 @@ O\left(\frac{N^2G'(\theta)}{\sqrt J}\right),
 =
 O\left(\frac{N^4G'(\theta)^2}{J}\right).
 \end{equation}
-Therefore an $N^4/J$ MSE can arise from a generic normalized
-path-functional result, but it is not the sharp current-particle rate
-proved here.
+Thus $N^3/J$ or $N^4/J$ can arise from generic normalized
+path-functional estimates, but neither is the current-particle rate
+proved in Lemma~\ref{lem:dmop-alpha-variance}.
 
 The lower-bound result of \citet{poyiadjis11} concerns their path-space
 score estimator and does not apply to DMOP-$0$. At $\alpha=1$, DMOP has
@@ -4233,12 +4466,13 @@ estimator covered by Theorem~1.
 \end{remark}
 
 \begin{remark}[Scope of the proved $\alpha$ dependence]
-The supplement proves the $(1-\alpha)^{-2}$ factor in Equation~
-(\ref{eq:current-particle-variance-summary}). It does not claim the
-stronger $(1-\alpha)^{-1}$ factor. Because the differentiable particle
-already contains its location and tangents, this limitation is not a
-tangent-stability caveat; it is simply the limit of the covariance bound
-used in Lemma~\ref{lem:dmop-alpha-variance}.
+The singular dependence on $\alpha$ is confined to the terminal term
+$J^{-1}(\sum_{r=0}^{N-1}\alpha^r)^2$ in Equation~
+(\ref{eq:current-particle-variance-summary}); the remaining time sum is
+$O(N/J)$. Thus the proved horizon order is $N/J$ for each fixed
+$\alpha<1$. Because the differentiable particle already contains its
+location and tangents, this statement uses no separate tangent-stability
+assumption.
 \end{remark}
 
 \begin{remark}[Ridge-type tuning and endpoint derivatives]
@@ -4271,6 +4505,13 @@ r\alpha^{r-1}\Delta_{n,r}^J
 \right].
 \label{eq:actual-mse-alpha-derivative}
 \end{align}
+The second brace in Equation~
+(\ref{eq:actual-mse-alpha-derivative}) is the derivative of a finite
+polynomial.  At $\alpha=0$ it is evaluated directly as
+\begin{equation}
+\sum_{n=2}^{N}\Delta_{n,1}^J,
+\end{equation}
+so no convention involving an indeterminate power is needed.
 Therefore moving right from DMOP-$0$ lowers the actual MSE precisely when
 the right derivative in Equation~
 (\ref{eq:actual-mse-alpha-derivative}) at zero is negative; moving left
@@ -4281,11 +4522,10 @@ assumptions used here do not determine these signed covariances, so they
 do not prove either endpoint sign.
 
 Remark~\ref{rem:alpha-envelope-choice} gives the corresponding calculation
-for the proved upper envelope.  That calculation can establish an interior
-minimizer of the displayed envelope under
-Equation~(\ref{eq:mse-envelope-interior-condition}), but it does not
-determine either endpoint derivative of the actual MSE in
-Equation~(\ref{eq:actual-mse-alpha-derivative}).
+for the proved upper envelope.  It identifies rate-balancing interior
+choices in two horizon regimes, but it does not determine either endpoint
+derivative of the actual MSE in Equation~
+(\ref{eq:actual-mse-alpha-derivative}).
 \end{remark}
 
 \begin{remark}[Endpoint interpretation]
@@ -4296,7 +4536,7 @@ choice of $\alpha$ improves on DMOP-$0$.
 
 For every fixed $N$, the finite-sum bound at $\alpha=1$ has the ordinary
 Monte Carlo variance order $J^{-1}$; its dependence on the horizon is
-$N^3/J$. The squared particle-bias term is $N^4/J^2$ and is lower order
+$N^2/J$. The squared particle-bias term is $N^2/J^2$ and is lower order
 as $J\to\infty$ with $N$ fixed. These fixed-$N$ statements should not be
 confused with joint limits in which $N$ and $J$ grow together.
 
@@ -4308,6 +4548,232 @@ not generally particlewise identical to their likelihood-ratio score
 contributions, so their lower
 bound is not automatically a DMOP-$1$ lower bound.
 \end{remark}
+
+\bigskip
+\noindent{\rmfamily\bfseries DMOP-$\alpha$ as an estimating equation}\par
+\medskip
+
+The preceding MSE results condition on a fixed realized data set and
+compare DMOP-$\alpha$ with its realized exact likelihood score.  That is
+not the only criterion relevant to parameter estimation.  We now let the
+observations be random under a correctly specified model with parameter
+$\theta_0$, and evaluate the population recursion at
+$\theta=\phi=\theta_0$.
+
+\begin{proposition}[Conditional unbiasedness]
+\label{prop:dmop-alpha-unbiased-estimating-equation}
+Suppose the differentiation and domination conditions used in
+Equation~(\ref{eq:finite-horizon-differentiation-under-expectation}) hold
+also when integrating over the next observation. Then, for every fixed
+$\alpha\in[0,1]$,
+\begin{equation}
+\E_{\theta_0}\left\{
+\nabla_\theta\ell_n^\alpha(\theta_0)
+\mid Y_{1:n-1}
+\right\}
+=0.
+\label{eq:dmop-alpha-conditional-unbiasedness}
+\end{equation}
+Consequently,
+\begin{equation}
+\E_{\theta_0}\left\{
+\sum_{n=1}^{N}\nabla_\theta\ell_n^\alpha(\theta_0)
+\right\}
+=0.
+\label{eq:dmop-alpha-unbiased-estimating-equation}
+\end{equation}
+\end{proposition}
+
+\begin{proof}[Proof.]
+For $1\leq r<n$, the definitions of $\rho_n$ and $h_{n-r}$ give
+\begin{align}
+\rho_n(h_{n-r})
+&=
+\E_{\theta_0}(h_{n-r}\mid Y_{1:n}),                         \notag\\
+\rho_{n-1}(h_{n-r})
+&=
+\E_{\theta_0}(h_{n-r}\mid Y_{1:n-1}).
+\label{eq:rho-as-observation-conditional-expectation}
+\end{align}
+Apply conditional expectation given $Y_{1:n-1}$ to the definition of
+$\Delta_{n,r}$ in Equation~(\ref{eq:lag-coefficient-definitions}).  The
+tower property and Equation~
+(\ref{eq:rho-as-observation-conditional-expectation}) give
+\begin{align}
+\E_{\theta_0}(\Delta_{n,r}\mid Y_{1:n-1})
+&=
+\E_{\theta_0}\left[
+\E_{\theta_0}(h_{n-r}\mid Y_{1:n})
+\mid Y_{1:n-1}
+\right]                                                       \notag\\
+&\qquad-
+\E_{\theta_0}(h_{n-r}\mid Y_{1:n-1})                       \notag\\
+&=
+\E_{\theta_0}(h_{n-r}\mid Y_{1:n-1})
+-\E_{\theta_0}(h_{n-r}\mid Y_{1:n-1})                       \notag\\
+&=0.
+\label{eq:positive-lag-conditional-mean-zero}
+\end{align}
+
+It remains to treat $r=0$.  Conditional on $Y_{1:n-1}$, the simulated
+$X_n^{\theta_0}$ and its tangent, the next observation has density
+$f_{Y_n\mid X_n}(y\mid X_n^{\theta_0};\theta_0)$.  The derivative in
+Equation~(\ref{eq:actual-path-score}) acts on both the parameter argument
+and the differentiable state argument.  Differentiation under the
+observation integral therefore gives
+\begin{align}
+&\E_{\theta_0}
+\left(
+h_n
+\mid Y_{1:n-1},X_n^{\theta_0},\nabla_\theta X_n^{\theta_0}
+\right)                                                       \notag\\
+&\quad=
+\int
+f_{Y_n\mid X_n}(y\mid X_n^{\theta_0};\theta_0)
+\left.
+\nabla_\theta\log
+f_{Y_n\mid X_n}(y\mid X_n^\theta;\theta)
+\right|_{\theta=\theta_0}
+\,dy                                                          \notag\\
+&\quad=
+\left.
+\nabla_\theta
+\int f_{Y_n\mid X_n}(y\mid X_n^\theta;\theta)\,dy
+\right|_{\theta=\theta_0}                                   \notag\\
+&\quad=
+\nabla_\theta 1
+=0.
+\label{eq:current-score-observation-integral-zero}
+\end{align}
+Taking conditional expectations of Equation~
+(\ref{eq:current-score-observation-integral-zero}) given
+$Y_{1:n-1}$ and using the tower property yield
+\begin{align}
+\rho_n(h_n)
+&=
+\E_{\theta_0}(h_n\mid Y_{1:n}),                              \notag\\
+\E_{\theta_0}(\Delta_{n,0}\mid Y_{1:n-1})
+&=
+\E_{\theta_0}\{\rho_n(h_n)\mid Y_{1:n-1}\}                 \notag\\
+&=
+\E_{\theta_0}(h_n\mid Y_{1:n-1})                            \notag\\
+&=0.
+\label{eq:zero-lag-conditional-mean-zero}
+\end{align}
+Finally, Equation~
+(\ref{eq:population-conditional-score-path-decomposition}) and the
+finiteness of the lag sum give
+\begin{align}
+\E_{\theta_0}
+\{\nabla_\theta\ell_n^\alpha(\theta_0)\mid Y_{1:n-1}\}
+&=
+\sum_{r=0}^{n-1}\alpha^r
+\E_{\theta_0}(\Delta_{n,r}\mid Y_{1:n-1})                  \notag\\
+&=0
+\end{align}
+by Equations~(\ref{eq:positive-lag-conditional-mean-zero}) and
+(\ref{eq:zero-lag-conditional-mean-zero}).  This proves Equation~
+(\ref{eq:dmop-alpha-conditional-unbiasedness}).  Taking expectations and
+summing the finite sequence proves Equation~
+(\ref{eq:dmop-alpha-unbiased-estimating-equation}).
+\end{proof}
+
+Proposition~\ref{prop:dmop-alpha-unbiased-estimating-equation} does not
+say that a realized DMOP-$\alpha$ score equals the realized likelihood
+score when $\alpha<1$.  It says that, under correct specification, the
+population conditional contributions form a martingale-difference
+estimating equation.  The usual parametric rate therefore does not
+require $\alpha\to1$, provided the estimating equation identifies
+$\theta_0$ and satisfies the regularity conditions stated next.
+
+\begin{proposition}[Parametric inference for fixed $\alpha$]
+\label{prop:dmop-alpha-parametric-inference}
+Fix $\alpha\in[0,1]$. Suppose $\theta_0$ is locally identified by the
+limiting population estimating equation, a local uniform law of large
+numbers holds, and there is a consistent solution
+$\widehat\theta_N^\alpha$ of
+\begin{equation}
+\sum_{n=1}^{N}\nabla_\theta\ell_n^\alpha
+(\widehat\theta_N^\alpha)=0,
+\label{eq:dmop-alpha-population-estimating-equation}
+\end{equation}
+where the reference value in the population recursion is set equal to its
+parameter argument.  Suppose also that the following limits hold under
+the correctly specified model:
+\begin{align}
+&\frac1{\sqrt N}\sum_{n=1}^{N}
+\nabla_\theta\ell_n^\alpha(\theta_0)
+\ \Rightarrow\
+\mathcal N(0,B_\alpha),
+\label{eq:dmop-alpha-martingale-clt}
+\\
+&-\frac1N\sum_{n=1}^{N}
+\nabla_\theta
+\{\nabla_\theta\ell_n^\alpha(\theta)\}^{\mathsf T}
+\ \stackrel{p}{\longrightarrow}\ A_\alpha
+\label{eq:dmop-alpha-sensitivity-limit}
+\end{align}
+uniformly on a neighborhood shrinking to $\theta_0$, where
+$A_\alpha$ is nonsingular.  Then
+\begin{equation}
+\sqrt N(\widehat\theta_N^\alpha-\theta_0)
+\ \Rightarrow\
+\mathcal N\left(
+0,A_\alpha^{-1}B_\alpha A_\alpha^{-\mathsf T}
+\right).
+\label{eq:dmop-alpha-sandwich-limit}
+\end{equation}
+\end{proposition}
+
+\begin{proof}[Proof.]
+Apply the integral form of the multivariate Taylor expansion to
+Equation~(\ref{eq:dmop-alpha-population-estimating-equation}):
+\begin{align}
+0
+&=
+\frac1{\sqrt N}\sum_{n=1}^{N}
+\nabla_\theta\ell_n^\alpha(\theta_0)                         \notag\\
+&\quad+
+\left[
+\frac1N\int_0^1\sum_{n=1}^{N}
+\nabla_\theta
+\{\nabla_\theta\ell_n^\alpha(
+\theta_0+s(\widehat\theta_N^\alpha-\theta_0))\}^{\mathsf T}
+\,ds
+\right]
+\sqrt N(\widehat\theta_N^\alpha-\theta_0).
+\label{eq:dmop-alpha-taylor-expansion}
+\end{align}
+Consistency of $\widehat\theta_N^\alpha$ and the uniform convergence in
+Equation~(\ref{eq:dmop-alpha-sensitivity-limit}) imply that the matrix in
+square brackets converges in probability to $-A_\alpha$.  Nonsingularity
+and continuity of matrix inversion therefore give
+\begin{align}
+\sqrt N(\widehat\theta_N^\alpha-\theta_0)
+&=
+A_\alpha^{-1}
+\frac1{\sqrt N}\sum_{n=1}^{N}
+\nabla_\theta\ell_n^\alpha(\theta_0)
++o_p(1).
+\label{eq:dmop-alpha-asymptotic-linearization}
+\end{align}
+Equation~(\ref{eq:dmop-alpha-sandwich-limit}) follows from
+Equation~(\ref{eq:dmop-alpha-martingale-clt}), Slutsky's theorem, and
+Equation~(\ref{eq:dmop-alpha-asymptotic-linearization}).
+\end{proof}
+
+At $\alpha=1$, the estimating equation is the likelihood score and the
+usual information equality may reduce the sandwich covariance.  For
+$\alpha<1$, the covariance in Equation~
+(\ref{eq:dmop-alpha-sandwich-limit}) records a possible efficiency loss,
+not a loss of the $N^{-1/2}$ parameter rate.  Under uniform-in-parameter
+extensions of Lemmas~\ref{lem:dmop-full-particle-bias} and
+\ref{lem:dmop-alpha-variance}, the finite-$J$ score bias $O(N/J)$ gives a
+parameter displacement $O(J^{-1})$, while the fixed-$\alpha$ particle
+score variance $O(N/J)$ gives parameter variance $O\{(NJ)^{-1}\}$. Thus
+first-order equivalence with the population root requires, in particular,
+$\sqrt N/J\to0$; these uniform stochastic extensions are not asserted by
+Proposition~\ref{prop:dmop-alpha-parametric-inference}.
 
 \section{Figures for Bayesian Inference}
 \label{appendix:bayes}
