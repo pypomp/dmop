@@ -4786,7 +4786,10 @@ The proof keeps three time indices explicit: $s$ is the time at which
 $h_{s,i}$ is created, $t$ is the local particle-sampling time, and $n$ is
 the conditional-score time.  We first separate terminal resampling, then
 control predictable contributions for $s\leq t$ and $t<s$, and only then
-sum the local particle errors over $t$.
+sum the local particle errors over $t$.  Since $\theta=\phi$, every
+particle location, measurement weight, and transition density in this
+proof is evaluated at that common parameter; redundant $\phi$
+superscripts are suppressed.
 
 \medskip\noindent\emph{Step 1: terminal multinomial resampling.}\quad
 Fix a coordinate $i$ and write
@@ -4817,7 +4820,7 @@ resampling.  For the prediction paths at time $n$, write
 \begin{equation}
 p_{n,a}
 =
-\frac{g_{n,a}^{\phi}}{\sum_{b=1}^Jg_{n,b}^{\phi}},
+\frac{g_{n,a}}{\sum_{b=1}^Jg_{n,b}},
 \qquad a=1,\ldots,J,
 \label{eq:dmop-direct-time-n-resampling-probability}
 \end{equation}
@@ -5190,24 +5193,32 @@ C G'(\theta)^q
 \label{eq:dmop-genealogical-lag-moments}
 \end{align}
 
-To verify Equation~(\ref{eq:dmop-genealogical-lag-moments}), condition
-on the arrays of particle locations, but not on their ancestral indices.
+To verify Equation~(\ref{eq:dmop-genealogical-lag-moments}), use the
+manuscript's prediction-cloud notation and put
+\begin{equation}
+\mathcal X_t^J
+=
+\sigma\left(X_{0,1:J}^P,\ldots,X_{t,1:J}^P\right).
+\label{eq:dmop-prediction-cloud-conditioning}
+\end{equation}
+Thus we condition on all prediction clouds through time $t$, but not on
+the complete predicted genealogies $\xi_{t,1:J}^P$.
 The exact backward representation of a randomly selected ancestral line
 in Equation~(3.3) of \citet{chanDelMoral18} has, from time $s$ to time
 $s-1$, the transition
 \begin{align}
 &\sum_{j=1}^{J}
 \frac{
-g_{s-1,j}^{\phi}
+g_{s-1,j}
 f_{X_s\mid X_{s-1}}
-(x_s\mid x_{s-1,j}^{P,\phi};\theta)
+(x_s\mid x_{s-1,j}^{P};\theta)
 }{
 \sum_{a=1}^{J}
-g_{s-1,a}^{\phi}
+g_{s-1,a}
 f_{X_s\mid X_{s-1}}
-(x_s\mid x_{s-1,a}^{P,\phi};\theta)
+(x_s\mid x_{s-1,a}^{P};\theta)
 }
-\delta_{x_{s-1,j}^{P,\phi}}(dx_{s-1}).
+\delta_{x_{s-1,j}^{P}}(dx_{s-1}).
 \label{eq:dmop-particle-backward-kernel}
 \end{align}
 The terminal distribution is the normalized measurement-weighted
@@ -5221,23 +5232,23 @@ For every measurable set $A$, Assumption
 \begin{align}
 &\sum_{j=1}^{J}
 \frac{
-g_{s-1,j}^{\phi}
+g_{s-1,j}
 f_{X_s\mid X_{s-1}}
-(x_s\mid x_{s-1,j}^{P,\phi};\theta)
+(x_s\mid x_{s-1,j}^{P};\theta)
 }{
 \sum_{a=1}^{J}
-g_{s-1,a}^{\phi}
+g_{s-1,a}
 f_{X_s\mid X_{s-1}}
-(x_s\mid x_{s-1,a}^{P,\phi};\theta)
+(x_s\mid x_{s-1,a}^{P};\theta)
 }
-\1\{x_{s-1,j}^{P,\phi}\in A\}                          \notag\\
+\1\{x_{s-1,j}^{P}\in A\}                               \notag\\
 &\quad\geq
 \frac{\underbar M}{\bar M}
 \frac{
-\sum_{j=1}^{J}g_{s-1,j}^{\phi}
-\1\{x_{s-1,j}^{P,\phi}\in A\}
+\sum_{j=1}^{J}g_{s-1,j}
+\1\{x_{s-1,j}^{P}\in A\}
 }{
-\sum_{a=1}^{J}g_{s-1,a}^{\phi}
+\sum_{a=1}^{J}g_{s-1,a}
 }.
 \label{eq:dmop-particle-backward-minorization}
 \end{align}
@@ -5248,7 +5259,7 @@ composition of these backward transitions and
 Equation~(\ref{eq:bounded-realized-measurement-score}) therefore give
 \begin{equation}
 \operatorname{osc}\left\{
-\E(h_{s,i}\mid X_u,\hbox{ location arrays})
+\E(h_{s,i}\mid X_u,\mathcal X_t^J)
 \right\}
 \leq
 2G'(\theta)\varrho^{u-s}.
@@ -5264,13 +5275,13 @@ Equation~(\ref{eq:dmop-backward-conditional-score-contraction}), yields
 \begin{align}
 &\left|
 \operatorname{Cov}
-\{h_{s,i}(X_s),h_{u,i}(X_u)\mid\hbox{ location arrays}\}
+\{h_{s,i}(X_s),h_{u,i}(X_u)\mid\mathcal X_t^J\}
 \right|                                                     \notag\\
 &\quad=
 \left|
 \operatorname{Cov}
-\{\E(h_{s,i}\mid X_u,\hbox{ location arrays}),
-h_{u,i}(X_u)\mid\hbox{ location arrays}\}
+\{\E(h_{s,i}\mid X_u,\mathcal X_t^J),
+h_{u,i}(X_u)\mid\mathcal X_t^J\}
 \right|                                                     \notag\\
 &\quad\leq
 G'(\theta)^2\varrho^{u-s}.
@@ -5282,7 +5293,7 @@ now gives
 &\Var\left(
 \left.
 \sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
-\right|\hbox{ location arrays}
+\right|\mathcal X_t^J
 \right)                                                     \notag\\
 &\quad\leq
 G'(\theta)^2
@@ -5311,9 +5322,9 @@ differences gives, for every $z>0$,
 \left|
 \sum_{s=1}^{t}c_sh_{s,i}(X_s)
 -\E\left(\left.\sum_{s=1}^{t}c_sh_{s,i}(X_s)
-\right|\hbox{ location arrays}\right)
+\right|\mathcal X_t^J\right)
 \right|\geq z
-\,\middle|\,\hbox{ location arrays}
+\,\middle|\,\mathcal X_t^J
 \right\}                                                    \notag\\
 &\quad\leq
 2\exp\left[
@@ -5347,9 +5358,9 @@ Equations~(\ref{eq:dmop-backward-additive-tail}) and
 \left|
 \sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
 -\E\left(\left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
-\right|\hbox{ location arrays}\right)
+\right|\mathcal X_t^J\right)
 \right|^4
-\right|\hbox{ location arrays}
+\right|\mathcal X_t^J
 \right]                                                     \notag\\
 &\quad\leq
 C G'(\theta)^4
@@ -5362,21 +5373,22 @@ C G'(\theta)^4
 
 It remains only to pass from a selected ancestral line to the empirical
 conditional laws in Equation~(\ref{eq:dmop-genealogical-lag-moments}).
-Let the finer conditioning include the realized ancestor indices and let
-the coarser conditioning include only the location arrays.  For the second
+For the finer conditioning, add the complete predicted genealogies
+$\xi_{t,1:J}^P$ to $\mathcal X_t^J$; the coarser conditioning is only on
+$\mathcal X_t^J$.  For the second
 moment, the conditional variance identity gives
 \begin{align}
 &\E\left[
 \Var\left\{
 \left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
-\right|\hbox{ locations and ancestor indices}
+\right|\mathcal X_t^J,\xi_{t,1:J}^P
 \right\}
-\,\middle|\,\hbox{ location arrays}
+\,\middle|\,\mathcal X_t^J
 \right]                                                     \notag\\
 &\quad\leq
 \Var\left\{
 \left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
-\right|\hbox{ location arrays}
+\right|\mathcal X_t^J
 \right\}.
 \label{eq:dmop-lag-law-total-variance}
 \end{align}
@@ -5385,16 +5397,16 @@ give
 \begin{align}
 &\E\left[
 \left|
-S-\E(S\mid\hbox{ locations and ancestor indices})
+S-\E(S\mid\mathcal X_t^J,\xi_{t,1:J}^P)
 \right|^4
-\,\middle|\,\hbox{ location arrays}
+\,\middle|\,\mathcal X_t^J
 \right]                                                     \notag\\
 &\quad\leq
 16\E\left[
 \left|
-S-\E(S\mid\hbox{ location arrays})
+S-\E(S\mid\mathcal X_t^J)
 \right|^4
-\,\middle|\,\hbox{ location arrays}
+\,\middle|\,\mathcal X_t^J
 \right],
 \label{eq:dmop-lag-law-total-fourth-moment}
 \end{align}
