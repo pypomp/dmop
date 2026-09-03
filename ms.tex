@@ -625,23 +625,37 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 \end{enumerate}
 \arxiv{}{\vspace*{-3ex}}
 
-\kevin{Suggested clarification to (A3) and (A5) for the Section~S7
-argument.  The clarified current-function clause in (A3) should state
-that, at $\theta=\phi$,
-$h_n(x_n)=\nabla_\theta\log g_n^{A,F,\theta}\big|_{\theta=\phi}$
-is a bounded function of the current particle location $x_n$.  The
-current DMOP object is the pair consisting of $x_n$ and
-$\nabla_\theta\log w_n^{F,\theta}|_{\theta=\phi}$.
-Here (A2) governs the transition of $x_n$.  The algorithm first obeys
-$\log w_n^{P,\theta}=\alpha\log w_{n-1}^{F,\theta}$ and then adds the
-log density-ratio correction; differentiating at $\theta=\phi$ gives the
-affine recursion in Section~S7 with current input $h_n(x_n)$.  Thus (A3)
-bounds that current input, while
-(A5) justifies its construction by fixed-random-number differentiation.
-The current-function clause is the premise used by the Section~S7
-coupling calculation; boundedness and differentiability alone do not
-replace it.  The proof does not require total-variation mixing of the
-location--log-weight-gradient pair.}
+\kevin{Suggested clarification to (A3) and (A5), and the separate extra
+premise needed for the sharper Section~S7 particle bound.  The total
+derivative in (A3) is, by the chain rule,
+\[
+\left.\nabla_\theta^{\rm tot}\log g_n^\theta\right|_{\theta=\phi}
+=
+\left.\partial_\theta\log f_{Y_n\mid X_n}(y_n^*\mid X_n;\theta)
+\right|_{\theta=\phi}
++
+\left.\partial_x\log f_{Y_n\mid X_n}(y_n^*\mid X_n;\theta)
+\,\partial_\theta X_n^\theta\right|_{\theta=\phi}.
+\]
+It is therefore generally a function of the physical location and its
+fixed-random-number simulator gradient, or equivalently a functional carried
+by the fixed-random-number simulator genealogy.  It is not generally a function of the
+physical location alone.  The algorithm also carries the distinct
+log-weight gradient, which satisfies
+\[
+\left.\nabla_\theta\log w_n^{F,\theta}\right|_{\theta=\phi}
+=\alpha
+\left.\nabla_\theta\log w_{n-1}^{F,\theta}\right|_{\theta=\phi}
++\left.\nabla_\theta^{\rm tot}\log g_n^\theta\right|_{\theta=\phi}.
+\]
+Thus $\alpha$ contracts the inherited log-weight gradient, but not the
+simulator gradient inside the new measurement input.  Assumptions (A3) and
+(A5) give boundedness and differentiability; (A2) mixes the physical
+location.  They do not by themselves imply that the total measurement input
+is a current-location function or that the location together with its
+simulator gradient is mixing.  The sharper Section~S7 covariance calculation
+therefore requires the current-location property as an explicit additional
+premise, or a separate contraction condition for the simulator gradient.}
 
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
@@ -726,75 +740,133 @@ can be written as the current function $h_n(X_n)$, the following bounds
 hold.  This current-function premise should be stated explicitly: bounded
 total fixed-random-number derivatives in (A3) and differentiability in
 (A5) do not by themselves imply it for an unaugmented physical state.
-Here the current DMOP object consists of the
-particle location and the gradient of its log weight.  The location transition
-is the one in (A2), and differentiating the log-space weight recursion gives
+The differentiated computation carries the physical location, its simulator
+gradient, and the gradient of its log weight.  The location transition is the
+one in (A2), and differentiating the log-space weight recursion gives
 $\nabla_\theta\log w_n^{F,\theta}
 =\alpha\nabla_\theta\log w_{n-1}^{F,\theta}+h_n(x_n)$ at
 $\theta=\phi$ along a selected lineage.  No total-variation minorization of
-this pair is assumed.  Then
+the three-component computational state is assumed.  Under the stated
+current-location premise, the physical backward kernels suffice.  Then
 \[
+\begin{aligned}
+&\max\left\{
 \E\|\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell^\alpha(\theta)\|_2^2,
-\quad
+-\nabla_\theta\ell^\alpha(\theta)\|_2^2,\,
 \Var\{\nabla_\theta\hat\ell^\alpha(\theta)\}
-\lesssim
+\right\}                                                     \\
+&\quad\lesssim
 pG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \frac{1+\alpha\varrho}
 {(1-\alpha^2)(1-\alpha\varrho)}.
+\end{aligned}
 \]
 Consequently,
 \[
-\E\|\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)\|_2^2
-\lesssim pG'(\theta)^2
-\left[
+\begin{aligned}
+&\E\|\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)\|_2^2                              \\
+&\quad\lesssim pG'(\theta)^2\Bigg[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \frac{1+\alpha\varrho}
-{(1-\alpha^2)(1-\alpha\varrho)}
-+\left\{
+{(1-\alpha^2)(1-\alpha\varrho)}                              \\
+&\qquad+\min\Bigg\{
+\left\{
 \sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
-\right\}^2\right].
+\right\}^2,\,
+(1-\alpha)^2
+\left\{
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\right\}^2
+\Bigg\}\Bigg].
+\end{aligned}
 \]
 Here $\varrho\in(0,1)$ is independent of $N,J$, and $\alpha$.  The exact
 bias--variance identity also holds, and the population discount bias is
 bounded by
 \[
-\|\nabla_\theta\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2
-\leq
+\begin{aligned}
+&\|\nabla_\theta\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2 \\
+&\quad\leq
 C\sqrt p\,G'(\theta)
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
-\leq
+\min\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r,\,
+\right.\\[-1mm]
+&\hspace{48mm}\left.
+(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\right\} \\
+&\quad\leq
 CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+\frac{1-\alpha}{1-\alpha\varrho}.
+\end{aligned}
 \]
 The $N^2/J^2$ term is the quadratic self-normalized-ratio remainder, not
 an additional oscillation normalization of the full score.  If $J\geq N$,
 it is absorbed by the $N/J$ term.
+The population discount-bias bound does not require the additional
+current-location premise: the Section~S7 proof projects each bounded
+genealogical input onto its physical location at the time that input is
+created before applying the physical backward kernels.
 At $\alpha=1$, the corresponding finite-horizon bound is
 \[
-pG'(\theta)^2\min\{N^2,N^2/J+N^3/J^2\}.
+pG'(\theta)^2
+\min\left\{
+N^2,\,
+\frac{N^2}{J}+\frac{N^3}{J^2}
+\right\}.
 \]
-The proof conditions on the particle
-locations but not on the realized ancestral indices and uses the exact
-backward genealogy representation of \citet{chanDelMoral18}; (A2) then
-minorizes every backward kernel and gives geometric lag covariance.}
+The proof conditions on the particle locations but not on the realized
+ancestral indices.  It uses the exact backward genealogy representation of
+\citet{chanDelMoral18}.  Assumption (A2) then minorizes every backward kernel
+and gives geometric lag covariance.}
 
-\kevin{Interpretation of the third MSE term.  Its sharper finite-horizon
-upper-bound contribution is
+\kevin{Interpretation of the third MSE term.  Its two finite-horizon
+upper bounds combine to give the contribution
 \[
 pG'(\theta)^2
-\left\{\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r\right\}^2.
+\min\left\{
+\left[\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r\right]^2,\,
+(1-\alpha)^2
+\left[\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q\right]^2
+\right\}.
 \]
-The factor $\varrho^r$ is therefore present.  The remaining
-$1-\alpha$ order cannot be improved uniformly under the stated
-assumptions, although particular models can have signed first-order
-cancellation.  The identity follows because $\alpha^r$ is the survival
-probability of a geometric cutoff
-with probabilities $(1-\alpha)\alpha^k$, including probability
-$1-\alpha$ of cutoff zero.  Algebraically,
+The second bound follows from the exact summation-by-parts identity
+\[
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+=(1-\alpha)\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}\alpha^q
+\{\rho_N(h_s)-\rho_{s+q}(h_s)\},
+\]
+together with
+\[
+\|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
+\leq2\sqrt p\,G'(\theta)\varrho^q.
+\]
+It yields the simpler full-score bound
+\[
+\|\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)\|_2
+\leq
+\frac{2N\sqrt p\,G'(\theta)(1-\alpha)}
+{1-\alpha\varrho}.
+\]
+This removes the extra explicit slow-mixing factor
+$\varrho/(1-\varrho)$ from the earlier lagwise simplification.  It does
+not improve the powers of $N$ or $1-\alpha$.  Indeed, the homogeneous
+two-state example in Section~S7 has
+\[
+\Delta_{n,r}
+=\frac1{20}\left(\frac25\right)^{r-1},
+\qquad
+\nabla_\theta\ell(0)-\nabla_\theta\ell^\alpha(0)
+\geq\frac{(N-1)(1-\alpha)}{20}.
+\]
+Thus the $N^2(1-\alpha)^2$ squared-bias order cannot be improved uniformly
+under fixed observations, although particular models can have signed
+first-order cancellation.
+The first finite bound also has a geometric-cutoff interpretation:
+$\alpha^r$ is the survival probability of a cutoff with probabilities
+$(1-\alpha)\alpha^k$, including probability $1-\alpha$ of cutoff zero.
+Algebraically,
 \[
 \sum_{r\geq1}(1-\alpha^r)\varrho^r
 =\sum_{k\geq0}(1-\alpha)\alpha^k
@@ -804,55 +876,17 @@ $1-\alpha$ of cutoff zero.  Algebraically,
 \]
 Thus one cannot replace this expression by
 $C\varrho^{\alpha/(1-\alpha)}$ uniformly as $\alpha\uparrow1$ with
-$C$ independent of $\alpha$.  Since
-$\alpha/(1-\alpha)=1/(1-\alpha)-1$, using $1/(1-\alpha)$ as the
-effective horizon changes the proposed exponential rate only by a fixed
-factor.  More strongly, for fixed $N$, the exact fixed-data discrepancy is
-a finite polynomial in $1-\alpha$.  For some $c>0$, an upper bound of order
-$\varrho^{c/(1-\alpha)}$ would force every coefficient of that polynomial
-to vanish, so the discrepancy would be identically zero.
-The comparison is nevertheless favorable when $\alpha$ is calibrated to
-the mixing time.  Put $k=\lfloor\alpha/(1-\alpha)\rfloor$, the integer
-part of the mean geometric time.  The ratio of the geometric scalar bound
-to the fixed-lag scalar bound is
-\[
-\frac12<
-\frac{(1-\alpha)\varrho^{-k}}{1-\alpha\varrho}
-\leq\varrho^{-k},
-\]
-provided $k<N$ so that the horizon has not saturated.  The lower bound
-follows by retaining the first $k+1$ terms in the geometric-series
-representation, which gives $1-\alpha^{k+1}>1/2$.  Thus the two uncapped
-bounds differ by at most a fixed factor when
-$k|\log\varrho|$ is bounded, meaning that discount memory spans at most a
-fixed number of mixing e-folding times.  This provides a finite-regime
-explanation consistent with comparable empirical behavior; the asymptotic
-gap appears when $\alpha\uparrow1$ with $\varrho$ fixed.
-There is also a sharper result when expectation is taken over observations
-generated from the original POMP at $\theta_0$, so that
-$Y_n\mid X_n\sim f_{Y_n\mid X_n}(\mathord\cdot\mid X_n;\theta_0)$,
-rather than conditioning on the realized values $y_{1:N}^*$.  This
-introduces no second observation model.  The per-time difference between
-the exact and DMOP-$\alpha$ population scores then has conditional mean zero
-given the previous observations.  Its cross-time inner products therefore
-vanish, and the final remark of Section~S7 states explicitly that
-\[
-\E_{\theta_0}\|\nabla_\theta\ell^\alpha(\theta_0)
--\nabla_\theta\ell(\theta_0)\|_2^2
-\leq
-CNpG'(\theta_0)^2
-\left\{\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}\right\}^2,
-\]
-provided the lagwise bound is uniform over the random observations, or has
-a random per-time bound whose second moment is uniformly bounded in $n$.
-Hence the third term accumulates as $N$, not $N^2$, for data-averaged score
-MSE.  Moreover, for every fixed
-$\alpha$, the population score remains an unbiased estimating equation;
-the parameter estimator retains the usual $N^{-1/2}$ rate, with a possible
-sandwich-efficiency loss rather than a loss of consistency rate.  The same
-remark also displays the mixing-calibrated comparison for
-$k=\lfloor\alpha/(1-\alpha)\rfloor$.}
+$C$ independent of $\alpha$.  More strongly, for fixed $N$, the exact
+fixed-data discrepancy is a finite polynomial in $1-\alpha$; an
+exponentially small bound would force every coefficient of that polynomial
+to vanish.  The comparison is nevertheless favorable when $\alpha$ is
+calibrated to the mixing time.  Put
+$k=\lfloor\alpha/(1-\alpha)\rfloor$.  The ratio of the geometric scalar
+bound to the fixed-lag scalar bound lies between
+$1/2$ and $\varrho^{-k}$ before horizon saturation.  Thus the two uncapped
+bounds differ by at most a fixed factor when $k|\log\varrho|$ is bounded,
+meaning that discount memory spans at most a fixed number of mixing
+e-folding times.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
@@ -871,8 +905,9 @@ coefficients and hence the population discount bias.
 A local Del Moral--Rio perturbation expansion is then applied to each
 continuation ratio before summing over discounted observation times.  Conditional
 multinomial centering makes the first-order local fields martingale differences,
-The exact conditional backward representation of a sampled particle genealogy
-from \citet{chanDelMoral18}, together with (A2), gives
+Under the additional current-location premise stated above, the exact
+conditional backward representation of a sampled particle genealogy from
+\citet{chanDelMoral18}, together with (A2), gives
 \[
 |\Cov\{h_s(X_s),h_u(X_u)\mid\hbox{particle locations}\}|
 \lesssim G'(\theta)^2\varrho^{|s-u|}.
@@ -881,39 +916,24 @@ Consequently, the centered squared contributions sum to order
 $N/\{J(1-\alpha^2)\}$ before horizon saturation.  The same backward
 martingale calculation gives the fourth moment needed for the quadratic
 ratio remainders, improving their contribution to
-$N^2/\{J^2(1-\alpha^2)\}$.  The current object used in
-this calculation consists of the location and the gradient of its log weight.
-Assumption (A2) couples the location component geometrically, while
-differentiation of the log-space weight recursion multiplies the inherited
-gradient by $\alpha$ and adds $h_n(x_n)$.  Full-score
-summation by parts gives
-\[
-(1-\alpha)\sum_{r=q}^{L-1}\alpha^{r-q}+\alpha^{L-q}=1,
-\]
-so a previously accumulated difference contracts by $\alpha$, every new
-$h_n(x_n)$ difference is summable under location coupling, and no additional
-mixing-time factor appears.  More directly, if two locations are coupled
-so that their probability of disagreement after $r$ steps is at most
-$\varrho^r$, then
-\[
-\E|w_{t+r}-w'_{t+r}|
-\leq\alpha^r|w_t-w'_t|
-+2G'(\theta)\sum_{q=1}^r\alpha^{r-q}\varrho^q,
-\]
-which decays at rate $\max(\alpha,\varrho)^r$, apart from the factor $r$
-when $\alpha=\varrho$.  The proof therefore needs no total-variation
-contraction assumption for the pair.  The uniform $J^{-1}$ current-filter
-weak-bias lemma is not applied directly to a historical genealogical
-functional.}
+$N^2/\{J^2(1-\alpha^2)\}$.  This does not assert total-variation mixing of
+the differentiated computational state.  For a general total measurement
+derivative, the simulator gradient is genealogical and the displayed
+covariance need not decay under (A2).  The factor $\alpha$ discounts that
+input only after it enters the log-weight-gradient recursion; it does not
+create the missing covariance decay.}
 \kevin{Audit of the other SI variance arguments.
-The DMOP-$0$ calculation remains valid because no historical score is carried
-across resampling times.  The earlier fixed-lag calculation does not remain valid:
+Under the current-location premise, the DMOP-$0$ calculation remains valid
+because no historical score is carried across resampling times.  Without
+that premise, the total one-time measurement derivative can itself carry
+the simulator genealogy, so physical-cloud mixing alone does not prove the
+same rate.  The earlier fixed-lag calculation does not remain valid:
 in the exact constant-weight model its variance has order $N(k+1)/J$ for
 $1\ll k\ll\min(N,J)$ and order $N^2/J$ at $k=N-1$, rather than
-$\{N+(k+1)^2\}/J$.  The current DMOP pair includes the particle location and
-the gradient of its log weight.  The backward genealogy calculation in
-Lemma~S13 now controls covariance among score contributions that share a
-resampling genealogy and gives
+$\{N+(k+1)^2\}/J$.  Under the additional current-location premise stated
+above, the backward genealogy calculation in Lemma~S13 controls covariance
+among single-time score contributions that share a resampling genealogy and
+gives
 \[
 \max\{\operatorname{MSE}_{\rm particle},\operatorname{Var}\}
 \lesssim
@@ -923,7 +943,8 @@ pG'(\theta)^2
 Combining this with the population truncation bound adds
 $pG'(\theta)^2N^2\varrho^{2(k+1)}/(1-\varrho)^2$ to the full MSE.
 The proof does not identify an ancestral sum with a current-location
-function.}
+function; it applies location mixing to the individual inputs before
+summing them.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -945,6 +966,11 @@ We also show that DMOP-$0$ achieves a MSE of $\tilde{O}\big(NpG'(\theta)^2(J^{-1
 Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to reduce said mixing error, leading to uncontrolled asymptotic bias. 
 
 \kevin{Suggested correction to this endpoint discussion.
+Under the additional current-location premise, DMOP-$0$ has variance
+$O\{NpG'(\theta)^2/J\}$, and Lemma~S13 gives the corresponding sharpened
+particle bound for $\alpha>0$.  Without that premise, (A2) mixes only the
+physical cloud and does not control the simulator-genealogical total
+measurement derivative.
 Theorem~1 of \citet{poyiadjis11} gives a quadratic lower bound for the
 central-limit asymptotic variance of their already unnormalized additive path
 estimator; no additional $N^2$ normalization factor should be applied.
@@ -957,7 +983,7 @@ identical to the complete-data likelihood-ratio score contributions of
 \citet{poyiadjis11}, so their lower bound
 does not automatically transfer to DMOP-$1$.
 There is also no DMOP-$0$ MSE lower bound under the present assumptions.
-For $\alpha<1$, Lemma~S13 gives the sharper particle term proportional to
+Under the same premise, for $\alpha<1$, Lemma~S13 gives the sharper particle term proportional to
 $(1-\alpha^2)^{-1}$.  Balancing it against the fixed-observation population
 term gives
 \[

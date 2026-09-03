@@ -2287,7 +2287,8 @@ First, we note the following relation between the Dobrushin contraction coeffici
 
 As a warm-up, we consider a variance bound for DMOP-$0$.
 Note that we made Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} to leverage the results from \cite{karjalainen23} on the forgetting of the particle filter. 
-This is used below to recover the $O(N/J)$ variance bound for DMOP-$0$.
+Together with the current-location premise stated in the theorem below,
+this is used to recover the $O(N/J)$ variance bound for DMOP-$0$.
 The former truncation extension to $\alpha>0$ is retained inactive for
 comparison.  Section~\ref{appendix:sharper-biasvar} gives the exact
 genealogical audit showing why the current-filter mixing argument cannot
@@ -2299,7 +2300,13 @@ We start by decomposing the MOP-$\alpha$ estimator as follows, for the case $\th
 Now, to illustrate the proof strategy for the general case in an easier context, we first analyze the special case when $\alpha=0$.
 We now prove the variance bound for this case, presented below. To our knowledge, this result for the variance of the gradient estimate of \cite{naesseth18} is novel. 
 \begin{thm}[Variance of MOP-$0$ Gradient Estimate]
-The variance of DMOP-$0$, i.e. the algorithm of \cite{naesseth18}, is
+Suppose the observations are fixed, $J\geq2$, $\theta=\phi$, Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used.  Assume additionally that the total fixed-random-number derivative
+of each log measurement density is a bounded measurable function of the
+current physical particle location.  Then the variance of DMOP-$0$, i.e.
+the algorithm of \cite{naesseth18}, is
  \begin{equation}
      \Var\big(\nabla_\theta \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2}{J}.
  \end{equation}
@@ -2343,7 +2350,9 @@ Here, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasur
 i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement}. 
 
 
-Lemma~2.3 of \citet{karjalainen23}, followed by conditional multinomial
+By the theorem's current-location premise, each time-$n$ contribution is a
+function of the current physical particle cloud.  Lemma~2.3 of
+\citet{karjalainen23}, followed by conditional multinomial
 resampling and the bounded Bayes-ratio step, gives the centered $L^4$
 bound below.  Theorem~3.1 of the same paper gives the displayed
 particle-cloud mixing coefficient.  At $\alpha=0$ these two results give
@@ -2381,9 +2390,9 @@ It then follows that as $\theta \in \Theta \subseteq \R^p$,
 \end{proof}
 Note that the factor of $N$ that pops up here is due to the use of the unnormalized gradient. If one divides the gradient estimate by $\sqrt{N}$ before usage, the variance does not depend on the horizon. If one divides by $N$, the error is $O(1/\sqrt{NJ})$.
 
-The order $NpG'(\theta)^2/J$ is the verified DMOP-$0$ baseline.  It is
-not asserted to be a lower bound for every model or every value of
-$\alpha$.
+Under the stated current-location premise, the order
+$NpG'(\theta)^2/J$ is the verified DMOP-$0$ baseline.  It is not asserted
+to be a lower bound for every model or every value of $\alpha$.
 
 \iffalse
 Having obtained a variance bound for DMOP-$0$, we are now in a position to tackle a variance bound for DMOP-$\alpha$.
@@ -2775,10 +2784,16 @@ Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1)$,
 $\theta=\phi$, Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  The bounded measurement-gradient input in Assumption~
-{\refAssumpBoundedMeasurement} is understood to be the current function
-$h_n(X_n)$ in
-Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
+used.  Assume additionally that there is a bounded measurable function
+$h_n$ on the physical state space such that, under the fixed-random-number
+construction,
+\begin{equation*}
+\left.\nabla_\theta^{\rm tot}\log g_{n,k_j}^{\theta}
+\right|_{\theta=\phi}
+=h_n(X_{n,j}^{F,\phi})
+\quad\text{almost surely}.
+\end{equation*}
+Then
 \begin{align}
 \Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
 &\lesssim
@@ -2800,8 +2815,8 @@ pG'(\theta)^2
 {(1-\alpha^2)(1-\alpha\varrho)}
 +N^2
 \left\{
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+\frac{1-\alpha}
+{1-\alpha\varrho}
 \right\}^2
 \right].
 \label{eq:verified-theorem-five-mse}
@@ -2814,10 +2829,14 @@ The population component of the fixed-observation bias satisfies
 \right\|_2
 \leq
 CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+\frac{1-\alpha}
+{1-\alpha\varrho}.
 \label{eq:verified-theorem-five-population-bias}
 \end{equation}
+Equation~(\ref{eq:verified-theorem-five-population-bias}) does not require
+the additional current-location premise: Lemma~
+\ref{lem:derivative-measure-forgetting} first projects each bounded
+genealogical input onto its creation-time physical location.
 If $J\geq N$, the $N^2/J^2$ term in
 Equation~(\ref{eq:verified-theorem-five-variance}) is absorbed by the
 $N/J$ term, so
@@ -2851,22 +2870,30 @@ Theorem~\ref{thm:dmop-alpha-truncation-mse}. Write
 $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
 conditional score produced by the deterministic differentiated population
 recursion. At $\theta=\phi$, its $\alpha=1$ version is the exact
-conditional score $\nabla_\theta\ell_n(\theta)$.  The current DMOP object
-needed below is the pair consisting of the particle location and the gradient
-of its log weight.  The location follows the ordinary particle
-transition to which Assumption~{\refAssumpBoundedProcess} applies.  Along
-each selected lineage, the second component obeys the existing recursion
+conditional score $\nabla_\theta\ell_n(\theta)$.  Three quantities must be
+distinguished.  The physical location follows the ordinary particle
+transition to which Assumption~{\refAssumpBoundedProcess} applies.  Its
+fixed-random-number simulator gradient is carried by the differentiation of
+that transition.  The log-weight gradient obeys, along each selected
+lineage, the existing recursion
 \begin{equation}
 \left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
 =
 \alpha
 \left.\nabla_\theta\log w_{n-1,k_j}^{F,\theta}\right|_{\theta=\phi}
-+h_n(x_{n,j}^{F,\phi}).
++
+\left.\nabla_\theta^{\rm tot}\log g_{n,k_j}^{\theta}
+\right|_{\theta=\phi}.
 \label{eq:location-weight-gradient-pair-recursion}
 \end{equation}
-Here $h_n$ is the bounded current measurement-gradient function of the
-particle location.  This is the derivative at $\theta=\phi$ of the
-log-space recursion
+The final term is the one-time measurement-gradient input called $h_n$
+below.  It is the total derivative through the recursively simulated state,
+not merely the partial derivative with the state held fixed.  Thus it is in
+general carried by the fixed-random-number simulator genealogy.  The sharper results below
+state separately the additional case in which this input is a bounded
+function of the current physical location.  Equation~
+(\ref{eq:location-weight-gradient-pair-recursion}) is the derivative at
+$\theta=\phi$ of the log-space recursion
 \begin{align}
 \log w_{n,j}^{P,\theta}
 &=\alpha\log w_{n-1,j}^{F,\theta},                         \notag\\
@@ -2876,10 +2903,14 @@ log-space recursion
 \label{eq:log-weight-recursion}
 \end{align}
 At $\theta=\phi$, the log weights are zero but their gradients need not be.
-We do not assume that the location--log-weight-gradient pair is mixing in
-total variation.  Instead, the proof expands the log-weight gradient
-into its single-time $h_n$ contributions, applies location
-forgetting to those contributions, and sums their powers of $\alpha$.
+The factor $\alpha$ contracts the inherited log-weight gradient.  It does
+not contract the simulator gradient inside the newly created input $h_n$.
+Consequently, Assumption~{\refAssumpBoundedProcess} alone does not imply
+that the computational state consisting of the location, its simulator
+gradient, and its log-weight gradient is mixing in total variation.  When
+$h_n$ is a current-location function, the proof instead expands the
+log-weight gradient into its single-time inputs, applies location forgetting
+to those inputs, and sums their powers of $\alpha$.
 Throughout this section, the observations are fixed. Expectations and
 variances are over the simulator and particle-filter random variables,
 conditional on those observations.
@@ -2946,15 +2977,17 @@ current filtering functional.  Its proof is not used for a historical
 functional carried by the genealogy; that separate issue is audited
 below.
 
-For the path functionals below, evaluated at $\theta=\phi$, let $\rho_t$
-be the posterior path measure of the particle locations. Thus, for
-every integrable path functional $h$,
+For the functionals below, evaluated at $\theta=\phi$, let $\rho_t$ be the
+likelihood-tilted law of the complete fixed-random-number simulator history
+through time $t$, including the base simulator variables.  Its
+$X_{0:t}$-marginal is the usual posterior path law.  Thus, for every
+integrable functional $h$ of that complete history,
 \begin{equation}
 \rho_t(h)
 =
 \frac{
 \E\left[
-h(X_{0:t})
+h
 \prod_{s=1}^t G_s(X_s)
 \right]
 }
@@ -2963,11 +2996,13 @@ h(X_{0:t})
 }.
 \label{eq:canonical-extended-posterior-path-law}
 \end{equation}
-Here $G_s(X_s)$ is the existing measurement potential.  The accumulated
-weight gradient is the second component of the current pair in Equation~
-(\ref{eq:location-weight-gradient-pair-recursion}); it is not included in
-the location variable $X_s$ or in the transition density appearing in
-Assumption~{\refAssumpBoundedProcess}.
+Here $G_s(X_s)$ is the existing measurement potential.  Future base
+simulator variables are fresh and conditionally independent of the complete
+past given the current physical location, as in the original POMP
+construction.  The accumulated log-weight gradient is distinct from both
+the physical location and its simulator gradient; neither gradient is
+included in the transition density appearing in Assumption~
+{\refAssumpBoundedProcess}.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -3132,9 +3167,6 @@ Equation~(\ref{eq:finite-horizon-differentiation-under-expectation}) gives
 \label{lem:derivative-measure-forgetting}
 Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and {\refAssumpDifferentiableSimulator},
-assume additionally that the bounded measurement-gradient input is the
-current function $h_n(X_n)$ in
-Equation~(\ref{eq:location-weight-gradient-pair-recursion}).  Then
 there are
 constants $C<\infty$ and $\varrho\in(0,1)$ such that, for
 $0\leq r<n$,
@@ -3218,7 +3250,7 @@ M_n(G_n)(x_{n-1})
 \medskip\noindent\emph{Step 2: backward-kernel contraction.}\quad
 We next control how much information about the path through time \(k\)
 can remain at time \(n-1\). For \(s\geq1\), the posterior backward kernel
-from \(X_s\) to \(X_{s-1}\), written only in this proof as \(B_s\), is
+from \(X_s\) to \(X_{s-1}\), denoted below by \(B_s\), is
 \begin{equation}
 B_s(x_s,dx_{s-1})
 =
@@ -3294,22 +3326,84 @@ Taking the supremum over \(x_s,x'_s\) gives
 \label{eq:posterior-backward-oscillation-contraction}
 \end{equation}
 
-\medskip\noindent\emph{Step 3: propagate the time-$k$ contribution.}\quad
-The function $h_{k,i}=h_{k,i}(X_k)$ is a bounded current function of the
-particle location $X_k$. Repeated conditioning through the backward kernels
-therefore gives
+\medskip\noindent\emph{Step 3: project and propagate the time-$k$
+contribution.}\quad
+The total derivative $h_{k,i}$ may depend on the complete simulator
+genealogy through time $k$.  Its conditional projection
+onto the physical location is
+\begin{equation}
+\bar h_{k,i}(X_k)
+=
+\E_{\rho_k}(h_{k,i}\mid X_k).
+\label{eq:population-score-current-projection}
+\end{equation}
+We first verify that the same projection applies under every later posterior
+path law.  For $t\geq k$, let
+\begin{equation}
+L_{k,t}(X_k)
+=
+\E_U\left\{
+\left.\prod_{s=k+1}^{t}G_s(X_s)\right|X_k
+\right\},
+\qquad L_{k,k}=1.
+\label{eq:population-score-future-likelihood}
+\end{equation}
+For every bounded function $q$ of $X_k$, the Markov property and
+Equation~(\ref{eq:canonical-extended-posterior-path-law}) give
 \begin{align}
-\E_{\rho_{n-1}}\{h_{k,i}(X_k)\mid X_{n-1}=x_{n-1}\}
+\rho_t\{h_{k,i}q(X_k)\}
 &=
-(B_{n-1}B_{n-2}\cdots B_{k+1}h_{k,i})(x_{n-1}).
+\frac{
+\E_U\left[
+h_{k,i}q(X_k)
+\prod_{s=1}^{k}G_s(X_s)L_{k,t}(X_k)
+\right]
+}{
+\E_U\left[
+\prod_{s=1}^{k}G_s(X_s)L_{k,t}(X_k)
+\right]
+}                                                           \notag\\
+&=
+\frac{
+\E_U\left[
+\bar h_{k,i}(X_k)q(X_k)
+\prod_{s=1}^{k}G_s(X_s)L_{k,t}(X_k)
+\right]
+}{
+\E_U\left[
+\prod_{s=1}^{k}G_s(X_s)L_{k,t}(X_k)
+\right]
+}                                                           \notag\\
+&=
+\rho_t\{\bar h_{k,i}(X_k)q(X_k)\}.
+\label{eq:population-score-projection-invariance}
+\end{align}
+The second equality is the defining conditional-expectation identity in
+Equation~(\ref{eq:population-score-current-projection}), multiplied by the
+$X_k$-measurable function $q(X_k)L_{k,t}(X_k)$.  Hence
+\begin{equation}
+\E_{\rho_t}(h_{k,i}\mid X_k)
+=\bar h_{k,i}(X_k),
+\qquad t\geq k.
+\label{eq:population-score-projection-conditional}
+\end{equation}
+Repeated conditioning through the physical backward kernels therefore gives
+\begin{align}
+\E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=x_{n-1}\}
+&=
+(B_{n-1}B_{n-2}\cdots B_{k+1}\bar h_{k,i})(x_{n-1}).
 \label{eq:iterated-backward-conditioning}
 \end{align}
 There are \(n-1-k=r-1\) backward kernels in this display. Moreover,
 Equation~(\ref{eq:population-forgetting-score-bound}) gives
 \begin{align}
-\operatorname{osc}(h_{k,i})
+\|\bar h_{k,i}\|_\infty
 &\leq
-2\|h_{k,i}\|_\infty                                          \notag\\
+\|h_{k,i}\|_\infty
+\leq G'(\theta),                                            \notag\\
+\operatorname{osc}(\bar h_{k,i})
+&\leq
+2\|\bar h_{k,i}\|_\infty                                  \notag\\
 &\leq
 2G'(\theta).
 \label{eq:conditional-past-score-oscillation}
@@ -3497,6 +3591,12 @@ Equation~(\ref{eq:predictive-potential-oscillation}) show that
 on the model minorization bounds and is independent of \(N,J,\alpha\), and
 any lag truncation \(k\).  In particular, the factor \(\varrho^r\) includes
 the contraction of the first positive lag; it is not only a tail bound.
+The projection in Equation~
+(\ref{eq:population-score-current-projection}) is sufficient here because
+\(\Delta_{n,r}\) is a difference of two linear expectations of one
+historical input.  It does not eliminate conditional covariance between two
+genealogical inputs, and therefore does not supply the particle covariance
+bound in Equation~(\ref{eq:dmop-backward-lag-covariance}).
 
 \end{proof}
 
@@ -3516,12 +3616,12 @@ particle location and every $t\geq1$,
 \label{eq:uniform-current-particle-weak-bias}
 \end{equation}
 The constant is independent of $t$ and $J$.
-Here ``current'' means measurable with respect to the time-$t$ particle
-location to which Assumption {\refAssumpBoundedProcess} applies.  In
-particular, $h_t=h_t(X_t)$ is current at time $t$.  For $s<t$, however,
-$h_s(\xi_{t,j})$ is selected through the ancestry and is not assumed to
-be a function of the current location alone.  The lemma is therefore not
-applied directly to a historical $h_s$ at a later time.
+Here ``current'' means measurable with respect to the time-$t$ physical
+particle location to which Assumption {\refAssumpBoundedProcess} applies.
+Under the additional premise of Lemma~\ref{lem:dmop-alpha-variance},
+$h_t(X_t)$ is an admissible choice of $f$.  Without that premise, the total
+measurement derivative can depend on the simulator genealogy and is not an
+admissible current-location function.
 \end{lem}
 
 \begin{proof}[Proof.]
@@ -4708,9 +4808,10 @@ Appendix~A.3 of \citet{delMoral11}.
 Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Assume additionally that the bounded measurement-gradient input
-is the current function $h_n(X_n)$ in
-Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
+used.  Assume additionally that there is a bounded measurable function
+$h_n$ on the physical state space such that the total derivative in
+Equation~(\ref{eq:location-weight-gradient-pair-recursion}) equals
+$h_n(X_n)$ almost surely under the fixed-random-number construction. Then
 \begin{align}
 &\max\left\{
 \E\left\|
@@ -5221,11 +5322,23 @@ f_{X_s\mid X_{s-1}}
 \delta_{x_{s-1,j}^{P}}(dx_{s-1}).
 \label{eq:dmop-particle-backward-kernel}
 \end{align}
-The terminal distribution is the normalized measurement-weighted
-prediction cloud for $\Psi_t\{m(\xi_t^P)\}$.  For $\mu_t^J$, the same
-formula applies after conditioning additionally on the newly propagated
-location at time $t$; its terminal distribution is otherwise immaterial
-for the bounds below.
+In the notation of \citet{chanDelMoral18}, the density in their backward
+transition is
+$H'_s(x_{s-1},x_s)=G'_{s-1}(x_{s-1})M'_s(x_{s-1},x_s)$.
+Taking $m(\xi'_{s-1})$ to be the empirical prediction cloud,
+$G'_{s-1}(x_{s-1,j}^P)=g_{s-1,j}$, and
+\begin{equation*}
+M'_s(x_{s-1,j}^P,x_s)
+=f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1,j}^P;\theta)
+\end{equation*}
+gives exactly Equation~(\ref{eq:dmop-particle-backward-kernel}).
+Equation~(3.3) of \citet{chanDelMoral18} uses the uniform terminal
+empirical measure.  Selecting its terminal state instead with
+probability proportional to $g_{t,j}$ gives
+$\Psi_t\{m(\xi_t^P)\}$ and changes only the terminal distribution, not
+the backward transitions in Equation~
+(\ref{eq:dmop-particle-backward-kernel}).  Thus the displayed transition
+is an exact specialization of their backward-law identity.
 
 For every measurable set $A$, Assumption
 {\refAssumpBoundedProcess} gives the pointwise minorization
@@ -5265,6 +5378,15 @@ Equation~(\ref{eq:bounded-realized-measurement-score}) therefore give
 2G'(\theta)\varrho^{u-s}.
 \label{eq:dmop-backward-conditional-score-contraction}
 \end{equation}
+This is the point at which the additional current-function premise in
+Lemma~\ref{lem:dmop-alpha-variance} is used.  It makes $h_{u,i}$
+measurable with respect to $X_u$, and it makes $h_{s,i}$ a bounded
+function at the endpoint of the backward composition.  Equation~(3.3)
+of \citet{chanDelMoral18} supplies the conditional genealogy law, but by
+itself it would not give the following covariance decay for arbitrary
+functionals of the ancestral path.  In particular, the factor $\alpha$
+does not repair this step: it weights the inputs only after the covariance
+of $h_{s,i}$ and $h_{u,i}$ has been formed.
 For real random variables $U,V$,
 \begin{equation}
 |\operatorname{Cov}(U,V)|
@@ -5287,8 +5409,15 @@ h_{u,i}(X_u)\mid\mathcal X_t^J\}
 G'(\theta)^2\varrho^{u-s}.
 \label{eq:dmop-backward-lag-covariance}
 \end{align}
-Expanding the conditional variance and putting $r=t-s$ and $v=t-u$
-now gives
+Equation~(\ref{eq:dmop-backward-lag-covariance}) concerns two
+single-time measurement-gradient inputs, not two accumulated log-weight
+gradients.  Their realized values are carried by the sampled genealogy.
+Nevertheless, at $\theta=\phi$, the reference genealogy and the
+single-time input maps are independent of $\alpha$, because every MOP
+weight ratio equals one.  The factors of $\alpha$ enter only when
+Equation~(\ref{eq:unrolled-filtered-weight}) reassembles the accumulated
+log-weight gradient.  Expanding the conditional variance of that sum and
+putting $r=t-s$ and $v=t-u$ now gives
 \begin{align}
 &\Var\left(
 \left.
@@ -5304,7 +5433,11 @@ G'(\theta)^2
 
 For completeness, the fourth moment follows from the same backward
 transitions.  Put $c_s=\alpha^{t-s}$ and expose the selected path in the
-order $X_t,X_{t-1},\ldots,X_1$.  At the step revealing $X_u$, the
+order $X_t,X_{t-1},\ldots,X_1$.  The conditional expectations of the
+fixed bounded sum $\sum_{s=1}^tc_sh_{s,i}(X_s)$ along these nested
+sigma-fields form its Doob martingale; this is an identity, not an
+additional stochastic assumption on the model or observations.  At the
+step revealing $X_u$, the
 oscillation of the corresponding Doob martingale difference is at most
 \begin{equation}
 2G'(\theta)\sum_{s=1}^{u}c_s\varrho^{u-s}.
@@ -5313,7 +5446,10 @@ oscillation of the corresponding Doob martingale difference is at most
 Indeed, conditional expectations of the terms with $s<u$ are obtained by
 the backward transitions from $u$ to $s$, and each has oscillation at
 most $2G'(\theta)c_s\varrho^{u-s}$; terms with $s>u$ have already been
-revealed and cancel from that martingale difference.
+revealed and cancel from that martingale difference.  This fourth-moment
+step is needed for the products of two empirical errors in Step 8; the
+second-moment covariance calculation alone does not control those
+products.
 
 Conditional Hoeffding's lemma applied successively to these centered
 differences gives, for every $z>0$,
@@ -5415,7 +5551,79 @@ Equation~(\ref{eq:dmop-genealogical-lag-moments}).  Equations~
 (\ref{eq:dmop-backward-additive-variance}),
 (\ref{eq:dmop-backward-additive-fourth-moment}),
 (\ref{eq:dmop-lag-law-total-variance}), and
-(\ref{eq:dmop-lag-law-total-fourth-moment}) prove
+(\ref{eq:dmop-lag-law-total-fourth-moment}) prove the
+$\Psi_t\{m(\xi_t^P)\}$ part of Equation~
+(\ref{eq:dmop-genealogical-lag-moments}).
+
+We now verify the $\mu_t^J$ part separately.  For $t\geq2$, draw one
+auxiliary predictor path conditionally on the complete time-$(t-1)$
+prediction genealogies, with the conditional law $\mu_t^J$ in Equation~
+(\ref{eq:dmop-direct-local-predictor-law}).  If one conditions more
+coarsely only on $\mathcal X_{t-1}^J$, and then conditions on the newly
+propagated terminal location $X_t$, the parent-selection probability
+proportional to $g_{t-1,j}$ and the transition density to $X_t$ give
+exactly Equation~(\ref{eq:dmop-particle-backward-kernel}).  Therefore the
+conditional variance and fourth-moment bounds in Equations~
+(\ref{eq:dmop-backward-additive-variance}) and
+(\ref{eq:dmop-backward-additive-fourth-moment}) also hold under this
+coarser conditioning.  The conditional variance identity now gives
+\begin{align}
+&\E\,\mu_t^J
+\left[
+\left|
+S-\mu_t^J(S)
+\right|^2
+\right]                                                        \notag\\
+&\quad=
+\E\left[
+\Var\{S\mid\mathcal X_{t-1}^J,\xi_{t-1,1:J}^P\}
+\right]                                                        \notag\\
+&\quad\leq
+\E\left[
+\Var(S\mid\mathcal X_{t-1}^J)
+\right]                                                        \notag\\
+&\quad\leq
+CG'(\theta)^2
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}.
+\label{eq:dmop-predictor-law-second-moment}
+\end{align}
+The same decomposition used in Equation~
+(\ref{eq:dmop-lag-law-total-fourth-moment}) gives
+\begin{align}
+&\E\,\mu_t^J
+\left[
+\left|
+S-\mu_t^J(S)
+\right|^4
+\right]                                                        \notag\\
+&\quad=
+\E\left[
+\left|
+S-\E(S\mid\mathcal X_{t-1}^J,\xi_{t-1,1:J}^P)
+\right|^4
+\right]                                                        \notag\\
+&\quad\leq
+16\E\left[
+\left|
+S-\E(S\mid\mathcal X_{t-1}^J)
+\right|^4
+\right]                                                        \notag\\
+&\quad\leq
+CG'(\theta)^4
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^2.
+\label{eq:dmop-predictor-law-fourth-moment}
+\end{align}
+For $t=1$, the same two bounds follow directly from
+$\operatorname{osc}(h_{1,i})\leq2G'(\theta)$ and the fact that the
+$r=u=0$ summand equals one.  Equations~
+(\ref{eq:dmop-lag-law-total-variance}),
+(\ref{eq:dmop-lag-law-total-fourth-moment}),
+(\ref{eq:dmop-predictor-law-second-moment}), and
+(\ref{eq:dmop-predictor-law-fourth-moment}) therefore prove both parts of
 Equation~(\ref{eq:dmop-genealogical-lag-moments}).
 
 \medskip\noindent\emph{Step 6: continuation when $t<s$.}\quad
@@ -6068,25 +6276,48 @@ Equation~(\ref{eq:dmop-direct-past-remainder-lag-bound}) gives
 \end{align}
 
 \medskip\noindent\emph{Step 9: martingale and remainder summation.}\quad
-Expose the terminal multinomial selections in chronological order.  Before
-the time-$n$ selection, the prediction cloud $\xi_{n,1:J}^P$ and every
-$R_{m,i}^J$ with $m<n$ are measurable, while Equation~
-(\ref{eq:aggregated-terminal-resampling-error}) gives conditional mean zero
-for $R_{n,i}^J$.  Hence
+Let $\mathcal G_n^P$ be the sigma-field containing all particle-filter
+randomness through the complete time-$n$ predicted genealogies
+$\xi_{n,1:J}^P$, but not the time-$n$ terminal multinomial-selection
+uniforms.  Then
+$R_{m,i}^J$ is $\mathcal G_n^P$-measurable for $m<n$, while conditional
+independence and centering of the summands in Equation~
+(\ref{eq:aggregated-terminal-resampling-error}) give
 \begin{equation}
-\E(R_{m,i}^JR_{n,i}^J)=0,
-\qquad m<n.
-\label{eq:terminal-resampling-martingale-orthogonality}
+\E(R_{n,i}^J\mid\mathcal G_n^P)=0.
+\label{eq:terminal-resampling-martingale-centering}
 \end{equation}
-Likewise, expose the prediction draws in chronological order.  The
+The tower property therefore gives, for $m<n$,
+\begin{align}
+\E(R_{m,i}^JR_{n,i}^J)
+&=
+\E\left[
+R_{m,i}^J\E(R_{n,i}^J\mid\mathcal G_n^P)
+\right]
+                                                               \notag\\
+&=0.
+\label{eq:terminal-resampling-martingale-orthogonality}
+\end{align}
+Likewise, expose the combined parent-selection and prediction draws in
+chronological order.  The
 sigma-field $\mathcal F_{t-1}$ in Step 8 contains every
 $\Gamma_{r,i}^J$ with $r<t$, and
 Equation~(\ref{eq:dmop-direct-local-field-centered-bounds}) gives
-\begin{equation}
-\E(\Gamma_{r,i}^J\Gamma_{t,i}^J)=0,
+\begin{align}
+\E(\Gamma_{r,i}^J\Gamma_{t,i}^J)
+&=
+\E\left[
+\Gamma_{r,i}^J
+\E(\Gamma_{t,i}^J\mid\mathcal F_{t-1})
+\right]                                                       \notag\\
+&=0,
 \qquad r<t.
 \label{eq:local-field-martingale-orthogonality}
-\end{equation}
+\end{align}
+These are martingale-difference identities for the particle-sampling
+randomness, conditional on the fixed observations.  They are unrelated to
+any martingale claim for the observations or for the population discount
+bias.
 The two families need not be mutually orthogonal because the selection
 at time $n$ also enters the next prediction cloud.  Applying
 $\|A+B\|_{L^2}^2\leq2\|A\|_{L^2}^2+2\|B\|_{L^2}^2$ first, and then
@@ -7745,6 +7976,26 @@ C\sqrt p\,G'(\theta)
 {(1-\varrho)(1-\alpha\varrho)}.
 \label{eq:dmop-population-discount-bias}
 \end{align}
+For the full score, the two finite bounds combine to give
+\begin{align}
+&\left\|
+\nabla_\theta\ell(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                     \notag\\
+&\quad\leq
+C\sqrt p\,G'(\theta)
+\min\Bigg\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r,                  \notag\\
+&\hspace{44mm}
+(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\Bigg\}                                                       \notag\\
+&\quad\leq
+CN\sqrt p\,G'(\theta)
+\frac{1-\alpha}{1-\alpha\varrho}.
+\label{eq:dmop-full-population-discount-bias}
+\end{align}
+For $N=1$, both finite sums are empty and the full-score difference is
+zero.
 \end{lem}
 
 \begin{proof}[Proof.]
@@ -7796,7 +8047,244 @@ C\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
 {(1-\varrho)(1-\alpha\varrho)}.
 \end{align}
+
+\medskip\noindent\emph{Step 3: exact summation by parts for the full
+score.}\quad
+Reindexing Equation~
+(\ref{eq:population-conditional-score-path-decomposition}) by
+$s=n-r$ shows that the contribution of $h_s$ to the full
+DMOP-$\alpha$ population score is
+\begin{align}
+&\rho_s(h_s)
++\sum_{q=1}^{N-s}\alpha^q
+\{\rho_{s+q}(h_s)-\rho_{s+q-1}(h_s)\}                       \notag\\
+&\quad=
+\rho_s(h_s)
++\sum_{q=1}^{N-s}\alpha^q\rho_{s+q}(h_s)
+-\sum_{q=0}^{N-s-1}\alpha^{q+1}\rho_{s+q}(h_s)             \notag\\
+&\quad=
+(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q\rho_{s+q}(h_s)
++\alpha^{N-s}\rho_N(h_s).
+\label{eq:population-discount-summation-by-parts}
+\end{align}
+The contribution of $h_s$ to the exact score in Equation~
+(\ref{eq:full-population-score-path-average}) is $\rho_N(h_s)$.
+Subtracting Equation~
+(\ref{eq:population-discount-summation-by-parts}) from this contribution
+gives
+\begin{align}
+&\rho_N(h_s)
+-\rho_s(h_s)
+-\sum_{q=1}^{N-s}\alpha^q
+\{\rho_{s+q}(h_s)-\rho_{s+q-1}(h_s)\}                       \notag\\
+&\quad=
+(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q
+\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
+\label{eq:population-discount-one-time-boundary-comparison}
+\end{align}
+Summing Equation~
+(\ref{eq:population-discount-one-time-boundary-comparison}) over
+$s=1,\ldots,N-1$ yields the exact identity
+\begin{align}
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+&=
+(1-\alpha)\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}\alpha^q
+\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
+\label{eq:population-discount-full-boundary-comparison}
+\end{align}
+
+\medskip\noindent\emph{Step 4: contract each partial-smoother
+comparison.}\quad
+Fix $s\leq N-1$, $0\leq q\leq N-s-1$, and a coordinate
+$i\in\{1,\ldots,p\}$.  The Markov property implies that observations
+after time $s+q$ are conditionally independent of the path through time
+$s$ given $X_{s+q}$.  Hence the following two conditional expectations
+are the same function of $x$:
+\begin{align}
+&\E_{\rho_N}\{h_{s,i}\mid X_{s+q}=x\}
+=\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}=x\}                  \notag\\
+&\qquad=
+\begin{cases}
+\bar h_{s,i}(x),&q=0,\\
+(B_{s+q}B_{s+q-1}\cdots B_{s+1}\bar h_{s,i})(x),&q\geq1.
+\end{cases}
+\label{eq:population-discount-common-conditional-past}
+\end{align}
+Here $\bar h_{s,i}$ is the conditional projection in Equation~
+(\ref{eq:population-score-current-projection}); its invariance under later
+posterior laws is Equation~
+(\ref{eq:population-score-projection-conditional}).  Also, $B_t$ is the
+posterior backward kernel in Equation~
+(\ref{eq:posterior-backward-kernel}).  Equation~
+(\ref{eq:conditional-past-score-oscillation}) and $q$ successive
+applications of Equation~
+(\ref{eq:posterior-backward-oscillation-contraction}) give
+\begin{align}
+&\operatorname{osc}\!\left[
+x\longmapsto
+\E_{\rho_N}\{h_{s,i}\mid X_{s+q}=x\}
+\right]                                                       \notag\\
+&\qquad\leq
+2G'(\theta)(1-\epsilon)^q
+\leq
+2G'(\theta)\varrho^q.
+\label{eq:population-discount-partial-smoother-oscillation}
+\end{align}
+Using the tower property under $\rho_N$ and $\rho_{s+q}$, followed by
+the fact that two probability measures applied to the same bounded
+function differ by at most its oscillation, therefore gives
+\begin{align}
+|\rho_N(h_{s,i})-\rho_{s+q}(h_{s,i})|
+&\leq
+2G'(\theta)\varrho^q.
+\label{eq:population-discount-coordinate-boundary-comparison}
+\end{align}
+Summing the squared coordinate bounds and taking square roots yield
+\begin{align}
+\|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
+&\leq
+2\sqrt p\,G'(\theta)\varrho^q.
+\label{eq:population-discount-vector-boundary-comparison}
+\end{align}
+Insert Equation~
+(\ref{eq:population-discount-vector-boundary-comparison}) into Equation~
+(\ref{eq:population-discount-full-boundary-comparison}), apply the
+triangle inequality, and reverse the two finite sums.  This gives
+\begin{align}
+&\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                     \notag\\
+&\quad\leq
+2\sqrt p\,G'(\theta)(1-\alpha)
+\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}(\alpha\varrho)^q         \notag\\
+&\quad=
+2\sqrt p\,G'(\theta)(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q                   \notag\\
+&\quad\leq
+2N\sqrt p\,G'(\theta)(1-\alpha)
+\sum_{q=0}^{\infty}(\alpha\varrho)^q                       \notag\\
+&\quad=
+2N\sqrt p\,G'(\theta)
+\frac{1-\alpha}{1-\alpha\varrho}.
+\label{eq:population-discount-boundary-comparison-bound}
+\end{align}
+On the other hand, summing the first line of Equation~
+(\ref{eq:dmop-population-discount-bias}) over $n=1,\ldots,N$ gives
+\begin{align}
+&\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2                                                     \notag\\
+&\quad\leq
+C\sqrt p\,G'(\theta)
+\sum_{n=1}^{N}\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r        \notag\\
+&\quad=
+C\sqrt p\,G'(\theta)
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r.
+\label{eq:population-discount-lagwise-full-bound}
+\end{align}
+Taking the smaller of Equations~
+(\ref{eq:population-discount-boundary-comparison-bound}) and
+(\ref{eq:population-discount-lagwise-full-bound}) proves Equation~
+(\ref{eq:dmop-full-population-discount-bias}).
 \end{proof}
+
+\begin{remark}[Sharpness of the fixed-observation population order]
+The powers of $N$ and $1-\alpha$ in Equation~
+(\ref{eq:dmop-full-population-discount-bias}) cannot be improved uniformly
+under the conditions of Lemma~\ref{lem:dmop-population-discount-bias}.
+To see this, take state space $\{0,1\}$ with counting measure,
+\begin{align}
+X_0&\sim {\rm Bernoulli}(3/4),
+&\Pr(X_n=X_{n-1}\mid X_{n-1})&=\frac34,
+\label{eq:population-bias-sharpness-transition}
+\end{align}
+fix $y_n^*=1$ for every $n$, and, for $|\theta|\leq1/4$, set
+\begin{align}
+g_\theta(1\mid0)&=\frac14,
+&g_\theta(1\mid1)&=\frac9{20}(1+\theta),
+\label{eq:population-bias-sharpness-measurement}
+\end{align}
+with the probabilities at observation zero defined by complementation.
+At $\theta=\phi=0$,
+\begin{equation}
+h_n(x)=x.
+\label{eq:population-bias-sharpness-score}
+\end{equation}
+If the filtering probability of state one at time $n-1$ is $3/4$, its
+one-step prediction and update are
+\begin{align}
+\Pr(X_n=1\mid y_{1:n-1}^*)&=
+\frac34\frac34+\frac14\frac14=\frac58,                    \notag\\
+\Pr(X_n=1\mid y_{1:n}^*)&=
+\frac{(5/8)(9/20)}{(5/8)(9/20)+(3/8)(1/4)}=\frac34.
+\label{eq:population-bias-sharpness-filter}
+\end{align}
+The law of $X_0$ initializes this induction, so the filtered probability
+is $3/4$ at every time.  The resulting time-homogeneous posterior
+backward kernel satisfies
+\begin{align}
+B(1\mid1)&=
+\frac{(3/4)(3/4)}{5/8}=\frac9{10},
+&B(1\mid0)&=
+\frac{(3/4)(1/4)}{3/8}=\frac12.
+\label{eq:population-bias-sharpness-backward-kernel}
+\end{align}
+Moreover, the next-observation likelihoods conditional on $X_{n-1}$ are
+\begin{align}
+M_n(G_n)(1)&=
+\frac34\frac9{20}+\frac14\frac14=\frac25,
+&M_n(G_n)(0)&=
+\frac14\frac9{20}+\frac34\frac14=\frac3{10}.
+\label{eq:population-bias-sharpness-next-likelihood}
+\end{align}
+Consequently,
+\begin{align}
+\Pr_{\rho_n}(X_{n-1}=1)
+&=
+\frac{(3/4)(2/5)}{(3/4)(2/5)+(1/4)(3/10)}
+=\frac45,                                                   \notag\\
+\Pr_{\rho_{n-1}}(X_{n-1}=1)&=\frac34.
+\label{eq:population-bias-sharpness-one-step-shift}
+\end{align}
+Equation~(\ref{eq:population-bias-sharpness-backward-kernel}) maps every
+affine function of the state to an affine function whose slope is
+multiplied by
+\begin{equation}
+B(1\mid1)-B(1\mid0)=\frac25.
+\end{equation}
+Applying the $r-1$ backward kernels between $X_{n-r}$ and $X_{n-1}$ and
+then using Equation~
+(\ref{eq:population-bias-sharpness-one-step-shift}) therefore gives, for
+$1\leq r<n$,
+\begin{align}
+\Delta_{n,r}
+&=
+\rho_n(h_{n-r})-\rho_{n-1}(h_{n-r})                         \notag\\
+&=
+\left(\frac45-\frac34\right)
+\left(\frac25\right)^{r-1}
+=\frac1{20}\left(\frac25\right)^{r-1}.
+\label{eq:population-bias-sharpness-lag}
+\end{align}
+All these quantities are nonnegative.  Equation~
+(\ref{eq:population-discount-lag-difference}), summed over $n$, now
+implies
+\begin{align}
+\nabla_\theta\ell(0)-\nabla_\theta\ell^\alpha(0)
+&=
+\frac1{20}\sum_{r=1}^{N-1}
+(N-r)(1-\alpha^r)\left(\frac25\right)^{r-1}                \notag\\
+&\geq
+\frac{(N-1)(1-\alpha)}{20}.
+\label{eq:population-bias-sharpness-full-score}
+\end{align}
+Thus the squared population bias is at least
+$(N-1)^2(1-\alpha)^2/400$.  This model satisfies the uniform transition
+and measurement bounds on $|\theta|\leq1/4$, its simulator is independent
+of $\theta$, and $h_n$ is a bounded current function.  Improving either
+power uniformly would therefore require an additional signed-cancellation
+condition, not merely the existing mixing assumptions.
+\end{remark}
 
 \iffalse
 \begin{thm}[Refined MSE bound for DMOP-$\alpha$]
@@ -8760,18 +9248,16 @@ bound is not automatically a DMOP-$1$ lower bound.
 Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
 \ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1]$,
 \begin{align}
-\E\left\|
+&\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2
+\right\|_2^2                                                    \notag\\
 &\lesssim
-pG'(\theta)^2
-\begin{aligned}[t]
-\Bigg[&
+pG'(\theta)^2\Bigg[
 \frac1J\sum_{t=1}^{N}
 \sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
-\alpha^{r+u}\varrho^{|r-u|}                                  \\
-&+
+\alpha^{r+u}\varrho^{|r-u|}                                  \notag\\
+&\quad+
 \frac1{J^2}
 \left\{
 \sum_{t=1}^{N}
@@ -8779,13 +9265,18 @@ pG'(\theta)^2
 \sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
 \alpha^{r+u}\varrho^{|r-u|}
 \right)^{1/2}
-\right\}^2                                                    \\
-&+
+\right\}^2                                                    \notag\\
+&\quad+
+\min\Bigg\{
 \left\{
 \sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2,\,
+(1-\alpha)^2
+\left\{
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2
+\Bigg\}
 \Bigg].
-\end{aligned}
 \label{eq:verified-dmop-alpha-mse-finite-sum}
 \end{align}
 For $\alpha\in[0,1)$, this implies
@@ -8802,8 +9293,8 @@ pG'(\theta)^2
 {(1-\alpha^2)(1-\alpha\varrho)}
 +N^2
 \left\{
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+\frac{1-\alpha}
+{1-\alpha\varrho}
 \right\}^2
 \right].
 \label{eq:verified-dmop-alpha-mse-bound}
@@ -8897,29 +9388,28 @@ pG'(\theta)^2
 \label{eq:mse-proof-direct-particle-error}
 \end{align}
 \medskip\noindent\emph{Population discounting error.}\quad
-Summing the first bound in Lemma~
-\ref{lem:dmop-population-discount-bias} over $n=1,\ldots,N$, using
-the triangle inequality, and interchanging the two finite sums give
+The full-score bound in Lemma~
+\ref{lem:dmop-population-discount-bias} gives
 \begin{align}
-\left\|
+&\left\|
 \nabla_\theta\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2
-&\leq
+\right\|_2                                                      \notag\\
+&\quad\leq
 C\sqrt p\,G'(\theta)
-\sum_{n=1}^{N}\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r       \notag\\
-&=
-C\sqrt p\,G'(\theta)
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r                \notag\\
-&\leq
+\min\Bigg\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r,                  \notag\\
+&\hspace{44mm}
+(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\Bigg\}                                                       \notag\\
+&\quad\leq
 CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+\frac{1-\alpha}{1-\alpha\varrho}.
 \label{eq:verified-full-population-discount-bias}
 \end{align}
 
 Insert Equation~(\ref{eq:mse-proof-direct-particle-error}) and the first
-two lines of Equation~
+three lines of Equation~
 (\ref{eq:verified-full-population-discount-bias}) into Equation~
 (\ref{eq:mse-proof-combined-particle-population-error}).  Absorbing the
 fixed factor $2$ into $\lesssim$ gives
@@ -8929,13 +9419,11 @@ fixed factor $2$ into $\lesssim$ gives
 -\nabla_\theta\ell(\theta)
 \right\|_2^2                                                \notag\\
 &\quad\lesssim
-pG'(\theta)^2
-\begin{aligned}[t]
-\Bigg[&
+pG'(\theta)^2\Bigg[
 \frac1J\sum_{t=1}^{N}
 \sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
-\alpha^{r+u}\varrho^{|r-u|}                                  \\
-&+
+\alpha^{r+u}\varrho^{|r-u|}                                  \notag\\
+&\qquad+
 \frac1{J^2}
 \left\{
 \sum_{t=1}^{N}
@@ -8943,13 +9431,18 @@ pG'(\theta)^2
 \sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
 \alpha^{r+u}\varrho^{|r-u|}
 \right)^{1/2}
-\right\}^2                                                    \\
-&+
+\right\}^2                                                    \notag\\
+&\qquad+
+\min\Bigg\{
 \left\{
 \sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2,\,
+(1-\alpha)^2
+\left\{
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2
+\Bigg\}
 \Bigg],
-\end{aligned}
 \end{align}
 which proves Equation~
 (\ref{eq:verified-dmop-alpha-mse-finite-sum}).  For $\alpha<1$, Equation~
@@ -9079,8 +9572,8 @@ N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}.
 \end{align}
 No horizon-saturation argument is used for this population term.
 Combining the sharper particle bound in Equation~
-(\ref{eq:refined-dmop-alpha-lag-particle-error}) with the exact
-$\varrho$-dependent population term in Theorem~
+(\ref{eq:refined-dmop-alpha-lag-particle-error}) with the displayed
+$\varrho$-dependent population upper bound in Theorem~
 \ref{thm:refined-dmop-alpha-mse} gives, with fixed model constants and
 before the geometric memory reaches the horizon,
 \begin{align}
@@ -9105,10 +9598,14 @@ and the population term before suppressing fixed model constants is
 \begin{equation}
 N^2
 \left\{
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+\frac{1-\alpha}
+{1-\alpha\varrho}
 \right\}^2.
 \end{equation}
+Thus the boundary-comparison argument removes the extra explicit factor
+$\varrho^2/(1-\varrho)^2$ from the earlier lagwise simplification.  With
+model constants fixed, it does not change the powers of $N$, $J$, or
+$1-\alpha$ in the following rate calculation.
 
 Balancing the two terms in
 Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) gives
@@ -9178,11 +9675,18 @@ In contrast, the squared population term has derivative zero at
 $\alpha=1$, because its unsquared sum vanishes there.
 
 For completeness, the minimizer of the displayed finite upper bound can
-be localized when $J\gg N^2$.  The $r=1$ population summand gives
+be localized when $J\gg N^2$.  The $r=1$ term of the first population
+bound and the $q=0$ term of the second give
 \begin{align}
+\min\Bigg\{
 \left\{
 \sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2,\,
+(1-\alpha)^2
+\left\{
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2
+\Bigg\}
 &\geq
 (N-1)^2\varrho^2(1-\alpha)^2.
 \label{eq:finite-population-bound-localization}
@@ -9198,7 +9702,8 @@ N(1-\alpha)=o(1).
 \label{eq:finite-alpha-minimizer-localization}
 \end{equation}
 Uniformly in this localized interval, direct differentiation of the
-finite sums gives
+particle terms and of either locally active branch of the population
+minimum gives the one-sided derivative orders
 \begin{align}
 -\frac{\partial}{\partial(1-\alpha)}
 \{\text{two particle terms}\}
@@ -9705,8 +10210,9 @@ C(N-k-1)\sqrt p\,G'(\theta)\frac{\varrho^{k+1}}{1-\varrho}.
 \label{eq:verified-fixed-lag-population-bias}
 \end{equation}
 
-The genealogy calculation in Lemma~\ref{lem:dmop-alpha-variance} also
-gives the general particle bound
+Under the additional current-location premise of Lemma~
+\ref{lem:dmop-alpha-variance}, its genealogy calculation also gives the
+particle bound
 \begin{align}
 &\max\Bigg\{
 \E\left\|
