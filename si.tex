@@ -143,7 +143,7 @@ resampling.  For the prediction paths at time $n$, write
 \begin{equation}
 p_{n,a}
 =
-\frac{G_n(\xi_{n,a}^P)}{\sum_{b=1}^JG_n(\xi_{n,b}^P)},
+\frac{g_{n,a}^{\phi}}{\sum_{b=1}^Jg_{n,b}^{\phi}},
 \qquad a=1,\ldots,J,
 \label{eq:dmop-direct-time-n-resampling-probability}
 \end{equation}
@@ -4548,6 +4548,12 @@ $\mathcal F$-measurable real functions $f,f_1,f_2$:
 \right]^4
 \right|\mathcal F
 \right\}
+&=
+\frac{\mu\{(f-\mu f)^4\}}{J^3}
++\frac{3(J-1)}{J^3}\mu\{(f-\mu f)^2\}^2                 \notag\\
+&\leq
+\frac{\mu\{(f-\mu f)^4\}}{J^3}
++\frac{3}{J^2}\mu\{(f-\mu f)^2\}^2                    \notag\\
 &\leq
 \frac{3\operatorname{osc}(f)^4}{J^2}.
 \label{eq:conditional-empirical-fourth-moment}
@@ -4586,9 +4592,10 @@ $\E(Y_j\mid\mathcal F)=0$ give Equations~
 J\mu\{(f-\mu f)^4\}
 +3J(J-1)\mu\{(f-\mu f)^2\}^2
 \right\}                                                    \notag\\
+&\quad=
+\frac{\mu\{(f-\mu f)^4\}}{J^3}
++\frac{3(J-1)}{J^3}\mu\{(f-\mu f)^2\}^2                 \notag\\
 &\quad\leq
-\frac{J+3J(J-1)}{J^4}\operatorname{osc}(f)^4
-\leq
 \frac{3}{J^2}\operatorname{osc}(f)^4,
 \end{align}
 which is Equation~(\ref{eq:conditional-empirical-fourth-moment}).
@@ -4697,6 +4704,21 @@ Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
 \right\}                                                     \notag\\
 &\quad\lesssim
 pG'(\theta)^2
+\left[
+\frac1J\sum_{t=1}^{N}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
++\frac1{J^2}
+\left\{
+\sum_{t=1}^{N}
+\left(
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right)^{1/2}
+\right\}^2
+\right]                                                     \notag\\
+&\quad\lesssim
+pG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:refined-dmop-alpha-direct-particle-error}
@@ -4704,12 +4726,38 @@ pG'(\theta)^2
 Here the multiplicative constants suppressed by $\lesssim$ depend on the
 fixed model bounds, but are independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
-In particular, if $\alpha<1$ and $J\geq N$, then
-\begin{equation}
+For $\alpha<1$, the first upper bound gives
+\begin{align}
+&\max\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2,\,
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\right\}                                                     \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)}.
+\label{eq:refined-dmop-alpha-lag-particle-error}
+\end{align}
+At $\alpha=1$, it gives
+\begin{equation}
+\max\left\{
+\E\left\|
+\nabla_\theta\hat\ell^1(\theta)
+-\nabla_\theta\ell^1(\theta)
+\right\|_2^2,\,
+\Var\left(\nabla_\theta\hat\ell^1(\theta)\right)
+\right\}
 \lesssim
-\frac{NpG'(\theta)^2}{J(1-\alpha)^2}.
-\label{eq:refined-dmop-alpha-variance-j-geq-n}
+pG'(\theta)^2
+\min\left\{
+N^2,\,
+\frac{N^2}{J}+\frac{N^3}{J^2}
+\right\}.
+\label{eq:refined-dmop-one-lag-particle-error}
 \end{equation}
 \end{lem}
 
@@ -4749,7 +4797,7 @@ resampling.  For the prediction paths at time $n$, write
 \begin{equation}
 p_{n,a}
 =
-\frac{G_n(\xi_{n,a}^P)}{\sum_{b=1}^JG_n(\xi_{n,b}^P)},
+\frac{g_{n,a}^{\phi}}{\sum_{b=1}^Jg_{n,b}^{\phi}},
 \qquad a=1,\ldots,J,
 \label{eq:dmop-direct-time-n-resampling-probability}
 \end{equation}
@@ -4778,15 +4826,32 @@ and centered.  Moreover,
 2G'(\theta)\sum_{r=0}^{N-1}\alpha^r.
 \label{eq:aggregated-terminal-function-oscillation}
 \end{align}
-It follows from Claim~\ref{claim:conditional-empirical-moments} and
-Equation~(\ref{eq:aggregated-terminal-function-oscillation}) that
+Claim~\ref{claim:conditional-empirical-moments} gives the exact
+conditional variance
 \begin{align}
 \E\left\{(R_{n,i}^J)^2\mid\xi_{n,1:J}^P\right\}
-&\leq
-\frac{G'(\theta)^2}{J}
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+&=
+\frac1J\Psi_n(\eta_n^J)
+\left[
+\left\{
+\sum_{s=1}^n\alpha^{n-s}h_{s,i}
+-\Psi_n(\eta_n^J)
+\left(\sum_{s=1}^n\alpha^{n-s}h_{s,i}\right)
+\right\}^2
+\right].
 \label{eq:aggregated-terminal-resampling-second-moment}
 \end{align}
+Taking expectations and applying the genealogical lag bound in
+Equation~(\ref{eq:dmop-genealogical-lag-moments}), proved in Step~5,
+gives
+\begin{equation}
+\E(R_{n,i}^J)^2
+\leq
+\frac{CG'(\theta)^2}{J}
+\sum_{r=0}^{n-1}\sum_{u=0}^{n-1}
+\alpha^{r+u}\varrho^{|r-u|}.
+\label{eq:aggregated-terminal-resampling-lag-bound}
+\end{equation}
 
 \medskip\noindent\emph{Step 2: exact predictable-score decomposition.}\quad
 We next derive the local perturbation bound for the predictable part.
@@ -5072,7 +5137,255 @@ cancel.  At $t=1$, $\mu_1^J=\eta_1$, and the remaining endpoints are
 exactly those displayed on the left.  The same verification proves
 Equation~(\ref{eq:dmop-direct-current-predictor-telescope}).
 
-\medskip\noindent\emph{Step 5: continuation when $t<s$.}\quad
+\medskip\noindent\emph{Step 5: lag moments along a sampled genealogy.}\quad
+We first prove the particle-genealogy estimate used below.  For
+$q\in\{2,4\}$ and every $t\leq N$,
+\begin{align}
+&\max\Bigg\{
+\E\,\Psi_t(\eta_t^J)
+\left[
+\left|
+\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}
+-\Psi_t(\eta_t^J)
+\left(\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}\right)
+\right|^q
+\right],                                                   \notag\\
+&\hspace{31mm}
+\E\,\mu_t^J
+\left[
+\left|
+\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}
+-\mu_t^J
+\left(\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}\right)
+\right|^q
+\right]
+\Bigg\}                                                    \notag\\
+&\qquad\leq
+C G'(\theta)^q
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{q/2}.
+\label{eq:dmop-genealogical-lag-moments}
+\end{align}
+
+To verify Equation~(\ref{eq:dmop-genealogical-lag-moments}), condition
+on the arrays of particle locations, but not on their ancestral indices.
+The exact backward representation of a randomly selected ancestral line
+in Equation~(3.3) of \citet{chanDelMoral18} has, from time $s$ to time
+$s-1$, the transition
+\begin{align}
+&\sum_{j=1}^{J}
+\frac{
+g_{s-1,j}^{\phi}
+f_{X_s\mid X_{s-1}}
+(x_s\mid x_{s-1,j}^{P,\phi};\theta)
+}{
+\sum_{a=1}^{J}
+g_{s-1,a}^{\phi}
+f_{X_s\mid X_{s-1}}
+(x_s\mid x_{s-1,a}^{P,\phi};\theta)
+}
+\delta_{x_{s-1,j}^{P,\phi}}(dx_{s-1}).
+\label{eq:dmop-particle-backward-kernel}
+\end{align}
+The terminal distribution is the normalized measurement-weighted
+prediction cloud for $\Psi_t(\eta_t^J)$.  For $\mu_t^J$, the same
+formula applies after conditioning additionally on the newly propagated
+location at time $t$; its terminal distribution is otherwise immaterial
+for the bounds below.
+
+For every measurable set $A$, Assumption
+{\refAssumpBoundedProcess} gives the pointwise minorization
+\begin{align}
+&\sum_{j=1}^{J}
+\frac{
+g_{s-1,j}^{\phi}
+f_{X_s\mid X_{s-1}}
+(x_s\mid x_{s-1,j}^{P,\phi};\theta)
+}{
+\sum_{a=1}^{J}
+g_{s-1,a}^{\phi}
+f_{X_s\mid X_{s-1}}
+(x_s\mid x_{s-1,a}^{P,\phi};\theta)
+}
+\1\{x_{s-1,j}^{P,\phi}\in A\}                          \notag\\
+&\quad\geq
+\frac{\underbar M}{\bar M}
+\frac{
+\sum_{j=1}^{J}g_{s-1,j}^{\phi}
+\1\{x_{s-1,j}^{P,\phi}\in A\}
+}{
+\sum_{a=1}^{J}g_{s-1,a}^{\phi}
+}.
+\label{eq:dmop-particle-backward-minorization}
+\end{align}
+Consequently, the Dobrushin coefficient of every transition in
+Equation~(\ref{eq:dmop-particle-backward-kernel}) is at most
+$1-\underbar M/\bar M\leq\varrho$.  If $1\leq s\leq u\leq t$,
+composition of these backward transitions and
+Equation~(\ref{eq:bounded-realized-measurement-score}) therefore give
+\begin{equation}
+\operatorname{osc}\left\{
+\E(h_{s,i}\mid X_u,\hbox{ location arrays})
+\right\}
+\leq
+2G'(\theta)\varrho^{u-s}.
+\label{eq:dmop-backward-conditional-score-contraction}
+\end{equation}
+For real random variables $U,V$,
+\begin{equation}
+|\operatorname{Cov}(U,V)|
+\leq\frac14\operatorname{osc}(U)\operatorname{osc}(V).
+\end{equation}
+Using the backward Markov property, followed by
+Equation~(\ref{eq:dmop-backward-conditional-score-contraction}), yields
+\begin{align}
+&\left|
+\operatorname{Cov}
+\{h_{s,i}(X_s),h_{u,i}(X_u)\mid\hbox{ location arrays}\}
+\right|                                                     \notag\\
+&\quad=
+\left|
+\operatorname{Cov}
+\{\E(h_{s,i}\mid X_u,\hbox{ location arrays}),
+h_{u,i}(X_u)\mid\hbox{ location arrays}\}
+\right|                                                     \notag\\
+&\quad\leq
+G'(\theta)^2\varrho^{u-s}.
+\label{eq:dmop-backward-lag-covariance}
+\end{align}
+Expanding the conditional variance and putting $r=t-s$ and $v=t-u$
+now gives
+\begin{align}
+&\Var\left(
+\left.
+\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
+\right|\hbox{ location arrays}
+\right)                                                     \notag\\
+&\quad\leq
+G'(\theta)^2
+\sum_{r=0}^{t-1}\sum_{v=0}^{t-1}
+\alpha^{r+v}\varrho^{|r-v|}.
+\label{eq:dmop-backward-additive-variance}
+\end{align}
+
+For completeness, the fourth moment follows from the same backward
+transitions.  Put $c_s=\alpha^{t-s}$ and expose the selected path in the
+order $X_t,X_{t-1},\ldots,X_1$.  At the step revealing $X_u$, the
+oscillation of the corresponding Doob martingale difference is at most
+\begin{equation}
+2G'(\theta)\sum_{s=1}^{u}c_s\varrho^{u-s}.
+\label{eq:dmop-backward-doob-difference-bound}
+\end{equation}
+Indeed, conditional expectations of the terms with $s<u$ are obtained by
+the backward transitions from $u$ to $s$, and each has oscillation at
+most $2G'(\theta)c_s\varrho^{u-s}$; terms with $s>u$ have already been
+revealed and cancel from that martingale difference.
+
+Conditional Hoeffding's lemma applied successively to these centered
+differences gives, for every $z>0$,
+\begin{align}
+&\Pr\left\{
+\left|
+\sum_{s=1}^{t}c_sh_{s,i}(X_s)
+-\E\left(\left.\sum_{s=1}^{t}c_sh_{s,i}(X_s)
+\right|\hbox{ location arrays}\right)
+\right|\geq z
+\,\middle|\,\hbox{ location arrays}
+\right\}                                                    \notag\\
+&\quad\leq
+2\exp\left[
+-\frac{z^2}{
+2G'(\theta)^2
+\sum_{u=1}^{t}
+\left\{\sum_{s=1}^{u}c_s\varrho^{u-s}\right\}^2}
+\right].
+\label{eq:dmop-backward-additive-tail}
+\end{align}
+Young's convolution inequality gives
+\begin{align}
+\sum_{u=1}^{t}
+\left\{\sum_{s=1}^{u}c_s\varrho^{u-s}\right\}^2
+&\leq
+\left(\sum_{d=0}^{\infty}\varrho^d\right)^2
+\sum_{s=1}^{t}c_s^2                                      \notag\\
+&\leq
+\frac1{(1-\varrho)^2}
+\sum_{r=0}^{t-1}\sum_{v=0}^{t-1}
+\alpha^{r+v}\varrho^{|r-v|}.
+\label{eq:dmop-backward-convolution-square}
+\end{align}
+Using
+$\E|U|^4=4\int_0^\infty z^3\Pr(|U|\geq z)\,dz$ in
+Equations~(\ref{eq:dmop-backward-additive-tail}) and
+(\ref{eq:dmop-backward-convolution-square}) proves
+\begin{align}
+&\E\left[
+\left.
+\left|
+\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
+-\E\left(\left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
+\right|\hbox{ location arrays}\right)
+\right|^4
+\right|\hbox{ location arrays}
+\right]                                                     \notag\\
+&\quad\leq
+C G'(\theta)^4
+\left\{
+\sum_{r=0}^{t-1}\sum_{v=0}^{t-1}
+\alpha^{r+v}\varrho^{|r-v|}
+\right\}^2.
+\label{eq:dmop-backward-additive-fourth-moment}
+\end{align}
+
+It remains only to pass from a selected ancestral line to the empirical
+conditional laws in Equation~(\ref{eq:dmop-genealogical-lag-moments}).
+Let the finer conditioning include the realized ancestor indices and let
+the coarser conditioning include only the location arrays.  For the second
+moment, the conditional variance identity gives
+\begin{align}
+&\E\left[
+\Var\left\{
+\left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
+\right|\hbox{ locations and ancestor indices}
+\right\}
+\,\middle|\,\hbox{ location arrays}
+\right]                                                     \notag\\
+&\quad\leq
+\Var\left\{
+\left.\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}(X_s)
+\right|\hbox{ location arrays}
+\right\}.
+\label{eq:dmop-lag-law-total-variance}
+\end{align}
+For the fourth moment, $(a+b)^4\leq8a^4+8b^4$ and conditional Jensen
+give
+\begin{align}
+&\E\left[
+\left|
+S-\E(S\mid\hbox{ locations and ancestor indices})
+\right|^4
+\,\middle|\,\hbox{ location arrays}
+\right]                                                     \notag\\
+&\quad\leq
+16\E\left[
+\left|
+S-\E(S\mid\hbox{ location arrays})
+\right|^4
+\,\middle|\,\hbox{ location arrays}
+\right],
+\label{eq:dmop-lag-law-total-fourth-moment}
+\end{align}
+where $S$ in this display is the finite sum appearing in
+Equation~(\ref{eq:dmop-genealogical-lag-moments}).  Equations~
+(\ref{eq:dmop-backward-additive-variance}),
+(\ref{eq:dmop-backward-additive-fourth-moment}),
+(\ref{eq:dmop-lag-law-total-variance}), and
+(\ref{eq:dmop-lag-law-total-fourth-moment}) prove
+Equation~(\ref{eq:dmop-genealogical-lag-moments}).
+
+\medskip\noindent\emph{Step 6: continuation when $t<s$.}\quad
 We now propagate a current function from its creation time.  For
 $t\leq n$, define
 \begin{equation}
@@ -5328,7 +5641,7 @@ Together with Equations~
 the required first- and second-order continuation bounds for every
 $t,s,n$.
 
-\medskip\noindent\emph{Step 6: sum deterministic coefficients before norms.}\quad
+\medskip\noindent\emph{Step 7: sum deterministic coefficients before norms.}\quad
 Equation~(\ref{eq:location-weight-gradient-pair-recursion}) shows why no
 additional mixing coefficient is required for the accumulated weight
 gradient: the previously accumulated component is multiplied by
@@ -5484,7 +5797,7 @@ the score-continuation bound used in Equation~
 (\ref{eq:dmop-direct-aggregated-local-oscillation}).
 \fi
 
-\medskip\noindent\emph{Step 7: local particle errors.}\quad
+\medskip\noindent\emph{Step 8: local particle errors.}\quad
 We next define the two local terms rather than citing a fixed-terminal
 formula for their sum.  For the signed empirical error
 $\eta_t^J-\mu_t^J$, put
@@ -5535,52 +5848,220 @@ sums taken only after the local fields have been formed.  Conditionally
 on the information just before the combined time-$t$ multinomial-selection
 and mutation block, $\eta_t^J$ is the empirical measure of $J$
 independent draws with common law $\mu_t^J$.
-Claim~\ref{claim:conditional-empirical-moments}, the continuation bounds
-in Steps 3 and 5, and
-Equation~(\ref{eq:dmop-direct-aggregated-local-oscillation}) therefore
-give
+We now use the lag moments before summing over the historical index.
+Within the next calculation only, abbreviate
+\begin{equation}
+S=\sum_{s=1}^{t}\alpha^{t-s}h_{s,i}.
+\label{eq:dmop-local-discounted-history}
+\end{equation}
+Because the functional in
+Equation~(\ref{eq:dmop-direct-continuation-functional}) is linear in its
+displayed $h_{s,i}$, for every $n\geq t$,
+\begin{equation}
+\sum_{s=1}^{t}\alpha^{n-s}D_{\mu_t^J}C_{t,n}^{(s)}
+=
+\alpha^{n-t}D_{\mu_t^J}C_{t,n}^{S},
+\label{eq:dmop-local-past-score-linear-combination}
+\end{equation}
+where the superscript $S$ means only that $S$ replaces $h_{s,i}$ in
+Equation~(\ref{eq:dmop-direct-continuation-functional}).
+
+Write $\mu=\mu_t^J$ in this paragraph.  With the $a_l$ from
+Equation~(\ref{eq:dmop-direct-local-ratios}), put
+$\mathcal R_l^S(\mu)=\mu(a_lS)$.  Since $\mu(a_l)=1$ and the $a_l$ are
+uniformly bounded,
+\begin{align}
+|\mathcal R_l^S(\mu)-\mu(S)|
+&=
+|\mu\{(a_l-1)(S-\mu S)\}|                                \notag\\
+&\leq
+C\mu\{(S-\mu S)^2\}^{1/2},
+\label{eq:dmop-local-weighted-mean-bound}
+\end{align}
+while Equation~(\ref{eq:dmop-direct-local-derivative-formula}) and
+$\|a_1-a_0\|_\infty\leq C\varrho^{n-t}$ give
+\begin{align}
+|\mathcal R_1^S(\mu)-\mathcal R_0^S(\mu)|
+&=
+|\mu\{(a_1-a_0)(S-\mu S)\}|                              \notag\\
+&\leq
+C\varrho^{n-t}\mu\{(S-\mu S)^2\}^{1/2},
+\label{eq:dmop-local-two-weighted-means}
+\end{align}
+Here $\mu(a_1-a_0)=0$ by $\mu(a_0)=\mu(a_1)=1$, so the asserted
+supremum bound follows from
+$\operatorname{osc}(a_1-a_0)\leq C\varrho^{n-t}$ in
+Equation~(\ref{eq:dmop-direct-local-derivative-oscillation}), and hence
+\begin{align}
+\mu\{(D_\mu C_{t,n}^{S})^2\}^{1/2}
+&\leq
+C\varrho^{n-t}\mu\{(S-\mu S)^2\}^{1/2},
+\label{eq:dmop-local-past-field-l2}
+\end{align}
+\begin{align}
+\mu\{|D_\mu C_{t,n}^{S}|^4\}^{1/4}
+&\leq
+C\varrho^{n-t}\mu\{|S-\mu S|^4\}^{1/4}.
+\label{eq:dmop-local-past-field-l4}
+\end{align}
+The fourth-moment inequality follows from the same two displayed
+identities and Lyapunov's inequality,
+\begin{equation}
+\{\mu((S-\mu S)^2)\}^{1/2}
+\leq
+\{\mu(|S-\mu S|^4)\}^{1/4}.
+\end{equation}
+
+Minkowski's inequality, Equations~
+(\ref{eq:dmop-local-past-score-linear-combination}) and
+(\ref{eq:dmop-local-past-field-l2}), and the geometric sum give
+\begin{align}
+&\mu_t^J\left[
+\left\{
+\sum_{n=t}^{N}\sum_{s=1}^{t}
+\alpha^{n-s}D_{\mu_t^J}C_{t,n}^{(s)}
+\right\}^2
+\right]^{1/2}                                              \notag\\
+&\quad\leq
+C\mu_t^J\{(S-\mu_t^JS)^2\}^{1/2}
+\sum_{n=t}^{N}(\alpha\varrho)^{n-t}                      \notag\\
+&\quad\leq
+C\mu_t^J\{(S-\mu_t^JS)^2\}^{1/2}.
+\label{eq:dmop-local-past-field-summed-l2}
+\end{align}
+All remaining first-order terms are current functions at time $t$.
+Equations~(\ref{eq:dmop-direct-current-score-derivative-bound}),
+(\ref{eq:dmop-direct-future-current-derivative-bounds}),
+(\ref{eq:dmop-direct-future-score-coefficient-sum}), and
+(\ref{eq:dmop-direct-current-predictor-coefficient-sum}) give their
+combined $L^2(\mu_t^J)$ norm at most $CG'(\theta)$.  Every first
+variation is centered under $\mu_t^J$.  Therefore Claim~
+\ref{claim:conditional-empirical-moments} gives
 \begin{align}
 \E(\Gamma_{t,i}^J\mid\mathcal F_{t-1})&=0,                  \notag\\
-\E\{(\Gamma_{t,i}^J)^2\mid\mathcal F_{t-1}\}
-&\leq\frac1{4J}
-\operatorname{osc}\left[
+\E(\Gamma_{t,i}^J)^2
+&=
+\frac1J\E\,\mu_t^J\left[
+\left\{
 \sum_{n=t}^{N}D_{\mu_t^J}H_{t,n}
 +\sum_{n=t}^{N}\sum_{s=1}^{n}
 \alpha^{n-s}D_{\mu_t^J}C_{t,n}^{(s)}
-\right]^2                                                    \notag\\
+\right\}^2
+\right]                                                     \notag\\
 &\leq
 \frac{CG'(\theta)^2}{J}
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}.
 \label{eq:dmop-direct-local-field-centered-bounds}
 \end{align}
 Here $\mathcal F_{t-1}$ is the sigma-field just before that combined
 selection--mutation block: $\eta_{t-1}^J$ is measurable, but the parent
 selections and mutations used to construct $\eta_t^J$ have not yet been
-revealed.  Equation~(\ref{eq:conditional-empirical-product-moment})
-applied to the products in
-Equations~(\ref{eq:dmop-direct-local-quadratic-remainder}),
-(\ref{eq:dmop-direct-current-predictor-remainder-bound}), and
-(\ref{eq:dmop-direct-propagated-quadratic-remainder}), followed by the
-three coefficient sums in Step 6, gives
+revealed.  The last inequality is
+Equation~(\ref{eq:dmop-genealogical-lag-moments}) with $q=2$; its
+right side also dominates the squared $CG'(\theta)$ current-function
+bound because its $r=u=0$ summand equals one.
+
+The same reordering sharpens the quadratic remainder.  For each
+$n\geq t$, first sum the terms with $s\leq t$ inside the two products in
+Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}).
+By linearity, the resulting products are the same products with
+$\alpha^{n-t}S$ in place of $h_{s,i}$.  Thus each product has an
+outside factor $\alpha^{n-t}$.  Equations~
+(\ref{eq:dmop-local-weighted-mean-bound})--
+(\ref{eq:dmop-local-past-field-l4}) give the conditional fourth-moment
+bound
+\begin{equation}
+C\varrho^{4(n-t)}
+\mu_t^J\{|S-\mu_t^JS|^4\}.
+\end{equation}
+To write out the empirical-product step, condition on
+$\mathcal F_{t-1}$ and apply Cauchy--Schwarz.  The exact fourth-moment
+identity in Equation~(\ref{eq:conditional-empirical-fourth-moment})
+gives, for each product on the right of
+Equation~(\ref{eq:dmop-direct-local-quadratic-remainder}),
 \begin{align}
-\|B_{t,i}^J\|_{L^2\mid\mathcal F_{t-1}}
+&\E\left[
+\left.
+\left|\{(\eta_t^J-\mu_t^J)(a_1-a_0)\}
+\{(\eta_t^J-\mu_t^J)D_{\mu_t^J}\mathcal R_1^S\}\right|^2
+\right|\mathcal F_{t-1}
+\right]                                                     \notag\\
+&\quad\leq
+\E\left[
+\left.\{(\eta_t^J-\mu_t^J)(a_1-a_0)\}^4
+\right|\mathcal F_{t-1}\right]^{1/2}
+\E\left[
+\left.\{(\eta_t^J-\mu_t^J)D_{\mu_t^J}\mathcal R_1^S\}^4
+\right|\mathcal F_{t-1}\right]^{1/2}                       \notag\\
+&\quad\leq
+\frac{C\varrho^{2(n-t)}}{J^2}
+\left[\mu_t^J\{|S-\mu_t^JS|^4\}\right]^{1/2}.
+\label{eq:dmop-direct-empirical-product-fourth-moment}
+\end{align}
+The same calculation, with $a_0$ and
+$D_{\mu_t^J}C_{t,n}^{S}$, gives the same right side.  Taking the square
+root of Equation~
+(\ref{eq:dmop-direct-empirical-product-fourth-moment}), then applying
+Equation~(\ref{eq:dmop-genealogical-lag-moments}) with $q=4$, gives
+\begin{align}
+&\left\|
+\{(\eta_t^J-\mu_t^J)(a_1-a_0)\}
+\{(\eta_t^J-\mu_t^J)D_{\mu_t^J}\mathcal R_1^S\}
+\right\|_{L^2}                                              \notag\\
+&\quad\leq
+\frac{CG'(\theta)\varrho^{n-t}}J
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{1/2}.
+\label{eq:dmop-direct-empirical-product-lag-bound}
+\end{align}
+Consequently,
+\begin{align}
+&\left\|
+\sum_{n=t}^{N}\sum_{s=1}^{t}\alpha^{n-s}
+\left[
+C_{t,n}^{(s)}(\eta_t^J)-C_{t,n}^{(s)}(\mu_t^J)
+-(\eta_t^J-\mu_t^J)D_{\mu_t^J}C_{t,n}^{(s)}
+\right]
+\right\|_{L^2}                                             \notag\\
+&\quad\leq
+\frac{CG'(\theta)}J
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{1/2}
+\sum_{n=t}^{N}(\alpha\varrho)^{n-t}                       \notag\\
+&\quad\leq
+\frac{CG'(\theta)}J
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{1/2}.
+\label{eq:dmop-direct-past-remainder-lag-bound}
+\end{align}
+For the $H_{t,n}$ terms and the terms with $t<s$, both empirical
+factors are current functions.  Equations~
+(\ref{eq:dmop-direct-current-predictor-remainder-bound}),
+(\ref{eq:dmop-direct-propagated-quadratic-remainder}),
+(\ref{eq:dmop-direct-future-score-coefficient-sum}), and
+(\ref{eq:dmop-direct-current-predictor-coefficient-sum}) bound their
+combined unconditional $L^2$ norm by $CG'(\theta)/J$.  Since the
+$r=u=0$ summand again equals one, combining this bound with
+Equation~(\ref{eq:dmop-direct-past-remainder-lag-bound}) gives
+\begin{align}
+\|B_{t,i}^J\|_{L^2}
 &\leq
 \frac{CG'(\theta)}J
 \left\{
-\sum_{n=t}^{N}\varrho^{n-t}
-+\sum_{s=1}^{t}\sum_{n=t}^{N}
-\alpha^{n-s}\varrho^{n-t}
-+\sum_{s=t+1}^{N}\sum_{n=s}^{N}
-\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}
-\right\}                                                     \notag\\
-&\leq
-\frac{CG'(\theta)}J
-\sum_{r=0}^{N-1}\alpha^r.
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{1/2}.
 \label{eq:dmop-direct-local-field-remainder-bound}
 \end{align}
-The same bound holds for the unconditional $L^2$ norm.
 
-\medskip\noindent\emph{Step 8: martingale and remainder summation.}\quad
+\medskip\noindent\emph{Step 9: martingale and remainder summation.}\quad
 Expose the terminal multinomial selections in chronological order.  Before
 the time-$n$ selection, the prediction cloud $\xi_{n,1:J}^P$ and every
 $R_{m,i}^J$ with $m<n$ are measurable, while Equation~
@@ -5592,7 +6073,7 @@ for $R_{n,i}^J$.  Hence
 \label{eq:terminal-resampling-martingale-orthogonality}
 \end{equation}
 Likewise, expose the prediction draws in chronological order.  The
-sigma-field $\mathcal F_{t-1}$ in Step 7 contains every
+sigma-field $\mathcal F_{t-1}$ in Step 8 contains every
 $\Gamma_{r,i}^J$ with $r<t$, and
 Equation~(\ref{eq:dmop-direct-local-field-centered-bounds}) gives
 \begin{equation}
@@ -5613,8 +6094,10 @@ martingale orthogonality separately within each family, gives
 2\sum_{n=1}^{N}\|R_{n,i}^J\|_{L^2}^2
 +2\sum_{t=1}^{N}\|\Gamma_{t,i}^J\|_{L^2}^2               \notag\\
 &\leq
-\frac{CNG'(\theta)^2}{J}
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\frac{CG'(\theta)^2}{J}
+\sum_{t=1}^{N}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}.
 \label{eq:dmop-direct-centered-local-sum}
 \end{align}
 For the quadratic terms, Minkowski's inequality gives
@@ -5623,8 +6106,12 @@ For the quadratic terms, Minkowski's inequality gives
 &\leq
 \sum_{t=1}^{N}\|B_{t,i}^J\|_{L^2}                         \notag\\
 &\leq
-\frac{CNG'(\theta)}J
-\sum_{r=0}^{N-1}\alpha^r.
+\frac{CG'(\theta)}J
+\sum_{t=1}^{N}
+\left\{
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right\}^{1/2}.
 \label{eq:dmop-direct-quadratic-sum}
 \end{align}
 Combining Equations~(\ref{eq:dmop-direct-local-error-decomposition}),
@@ -5635,10 +6122,39 @@ $(a+b)^2\leq2a^2+2b^2$, yields
 \E|Z_i^J-z_i^\alpha|^2
 \leq
 CG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\left[
+\frac1J\sum_{t=1}^{N}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
++\frac1{J^2}
+\left\{
+\sum_{t=1}^{N}
+\left(
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right)^{1/2}
+\right\}^2
+\right].
 \label{eq:dmop-direct-coordinate-particle-error}
 \end{equation}
+Since $\varrho^{|r-u|}\leq1$ and
+$t\leq N$,
+\begin{align}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+&\leq
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2,                 \notag\\
+\left\{
+\sum_{t=1}^{N}
+\left(
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+\right)^{1/2}
+\right\}^2
+&\leq
+N^2\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\label{eq:dmop-lag-sums-coarse-bounds}
+\end{align}
 Summing over $i=1,\ldots,p$ proves
 Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}).  Since
 $z_i^\alpha$ is deterministic,
@@ -5648,15 +6164,69 @@ $z_i^\alpha$ is deterministic,
 \leq\E|Z_i^J-z_i^\alpha|^2.
 \end{equation}
 Summing this inequality over the coordinates proves the variance part of
-Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}).  If
-$\alpha<1$ and $J\geq N$, then
-\begin{equation}
-\sum_{r=0}^{N-1}\alpha^r\leq\frac1{1-\alpha},
-\qquad
-\frac{N^2}{J^2}\leq\frac NJ,
-\end{equation}
-which proves
-Equation~(\ref{eq:refined-dmop-alpha-variance-j-geq-n}).
+Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}).
+
+It remains to evaluate the lag sums.  For $\alpha<1$ and every $t$,
+\begin{align}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}
+\alpha^{r+u}\varrho^{|r-u|}
+&\leq
+\sum_{r=0}^{\infty}\sum_{u=0}^{\infty}
+\alpha^{r+u}\varrho^{|r-u|}                               \notag\\
+&=
+\frac1{1-\alpha^2}
+\left\{1+2\sum_{d=1}^{\infty}(\alpha\varrho)^d\right\}
+                                                               \notag\\
+&=
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)}.
+\label{eq:dmop-infinite-lag-double-sum}
+\end{align}
+Substitution into Equation~
+(\ref{eq:dmop-direct-coordinate-particle-error}), followed by summation
+over the coordinates, proves Equation~
+(\ref{eq:refined-dmop-alpha-lag-particle-error}).  At $\alpha=1$,
+\begin{align}
+\sum_{r=0}^{t-1}\sum_{u=0}^{t-1}\varrho^{|r-u|}
+&=
+t+2\sum_{d=1}^{t-1}(t-d)\varrho^d                       \notag\\
+&\leq
+t\frac{1+\varrho}{1-\varrho},                            \notag\\
+\sum_{t=1}^{N}t&\leq N^2,                                \notag\\
+\left(\sum_{t=1}^{N}\sqrt t\right)^2&\leq N^3.
+\label{eq:dmop-one-finite-lag-sums}
+\end{align}
+Equations~(\ref{eq:dmop-direct-coordinate-particle-error}) and
+(\ref{eq:dmop-one-finite-lag-sums}) give the second member of the
+minimum in Equation~(\ref{eq:refined-dmop-one-lag-particle-error}).
+For the first member, Equations~
+(\ref{eq:full-score-summation-by-parts}) and
+(\ref{eq:population-full-score-summation-by-parts}), together with
+Equation~(\ref{eq:bounded-realized-measurement-score}), give, for every
+coordinate $i$,
+\begin{align}
+&(1-\alpha)\sum_{t=1}^{N-1}\sum_{k=1}^{t}\alpha^{t-k}
++\sum_{k=1}^{N}\alpha^{N-k}                                \notag\\
+&\qquad=
+\sum_{t=1}^{N-1}(1-\alpha^t)
++\sum_{r=0}^{N-1}\alpha^r
+=N,
+\label{eq:dmop-full-score-coefficient-identity}
+\\
+\left|\partial_{\theta_i}\hat\ell^1(\theta)\right|
+&\leq NG'(\theta),                                         \notag\\
+\left|\partial_{\theta_i}\ell^1(\theta)\right|
+&\leq NG'(\theta),                                         \notag\\
+\left|\partial_{\theta_i}\hat\ell^1(\theta)
+-\partial_{\theta_i}\ell^1(\theta)\right|^2
+&\leq4N^2G'(\theta)^2,                                    \notag\\
+\Var\{\partial_{\theta_i}\hat\ell^1(\theta)\}
+&\leq N^2G'(\theta)^2.
+\label{eq:dmop-one-pathwise-particle-error}
+\end{align}
+Summing Equation~(\ref{eq:dmop-one-pathwise-particle-error}) over
+$i=1,\ldots,p$ and combining the two valid bounds proves
+Equation~(\ref{eq:refined-dmop-one-lag-particle-error}).
 \end{proof}
 
 \begin{cor}[Particle bias of the DMOP-$\alpha$ score]
@@ -8157,21 +8727,34 @@ bound is not automatically a DMOP-$1$ lower bound.
 \begin{thm}[MSE rate for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
 Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
-\ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1]$,
-\begin{equation}
+\ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1)$,
+\begin{align}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
 \right\|_2^2
-\lesssim
+&\lesssim
 pG'(\theta)^2
 \left[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+N^2(1-\alpha)^2
++\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2
+\right]                                                        \notag\\
+&\lesssim
+pG'(\theta)^2
+\left[
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
++N^2
+\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
 \right].
 \label{eq:verified-dmop-alpha-mse-bound}
-\end{equation}
+\end{align}
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -8269,9 +8852,8 @@ $(a+b)^2\leq2a^2+2b^2$ and the triangle inequality give
 Take expectations in
 Equation~(\ref{eq:mse-proof-direct-total-error-split}) and substitute
 Equation~(\ref{eq:mse-proof-direct-particle-error}) and
-Equation~(\ref{eq:verified-full-population-discount-bias}).  Since
-$1-\alpha\varrho\geq1-\varrho$, the squared population term is at most
-$CN^2pG'(\theta)^2(1-\alpha)^2$.  Therefore
+the first two lines of
+Equation~(\ref{eq:verified-full-population-discount-bias}).  Therefore
 \begin{align}
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -8282,10 +8864,19 @@ pG'(\theta)^2
 \left[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+N^2(1-\alpha)^2
++\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2
 \right],
 \end{align}
-which is Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).  The exact
+which is the first line of Equation~
+(\ref{eq:verified-dmop-alpha-mse-bound}).  Since $\alpha<1$,
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r\leq\frac1{1-\alpha}.
+\end{equation}
+Substitution of this inequality and the last line of
+Equation~(\ref{eq:verified-full-population-discount-bias}) gives the
+second line of Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).  The exact
 bias--variance identity in Equation~
 (\ref{eq:verified-dmop-alpha-bias-variance-decomposition}) does not
 create an additional power of $N$.
@@ -8373,8 +8964,8 @@ Thus the variance has order $N/J$ for every fixed $\alpha<1$, and its
 genealogical contribution has order $N/\{J(1-\alpha^2)\}$ before horizon
 saturation.  At $\alpha=0$, this agrees with the DMOP-$0$ bound preceding
 Theorem~\ref{thm:dmop-alpha-truncation-mse}.  The example is consistent
-with Lemma~\ref{lem:dmop-alpha-variance}, but shows why the sharper
-$N/\{J(1-\alpha^2)\}$ rate would require additional joint-lineage control.
+with the lag-moment bound proved in Lemma~
+\ref{lem:dmop-alpha-variance}.
 \end{remark}
 
 \begin{remark}[Choice of $\alpha$ in the fixed-observation upper bound]
@@ -8393,8 +8984,11 @@ N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}.
 \label{eq:finite-population-bias-first-order-bound}
 \end{align}
 No horizon-saturation argument is used for this population term.
-Theorem~\ref{thm:refined-dmop-alpha-mse} gives the finite-horizon upper
-bound
+Combining the sharper particle bound in Equation~
+(\ref{eq:refined-dmop-alpha-lag-particle-error}) with the exact
+$\varrho$-dependent population term in Theorem~
+\ref{thm:refined-dmop-alpha-mse} gives, with fixed model constants and
+before the geometric memory reaches the horizon,
 \begin{align}
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -8403,30 +8997,45 @@ bound
 &\quad\lesssim
 pG'(\theta)^2
 \left[
-\left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)\frac1{1-\alpha}
 +N^2(1-\alpha)^2
 \right].
 \label{eq:direct-alpha-tuning-upper-bound}
 \end{align}
-For $0\leq\alpha<1$,
+The factor $(1-\alpha)^{-1}$ here is obtained from the exact factor
 \begin{equation}
-\sum_{r=0}^{N-1}\alpha^r
-\leq
-\min\left\{N,\frac1{1-\alpha}\right\},
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)},
 \end{equation}
-and the following three choices retain the appropriate side of the minimum:
+and the population term before suppressing fixed model constants is
+\begin{equation}
+N^2
+\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2.
+\end{equation}
+
+Balancing the two terms in
+Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) gives
+\begin{equation}
+1-\alpha
+\asymp
+\left(\frac1{NJ}+\frac1{J^2}\right)^{1/3}
+\end{equation}
+until $1-\alpha$ reaches order $N^{-1}$.  Written by regime, the
+resulting choices and upper bounds are
 \begin{align}
 1-\alpha
 &\asymp
 \begin{cases}
-J^{-1/2},&J\lesssim N,\\
-(NJ)^{-1/4},&N\lesssim J\lesssim N^3,\\
-N^2/J,&J\gtrsim N^3.
+J^{-2/3},&J\lesssim N,\\
+(NJ)^{-1/3},&N\lesssim J\lesssim N^2,\\
+J^{-1/2},&J\gtrsim N^2,
 \end{cases}
 \label{eq:direct-alpha-tuning-rate}
 \end{align}
-Substitution in Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) gives
+and
 \begin{align}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -8435,67 +9044,41 @@ Substitution in Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) gives
 &\lesssim
 pG'(\theta)^2
 \begin{cases}
-N^2/J,&J\lesssim N,\\
-N^{3/2}/\sqrt J,&N\lesssim J\lesssim N^3,\\
-N^3/J,&J\gtrsim N^3.
+N^2/J^{4/3},&J\lesssim N,\\
+N^{4/3}/J^{2/3},&N\lesssim J\lesssim N^2,\\
+N^2/J,&J\gtrsim N^2.
 \end{cases}
 \label{eq:direct-alpha-tuned-mse-rate}
 \end{align}
-Indeed, in the first regime the squared geometric sum is $\lesssim J$;
-in the second it is $\lesssim\sqrt{NJ}$ and
-$N^2/J^2\lesssim N/J$; and in the third it is at most $N^2$, while
+In the last line, $J^{-1/2}\lesssim N^{-1}$, so the finite lag sums have
+already reached their horizon order.  The population term is at most
+$CN^2/J$, and continuity of the finite sums at $\alpha=1$, together with
+Equation~(\ref{eq:refined-dmop-one-lag-particle-error}), gives
 \begin{equation}
-\frac{N^4}{J^2}\lesssim\frac{N^3}{J},
-\qquad
-\frac{N^6}{J^2}\lesssim\frac{N^3}{J}.
-\end{equation}
-For $J\gg N^3$ and $N\geq2$, the bracketed proxy in Equation~
-(\ref{eq:direct-alpha-tuning-upper-bound}) is strictly convex, and its
-first derivative at the two endpoints is
-\begin{equation}
-2\left(\frac NJ+\frac{N^2}{J^2}\right)-2N^2<0,
-\qquad
-\left(\frac NJ+\frac{N^2}{J^2}\right)N^2(N-1)>0.
-\end{equation}
-It therefore has a unique interior stationary point, which satisfies
-the exact equation
-\begin{align}
-N^2(1-\alpha)
-&=
-\left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)
-\left(\sum_{r=1}^{N-1}r\alpha^{r-1}\right).
-\label{eq:large-j-alpha-stationary-equation}
-\end{align}
-Since the two sums on the right are at most $N$ and $N(N-1)/2$,
-respectively, Equation~
-(\ref{eq:large-j-alpha-stationary-equation}) first gives
-\begin{equation}
-1-\alpha
-\leq
-\frac{N-1}{2}\left(\frac NJ+\frac{N^2}{J^2}\right)
-=o(N^{-1}).
-\end{equation}
-Consequently, the two sums in Equation~
-(\ref{eq:large-j-alpha-stationary-equation}) are
-$N\{1+o(1)\}$ and $N(N-1)\{1+o(1)\}/2$, and substitution gives
-\begin{equation}
-1-\alpha
-=\frac{N-1}{2}\left(\frac NJ+\frac{N^2}{J^2}\right)
-\{1+o(1)\}
-\asymp\frac{N^2}{J}.
-\end{equation}
-\medskip\noindent
-At $\alpha=1$, Theorem~
-\ref{thm:refined-dmop-alpha-mse} also gives
-\begin{equation}
-\E\left\|
-\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
-\right\|_2^2
+pG'(\theta)^2
+\left(\frac{N^2}{J}+\frac{N^3}{J^2}\right)
 \lesssim
-pG'(\theta)^2\left(\frac{N^3}{J}+\frac{N^4}{J^2}\right),
+\frac{N^2pG'(\theta)^2}{J},
+\qquad J\gtrsim N^2.
 \end{equation}
-which has the same $N^3/J$ order when $J\gtrsim N^3$.
+In particular, when $N>J^3$ the first regime applies and the displayed
+upper bound is $N^2/J^{4/3}$, not $N^2/J$.  The former $N^2/J$ result in
+that regime came from replacing the lag second and fourth moments by a
+squared worst-case oscillation.
+Moreover, Equation~(\ref{eq:refined-dmop-one-lag-particle-error}) and
+the pathwise bound in Equation~
+(\ref{eq:dmop-one-pathwise-particle-error}) give at $\alpha=1$
+\begin{equation}
+pG'(\theta)^2
+\min\left\{
+N^2,\,
+\frac{N^2}{J}+\frac{N^3}{J^2}
+\right\}
+\asymp N^2pG'(\theta)^2,
+\qquad N>J^3.
+\end{equation}
+The ratio of this last upper bound to the tuned DMOP-$\alpha$ upper
+bound is $J^{4/3}$, which is not of constant order as $J$ grows.
 
 This calculation gives rate-balancing choices for the displayed
 fixed-observation norm upper bound, not the actual MSE.  The actual
@@ -8507,9 +9090,12 @@ population discount bias is the signed finite sum
 (1-\alpha^r)\Delta_{n,r},
 \end{equation}
 whose first-order coefficient can cancel.  Consequently,
-Equation~(\ref{eq:direct-alpha-tuned-mse-rate}) is not a lower bound on
-the optimally tuned MSE and does not rule out an interior $\alpha$ with
-smaller MSE than both endpoints.
+Equation~(\ref{eq:direct-alpha-tuned-mse-rate}) consists only of upper
+bounds.  It neither identifies the actual MSE rates nor proves equality
+with the DMOP-$1$ endpoint.  A comparison with the quadratic lower bound
+of \citet{poyiadjis11} additionally requires the nondegeneracy conditions
+of that result and the identification of its likelihood-ratio estimator
+with the DMOP-$1$ estimator in the model under study.
 
 \end{remark}
 

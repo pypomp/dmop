@@ -766,10 +766,23 @@ CN\sqrt p\,G'(\theta)
 \]
 The $N^2/J^2$ term is the quadratic self-normalized-ratio remainder, not
 an additional oscillation normalization of the full score.  If $J\geq N$,
-it is absorbed by the $N/J$ term.  A sharper variance upper bound of order
-$N/\{J(1-\alpha^2)\}$ before horizon saturation would require the
-centered two- and four-lineage estimate stated in Section~S7 and is not
-claimed under the displayed conditions.}
+it is absorbed by the $N/J$ term in the coarser display.  Lemma~S13 proves
+the sharper lag-moment bound
+\[
+\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell^\alpha\|_2^2,
+\quad
+\Var(\nabla_\theta\hat\ell^\alpha)
+\lesssim
+pG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)}.
+\]
+At $\alpha=1$, the corresponding finite-horizon bound is
+$pG'(\theta)^2\min\{N^2,N^2/J+N^3/J^2\}$.  The proof conditions on the particle
+locations but not on the realized ancestral indices and uses the exact
+backward genealogy representation of \citet{chanDelMoral18}; (A2) then
+minorizes every backward kernel and gives geometric lag covariance.}
 
 \kevin{Interpretation of the third MSE term.  Its sharper finite-horizon
 upper-bound contribution is
@@ -858,8 +871,17 @@ coefficients and hence the population discount bias.
 A local Del Moral--Rio perturbation expansion is then applied to each
 continuation ratio before summing over discounted observation times.  Conditional
 multinomial centering makes the first-order local fields martingale differences,
-whose squared contributions sum to $N/\{J(1-\alpha)^2\}$; the quadratic ratio
-remainders sum to $N^2/\{J^2(1-\alpha)^2\}$.  The current object used in
+The exact conditional backward representation of a sampled particle genealogy
+from \citet{chanDelMoral18}, together with (A2), gives
+\[
+|\Cov\{h_s(X_s),h_u(X_u)\mid\hbox{particle locations}\}|
+\lesssim G'(\theta)^2\varrho^{|s-u|}.
+\]
+Consequently, the centered squared contributions sum to order
+$N/\{J(1-\alpha^2)\}$ before horizon saturation.  The same backward
+martingale calculation gives the fourth moment needed for the quadratic
+ratio remainders, improving their contribution to
+$N^2/\{J^2(1-\alpha^2)\}$.  The current object used in
 this calculation consists of the location and the gradient of its log weight.
 Assumption (A2) couples the location component geometrically, while
 differentiation of the log-space weight recursion multiplies the inherited
@@ -889,9 +911,11 @@ across resampling times.  The earlier fixed-lag calculation does not remain vali
 in the exact constant-weight model its variance has order $N(k+1)/J$ for
 $1\ll k\ll\min(N,J)$ and order $N^2/J$ at $k=N-1$, rather than
 $\{N+(k+1)^2\}/J$.  The current DMOP pair includes the particle location and
-the gradient of its log weight; the unresolved issue is covariance
-among score contributions that share a resampling genealogy.  Current-cloud
-mixing and suppression of its mixing-time factor do not remove that covariance.}
+the gradient of its log weight.  The backward genealogy calculation in
+Lemma~S13 now controls covariance among score contributions that share a
+resampling genealogy and recovers the $N(k+1)/J$ leading upper bound, with
+the corresponding second-order particle term.  It does not identify an
+ancestral sum with a current-location function.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -925,16 +949,20 @@ identical to the complete-data likelihood-ratio score contributions of
 \citet{poyiadjis11}, so their lower bound
 does not automatically transfer to DMOP-$1$.
 There is also no DMOP-$0$ MSE lower bound under the present assumptions.
-For $\alpha<1$, the direct theorem above gives a finite-particle tradeoff without
-the unproved centered genealogy estimate.  Balancing its displayed upper bound
-gives
+For $\alpha<1$, Lemma~S13 gives the sharper particle term proportional to
+$(1-\alpha^2)^{-1}$.  Balancing it against the fixed-observation population
+term gives
 \[
-1-\alpha\asymp\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4},
-\qquad
-\operatorname{MSE}\lesssim
-pG'(\theta)^2N\left(\frac{N}{J}+\frac{N^2}{J^2}\right)^{1/2}.
+1-\alpha\asymp
+\left(\frac1{NJ}+\frac1{J^2}\right)^{1/3}.
 \]
-This is only the minimizer of the proved upper bound.  The signed population
+Before horizon saturation, the resulting MSE upper bounds are
+$pG'(\theta)^2N^2/J^{4/3}$ when $J\lesssim N$ and
+$pG'(\theta)^2N^{4/3}/J^{2/3}$ when
+$N\lesssim J\lesssim N^2$.  Once $J\gtrsim N^2$, a choice
+$1-\alpha\asymp J^{-1/2}$ gives the finite-horizon upper bound
+$pG'(\theta)^2N^2/J$.  These are only bounds obtained by balancing the
+proved upper bound.  The signed population
 bias can cancel, so neither this calculation nor the endpoint bounds prove that
 the actual MSE has, or lacks, an interior minimizer.}
 
