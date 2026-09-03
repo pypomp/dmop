@@ -720,11 +720,15 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 
 \kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}.
 Under (A2), the clarified forms of (A3) and (A5), fixed observations,
-multinomial resampling, $J\geq2$, $\theta=\phi$, and $\alpha\in[0,1)$,
-the following bounds hold.  Here the current DMOP object consists of the
+multinomial resampling, $J\geq2$, $\theta=\phi$, $\alpha\in[0,1)$, and the
+additional premise that the bounded one-time measurement-gradient input
+can be written as the current function $h_n(X_n)$, the following bounds
+hold.  This current-function premise should be stated explicitly: bounded
+total fixed-random-number derivatives in (A3) and differentiability in
+(A5) do not by themselves imply it for an unaugmented physical state.
+Here the current DMOP object consists of the
 particle location and the gradient of its log weight.  The location transition
-is the one in (A2), the current measurement-gradient input is the bounded
-function in (A3), and differentiating the log-space weight recursion gives
+is the one in (A2), and differentiating the log-space weight recursion gives
 $\nabla_\theta\log w_n^{F,\theta}
 =\alpha\nabla_\theta\log w_{n-1}^{F,\theta}+h_n(x_n)$ at
 $\theta=\phi$ along a selected lineage.  No total-variation minorization of
@@ -735,18 +739,20 @@ this pair is assumed.  Then
 \quad
 \Var\{\nabla_\theta\hat\ell^\alpha(\theta)\}
 \lesssim
-pG'(\theta)^2\left\{
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-\right\}.
+pG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)}.
 \]
 Consequently,
 \[
 \E\|\nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)\|_2^2
-\lesssim pG'(\theta)^2\left[
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
+\lesssim pG'(\theta)^2
+\left[
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\frac{1+\alpha\varrho}
+{(1-\alpha^2)(1-\alpha\varrho)}
 +\left\{
 \sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
 \right\}^2\right].
@@ -766,20 +772,12 @@ CN\sqrt p\,G'(\theta)
 \]
 The $N^2/J^2$ term is the quadratic self-normalized-ratio remainder, not
 an additional oscillation normalization of the full score.  If $J\geq N$,
-it is absorbed by the $N/J$ term in the coarser display.  Lemma~S13 proves
-the sharper lag-moment bound
-\[
-\E\|\nabla_\theta\hat\ell^\alpha-\nabla_\theta\ell^\alpha\|_2^2,
-\quad
-\Var(\nabla_\theta\hat\ell^\alpha)
-\lesssim
-pG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
-\frac{1+\alpha\varrho}
-{(1-\alpha^2)(1-\alpha\varrho)}.
-\]
+it is absorbed by the $N/J$ term.
 At $\alpha=1$, the corresponding finite-horizon bound is
-$pG'(\theta)^2\min\{N^2,N^2/J+N^3/J^2\}$.  The proof conditions on the particle
+\[
+pG'(\theta)^2\min\{N^2,N^2/J+N^3/J^2\}.
+\]
+The proof conditions on the particle
 locations but not on the realized ancestral indices and uses the exact
 backward genealogy representation of \citet{chanDelMoral18}; (A2) then
 minorizes every backward kernel and gives geometric lag covariance.}
@@ -864,6 +862,8 @@ The MSE bound considers the error between the target derivative and DMOP-$(1,k)$
 The latter can be shown to be $\tilde{O}\big(Np \, G'(\theta)^2(k+\psi_k(\alpha))\big)$, and the former can be controlled with a result on the the forgetting of the particle filter from \cite{karjalainen23} and the very same $L^p$ error bound mentioned above. 
 
 \kevin{Suggested replacement proof outline.
+Update the supplement-section cross-reference in this paragraph from
+Section~S6 to Section~S7.
 The clarified (A3) and (A5) justify differentiation under each finite-horizon
 simulator expectation.
 Posterior backward-kernel contraction gives geometric decay of the population lag
@@ -913,9 +913,17 @@ $1\ll k\ll\min(N,J)$ and order $N^2/J$ at $k=N-1$, rather than
 $\{N+(k+1)^2\}/J$.  The current DMOP pair includes the particle location and
 the gradient of its log weight.  The backward genealogy calculation in
 Lemma~S13 now controls covariance among score contributions that share a
-resampling genealogy and recovers the $N(k+1)/J$ leading upper bound, with
-the corresponding second-order particle term.  It does not identify an
-ancestral sum with a current-location function.}
+resampling genealogy and gives
+\[
+\max\{\operatorname{MSE}_{\rm particle},\operatorname{Var}\}
+\lesssim
+pG'(\theta)^2
+\left\{\frac{N(k+1)}J+\frac{N^2(k+1)}{J^2}\right\}.
+\]
+Combining this with the population truncation bound adds
+$pG'(\theta)^2N^2\varrho^{2(k+1)}/(1-\varrho)^2$ to the full MSE.
+The proof does not identify an ancestral sum with a current-location
+function.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -959,10 +967,20 @@ term gives
 Before horizon saturation, the resulting MSE upper bounds are
 $pG'(\theta)^2N^2/J^{4/3}$ when $J\lesssim N$ and
 $pG'(\theta)^2N^{4/3}/J^{2/3}$ when
-$N\lesssim J\lesssim N^2$.  Once $J\gtrsim N^2$, a choice
-$1-\alpha\asymp J^{-1/2}$ gives the finite-horizon upper bound
-$pG'(\theta)^2N^2/J$.  These are only bounds obtained by balancing the
-proved upper bound.  The signed population
+$N\lesssim J\lesssim N^2$.  Once $J\gtrsim N^2$, both the endpoint
+$\alpha=1$ and every interior choice with
+$1-\alpha\lesssim J^{-1/2}$ give the finite-horizon upper bound
+$pG'(\theta)^2N^2/J$.  The exact finite-sum right side is nevertheless
+strictly decreased by moving slightly left of one: its particle part has
+positive derivative at $\alpha=1$, while its squared population-bias
+part has derivative zero.  For $J\gg N^2$, its interior minimizer
+satisfies $1-\alpha\asymp N/J$, but its improvement over $\alpha=1$ is
+lower order.
+The power $J^{-4/3}$ applies only in the joint regime $J\lesssim N$ and
+is not a fixed-$N$ superparametric Monte Carlo rate: it is produced by
+balancing the $N^2/J^2$ quadratic particle remainder against population
+bias.  For fixed $N$, sufficiently large $J$ lies in the $N^2/J$ regime.
+These are only bounds obtained by balancing the proved upper bound.  The signed population
 bias can cancel, so neither this calculation nor the endpoint bounds prove that
 the actual MSE has, or lacks, an interior minimizer.}
 
