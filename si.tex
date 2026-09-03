@@ -4681,40 +4681,30 @@ Appendix~A.3 of \citet{delMoral11}.
 
 \begin{lem}[Particle error and variance of the DMOP-$\alpha$ score]
 \label{lem:dmop-alpha-variance}
-Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1)$, Assumptions
+Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
 used.  Assume additionally that the bounded measurement-gradient input
 is the current function $h_n(X_n)$ in
 Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
-\begin{equation}
+\begin{align}
+&\max\left\{
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell^\alpha(\theta)
-\right\|_2^2
-\lesssim
-pG'(\theta)^2
-\left\{
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-\right\},
-\label{eq:refined-dmop-alpha-direct-particle-error}
-\end{equation}
-and
-\begin{equation}
+\right\|_2^2,\,
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
-\lesssim
+\right\}                                                     \notag\\
+&\quad\lesssim
 pG'(\theta)^2
-\left\{
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-\right\}.
-\label{eq:refined-dmop-alpha-variance}
-\end{equation}
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\label{eq:refined-dmop-alpha-direct-particle-error}
+\end{align}
 Here the multiplicative constants suppressed by $\lesssim$ depend on the
 fixed model bounds, but are independent of $N,J$, and $\alpha$, and
 $\Var(Z)=\E\|Z-\E Z\|_2^2$.
-In particular, if $J\geq N$, the second term is absorbed by the first and
+In particular, if $\alpha<1$ and $J\geq N$, then
 \begin{equation}
 \Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
 \lesssim
@@ -4748,7 +4738,8 @@ Equation~(\ref{eq:bounded-realized-measurement-score}) give
 G'(\theta)+2G'(\theta)\sum_{r=1}^{n-1}\alpha^r
 \right\}                                                   \notag\\
 &\leq
-NG'(\theta)\left\{1+\frac{2}{1-\alpha}\right\}<\infty.
+NG'(\theta)\left\{1+2\sum_{r=1}^{N-1}\alpha^r\right\}
+\leq2N^2G'(\theta)<\infty.
 \label{eq:dmop-direct-error-square-integrability}
 \end{align}
 Thus all random variables used below are square integrable.
@@ -4784,7 +4775,7 @@ and centered.  Moreover,
 &\leq
 2G'(\theta)\sum_{s=1}^n\alpha^{n-s}                         \notag\\
 &\leq
-\frac{2G'(\theta)}{1-\alpha}.
+2G'(\theta)\sum_{r=0}^{N-1}\alpha^r.
 \label{eq:aggregated-terminal-function-oscillation}
 \end{align}
 It follows from Claim~\ref{claim:conditional-empirical-moments} and
@@ -4792,7 +4783,8 @@ Equation~(\ref{eq:aggregated-terminal-function-oscillation}) that
 \begin{align}
 \E\left\{(R_{n,i}^J)^2\mid\xi_{n,1:J}^P\right\}
 &\leq
-\frac{G'(\theta)^2}{J(1-\alpha)^2}.
+\frac{G'(\theta)^2}{J}
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:aggregated-terminal-resampling-second-moment}
 \end{align}
 
@@ -5354,7 +5346,11 @@ CG'(\theta)
 \left(\sum_{a=0}^{t-1}\alpha^a\right)
 \left(\sum_{b=0}^{N-t}(\alpha\varrho)^b\right)             \notag\\
 &\quad\leq
-\frac{CG'(\theta)}{(1-\alpha)(1-\alpha\varrho)}.
+CG'(\theta)
+\left(\sum_{a=0}^{N-1}\alpha^a\right)
+\left(\sum_{b=0}^{\infty}\varrho^b\right)                   \notag\\
+&\quad\leq
+CG'(\theta)\sum_{a=0}^{N-1}\alpha^a.
 \label{eq:dmop-direct-past-score-coefficient-sum}
 \end{align}
 Those with $t<s\leq n$ have total coefficient
@@ -5378,11 +5374,12 @@ CG'(\theta)\sum_{n=t}^{N}\varrho^{n-t}
 \leq\frac{CG'(\theta)}{1-\varrho}.
 \label{eq:dmop-direct-current-predictor-coefficient-sum}
 \end{equation}
-Since $1-\alpha\varrho\geq1-\varrho$, the oscillation of the
-aggregated first-order local function, and the coefficient of its
-quadratic remainder, are at most
+Since $1-\alpha\varrho\geq1-\varrho$ and
+$\sum_{a=0}^{N-1}\alpha^a\geq1$, the oscillation of the aggregated
+first-order local function, and the coefficient of its quadratic
+remainder, are at most
 \begin{equation}
-\frac{CG'(\theta)}{1-\alpha}.
+CG'(\theta)\sum_{a=0}^{N-1}\alpha^a.
 \label{eq:dmop-direct-aggregated-local-oscillation}
 \end{equation}
 
@@ -5552,7 +5549,8 @@ give
 \alpha^{n-s}D_{\mu_t^J}C_{t,n}^{(s)}
 \right]^2                                                    \notag\\
 &\leq
-\frac{CG'(\theta)^2}{J(1-\alpha)^2}.
+\frac{CG'(\theta)^2}{J}
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:dmop-direct-local-field-centered-bounds}
 \end{align}
 Here $\mathcal F_{t-1}$ is the sigma-field just before that combined
@@ -5567,16 +5565,17 @@ three coefficient sums in Step 6, gives
 \begin{align}
 \|B_{t,i}^J\|_{L^2\mid\mathcal F_{t-1}}
 &\leq
-\frac CJ
+\frac{CG'(\theta)}J
 \left\{
-\frac{G'(\theta)}{1-\varrho}
-+\frac{G'(\theta)}
-{(1-\alpha)(1-\alpha\varrho)}
-+\frac{G'(\theta)\varrho}
-{(1-\varrho)(1-\alpha\varrho)}
+\sum_{n=t}^{N}\varrho^{n-t}
++\sum_{s=1}^{t}\sum_{n=t}^{N}
+\alpha^{n-s}\varrho^{n-t}
++\sum_{s=t+1}^{N}\sum_{n=s}^{N}
+\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}
 \right\}                                                     \notag\\
 &\leq
-\frac{CG'(\theta)}{J(1-\alpha)}.
+\frac{CG'(\theta)}J
+\sum_{r=0}^{N-1}\alpha^r.
 \label{eq:dmop-direct-local-field-remainder-bound}
 \end{align}
 The same bound holds for the unconditional $L^2$ norm.
@@ -5614,7 +5613,8 @@ martingale orthogonality separately within each family, gives
 2\sum_{n=1}^{N}\|R_{n,i}^J\|_{L^2}^2
 +2\sum_{t=1}^{N}\|\Gamma_{t,i}^J\|_{L^2}^2               \notag\\
 &\leq
-\frac{CNG'(\theta)^2}{J(1-\alpha)^2}.
+\frac{CNG'(\theta)^2}{J}
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:dmop-direct-centered-local-sum}
 \end{align}
 For the quadratic terms, Minkowski's inequality gives
@@ -5623,7 +5623,8 @@ For the quadratic terms, Minkowski's inequality gives
 &\leq
 \sum_{t=1}^{N}\|B_{t,i}^J\|_{L^2}                         \notag\\
 &\leq
-\frac{CNG'(\theta)}{J(1-\alpha)}.
+\frac{CNG'(\theta)}J
+\sum_{r=0}^{N-1}\alpha^r.
 \label{eq:dmop-direct-quadratic-sum}
 \end{align}
 Combining Equations~(\ref{eq:dmop-direct-local-error-decomposition}),
@@ -5634,10 +5635,8 @@ $(a+b)^2\leq2a^2+2b^2$, yields
 \E|Z_i^J-z_i^\alpha|^2
 \leq
 CG'(\theta)^2
-\left\{
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-\right\}.
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:dmop-direct-coordinate-particle-error}
 \end{equation}
 Summing over $i=1,\ldots,p$ proves
@@ -5648,9 +5647,15 @@ $z_i^\alpha$ is deterministic,
 =\inf_{a\in\mathbb R}\E|Z_i^J-a|^2
 \leq\E|Z_i^J-z_i^\alpha|^2.
 \end{equation}
-Summing this inequality over the coordinates proves
-Equation~(\ref{eq:refined-dmop-alpha-variance}).  If $J\geq N$, then
-$N^2/J^2\leq N/J$, which proves
+Summing this inequality over the coordinates proves the variance part of
+Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}).  If
+$\alpha<1$ and $J\geq N$, then
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r\leq\frac1{1-\alpha},
+\qquad
+\frac{N^2}{J^2}\leq\frac NJ,
+\end{equation}
+which proves
 Equation~(\ref{eq:refined-dmop-alpha-variance-j-geq-n}).
 \end{proof}
 
@@ -8149,15 +8154,10 @@ bound is not automatically a DMOP-$1$ lower bound.
 
 \fi
 
-\begin{thm}[MSE decomposition and bound for DMOP-$\alpha$]
+\begin{thm}[MSE rate for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
-Suppose the observations are fixed, $J\geq2$, $\theta=\phi$,
-$\alpha\in[0,1)$, Assumptions {\refAssumpBoundedProcess},
-{\refAssumpBoundedMeasurement}, and
-{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  The bounded measurement-gradient input in Assumption~
-{\refAssumpBoundedMeasurement} is the current function $h_n(X_n)$ in
-Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
+Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
+\ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1]$,
 \begin{equation}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -8166,48 +8166,12 @@ Equation~(\ref{eq:location-weight-gradient-pair-recursion}). Then
 \lesssim
 pG'(\theta)^2
 \left[
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-+\left\{
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
-\right\}^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
++N^2(1-\alpha)^2
 \right].
 \label{eq:verified-dmop-alpha-mse-bound}
 \end{equation}
-Moreover, the exact bias--variance decomposition is
-\begin{align}
-&\E\left\|
-\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2^2                                                \notag\\
-&\quad=
-\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
-+\left\|
-\E\nabla_\theta\hat\ell^\alpha(\theta)
--\nabla_\theta\ell^\alpha(\theta)
-+\nabla_\theta\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2^2,
-\label{eq:verified-dmop-alpha-bias-variance-decomposition}
-\end{align}
-where the population discounting term satisfies
-\begin{align}
-\left\|
-\nabla_\theta\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2
-&\leq
-C\sqrt p\,G'(\theta)
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r                 \notag\\
-&\leq
-CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
-\label{eq:verified-full-population-discount-bias}
-\end{align}
-The factor $\varrho\in(0,1)$ is the one in Lemma~
-\ref{lem:derivative-measure-forgetting} and is independent of
-$N,J$, and $\alpha$.
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -8231,9 +8195,22 @@ because
 Apply Equation~(\ref{eq:direct-vector-bias-variance-identity}) with
 $Z=\nabla_\theta\hat\ell^\alpha(\theta)$ and
 $z=\nabla_\theta\ell(\theta)$, and add and subtract
-$\nabla_\theta\ell^\alpha(\theta)$ inside the deterministic norm.  This
-gives Equation~
-(\ref{eq:verified-dmop-alpha-bias-variance-decomposition}).
+$\nabla_\theta\ell^\alpha(\theta)$ inside the deterministic norm.  Thus
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad=
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
++\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
++\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2.
+\label{eq:verified-dmop-alpha-bias-variance-decomposition}
+\end{align}
 
 \medskip\noindent\emph{Step 2: particle error.}\quad
 Lemma~\ref{lem:dmop-alpha-variance} gives the direct particle error
@@ -8244,10 +8221,8 @@ Lemma~\ref{lem:dmop-alpha-variance} gives the direct particle error
 \right\|_2^2                                                \notag\\
 &\quad\lesssim
 pG'(\theta)^2
-\left\{
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-\right\}.
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:mse-proof-direct-particle-error}
 \end{align}
 \medskip\noindent\emph{Step 3: population discounting error.}\quad
@@ -8268,10 +8243,9 @@ C\sqrt p\,G'(\theta)
 &\leq
 CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)},
+{(1-\varrho)(1-\alpha\varrho)}.
+\label{eq:verified-full-population-discount-bias}
 \end{align}
-which is Equation~
-(\ref{eq:verified-full-population-discount-bias}).
 
 \medskip\noindent\emph{Step 4: combine the two errors.}\quad
 Pointwise,
@@ -8295,10 +8269,26 @@ $(a+b)^2\leq2a^2+2b^2$ and the triangle inequality give
 Take expectations in
 Equation~(\ref{eq:mse-proof-direct-total-error-split}) and substitute
 Equation~(\ref{eq:mse-proof-direct-particle-error}) and
-Equation~(\ref{eq:verified-full-population-discount-bias}).  This proves
-Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).  The exact
-bias--variance identity was proved independently at the beginning of the
-argument; it does not create an additional power of $N$.
+Equation~(\ref{eq:verified-full-population-discount-bias}).  Since
+$1-\alpha\varrho\geq1-\varrho$, the squared population term is at most
+$CN^2pG'(\theta)^2(1-\alpha)^2$.  Therefore
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left[
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
++N^2(1-\alpha)^2
+\right],
+\end{align}
+which is Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).  The exact
+bias--variance identity in Equation~
+(\ref{eq:verified-dmop-alpha-bias-variance-decomposition}) does not
+create an additional power of $N$.
 \end{proof}
 
 \iffalse
@@ -8403,9 +8393,8 @@ N(1-\alpha)\frac{\varrho}{(1-\varrho)^2}.
 \label{eq:finite-population-bias-first-order-bound}
 \end{align}
 No horizon-saturation argument is used for this population term.
-Applying the last inequality to Theorem~
-\ref{thm:refined-dmop-alpha-mse} gives the following coarsening of its
-fixed-observation upper bound, with fixed model factors suppressed:
+Theorem~\ref{thm:refined-dmop-alpha-mse} gives the finite-horizon upper
+bound
 \begin{align}
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -8413,49 +8402,104 @@ fixed-observation upper bound, with fixed model factors suppressed:
 \right\|_2^2                                                \notag\\
 &\quad\lesssim
 pG'(\theta)^2
-\left\{
-\frac{1}{(1-\alpha)^2}
-\left(\frac{N}{J}+\frac{N^2}{J^2}\right)
+\left[
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
 +N^2(1-\alpha)^2
-\right\}.
+\right].
 \label{eq:direct-alpha-tuning-upper-bound}
 \end{align}
-Differentiation gives the interior rate-balancing choice and its value:
+For $0\leq\alpha<1$,
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r
+\leq
+\min\left\{N,\frac1{1-\alpha}\right\},
+\end{equation}
+and the following three choices retain the appropriate side of the minimum:
 \begin{align}
 1-\alpha
 &\asymp
-\left(\frac1{NJ}+\frac1{J^2}\right)^{1/4},
+\begin{cases}
+J^{-1/2},&J\lesssim N,\\
+(NJ)^{-1/4},&N\lesssim J\lesssim N^3,\\
+N^2/J,&J\gtrsim N^3.
+\end{cases}
 \label{eq:direct-alpha-tuning-rate}
-\\
+\end{align}
+Substitution in Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) gives
+\begin{align}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
 \right\|_2^2
 &\lesssim
 pG'(\theta)^2
-N\left(\frac{N}{J}+\frac{N^2}{J^2}\right)^{1/2}.
+\begin{cases}
+N^2/J,&J\lesssim N,\\
+N^{3/2}/\sqrt J,&N\lesssim J\lesssim N^3,\\
+N^3/J,&J\gtrsim N^3.
+\end{cases}
 \label{eq:direct-alpha-tuned-mse-rate}
 \end{align}
+Indeed, in the first regime the squared geometric sum is $\lesssim J$;
+in the second it is $\lesssim\sqrt{NJ}$ and
+$N^2/J^2\lesssim N/J$; and in the third it is at most $N^2$, while
+\begin{equation}
+\frac{N^4}{J^2}\lesssim\frac{N^3}{J},
+\qquad
+\frac{N^6}{J^2}\lesssim\frac{N^3}{J}.
+\end{equation}
+For $J\gg N^3$ and $N\geq2$, the bracketed proxy in Equation~
+(\ref{eq:direct-alpha-tuning-upper-bound}) is strictly convex, and its
+first derivative at the two endpoints is
+\begin{equation}
+2\left(\frac NJ+\frac{N^2}{J^2}\right)-2N^2<0,
+\qquad
+\left(\frac NJ+\frac{N^2}{J^2}\right)N^2(N-1)>0.
+\end{equation}
+It therefore has a unique interior stationary point, which satisfies
+the exact equation
+\begin{align}
+N^2(1-\alpha)
+&=
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)
+\left(\sum_{r=1}^{N-1}r\alpha^{r-1}\right).
+\label{eq:large-j-alpha-stationary-equation}
+\end{align}
+Since the two sums on the right are at most $N$ and $N(N-1)/2$,
+respectively, Equation~
+(\ref{eq:large-j-alpha-stationary-equation}) first gives
+\begin{equation}
+1-\alpha
+\leq
+\frac{N-1}{2}\left(\frac NJ+\frac{N^2}{J^2}\right)
+=o(N^{-1}).
+\end{equation}
+Consequently, the two sums in Equation~
+(\ref{eq:large-j-alpha-stationary-equation}) are
+$N\{1+o(1)\}$ and $N(N-1)\{1+o(1)\}/2$, and substitution gives
+\begin{equation}
+1-\alpha
+=\frac{N-1}{2}\left(\frac NJ+\frac{N^2}{J^2}\right)
+\{1+o(1)\}
+\asymp\frac{N^2}{J}.
+\end{equation}
+\medskip\noindent
+At $\alpha=1$, Theorem~
+\ref{thm:refined-dmop-alpha-mse} also gives
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\lesssim
+pG'(\theta)^2\left(\frac{N^3}{J}+\frac{N^4}{J^2}\right),
+\end{equation}
+which has the same $N^3/J$ order when $J\gtrsim N^3$.
 
-The factor $(1-\alpha)^{-1}$ in
-Equation~(\ref{eq:direct-alpha-tuning-upper-bound}) enters through the
-replacement of finite sums $\sum_{q=0}^{m}\alpha^q$ in the proof of
-Lemma~\ref{lem:dmop-alpha-variance}.  Hence the effective-memory
-interpretation of Equation~(\ref{eq:direct-alpha-tuning-rate}) requires
-$(1-\alpha)^{-1}\lesssim N$.  At the displayed choice this condition is
-equivalent, up to fixed factors, to
-$N^3/J+N^4/J^2\gtrsim1$.  It holds throughout $J\leq N$, where Equation~
-(\ref{eq:direct-alpha-tuned-mse-rate}) is of order $pG'(\theta)^2N^2/J$,
-and for $N\leq J\lesssim N^3$, where it is of order
-$pG'(\theta)^2N^{3/2}/\sqrt J$.  When $J\gg N^3$, the proposed choice has
-$(1-\alpha)^{-1}\gg N$; the finite sums in the proof of Lemma~
-\ref{lem:dmop-alpha-variance} must then be retained rather than replaced by
-$(1-\alpha)^{-1}$, and Equation~
-(\ref{eq:direct-alpha-tuned-mse-rate}) is not asserted as the optimized
-finite-horizon rate.
-
-This calculation minimizes a fixed-observation norm upper bound, not the
-actual MSE.  The actual population discount bias is the signed finite sum
+This calculation gives rate-balancing choices for the displayed
+fixed-observation norm upper bound, not the actual MSE.  The actual
+population discount bias is the signed finite sum
 \begin{equation}
 \nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
 =
