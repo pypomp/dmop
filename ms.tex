@@ -756,10 +756,11 @@ the implemented discounted score satisfies the exact identity
 \nabla_\theta\hat\ell^\alpha(\theta)
 =\sum_{k=0}^{N-1}\beta_k\nabla_\theta\hat s_k^1(\theta).
 \]
-Here $\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
+For $N\geq2$, $\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
 score, whereas the coefficient of the zero-lag contribution is
 $\sum_{k=0}^{N-1}\beta_k=1$, because every hard-$k$ score contains it.
 Thus $\nabla_\theta\hat\ell_n^0(\theta)=\Delta_{n,0}^J$ exactly.
+For $N=1$, the only mixture weight is $\beta_0=1$.
 Thus DMOP-$\alpha$ is exactly a geometric average of the analytical lag
 truncations and, in this precise sense, approximates a hard lag cutoff.  A
 contribution of age $r$ is multiplied by $\alpha^r$, and its effective
@@ -784,7 +785,22 @@ CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
 \]
 The factor $\varrho^{q+1}$ therefore remains in the bound; discounting and
-model forgetting enter together rather than as unrelated approximations.}
+model forgetting enter together rather than as unrelated approximations.
+S14 sharpens these constants using the existing
+$\epsilon=\underbar M/\bar M$: for $0<\epsilon<1$ the population bias is
+at most
+\[
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+\frac{(1-\alpha)(1+\epsilon)}
+{1-\alpha+(1+\alpha)\epsilon},
+\]
+and it is zero when $\epsilon=1$.
+It also retains the signed first-order coefficient
+$\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}$, with an explicit
+$O\{N(1-\alpha)^2\}$ remainder.  Cancellation of this coefficient can
+improve the population order without an estimator correction, but is
+not imposed by the mixing assumptions.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
