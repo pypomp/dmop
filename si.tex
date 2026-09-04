@@ -2809,7 +2809,8 @@ pG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
 +\left\{
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2
 \right]
 \notag\\
@@ -2821,7 +2822,7 @@ pG'(\theta)^2
 +N^2
 \left\{
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+{1-\alpha\varrho}
 \right\}^2
 \right].
 \label{eq:verified-theorem-five-mse}
@@ -2836,7 +2837,7 @@ fixed-observation bias satisfies
 \leq
 CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+{1-\alpha\varrho}.
 \label{eq:verified-theorem-five-population-bias}
 \end{equation}
 Here $\varrho\in(0,1)$.  Apart from the particle-system mixing and
@@ -7647,6 +7648,23 @@ algorithm and not an additional randomization.  In this precise sense,
 geometric discounting is a soft lag truncation whose effective memory is
 computed below.
 
+There are two different coefficients at lag zero.  The number
+$\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
+score $\nabla_\theta\hat s_0^1(\theta)$.  By contrast, every hard-$k$
+score contains $\Delta_{n,0}^J$, so the coefficient of the zero-lag
+contribution in the geometric mixture is
+\begin{equation}
+\sum_{k=0}^{N-1}\beta_k=1.
+\label{eq:geometric-mixture-zero-lag-coefficient-s13}
+\end{equation}
+In particular, at $\alpha=0$,
+\begin{equation}
+\nabla_\theta\hat\ell_n^0(\theta)=\Delta_{n,0}^J,
+\qquad
+\nabla_\theta\ell_n^0(\theta)=\Delta_{n,0}.
+\label{eq:dmop-zero-exact-lag-coefficient-s13}
+\end{equation}
+
 The mean lag in this censored geometric mixture satisfies
 \begin{align}
 \sum_{k=0}^{N-1}\beta_k(k+1)
@@ -9115,26 +9133,26 @@ C\sqrt p\,G'(\theta)
 {(1-\varrho)(1-\alpha\varrho)}.
 \label{eq:dmop-population-discount-bias}
 \end{align}
-For the full score, the two finite bounds combine to give
+For the full score,
 \begin{align}
 &\left\|
 \nabla_\theta\ell(\theta)
 -\nabla_\theta\ell^\alpha(\theta)
 \right\|_2                                                     \notag\\
 &\quad\leq
-C\sqrt p\,G'(\theta)
-\min\Bigg\{
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r,                  \notag\\
-&\hspace{44mm}
-(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-\Bigg\}                                                       \notag\\
+C\sqrt p\,G'(\theta)\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q                    \notag\\
+&\quad=
+C\sqrt p\,G'(\theta)\varrho(1-\alpha)
+\frac{(N-1)-N\alpha\varrho+(\alpha\varrho)^N}
+{(1-\alpha\varrho)^2}                                       \notag\\
 &\quad\leq
-CN\sqrt p\,G'(\theta)
-\frac{1-\alpha}{1-\alpha\varrho}.
+C(N-1)\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
 \label{eq:dmop-full-population-discount-bias}
 \end{align}
-For $N=1$, both finite sums are empty and the full-score difference is
-zero.
+For $N=1$, the finite sum is empty, the displayed fraction is zero, and
+the full-score difference is zero.
 \end{lem}
 
 \begin{proof}[Proof.]
@@ -9150,7 +9168,18 @@ $\alpha$ and at $\alpha=1$ gives
 \sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r},
 \label{eq:population-discount-lag-difference}
 \end{align}
-because $1-\alpha^0=0$.
+The coefficient of $\Delta_{n,0}$ is one in both scores, so its
+difference is zero.  In particular, at the left endpoint Equation~
+(\ref{eq:dmop-zero-exact-lag-coefficient-s13}) gives
+\begin{equation}
+\nabla_\theta\ell_n^0(\theta)=\Delta_{n,0},
+\qquad
+\nabla_\theta\ell_n(\theta)-\nabla_\theta\ell_n^0(\theta)
+=\sum_{r=1}^{n-1}\Delta_{n,r}.
+\label{eq:population-discount-alpha-zero-endpoint}
+\end{equation}
+Thus DMOP-$0$ retains the zero-lag contribution with coefficient one and
+retains no positive-lag contribution.
 
 \medskip\noindent\emph{Step 2: apply forgetting and sum.}\quad
 Taking norms, applying the triangle
@@ -9269,20 +9298,113 @@ x\longmapsto
 2G'(\theta)\varrho^q.
 \label{eq:population-discount-partial-smoother-oscillation}
 \end{align}
-Using the tower property under $\rho_N$ and $\rho_{s+q}$, followed by
-the fact that two probability measures applied to the same bounded
-function differ by at most its oscillation, therefore gives
+The observations after time $s+q$ supply one additional contraction.
+Since $s+q<N$, Equation~
+(\ref{eq:population-score-future-likelihood}) and the Markov property give
+\begin{align}
+L_{s+q,N}(x)
+&=
+\int M_{s+q+1}(x,du)G_{s+q+1}(u)L_{s+q+1,N}(u).
+\label{eq:population-discount-future-likelihood-recursion}
+\end{align}
+For every $x,x'$, Assumption~{\refAssumpBoundedProcess} gives
+\begin{align}
+L_{s+q,N}(x)
+&\geq
+\epsilon
+\int M_{s+q+1}(x',du)G_{s+q+1}(u)L_{s+q+1,N}(u)             \notag\\
+&=
+\epsilon L_{s+q,N}(x').
+\label{eq:population-discount-future-likelihood-ratio}
+\end{align}
+Consequently,
+\begin{equation}
+\frac{L_{s+q,N}(x)}{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}
+\geq\epsilon.
+\label{eq:population-discount-future-tilt-minorization}
+\end{equation}
+Indeed, the denominator is no larger than
+$\sup_{x'}L_{s+q,N}(x')$, while Equation~
+(\ref{eq:population-discount-future-likelihood-ratio}) bounds the
+numerator below by $\epsilon\sup_{x'}L_{s+q,N}(x')$.
+
+For $\epsilon<1$, subtracting $\epsilon$ from the left side of
+Equation~(\ref{eq:population-discount-future-tilt-minorization}) and
+dividing by $1-\epsilon$ produces a nonnegative function whose
+$\rho_{s+q}$ expectation is one.  Hence, for every bounded real
+function $f$ of $X_{s+q}$,
+\begin{align}
+&\frac{\rho_{s+q}\{f(X_{s+q})L_{s+q,N}(X_{s+q})\}}
+{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}                         \notag\\
+&\quad=
+\epsilon\rho_{s+q}\{f(X_{s+q})\}                          \notag\\
+&\qquad+
+(1-\epsilon)\rho_{s+q}\!\left[
+f(X_{s+q})
+\frac{
+L_{s+q,N}(X_{s+q})/
+\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}-\epsilon
+}{1-\epsilon}
+\right].
+\label{eq:population-discount-future-tilt-splitting}
+\end{align}
+Subtracting $\rho_{s+q}\{f(X_{s+q})\}$ from both sides of Equation~
+(\ref{eq:population-discount-future-tilt-splitting}) and using that both
+terms multiplied by $\epsilon$ and $1-\epsilon$ are probability
+expectations gives
+\begin{align}
+&\left|
+\frac{\rho_{s+q}\{f(X_{s+q})L_{s+q,N}(X_{s+q})\}}
+{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}
+-\rho_{s+q}\{f(X_{s+q})\}
+\right|                                                       \notag\\
+&\qquad\leq
+(1-\epsilon)\operatorname{osc}(f).
+\label{eq:population-discount-future-tilt-contraction}
+\end{align}
+If $\epsilon=1$, the two expectations in Equation~
+(\ref{eq:population-discount-future-tilt-contraction}) are equal, so the
+same inequality holds.
+
+Equation~(\ref{eq:canonical-extended-posterior-path-law}), conditioning
+on $X_{s+q}$, and Equation~
+(\ref{eq:population-discount-common-conditional-past}) give
+\begin{align}
+\rho_N(h_{s,i})
+&=
+\frac{
+\rho_{s+q}\!\left[
+\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}
+L_{s+q,N}(X_{s+q})
+\right]
+}
+{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}},                       \notag\\
+\rho_{s+q}(h_{s,i})
+&=
+\rho_{s+q}\!\left[
+\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}
+\right].
+\label{eq:population-discount-two-boundary-expectations}
+\end{align}
+Apply Equation~(\ref{eq:population-discount-future-tilt-contraction})
+to the common conditional expectation in Equation~
+(\ref{eq:population-discount-common-conditional-past}).  The tower
+identities in Equation~
+(\ref{eq:population-discount-two-boundary-expectations}) and Equation~
+(\ref{eq:population-discount-partial-smoother-oscillation}) give
 \begin{align}
 |\rho_N(h_{s,i})-\rho_{s+q}(h_{s,i})|
 &\leq
-2G'(\theta)\varrho^q.
+2G'(\theta)(1-\epsilon)^{q+1}                              \notag\\
+&\leq
+2G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-coordinate-boundary-comparison}
 \end{align}
 Summing the squared coordinate bounds and taking square roots yield
 \begin{align}
 \|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
 &\leq
-2\sqrt p\,G'(\theta)\varrho^q.
+2\sqrt p\,G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-vector-boundary-comparison}
 \end{align}
 Insert Equation~
@@ -9294,36 +9416,44 @@ triangle inequality, and reverse the two finite sums.  This gives
 \nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
 \right\|_2                                                     \notag\\
 &\quad\leq
-2\sqrt p\,G'(\theta)(1-\alpha)
+2\sqrt p\,G'(\theta)\varrho(1-\alpha)
 \sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}(\alpha\varrho)^q         \notag\\
 &\quad=
-2\sqrt p\,G'(\theta)(1-\alpha)
+2\sqrt p\,G'(\theta)\varrho(1-\alpha)
 \sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q                   \notag\\
 &\quad\leq
-2N\sqrt p\,G'(\theta)(1-\alpha)
+2(N-1)\sqrt p\,G'(\theta)\varrho(1-\alpha)
 \sum_{q=0}^{\infty}(\alpha\varrho)^q                       \notag\\
 &\quad=
-2N\sqrt p\,G'(\theta)
-\frac{1-\alpha}{1-\alpha\varrho}.
+2(N-1)\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
 \label{eq:population-discount-boundary-comparison-bound}
 \end{align}
-On the other hand, summing the first line of Equation~
-(\ref{eq:dmop-population-discount-bias}) over $n=1,\ldots,N$ gives
+Finally, multiplying the finite sum by $1-\alpha\varrho$ gives
 \begin{align}
-&\left\|
-\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
-\right\|_2                                                     \notag\\
-&\quad\leq
-C\sqrt p\,G'(\theta)
-\sum_{n=1}^{N}\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r        \notag\\
-&\quad=
-C\sqrt p\,G'(\theta)
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r.
-\label{eq:population-discount-lagwise-full-bound}
+&(1-\alpha\varrho)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\notag\\
+&\qquad=
+(N-1)-\sum_{q=1}^{N-1}(\alpha\varrho)^q                    \notag\\
+&\qquad=
+(N-1)-
+\frac{\alpha\varrho\{1-(\alpha\varrho)^{N-1}\}}
+{1-\alpha\varrho}.
+\label{eq:population-discount-finite-boundary-sum-step}
 \end{align}
-Taking the smaller of Equations~
-(\ref{eq:population-discount-boundary-comparison-bound}) and
-(\ref{eq:population-discount-lagwise-full-bound}) proves Equation~
+Multiplying Equation~
+(\ref{eq:population-discount-finite-boundary-sum-step}) once more by
+$1-\alpha\varrho$ and collecting terms therefore gives
+\begin{align}
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+&=
+\frac{(N-1)-N\alpha\varrho+(\alpha\varrho)^N}
+{(1-\alpha\varrho)^2}.
+\label{eq:population-discount-finite-boundary-sum}
+\end{align}
+Equations~(\ref{eq:population-discount-boundary-comparison-bound}) and
+(\ref{eq:population-discount-finite-boundary-sum}) prove Equation~
 (\ref{eq:dmop-full-population-discount-bias}).
 \end{proof}
 
@@ -10624,7 +10754,8 @@ pG'(\theta)^2\Bigg[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
 +\left\{
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2
 \Bigg]
 \label{eq:verified-dmop-alpha-mse-finite-sum}.
@@ -10642,7 +10773,7 @@ pG'(\theta)^2
 +\frac{N^2}{J^2(1-\alpha)^2}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+{1-\alpha\varrho}
 \right\}^2
 \right].
 \label{eq:verified-dmop-alpha-mse-bound}
@@ -10683,24 +10814,21 @@ Lemma~\ref{lem:dmop-population-discount-bias} gives
 \leq
 CpG'(\theta)^2
 \left\{
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 \right\}^2.
 \end{equation}
-Here the first branch of the minimum in Lemma~
-\ref{lem:dmop-population-discount-bias} is retained so that the dependence
-on the model-forgetting rate $\varrho$ remains explicit.
 Substitution into Equation~
 (\ref{eq:generic-mse-particle-population-split}) proves the first bound.
 For $0\leq\alpha<1$,
 \begin{align}
 \sum_{r=0}^{N-1}\alpha^r
 &\leq\frac1{1-\alpha},                                    \notag\\
-\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
 &\leq
-N\sum_{r=1}^{\infty}(1-\alpha^r)\varrho^r                \notag\\
-&=
 N\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+{1-\alpha\varrho}.
 \end{align}
 Substitution of these two inequalities proves Equation~
 (\ref{eq:verified-dmop-alpha-mse-bound}).
@@ -11862,14 +11990,15 @@ and its population truncation error are
 &=
 \sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
 \end{align}
-Lemma~\ref{lem:derivative-measure-forgetting} gives
+Equation~(\ref{eq:population-discount-vector-boundary-comparison}) with
+$q=k$ gives
 \begin{equation}
 \left\|
 \nabla_\theta\ell(\theta)-\nabla_\theta s_k^1(\theta)
 \right\|_2
 \leq
 C(N-k-1)\sqrt p\,G'(\theta)
-\frac{\varrho^{k+1}}{1-\varrho}.
+\varrho^{k+1}.
 \end{equation}
 The finite-window particle calculation in Equations~
 (\ref{eq:fixed-lag-variance-s13}) and

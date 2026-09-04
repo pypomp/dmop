@@ -754,14 +754,17 @@ For $0\leq\alpha<1$, the full-score MSE has the two-line bound
 &\quad\lesssim pG'(\theta)^2\left[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+\left\{\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r\right\}^2
++\left\{
+\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\right\}^2
 \right]\\
 &\quad\lesssim pG'(\theta)^2\left[
 \frac{N}{J(1-\alpha)^2}
 +\frac{N^2}{J^2(1-\alpha)^2}
 +N^2\left\{
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}
+{1-\alpha\varrho}
 \right\}^2
 \right].
 \end{aligned}
@@ -778,7 +781,7 @@ The population part of the fixed-observation bias is bounded by
 \leq
 CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+{1-\alpha\varrho}.
 \]
 For each fixed $\alpha<1$ and $J\geq N$, the leading particle term is
 $NpG'(\theta)^2/J$, multiplied by a constant depending on $\alpha$.}
@@ -796,6 +799,10 @@ the implemented discounted score satisfies the exact identity
 \nabla_\theta\hat\ell^\alpha(\theta)
 =\sum_{k=0}^{N-1}\beta_k\nabla_\theta\hat s_k^1(\theta).
 \]
+Here $\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
+score, whereas the coefficient of the zero-lag contribution is
+$\sum_{k=0}^{N-1}\beta_k=1$, because every hard-$k$ score contains it.
+Thus $\nabla_\theta\hat\ell_n^0(\theta)=\Delta_{n,0}^J$ exactly.
 Thus DMOP-$\alpha$ is exactly a geometric average of the analytical lag
 truncations and, in this precise sense, approximates a hard lag cutoff.  A
 contribution of age $r$ is multiplied by $\alpha^r$, and its effective
@@ -808,13 +815,18 @@ Applying the finite-window variance and weak-bias bounds before taking this
 geometric average gives the particle terms in the theorem.  This order of
 argument avoids applying a particle theorem once to the complete
 unnormalized score.
-For the population term, geometric forgetting gives
+For the full-score population term, posterior backward contraction over
+$q$ steps and the first future transition give
 \[
-\sum_{r\geq1}(1-\alpha^r)\varrho^r
-=\frac{\varrho(1-\alpha)}
-{(1-\varrho)(1-\alpha\varrho)}.
+\|\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)\|_2
+\leq
+C\sqrt p\,G'(\theta)\varrho(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
+\leq
+CN\sqrt p\,G'(\theta)
+\frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
 \]
-The factor $\varrho^r$ therefore remains in the bound; discounting and
+The factor $\varrho^{q+1}$ therefore remains in the bound; discounting and
 model forgetting enter together rather than as unrelated approximations.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
