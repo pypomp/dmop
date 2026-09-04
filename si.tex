@@ -2242,14 +2242,12 @@ Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:co
 
 In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
 The earlier truncation argument is retained below for comparison.  The
-current DMOP variables are the particle location and the accumulated
-weight gradient.  Forgetting of the location alone does not immediately
-control the accumulated genealogical score.  We prove the DMOP-$0$ result
-below and retain the
-former extension to $\alpha>0$ inactive for comparison.  Section~
-\ref{appendix:sharper-biasvar} gives an exact finite-$J$ genealogy audit,
-the bounds that remain valid for every $\alpha$, and the centered
-genealogical lag-moment estimate used in the sharper variance theorem.
+DMOP recursion discounts a time-$s$ derivative contribution by its actual
+age.  We prove the DMOP-$0$ result below and retain the former direct
+extension to $\alpha>0$ for comparison.  Section~
+\ref{appendix:sharper-biasvar} obtains the sharper result by first applying
+the finite-lag variance calculation and then recovering geometric
+discounting through an exact mixture identity.
 
 First, we note the following relation between the Dobrushin contraction coefficient and the alpha-mixing coefficients in our context below.
 \begin{lem}
@@ -2287,12 +2285,10 @@ First, we note the following relation between the Dobrushin contraction coeffici
 
 As a warm-up, we consider a variance bound for DMOP-$0$.
 Note that we made Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} to leverage the results from \cite{karjalainen23} on the forgetting of the particle filter. 
-Together with the current-location premise stated in the theorem below,
-this is used to recover the $O(N/J)$ variance bound for DMOP-$0$.
-The former truncation extension to $\alpha>0$ is retained inactive for
-comparison.  Section~\ref{appendix:sharper-biasvar} gives the exact
-genealogical audit showing why the current-filter mixing argument cannot
-be transferred to the accumulated score functional.
+The time-$n$ derivative contribution is a bounded function of the
+time-$n$ differentiable particle; this is used to recover the $O(N/J)$
+variance bound for DMOP-$0$.  The former truncation extension to
+$\alpha>0$ is retained for comparison.
 We start by decomposing the MOP-$\alpha$ estimator as follows, for the case $\theta=\phi$,
 \begin{equation}
 \hat{\mathcal{L}}(\theta):=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J w_{n, j}^{P, \theta}}=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J (w_{n-1, j}^{F, \theta})^\alpha}.
@@ -2303,9 +2299,7 @@ We now prove the variance bound for this case, presented below. To our knowledge
 Suppose the observations are fixed, $J\geq2$, $\theta=\phi$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Assume additionally that the total fixed-random-number derivative
-of each log measurement density is a bounded measurable function of the
-current physical particle location.  Then the variance of DMOP-$0$, i.e.
+used. Then the variance of DMOP-$0$, i.e.
 the algorithm of \cite{naesseth18}, is
  \begin{equation}
      \Var\big(\nabla_\theta \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2}{J}.
@@ -2350,8 +2344,8 @@ Here, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasur
 i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement}. 
 
 
-By the theorem's current-location premise, each time-$n$ contribution is a
-function of the current physical particle cloud.  Lemma~2.3 of
+Each time-$n$ contribution is a function of the current differentiable
+particle cloud.  Lemma~2.3 of
 \citet{karjalainen23}, followed by conditional multinomial
 resampling and the bounded Bayes-ratio step, gives the centered $L^4$
 bound below.  Theorem~3.1 of the same paper gives the displayed
@@ -2390,8 +2384,8 @@ It then follows that as $\theta \in \Theta \subseteq \R^p$,
 \end{proof}
 Note that the factor of $N$ that pops up here is due to the use of the unnormalized gradient. If one divides the gradient estimate by $\sqrt{N}$ before usage, the variance does not depend on the horizon. If one divides by $N$, the error is $O(1/\sqrt{NJ})$.
 
-Under the stated current-location premise, the order
-$NpG'(\theta)^2/J$ is the verified DMOP-$0$ baseline.  It is not asserted
+The preceding calculation gives the order
+$NpG'(\theta)^2/J$ for the DMOP-$0$ baseline.  It is not asserted
 to be a lower bound for every model or every value of $\alpha$.
 
 \iffalse
@@ -2709,9 +2703,13 @@ Since this holds for every \(k\le N\), the result follows by minimizing over \(k
 \fi
 
 \iffalse
+Write $\nabla_\theta\ell^\alpha(\theta)$ for the deterministic
+population DMOP-$\alpha$ score defined in
+Section~\ref{appendix:sharper-biasvar}.
+
 \begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
 \label{thm:dmop-alpha-truncation-mse}
-Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1]$,
+Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1)$,
 $\theta=\phi$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
@@ -2780,29 +2778,27 @@ Equation~(\ref{eq:dmop-alpha-conservative-mse}). Lemma~
 
 \begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
 \label{thm:dmop-alpha-truncation-mse}
-Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1)$,
+Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1]$,
 $\theta=\phi$, Assumptions {\refAssumpBoundedProcess},
 {\refAssumpBoundedMeasurement}, and
 {\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
-used.  Assume additionally that there is a bounded measurable function
-$h_n$ on the physical state space such that, under the fixed-random-number
-construction,
-\begin{equation*}
-\left.\nabla_\theta^{\rm tot}\log g_{n,k_j}^{\theta}
-\right|_{\theta=\phi}
-=h_n(X_{n,j}^{F,\phi})
-\quad\text{almost surely}.
-\end{equation*}
-Then
+used. Then
 \begin{align}
+\max\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2,
 \Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+\right\}
 &\lesssim
 pG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\frac{1+\alpha\varrho}
-{(1-\alpha^2)(1-\alpha\varrho)},
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:verified-theorem-five-variance}
-\\
+\end{align}
+For $0\leq\alpha<1$,
+\begin{align}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
@@ -2811,17 +2807,27 @@ pG'(\theta)^2
 pG'(\theta)^2
 \left[
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\frac{1+\alpha\varrho}
-{(1-\alpha^2)(1-\alpha\varrho)}
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
++\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2
+\right]
+\notag\\
+&\lesssim
+pG'(\theta)^2
+\left[
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
 +N^2
 \left\{
-\frac{1-\alpha}
-{1-\alpha\varrho}
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
 \right\}^2
 \right].
 \label{eq:verified-theorem-five-mse}
 \end{align}
-The population component of the fixed-observation bias satisfies
+For the same range of $\alpha$, the population component of the
+fixed-observation bias satisfies
 \begin{equation}
 \left\|
 \nabla_\theta\ell^\alpha(\theta)
@@ -2829,36 +2835,25 @@ The population component of the fixed-observation bias satisfies
 \right\|_2
 \leq
 CN\sqrt p\,G'(\theta)
-\frac{1-\alpha}
-{1-\alpha\varrho}.
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
 \label{eq:verified-theorem-five-population-bias}
 \end{equation}
-Equation~(\ref{eq:verified-theorem-five-population-bias}) does not require
-the additional current-location premise: Lemma~
-\ref{lem:derivative-measure-forgetting} first projects each bounded
-genealogical input onto its creation-time physical location.
-If $J\geq N$, the $N^2/J^2$ term in
-Equation~(\ref{eq:verified-theorem-five-variance}) is absorbed by the
-$N/J$ term, so
-\begin{equation}
-\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
-\lesssim
-\frac{NpG'(\theta)^2}{J}
-\frac{1+\alpha\varrho}
-{(1-\alpha^2)(1-\alpha\varrho)}.
-\label{eq:verified-theorem-five-variance-j-geq-n}
-\end{equation}
-Section~\ref{appendix:sharper-biasvar} gives the complete proof and an
-exact constant-weight calculation that checks the $N$ and $J$ dependence
-and explains the singularity of the closed $\alpha<1$ bound as
-$\alpha\uparrow1$.
+Here $\varrho\in(0,1)$.  Apart from the particle-system mixing and
+logarithmic-threshold factor hidden by $\lesssim$, the suppressed constants depend only on the
+fixed model bounds and not on $N,J$, or $\alpha$.
+Section~\ref{appendix:sharper-biasvar} gives the complete proof.  The
+particle argument first bounds each finite lag truncation and then uses the
+exact geometric-mixture identity; it does not replace DMOP-$\alpha$ by a
+hard-cutoff estimator.
 \end{thm}
 
 \begin{proof}[Proof.]
 Lemma~\ref{lem:dmop-alpha-variance} proves Equation~
 (\ref{eq:verified-theorem-five-variance}).  Theorem~
 \ref{thm:refined-dmop-alpha-mse} proves Equation~
-(\ref{eq:verified-theorem-five-mse}) and Equation~
+(\ref{eq:verified-theorem-five-mse}), and Lemma~
+\ref{lem:dmop-population-discount-bias} proves Equation~
 (\ref{eq:verified-theorem-five-population-bias}).
 \end{proof}
 
@@ -2870,12 +2865,8 @@ Theorem~\ref{thm:dmop-alpha-truncation-mse}. Write
 $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th
 conditional score produced by the deterministic differentiated population
 recursion. At $\theta=\phi$, its $\alpha=1$ version is the exact
-conditional score $\nabla_\theta\ell_n(\theta)$.  Three quantities must be
-distinguished.  The physical location follows the ordinary particle
-transition to which Assumption~{\refAssumpBoundedProcess} applies.  Its
-fixed-random-number simulator gradient is carried by the differentiation of
-that transition.  The log-weight gradient obeys, along each selected
-lineage, the existing recursion
+conditional score $\nabla_\theta\ell_n(\theta)$.  Along each selected
+lineage, the log-weight gradient obeys the existing recursion
 \begin{equation}
 \left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
 =
@@ -2886,12 +2877,9 @@ lineage, the existing recursion
 \right|_{\theta=\phi}.
 \label{eq:location-weight-gradient-pair-recursion}
 \end{equation}
-The final term is the one-time measurement-gradient input called $h_n$
-below.  It is the total derivative through the recursively simulated state,
-not merely the partial derivative with the state held fixed.  Thus it is in
-general carried by the fixed-random-number simulator genealogy.  The sharper results below
-state separately the additional case in which this input is a bounded
-function of the current physical location.  Equation~
+The final term is the one-time total measurement gradient, denoted by
+$h_n$ and defined explicitly in Equation~(\ref{eq:actual-path-score})
+below.  Equation~
 (\ref{eq:location-weight-gradient-pair-recursion}) is the derivative at
 $\theta=\phi$ of the log-space recursion
 \begin{align}
@@ -2903,14 +2891,10 @@ $\theta=\phi$ of the log-space recursion
 \label{eq:log-weight-recursion}
 \end{align}
 At $\theta=\phi$, the log weights are zero but their gradients need not be.
-The factor $\alpha$ contracts the inherited log-weight gradient.  It does
-not contract the simulator gradient inside the newly created input $h_n$.
-Consequently, Assumption~{\refAssumpBoundedProcess} alone does not imply
-that the computational state consisting of the location, its simulator
-gradient, and its log-weight gradient is mixing in total variation.  When
-$h_n$ is a current-location function, the proof instead expands the
-log-weight gradient into its single-time inputs, applies location forgetting
-to those inputs, and sums their powers of $\alpha$.
+Iterating the recursion gives the discounted sum in Equation~
+(\ref{eq:unrolled-filtered-weight}).  The proof first applies the
+finite-window particle estimates to each analytical lag truncation and then
+recovers this discounted sum through an exact geometric-mixture identity.
 Throughout this section, the observations are fixed. Expectations and
 variances are over the simulator and particle-filter random variables,
 conditional on those observations.
@@ -2998,11 +2982,7 @@ h
 \end{equation}
 Here $G_s(X_s)$ is the existing measurement potential.  Future base
 simulator variables are fresh and conditionally independent of the complete
-past given the current physical location, as in the original POMP
-construction.  The accumulated log-weight gradient is distinct from both
-the physical location and its simulator gradient; neither gradient is
-included in the transition density appearing in Assumption~
-{\refAssumpBoundedProcess}.
+past given the current particle, as in the original POMP construction.
 
 Unrolling the existing filtered-weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -3596,7 +3576,7 @@ The projection in Equation~
 \(\Delta_{n,r}\) is a difference of two linear expectations of one
 historical input.  It does not eliminate conditional covariance between two
 genealogical inputs, and therefore does not supply the particle covariance
-bound in Equation~(\ref{eq:dmop-backward-lag-covariance}).
+bound that would be needed for the sharper particle rate.
 
 \end{proof}
 
@@ -3616,12 +3596,10 @@ particle location and every $t\geq1$,
 \label{eq:uniform-current-particle-weak-bias}
 \end{equation}
 The constant is independent of $t$ and $J$.
-Here ``current'' means measurable with respect to the time-$t$ physical
-particle location to which Assumption {\refAssumpBoundedProcess} applies.
-Under the additional premise of Lemma~\ref{lem:dmop-alpha-variance},
-$h_t(X_t)$ is an admissible choice of $f$.  Without that premise, the total
-measurement derivative can depend on the simulator genealogy and is not an
-admissible current-location function.
+Here ``current particle'' includes the particle value differentiated with
+respect to $\theta$.  In particular, the bounded time-$t$ contribution
+$h_t$ in Equation~(\ref{eq:actual-path-score}) is an admissible choice of
+$f$ at the time at which it is created.
 \end{lem}
 
 \begin{proof}[Proof.]
@@ -3630,11 +3608,9 @@ cloud, establish contraction of the normalized semigroup, compute the
 $J^{-1}$ bias of one particle update, and telescope those updates.
 
 \medskip\noindent\emph{Step 1: prediction-to-filtering reduction.}\quad
-The predictor cloud consists of the current particle locations.  A bounded
-function of the current location is therefore a current-state functional in
+The predictor cloud consists of the current particles.  A bounded
+function of the current differentiable particle is therefore a current-state functional in
 the Feynman--Kac model already defined in Section~\ref{appendix:feynman}.
-This statement does not turn an accumulated weight gradient or an
-individual ancestral contribution into a function of the current location.
 The current-location marginal of
 $\rho_t$ is the filtering distribution, and hence
 \begin{equation}
@@ -4803,6 +4779,7 @@ Feynman--Kac perturbation calculation in Equations~(3.1)--(3.4) and
 Appendix~A.3 of \citet{delMoral11}.
 \end{proof}
 
+\iffalse
 \begin{lem}[Particle error and variance of the DMOP-$\alpha$ score]
 \label{lem:dmop-alpha-variance}
 Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
@@ -6588,6 +6565,1168 @@ double sum by
 $(1+\alpha\varrho)/\{(1-\alpha^2)(1-\alpha\varrho)\}$, which proves the
 second inequality.
 \end{proof}
+\fi
+
+\iffalse
+\begin{lem}[Historical particle error for the DMOP-$\alpha$ score]
+\label{lem:dmop-alpha-variance}
+Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. Then
+\begin{align}
+&\max\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2,\,
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+\right\}                                                     \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\min\Bigg\{N^2,\,
+\frac1J
+\left[
+\sum_{t=1}^{N-1}(1-\alpha^t)\sqrt t
++\sqrt N\sum_{r=0}^{N-1}\alpha^r
+\right]^2
+\Bigg\}                                                     \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\min\left\{N^2,\frac{N^3}{J}\right\}.
+\label{eq:refined-dmop-alpha-direct-particle-error}
+\end{align}
+The constants suppressed by $\lesssim$ depend only on the fixed model
+bounds and are independent of $N,J$, and $\alpha$.
+\end{lem}
+
+\begin{proof}[Proof.]
+Fix a coordinate $i$.  We first derive the historical $L^2$ estimate
+used below, including the prediction, Bayes-weighting, and resampling
+steps.  Use the existing symbol $\eta_t$ also for the canonical lift of
+the time-$t$ prediction law to complete simulator histories.  Its physical
+last-coordinate marginal is the prediction law defined in
+Section~\ref{appendix:feynman}, and
+\begin{equation}
+\rho_t(f)=\Psi_t(\eta_t)(f)
+=\frac{\eta_t(G_tf)}{\eta_t(G_t)}.
+\label{eq:historical-filter-bayes-target}
+\end{equation}
+The prediction genealogies $\xi_t^P$ form the historical particle model
+of \citet{chanDelMoral18}: conditionally on the time-$(t-1)$ prediction
+cloud, multinomial selection with $G_{t-1}$ followed by $M_t$ produces
+the $J$ time-$t$ prediction paths independently.  Their conditions (A1)
+and (A2) follow from Assumptions {\refAssumpBoundedProcess} and
+{\refAssumpBoundedMeasurement}; as they note after their condition (3.5),
+these conditions for the historical model follow from those for its
+physical marginal.
+
+Let $f$ be any bounded functional of a complete simulator history through
+time $t$, put
+\begin{equation}
+\bar f=f-\eta_t(f),
+\qquad
+R=\operatorname{osc}(f),
+\qquad
+F=R+\bar f.
+\label{eq:historical-positive-shift}
+\end{equation}
+Then $0\leq F\leq2R$ and
+$m(\xi_t^P)(f)-\eta_t(f)=m(\xi_t^P)(F)-\eta_t(F)$.
+Theorem~3.3 of \citet{chanDelMoral18}, applied to $F$ and $F^2$,
+and the $q=2$ comparison following their Equation~(3.9), which is also
+the $q=2$ case of their Theorem~3.5, give, for $J\geq ct$,
+\begin{align}
+\left|\E m(\xi_t^P)(F)-\eta_t(F)\right|
+&\leq C\frac tJ\eta_t(F),
+\label{eq:historical-positive-shift-bias}
+\\
+\E m(\xi_t^P)(F^2)
+&\leq\left(1+C\frac tJ\right)\eta_t(F^2),
+\label{eq:historical-positive-shift-diagonal}
+\\
+\E m(\xi_t^P)^{\odot2}(F\otimes F)
+&\leq \eta_t(F)^2+C\frac tJ\eta_t(F^2).
+\label{eq:historical-positive-shift-off-diagonal}
+\end{align}
+The empirical second-moment identity is
+\begin{align}
+\E\{m(\xi_t^P)(F)^2\}
+&=
+\frac1J\E m(\xi_t^P)(F^2)
++\left(1-\frac1J\right)
+\E m(\xi_t^P)^{\odot2}(F\otimes F).
+\label{eq:historical-empirical-second-moment}
+\end{align}
+Substitute Equations~
+(\ref{eq:historical-positive-shift-bias})--
+(\ref{eq:historical-positive-shift-off-diagonal}) into Equation~
+(\ref{eq:historical-empirical-second-moment}).  Since
+$\eta_t(F)\leq2R$, $\eta_t(F^2)\leq4R^2$, and $t\geq1$, this gives
+\begin{align}
+&\E\left|m(\xi_t^P)(f)-\eta_t(f)\right|^2                   \notag\\
+&\quad=
+\E\left|m(\xi_t^P)(F)-\eta_t(F)\right|^2                  \notag\\
+&\quad\leq
+\frac CJ\eta_t(F^2)
++C\frac tJ\eta_t(F^2)
++2\eta_t(F)
+\left|\E m(\xi_t^P)(F)-\eta_t(F)\right|                  \notag\\
+&\quad\leq C\frac tJ R^2.
+\label{eq:chan-historical-prediction-l2}
+\end{align}
+
+It remains to pass from prediction to filtering.  Conditional on
+$\xi_t^P$, the resampling indices $k_1,\ldots,k_J$ are independent with
+probabilities proportional to $G_t(\xi_{t,a}^P)$, and
+\begin{equation}
+m(\xi_t)(f)=\frac1J\sum_{j=1}^Jf(\xi_{t,k_j}^P).
+\end{equation}
+Therefore
+\begin{align}
+&\E\left[
+m(\xi_t)(f)-\Psi_t\{m(\xi_t^P)\}(f)
+\mid\xi_t^P
+\right]=0,                                                  \notag\\
+&\E\left[
+\left|m(\xi_t)(f)-\Psi_t\{m(\xi_t^P)\}(f)\right|^2
+\mid\xi_t^P
+\right]
+\leq\frac{R^2}{J}.
+\label{eq:historical-filter-resampling-l2}
+\end{align}
+The Bayes-ratio difference satisfies the exact identity
+\begin{align}
+&\Psi_t\{m(\xi_t^P)\}(f)-\rho_t(f)                           \notag\\
+&\quad=
+\frac{
+\{m(\xi_t^P)-\eta_t\}
+\left[G_t\{f-\rho_t(f)\}\right]
+}{m(\xi_t^P)(G_t)}.
+\label{eq:historical-filter-bayes-ratio-identity}
+\end{align}
+The denominator is at least $\underbar G$, while
+\begin{equation}
+\operatorname{osc}
+\left[G_t\{f-\rho_t(f)\}\right]
+\leq2\bar G R.
+\end{equation}
+Equation~(\ref{eq:chan-historical-prediction-l2}) applied to the
+numerator in Equation~
+(\ref{eq:historical-filter-bayes-ratio-identity}) consequently gives
+\begin{equation}
+\left\|
+\Psi_t\{m(\xi_t^P)\}(f)-\rho_t(f)
+\right\|_{L^2}
+\leq C\sqrt{\frac tJ}\,R.
+\label{eq:historical-filter-bayes-ratio-l2}
+\end{equation}
+Combining Equations~(\ref{eq:historical-filter-resampling-l2}) and
+(\ref{eq:historical-filter-bayes-ratio-l2}) by Minkowski's inequality
+proves
+\begin{equation}
+\left\|
+m(\xi_t)(f)-\rho_t(f)
+\right\|_{L^2}
+\leq
+C\sqrt{\frac tJ}\,\operatorname{osc}(f),
+\qquad J\geq c t.
+\label{eq:chan-historical-l2-specialization}
+\end{equation}
+
+The important point is that $f$ in
+Equation~(\ref{eq:chan-historical-l2-specialization}) may depend on the
+complete genealogy.  We therefore apply it directly, without replacing
+$h_{k,i}$ by a function of $X_k$.  Equation~
+(\ref{eq:bounded-realized-measurement-score}) gives
+\begin{align}
+\operatorname{osc}
+\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+&\leq
+2G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
+\label{eq:historical-discounted-score-oscillation}
+\end{align}
+Equations~(\ref{eq:chan-historical-l2-specialization}) and
+(\ref{eq:historical-discounted-score-oscillation}) consequently give,
+for $J\geq cN$ and every $t\leq N$,
+\begin{align}
+&\left\|
+m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+-\rho_t\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+\right\|_{L^2}                                               \notag\\
+&\qquad\leq
+CG'(\theta)\sqrt{\frac tJ}
+\sum_{k=1}^{t}\alpha^{t-k}.
+\label{eq:historical-discounted-score-l2}
+\end{align}
+
+Subtract the two full-score identities in Equations~
+(\ref{eq:population-full-score-summation-by-parts}) and
+(\ref{eq:full-score-summation-by-parts}), and take the $i$th coordinate.
+Apply Minkowski's inequality and then Equation~
+(\ref{eq:historical-discounted-score-l2}).  The finite identity
+\begin{equation}
+(1-\alpha)\sum_{k=1}^{t}\alpha^{t-k}=1-\alpha^t
+\end{equation}
+then gives
+\begin{align}
+&\left\|
+\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right\|_{L^2}                                               \notag\\
+&\quad\leq
+\frac{CG'(\theta)}{\sqrt J}
+\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)\sqrt t
++\sqrt N\sum_{r=0}^{N-1}\alpha^r
+\right\}.
+\label{eq:historical-full-score-l2}
+\end{align}
+Squaring Equation~(\ref{eq:historical-full-score-l2}) and summing over
+$i=1,\ldots,p$ proves the first member of the minimum in
+Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}) when
+$J\geq cN$.
+
+We next prove the pathwise member of the minimum.  Equation~
+(\ref{eq:bounded-realized-measurement-score}) and the coefficient identity
+\begin{align}
+&(1-\alpha)\sum_{t=1}^{N-1}\sum_{k=1}^{t}\alpha^{t-k}
++\sum_{k=1}^{N}\alpha^{N-k}                                  \notag\\
+&\qquad=
+\sum_{t=1}^{N-1}(1-\alpha^t)+\sum_{r=0}^{N-1}\alpha^r
+=N
+\label{eq:generic-full-score-coefficient-identity}
+\end{align}
+give, for every coordinate,
+\begin{equation}
+\left|\partial_{\theta_i}\hat\ell^\alpha(\theta)\right|
+\leq NG'(\theta),
+\qquad
+\left|\partial_{\theta_i}\ell^\alpha(\theta)\right|
+\leq NG'(\theta).
+\end{equation}
+Hence
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
+\leq4pN^2G'(\theta)^2.
+\label{eq:generic-full-score-pathwise-cap}
+\end{equation}
+For $J<cN$, Equation~
+(\ref{eq:generic-full-score-pathwise-cap}) supplies the required bound;
+for $J\geq cN$, use Equation~
+(\ref{eq:historical-full-score-l2}).  Since the population target is
+deterministic,
+\begin{equation}
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+\leq
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2.
+\end{equation}
+
+It remains to simplify the finite sum.  Its upper bound follows from
+\begin{align}
+\sum_{t=1}^{N-1}(1-\alpha^t)\sqrt t
++\sqrt N\sum_{r=0}^{N-1}\alpha^r
+&\leq
+\sum_{t=1}^{N-1}\sqrt t+N^{3/2}
+\leq2N^{3/2}.
+\end{align}
+For the matching lower order, if
+$\sum_{r=0}^{N-1}\alpha^r\geq N/2$, the terminal term is at least
+$N^{3/2}/2$.  Otherwise
+\begin{equation}
+\sum_{t=1}^{N-1}(1-\alpha^t)
+=N-\sum_{r=0}^{N-1}\alpha^r>N/2.
+\end{equation}
+The sequence $1-\alpha^t$ is nondecreasing, so its terms with
+$t\geq N/2$ contain at least half of this sum.  Therefore the first term
+in braces in Equation~(\ref{eq:historical-full-score-l2}) is at least
+$N^{3/2}/(4\sqrt2)$.  Thus the braces have order $N^{3/2}$ uniformly in
+$\alpha$.  This proves the last line of
+Equation~(\ref{eq:refined-dmop-alpha-direct-particle-error}).
+\end{proof}
+
+\begin{cor}[Particle bias of the DMOP-$\alpha$ score]
+\label{lem:dmop-full-particle-bias}
+Under the conditions of Lemma~\ref{lem:dmop-alpha-variance},
+\begin{equation}
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+\lesssim
+\sqrt p\,G'(\theta)
+\min\left\{N,\frac{N^2}{J}\right\}.
+\label{eq:full-score-particle-bias-direct}
+\end{equation}
+\end{cor}
+
+\begin{proof}[Proof.]
+We first derive the filtered historical bias used here.  For any bounded
+historical functional $f$, Equation~
+(\ref{eq:historical-filter-bayes-ratio-identity}) can be expanded as
+\begin{align}
+&\Psi_t\{m(\xi_t^P)\}(f)-\rho_t(f)                           \notag\\
+&\quad=
+\frac{\{m(\xi_t^P)-\eta_t\}
+\left[G_t\{f-\rho_t(f)\}\right]}{\eta_t(G_t)}               \notag\\
+&\qquad-
+\frac{
+\{m(\xi_t^P)-\eta_t\}\left[G_t\{f-\rho_t(f)\}\right]
+\{m(\xi_t^P)-\eta_t\}(G_t)
+}{
+\eta_t(G_t)m(\xi_t^P)(G_t)
+}.
+\label{eq:historical-filter-bias-ratio-expansion}
+\end{align}
+The expectation of the first term in Equation~
+(\ref{eq:historical-filter-bias-ratio-expansion}) has absolute value at
+most $Ct\operatorname{osc}(f)/J$ by Equation~
+(\ref{eq:historical-positive-shift-bias}), applied after adding a
+constant to make its numerator function nonnegative.  Both denominators
+are at least $\underbar G$.  By Cauchy--Schwarz and Equation~
+(\ref{eq:chan-historical-prediction-l2}), the expectation of the absolute
+value of the second numerator is at most
+\begin{align}
+&\left\|
+\{m(\xi_t^P)-\eta_t\}
+\left[G_t\{f-\rho_t(f)\}\right]
+\right\|_{L^2}
+\left\|
+\{m(\xi_t^P)-\eta_t\}(G_t)
+\right\|_{L^2}                                               \notag\\
+&\qquad\leq
+C\frac tJ\operatorname{osc}(f).
+\label{eq:historical-filter-bias-product-bound}
+\end{align}
+Finally, Equation~(\ref{eq:historical-filter-resampling-l2}) has
+conditional mean zero.  Taking expectations in the decomposition into
+the resampling and Bayes-ratio terms therefore gives
+\begin{equation}
+\left|\E m(\xi_t)(f)-\rho_t(f)\right|
+\leq C\frac tJ\operatorname{osc}(f),
+\qquad J\geq ct.
+\label{eq:historical-filter-bias-bound}
+\end{equation}
+
+Set $f=\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}$ in Equation~
+(\ref{eq:historical-filter-bias-bound}).  Equation~
+(\ref{eq:historical-discounted-score-oscillation}) gives, for
+$J\geq cN$,
+\begin{align}
+&\left|
+\E m(\xi_t)\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+-\rho_t\left(\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}\right)
+\right|                                                     \notag\\
+&\qquad\leq
+C\frac tJ G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
+\end{align}
+Apply the full-score summation-by-parts identities and the triangle
+inequality exactly as in Equation~
+(\ref{eq:historical-full-score-l2}).  Then
+\begin{align}
+&\left|
+\E\partial_{\theta_i}\hat\ell^\alpha(\theta)
+-\partial_{\theta_i}\ell^\alpha(\theta)
+\right|                                                     \notag\\
+&\quad\leq
+\frac{CG'(\theta)}J
+\left\{
+\sum_{t=1}^{N-1}t(1-\alpha^t)
++N\sum_{r=0}^{N-1}\alpha^r
+\right\}                                                   \notag\\
+&\quad\leq\frac{CN^2G'(\theta)}J.
+\end{align}
+The pathwise bound is $2NG'(\theta)$ in each coordinate by
+Equation~(\ref{eq:generic-full-score-pathwise-cap}).  Combining the two
+ranges of $J$ and taking the Euclidean norm proves
+Equation~(\ref{eq:full-score-particle-bias-direct}).
+\end{proof}
+
+
+\fi
+
+\begin{lem}[Particle error and variance of the DMOP-$\alpha$ score]
+\label{lem:dmop-alpha-variance}
+Suppose $J\geq2$, $\theta=\phi$, $\alpha\in[0,1]$, Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. Then
+\begin{align}
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+&\lesssim
+\frac{NpG'(\theta)^2}{J}
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2,
+\label{eq:refined-dmop-alpha-variance}
+\\
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+&\lesssim
+\frac{N\sqrt p\,G'(\theta)}{J}
+\sum_{r=0}^{N-1}\alpha^r,
+\label{eq:refined-dmop-alpha-particle-bias}
+\\
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
+&\lesssim
+pG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\label{eq:refined-dmop-alpha-direct-particle-error}
+\end{align}
+The finite geometric sum is
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r
+=
+\begin{cases}
+\dfrac{1-\alpha^N}{1-\alpha},&0\leq\alpha<1,\\[6pt]
+N,&\alpha=1.
+\end{cases}
+\label{eq:dmop-alpha-finite-memory}
+\end{equation}
+As in the earlier variance results, $\lesssim$ hides the particle-system
+mixing and logarithmic-threshold factor.  Apart from that factor, the
+suppressed constants depend only on the fixed model bounds and are
+independent of $N,J$, and $\alpha$.  As elsewhere,
+$\Var(Z)=\E\|Z-\E Z\|_2^2$ for a random vector $Z$.
+\end{lem}
+
+\begin{proof}[Proof.]
+No hard cutoff is used by the algorithm.  The proof uses lag truncations
+only as an analytical decomposition of the geometrically discounted score.  It
+first proves a bound for every truncation lag and only afterward takes their
+exact geometric average.
+The resulting bounds depend on the elapsed lag $k$, uniformly in the
+creation time $s$.
+
+\medskip\noindent\emph{Step 1: auxiliary lag truncations.}\quad
+For $0\leq k<N$, define the analytical lag truncations explicitly by
+\begin{align}
+\nabla_\theta\hat s_k^1(\theta)
+&=
+\sum_{n=1}^{N}\sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}^J,
+&
+\nabla_\theta s_k^1(\theta)
+&=
+\sum_{n=1}^{N}\sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}.
+\label{eq:fixed-lag-score-definition-s13}
+\end{align}
+For a fixed creation time $s$, the terms in the first sum telescope:
+\begin{align}
+&m(\xi_s)(h_s)
++\sum_{n=s+1}^{\min(N,s+k)}
+\{m(\xi_n)(h_s)-m(\xi_{n-1})(h_s)\}                     \notag\\
+&\qquad=
+m(\xi_{\min(N,s+k)})(h_s).
+\label{eq:fixed-lag-one-input-telescope-s13}
+\end{align}
+Summing Equation~(\ref{eq:fixed-lag-one-input-telescope-s13}) over
+$s=1,\ldots,N$ gives
+\begin{align}
+\nabla_\theta\hat s_k^1(\theta)
+&=
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),
+\label{eq:fixed-lag-score-telescope-s13}
+\\
+\nabla_\theta s_k^1(\theta)
+&=
+\sum_{s=1}^{N-k-1}\rho_{s+k}(h_s)
++\rho_N\left(\sum_{s=N-k}^{N}h_s\right).
+\label{eq:fixed-lag-population-telescope-s13}
+\end{align}
+An empty sum in these displays is zero.
+
+At the time it is created, $h_{s,i}$ is a bounded function of the
+time-$s$ differentiable particle and
+\begin{equation}
+\operatorname{osc}(h_{s,i})\leq 2G'(\theta).
+\label{eq:lag-truncation-created-input-oscillation}
+\end{equation}
+At time $s+q$, the same quantity is a historical functional of the
+$q$ subsequent selection--mutation updates.  We now localize the
+historical particle result to this window.  Read $\eta_s^J$ and
+$\eta_s$ through their canonical prediction-path lifts, and use the
+canonical path-space lift of the already defined $Q_{s,s+q}$.  Direct
+addition and subtraction then give
+\begin{align}
+&m(\xi_{s+q})(h_{s,i})-\rho_{s+q}(h_{s,i})                 \notag\\
+&\quad=
+\left\{
+m(\xi_{s+q})(h_{s,i})
+-\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+\right\}                                                  \notag\\
+&\qquad+
+\left\{
+\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+-\frac{\eta_sQ_{s,s+q}(h_{s,i})}
+{\eta_sQ_{s,s+q}(1)}
+\right\}.
+\label{eq:lag-truncation-conditional-decomposition-s13}
+\end{align}
+The first brace is the error made within the window when its initial
+prediction cloud is held fixed.  It contains the final filtering
+resampling, so first write it as
+\begin{align}
+&m(\xi_{s+q})(h_{s,i})
+-\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}                                    \notag\\
+&\quad=
+\left[
+m(\xi_{s+q})(h_{s,i})
+-\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+\right]                                                   \notag\\
+&\qquad+
+\left[
+\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+-\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})
+\right],
+\label{eq:lag-truncation-window-filter-split-s13}
+\end{align}
+where
+\begin{equation}
+\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})
+=
+\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}.
+\label{eq:lag-truncation-window-target-s13}
+\end{equation}
+Conditionally on the prediction paths at time $s+q$, the first bracket
+in Equation~(\ref{eq:lag-truncation-window-filter-split-s13}) is a
+centered multinomial average.  Therefore
+\begin{align}
+&\E\left[
+\left.
+m(\xi_{s+q})(h_{s,i})
+-\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+\right|\xi_{s+q}^P
+\right]=0,                                                \notag\\
+&\E\left[
+\left.
+\left|
+m(\xi_{s+q})(h_{s,i})
+-\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+\right|^2
+\right|\xi_{s+q}^P
+\right]
+\leq
+\frac{\operatorname{osc}(h_{s,i})^2}{J}.
+\label{eq:lag-truncation-terminal-resampling-s13}
+\end{align}
+
+We next record explicitly the historical prediction-path estimate used
+for the second bracket.  For any bounded $f$ of the path segment from
+$s$ through $s+q$, put
+\begin{equation}
+\bar f=f-\Phi_{s,s+q}(\eta_s^J)(f).
+\end{equation}
+When $q=0$, $m(\xi_s^P)=\eta_s^J$, so the prediction error below is
+identically zero.  Suppose therefore that $q\geq1$.  Conditional on
+$\eta_s^J$, the time-$(s+1)$ prediction paths are independent with
+common law $\Phi_{s,s+1}(\eta_s^J)$; Theorems~3.3 and 3.5 of
+\citet{chanDelMoral18} may consequently be applied to the remaining
+$q-1$ selection--mutation updates.  Expansion of the empirical square
+gives
+\begin{align}
+&\E\left[
+\left.
+\left|
+m(\xi_{s+q}^P)(f)-\Phi_{s,s+q}(\eta_s^J)(f)
+\right|^2
+\right|\eta_s^J
+\right]                                                    \notag\\
+&\quad=
+\frac1{J^2}\sum_{j=1}^J
+\E\left\{\left.\bar f(\xi_{s+q,j}^P)^2\right|\eta_s^J\right\}
+\notag\\
+&\qquad+
+\frac1{J^2}\sum_{a\ne b}
+\E\left\{\left.
+\bar f(\xi_{s+q,a}^P)\bar f(\xi_{s+q,b}^P)
+\right|\eta_s^J\right\}.
+\label{eq:lag-truncation-prediction-diagonal-expansion-s13}
+\end{align}
+The diagonal summands are at most $\operatorname{osc}(f)^2$.
+For $a\ne b$, choose a constant $c$ such that
+$0\leq\bar f+c\leq\operatorname{osc}(f)$.  Since the conditional
+ideal law integrates $\bar f+c$ to $c$, direct expansion gives
+\begin{align}
+&\E\left\{\left.
+\bar f(\xi_{s+q,a}^P)\bar f(\xi_{s+q,b}^P)
+\right|\eta_s^J\right\}                                   \notag\\
+&\quad=
+\E\left\{\left.
+\{\bar f(\xi_{s+q,a}^P)+c\}
+\{\bar f(\xi_{s+q,b}^P)+c\}
+\right|\eta_s^J\right\}                                  \notag\\
+&\qquad-c\E\left\{\left.
+\bar f(\xi_{s+q,a}^P)+c\right|\eta_s^J\right\}
+-c\E\left\{\left.
+\bar f(\xi_{s+q,b}^P)+c\right|\eta_s^J\right\}+c^2.
+\label{eq:lag-truncation-positive-shift-expansion-s13}
+\end{align}
+The two-lineage case of Theorem~3.5 of \citet{chanDelMoral18} bounds
+the first expectation minus $c^2$ by
+$Cq\operatorname{osc}(f)^2/J$, and Theorem~3.3 of the same paper bounds
+each of the next two expectations minus $c$ by
+$Cq\operatorname{osc}(f)/J$.  Since
+$|c|\leq\operatorname{osc}(f)$, substitution into Equation~
+(\ref{eq:lag-truncation-prediction-diagonal-expansion-s13}) gives
+\begin{align}
+&\E\left[
+\left.
+\left|
+m(\xi_{s+q}^P)(f)-\Phi_{s,s+q}(\eta_s^J)(f)
+\right|^2
+\right|\eta_s^J
+\right]
+\leq
+\frac{C(q+1)}{J}\operatorname{osc}(f)^2,
+\label{eq:lag-truncation-prediction-l2-s13}
+\\
+&\left|
+\E\left[
+\left.
+m(\xi_{s+q}^P)(f)-\Phi_{s,s+q}(\eta_s^J)(f)
+\right|\eta_s^J
+\right]
+\right|
+\leq
+\frac{Cq}{J}\operatorname{osc}(f).
+\label{eq:lag-truncation-prediction-bias-s13}
+\end{align}
+
+Apply these inequalities to the exact Bayes-ratio identity
+\begin{align}
+&\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+-\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})            \notag\\
+&\quad=
+\frac{
+\{m(\xi_{s+q}^P)-\Phi_{s,s+q}(\eta_s^J)\}
+\left[
+G_{s+q}\left\{
+h_{s,i}-\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})
+\right\}
+\right]
+}{m(\xi_{s+q}^P)(G_{s+q})}.
+\label{eq:lag-truncation-window-bayes-ratio-s13}
+\end{align}
+The denominator is at least $\underbar G$, and the oscillation of the
+function in square brackets is at most
+$2\bar G\operatorname{osc}(h_{s,i})$.  Equation~
+(\ref{eq:lag-truncation-prediction-l2-s13}) therefore gives
+\begin{align}
+&\E\left[
+\left.
+\left|
+\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+-\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})
+\right|^2
+\right|\eta_s^J
+\right]
+\leq
+\frac{C(q+1)}{J}\operatorname{osc}(h_{s,i})^2.
+\label{eq:lag-truncation-window-bayes-l2-s13}
+\end{align}
+For the conditional expectation, set, only in the next display,
+\begin{align}
+\nu&=m(\xi_{s+q}^P),&
+\mu&=\Phi_{s,s+q}(\eta_s^J),                              \notag\\
+d&=G_{s+q}\{h_{s,i}-\Psi_{s+q}(\mu)(h_{s,i})\}.
+\end{align}
+Then $\mu(d)=0$, and expansion of the reciprocal denominator in
+Equation~(\ref{eq:lag-truncation-window-bayes-ratio-s13}) gives the
+exact identity
+\begin{align}
+\frac{(\nu-\mu)(d)}{\nu(G_{s+q})}
+&=
+\frac{(\nu-\mu)(d)}{\mu(G_{s+q})}
+-
+\frac{
+(\nu-\mu)(d)(\nu-\mu)(G_{s+q})
+}{\nu(G_{s+q})\mu(G_{s+q})}.
+\label{eq:lag-truncation-window-bayes-bias-expansion-s13}
+\end{align}
+Equation~(\ref{eq:lag-truncation-prediction-bias-s13}) bounds the
+conditional expectation of the first term on the right by
+$Cq\operatorname{osc}(h_{s,i})/J$.  Conditional Cauchy--Schwarz and
+Equation~(\ref{eq:lag-truncation-prediction-l2-s13}) bound the second
+term by the same order.  Hence
+\begin{align}
+&\left|
+\E\left[
+\left.
+\Psi_{s+q}\{m(\xi_{s+q}^P)\}(h_{s,i})
+-\Psi_{s+q}\{\Phi_{s,s+q}(\eta_s^J)\}(h_{s,i})
+\right|\eta_s^J
+\right]
+\right|
+\leq
+\frac{Cq}{J}\operatorname{osc}(h_{s,i}).
+\label{eq:lag-truncation-window-bayes-bias-s13}
+\end{align}
+Equations~(\ref{eq:lag-truncation-window-filter-split-s13}),
+(\ref{eq:lag-truncation-terminal-resampling-s13}),
+(\ref{eq:lag-truncation-window-bayes-l2-s13}), and
+(\ref{eq:lag-truncation-window-bayes-bias-s13}) prove, conditionally on
+$\eta_s^J$,
+\begin{align}
+&\E\left[
+\left.
+\left|
+m(\xi_{s+q})(h_{s,i})
+-\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+\right|^2
+\right|\eta_s^J
+\right]
+\leq
+\frac{C(q+1)}{J}\operatorname{osc}(h_{s,i})^2,
+\label{eq:lag-truncation-conditional-l2-s13}
+\\
+&\left|
+\E\left[
+\left.
+m(\xi_{s+q})(h_{s,i})
+-\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+\right|\eta_s^J
+\right]
+\right|
+\leq
+\frac{Cq}{J}\operatorname{osc}(h_{s,i}).
+\label{eq:lag-truncation-conditional-bias-s13}
+\end{align}
+
+The second brace in Equation~
+(\ref{eq:lag-truncation-conditional-decomposition-s13}) is the error in
+the initial prediction cloud.  Direct subtraction of its two ratios gives
+\begin{align}
+&\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+-\frac{\eta_sQ_{s,s+q}(h_{s,i})}
+{\eta_sQ_{s,s+q}(1)}                                      \notag\\
+&\quad=
+\frac{
+(\eta_s^J-\eta_s)
+Q_{s,s+q}
+\left\{
+h_{s,i}-\rho_{s+q}(h_{s,i})
+\right\}
+}{\eta_s^JQ_{s,s+q}(1)}.
+\label{eq:lag-truncation-continuation-ratio-s13}
+\end{align}
+Because $h_{s,i}$ is created at time $s$ and is preserved along the
+subsequent path,
+\begin{equation}
+Q_{s,s+q}
+\{h_{s,i}-\rho_{s+q}(h_{s,i})\}
+=
+\{h_{s,i}-\rho_{s+q}(h_{s,i})\}Q_{s,s+q}(1).
+\label{eq:lag-truncation-preserved-input-s13}
+\end{equation}
+Equation~(\ref{eq:weak-bias-uniform-normalizer-ratio}) therefore gives
+\begin{align}
+\inf_x
+\frac{Q_{s,s+q}(1)(x)}{\eta_sQ_{s,s+q}(1)}
+&\geq C^{-1},                                              \notag\\
+\operatorname{osc}\left[
+\frac{Q_{s,s+q}
+\{h_{s,i}-\rho_{s+q}(h_{s,i})\}}
+{\eta_sQ_{s,s+q}(1)}
+\right]
+&\leq C\operatorname{osc}(h_{s,i}).
+\label{eq:lag-truncation-continuation-ratio-bounds-s13}
+\end{align}
+Lemma~2.3 of \citet{karjalainen23}, which concerns the prediction
+empirical measure, and Equation~
+(\ref{eq:lag-truncation-continuation-ratio-bounds-s13}) therefore give
+\begin{align}
+&\E\left|
+\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+-\frac{\eta_sQ_{s,s+q}(h_{s,i})}
+{\eta_sQ_{s,s+q}(1)}
+\right|^2
+\leq
+\frac{C}{J}\operatorname{osc}(h_{s,i})^2.
+\label{eq:lag-truncation-initial-cloud-l2-s13}
+\end{align}
+For its expectation, use the exact ratio cancellation in
+Equations~(\ref{eq:weak-bias-local-cancellation})--
+(\ref{eq:weak-bias-one-complete-update}) and the update telescope in
+Equation~(\ref{eq:weak-bias-full-update-telescope}).  The same bounds
+give
+\begin{align}
+&\left|\E\left[
+\frac{\eta_s^JQ_{s,s+q}(h_{s,i})}
+{\eta_s^JQ_{s,s+q}(1)}
+-\frac{\eta_sQ_{s,s+q}(h_{s,i})}
+{\eta_sQ_{s,s+q}(1)}
+\right]\right|
+\leq
+\frac{C}{J}\operatorname{osc}(h_{s,i}).
+\label{eq:lag-truncation-initial-cloud-bias-s13}
+\end{align}
+
+Apply $|a+b|^2\leq2a^2+2b^2$ to Equation~
+(\ref{eq:lag-truncation-conditional-decomposition-s13}), use Equations~
+(\ref{eq:lag-truncation-conditional-l2-s13}) and
+(\ref{eq:lag-truncation-initial-cloud-l2-s13}), and then use
+Equation~(\ref{eq:lag-truncation-created-input-oscillation}).  For
+$J\geq c(q+1)$ this gives
+\begin{equation}
+\E\left|
+m(\xi_{s+q})(h_{s,i})-\rho_{s+q}(h_{s,i})
+\right|^2
+\leq
+\frac{C(q+1)G'(\theta)^2}{J}.
+\label{eq:fixed-lag-one-input-l2-s13}
+\end{equation}
+Taking expectations in Equation~
+(\ref{eq:lag-truncation-conditional-decomposition-s13}) and combining
+Equations~(\ref{eq:lag-truncation-conditional-bias-s13}) and
+(\ref{eq:lag-truncation-initial-cloud-bias-s13}) gives
+\begin{equation}
+\left|
+\E m(\xi_{s+q})(h_{s,i})-\rho_{s+q}(h_{s,i})
+\right|
+\leq
+\frac{C(q+1)G'(\theta)}{J}.
+\label{eq:fixed-lag-one-input-bias-s13}
+\end{equation}
+The particle-number restriction in the cited theorems does not restrict
+these conclusions.  If $2\leq J<c(q+1)$, then
+$(q+1)/J>1/c$, while the pathwise differences are at most
+$2G'(\theta)$.  After increasing $C$, Equations~
+(\ref{eq:fixed-lag-one-input-l2-s13}) and
+(\ref{eq:fixed-lag-one-input-bias-s13}) therefore hold for every
+$J\geq2$, $q\in\{0,\ldots,k\}$, and $1\leq s\leq N-q$.
+
+The terminal term is one additive historical functional over $k+1$
+times, not a current-particle function.  Its coordinatewise oscillation
+satisfies
+\begin{equation}
+\operatorname{osc}\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\leq 2(k+1)G'(\theta).
+\label{eq:lag-truncation-terminal-block-oscillation}
+\end{equation}
+The exact analogue of Equation~
+(\ref{eq:lag-truncation-conditional-decomposition-s13}) is
+\begin{align}
+&m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\rho_N\left(\sum_{s=N-k}^{N}h_{s,i}\right)               \notag\\
+&\quad=
+\left\{
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\frac{
+\eta_{N-k}^JQ_{N-k,N}\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+}{\eta_{N-k}^JQ_{N-k,N}(1)}
+\right\}                                                  \notag\\
+&\qquad+
+\left\{
+\frac{
+\eta_{N-k}^JQ_{N-k,N}\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+}{\eta_{N-k}^JQ_{N-k,N}(1)}
+-\frac{
+\eta_{N-k}Q_{N-k,N}\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+}{\eta_{N-k}Q_{N-k,N}(1)}
+\right\}.
+\label{eq:lag-truncation-terminal-decomposition-s13}
+\end{align}
+The first brace is controlled by the diagonal--off-diagonal calculation
+in Equation~(\ref{eq:lag-truncation-conditional-l2-s13}) over $k+1$
+times.  For the second brace, the normalized conditional expectation of
+the displayed sum lies between its infimum and supremum.  The ratio
+calculation in Equations~
+(\ref{eq:lag-truncation-continuation-ratio-s13})--
+(\ref{eq:lag-truncation-initial-cloud-bias-s13}) therefore applies with
+the oscillation in Equation~
+(\ref{eq:lag-truncation-terminal-block-oscillation}).  Thus
+\begin{align}
+&\E\left|
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\rho_N\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right|^2
+\leq
+\frac{C(k+1)^3G'(\theta)^2}{J},
+\label{eq:fixed-lag-terminal-l2-s13}
+\\
+&\left|
+\E m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\rho_N\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right|
+\leq
+\frac{C(k+1)^2G'(\theta)}{J}.
+\label{eq:fixed-lag-terminal-bias-s13}
+\end{align}
+For $J<c(k+1)$ these inequalities again follow from the pathwise bounds
+after increasing $C$.
+
+We next sum the covariances in the first term of Equation~
+(\ref{eq:fixed-lag-score-telescope-s13}).  Cauchy--Schwarz and
+Equation~(\ref{eq:fixed-lag-one-input-l2-s13}) give, for
+$s<t<N-k$,
+\begin{align}
+&\left|
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{t+k})(h_{t,i})\}
+\right|                                                     \notag\\
+&\quad\leq
+\left[\Var\{m(\xi_{s+k})(h_{s,i})\}
+\Var\{m(\xi_{t+k})(h_{t,i})\}\right]^{1/2}               \notag\\
+&\quad\leq
+\frac{C(k+1)G'(\theta)^2}{J}.
+\label{eq:lag-truncation-covariance-cauchy-s13}
+\end{align}
+If $t-s>k$, the first quantity is measurable through time $s+k$.
+The second is obtained from the time-$t$ differentiable particle and
+the subsequent selection--mutation variables through time $t+k$.
+The two windows are separated by $t-s-k$ particle updates.  Davydov's
+inequality, the coefficient $a(\cdot)$ in Equation~
+(\ref{eq:dmop-zero-centered-l4-and-mixing}), and the pathwise bound give
+\begin{equation}
+\left\|
+m(\xi_{s+k})(h_{s,i})-
+\E m(\xi_{s+k})(h_{s,i})
+\right\|_{L^4}
+\leq2G'(\theta),
+\end{equation}
+and the same inequality with $s$ replaced by $t$.  Covariance is
+unchanged by this centering, so Davydov's inequality gives
+\begin{align}
+&\left|
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{t+k})(h_{t,i})\}
+\right|
+\leq CG'(\theta)^2a(t-s-k)^{1/2}.
+\label{eq:lag-truncation-covariance-mixing-s13}
+\end{align}
+Combining Equations~(\ref{eq:lag-truncation-covariance-cauchy-s13}) and
+(\ref{eq:lag-truncation-covariance-mixing-s13}), and separating the
+$k$ overlapping separations, gives
+\begin{align}
+&\sum_{t=s+1}^{N-k-1}
+\left|
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{t+k})(h_{t,i})\}
+\right|                                                    \notag\\
+&\quad=
+\sum_{d=1}^{N-k-1-s}
+\left|
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{s+d+k})(h_{s+d,i})\}
+\right|                                                    \notag\\
+&\quad\leq
+\frac{Ck(k+1)G'(\theta)^2}{J}
++CG'(\theta)^2
+\sum_{d=k+1}^{N-k-1-s}
+\min\left\{\frac{k+1}{J},a(d-k)^{1/2}\right\}            \notag\\
+&\quad\lesssim
+\frac{C(k+1)^2G'(\theta)^2}{J}.
+\label{eq:fixed-lag-covariance-s13}
+\end{align}
+The inequality holds for every $1\leq s\leq N-k-2$; an empty sum is
+zero.  The last inequality uses the geometric bound on $a(\cdot)$ in
+Equation~(\ref{eq:dmop-zero-centered-l4-and-mixing}).  More explicitly,
+that bound gives
+\begin{equation}
+\sum_{u=1}^{\infty}
+\min\left\{\frac{k+1}{J},a(u)^{1/2}\right\}
+\leq
+\frac{C(k+1)}{J}(1+\log J)^2.
+\label{eq:lag-truncation-mixing-sum-s13}
+\end{equation}
+As in the preceding variance arguments, $\lesssim$ suppresses this
+particle-system mixing and logarithmic-threshold factor.  Expanding the
+variance and using Equation~
+(\ref{eq:fixed-lag-covariance-s13}) now gives
+\begin{align}
+&\Var\left\{
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_{s,i})
+\right\}                                                   \notag\\
+&\quad=
+\sum_{s=1}^{N-k-1}\Var\{m(\xi_{s+k})(h_{s,i})\}           \notag\\
+&\qquad+2\sum_{s=1}^{N-k-2}\sum_{t=s+1}^{N-k-1}
+\Cov\{m(\xi_{s+k})(h_{s,i}),m(\xi_{t+k})(h_{t,i})\}     \notag\\
+&\quad\lesssim
+\frac{N(k+1)^2G'(\theta)^2}{J}.
+\label{eq:fixed-lag-interior-variance-s13}
+\end{align}
+Equation~(\ref{eq:fixed-lag-terminal-l2-s13}) and
+$k+1\leq N$ give
+\begin{align}
+\Var\left\{
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right\}
+&\leq
+\E\left|
+m(\xi_N)\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+-\rho_N\left(\sum_{s=N-k}^{N}h_{s,i}\right)
+\right|^2                                                  \notag\\
+&\leq
+\frac{C(k+1)^3G'(\theta)^2}{J}                            \notag\\
+&\leq
+\frac{CN(k+1)^2G'(\theta)^2}{J}.
+\label{eq:fixed-lag-terminal-variance-s13}
+\end{align}
+Writing the two terms in Equation~
+(\ref{eq:fixed-lag-score-telescope-s13}) as $A$ and $B$, respectively,
+and using
+\begin{equation}
+\Var(A+B)\leq2\Var(A)+2\Var(B),
+\end{equation}
+then summing over the $p$ coordinates, proves
+\begin{equation}
+\Var\{\nabla_\theta\hat s_k^1(\theta)\}
+\lesssim
+\frac{NpG'(\theta)^2(k+1)^2}{J}.
+\label{eq:fixed-lag-variance-s13}
+\end{equation}
+Equations~(\ref{eq:fixed-lag-one-input-bias-s13}) and
+(\ref{eq:fixed-lag-terminal-bias-s13}), the triangle inequality, and
+$k+1\leq N$ similarly give
+\begin{align}
+\left\|
+\E\nabla_\theta\hat s_k^1(\theta)
+-\nabla_\theta s_k^1(\theta)
+\right\|_2
+&\leq
+\frac{C\sqrt p\,G'(\theta)}{J}
+\left\{(N-k-1)(k+1)+(k+1)^2\right\}                       \notag\\
+&\leq
+\frac{CN\sqrt p\,G'(\theta)(k+1)}{J}.
+\label{eq:fixed-lag-particle-bias-s13}
+\end{align}
+
+\medskip\noindent\emph{Step 2: recover geometric discounting exactly.}\quad
+For $0\leq k<N-1$, put
+\begin{equation}
+\beta_k=(1-\alpha)\alpha^k,
+\qquad
+\beta_{N-1}=\alpha^{N-1}.
+\label{eq:geometric-mixture-weights-s13}
+\end{equation}
+These nonnegative numbers sum to one.  Moreover, for every
+$0\leq r<N$,
+\begin{align}
+\sum_{k=r}^{N-1}\beta_k
+&=
+\sum_{k=r}^{N-2}(1-\alpha)\alpha^k+\alpha^{N-1}             \notag\\
+&=
+\alpha^r(1-\alpha^{N-1-r})+\alpha^{N-1}                    \notag\\
+&=\alpha^r.
+\label{eq:geometric-mixture-tail-s13}
+\end{align}
+Equations~(\ref{eq:conditional-score-path-decomposition}),
+(\ref{eq:population-conditional-score-path-decomposition}), and
+(\ref{eq:fixed-lag-score-definition-s13}) therefore give the pathwise
+identities
+\begin{align}
+\nabla_\theta\hat\ell^\alpha(\theta)
+&=
+\sum_{k=0}^{N-1}\beta_k\nabla_\theta\hat s_k^1(\theta),
+&
+\nabla_\theta\ell^\alpha(\theta)
+&=
+\sum_{k=0}^{N-1}\beta_k\nabla_\theta s_k^1(\theta).
+\label{eq:dmop-alpha-fixed-lag-mixture-s13}
+\end{align}
+Indeed, the coefficient of $\Delta_{n,r}^J$, or of $\Delta_{n,r}$,
+on the right is exactly the tail sum in Equation~
+(\ref{eq:geometric-mixture-tail-s13}).  Thus this is an identity for the
+implemented geometrically discounted estimator, not a change to the
+algorithm and not an additional randomization.  In this precise sense,
+geometric discounting is a soft lag truncation whose effective memory is
+computed below.
+
+The mean lag in this censored geometric mixture satisfies
+\begin{align}
+\sum_{k=0}^{N-1}\beta_k(k+1)
+&=
+\sum_{r=0}^{N-1}\sum_{k=r}^{N-1}\beta_k                  \notag\\
+&=
+\sum_{r=0}^{N-1}\alpha^r.
+\label{eq:geometric-mixture-mean-lag-s13}
+\end{align}
+Center the first identity in Equation~
+(\ref{eq:dmop-alpha-fixed-lag-mixture-s13}).  Minkowski's inequality,
+Equation~(\ref{eq:fixed-lag-variance-s13}), and Equation~
+(\ref{eq:geometric-mixture-mean-lag-s13}) give
+\begin{align}
+\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\E\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_{L^2}
+&\leq
+\sum_{k=0}^{N-1}\beta_k
+\left\|
+\nabla_\theta\hat s_k^1(\theta)
+-\E\nabla_\theta\hat s_k^1(\theta)
+\right\|_{L^2}                                             \notag\\
+&\lesssim
+C\sqrt{\frac{NpG'(\theta)^2}{J}}
+\sum_{k=0}^{N-1}\beta_k(k+1)                              \notag\\
+&\lesssim
+C\sqrt{\frac{NpG'(\theta)^2}{J}}
+\sum_{r=0}^{N-1}\alpha^r.
+\label{eq:geometric-mixture-variance-root-s13}
+\end{align}
+Squaring proves Equation~(\ref{eq:refined-dmop-alpha-variance}).
+Taking expectations in Equation~
+(\ref{eq:dmop-alpha-fixed-lag-mixture-s13}), applying the triangle
+inequality and Equation~(\ref{eq:fixed-lag-particle-bias-s13}), and
+then using Equation~(\ref{eq:geometric-mixture-mean-lag-s13}) give
+\begin{align}
+\left\|
+\E\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2
+&\leq
+\sum_{k=0}^{N-1}\beta_k
+\left\|
+\E\nabla_\theta\hat s_k^1(\theta)
+-\nabla_\theta s_k^1(\theta)
+\right\|_2                                                \notag\\
+&\leq
+\frac{CN\sqrt p\,G'(\theta)}{J}
+\sum_{k=0}^{N-1}\beta_k(k+1)                              \notag\\
+&=
+\frac{CN\sqrt p\,G'(\theta)}{J}
+\sum_{r=0}^{N-1}\alpha^r,
+\end{align}
+which proves Equation~(\ref{eq:refined-dmop-alpha-particle-bias}).
+Finally, for a random vector $Z$ and deterministic $z$,
+\begin{equation}
+\E\|Z-z\|_2^2
+=\Var(Z)+\|\E Z-z\|_2^2.
+\end{equation}
+Apply this identity with
+$Z=\nabla_\theta\hat\ell^\alpha(\theta)$ and
+$z=\nabla_\theta\ell^\alpha(\theta)$, and substitute Equations~
+(\ref{eq:refined-dmop-alpha-variance}) and
+(\ref{eq:refined-dmop-alpha-particle-bias}).  This proves Equation~
+(\ref{eq:refined-dmop-alpha-direct-particle-error}).
+\end{proof}
+
+\begin{cor}[Particle bias of the DMOP-$\alpha$ score]
+\label{lem:dmop-full-particle-bias}
+Under the conditions of Lemma~\ref{lem:dmop-alpha-variance},
+Equation~(\ref{eq:refined-dmop-alpha-particle-bias}) holds.
+\end{cor}
+
+\begin{proof}[Proof.]
+This is the second conclusion of Lemma~
+\ref{lem:dmop-alpha-variance}.
+\end{proof}
+
 
 \iffalse
 \begin{proof}[Superseded proof.]
@@ -9243,6 +10382,7 @@ bound is not automatically a DMOP-$1$ lower bound.
 
 \fi
 
+\iffalse
 \begin{thm}[MSE bounds for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
 Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
@@ -9284,7 +10424,7 @@ For $\alpha\in[0,1)$, this implies
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2                                                \notag\\
+\Bigg\|_2^2                                                \notag\\
 &\lesssim
 pG'(\theta)^2
 \left[
@@ -9468,6 +10608,103 @@ $\nabla_\theta\ell^1(\theta)=\nabla_\theta\ell(\theta)$.
 Equation~(\ref{eq:refined-dmop-one-lag-particle-error}) therefore proves
 Equation~(\ref{eq:verified-dmop-one-mse-bound}).
 \end{proof}
+\fi
+
+\begin{thm}[MSE bounds for DMOP-$\alpha$]
+\label{thm:refined-dmop-alpha-mse}
+Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
+\ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1]$,
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad\lesssim
+pG'(\theta)^2\Bigg[
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
++\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2
+\Bigg]
+\label{eq:verified-dmop-alpha-mse-finite-sum}.
+\end{align}
+For $0\leq\alpha<1$, this finite bound implies
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\lesssim
+pG'(\theta)^2
+\left[
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right].
+\label{eq:verified-dmop-alpha-mse-bound}
+\end{equation}
+\end{thm}
+
+\begin{proof}[Proof.]
+Add and subtract $\nabla_\theta\ell^\alpha(\theta)$ and use
+$\|a+b\|_2^2\leq2\|a\|_2^2+2\|b\|_2^2$.  This gives
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad\leq
+2\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2
++2\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2.
+\label{eq:generic-mse-particle-population-split}
+\end{align}
+Lemma~\ref{lem:dmop-alpha-variance} bounds the first term by
+\begin{equation}
+CpG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\end{equation}
+Lemma~\ref{lem:dmop-population-discount-bias} gives
+\begin{equation}
+\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\leq
+CpG'(\theta)^2
+\left\{
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+\right\}^2.
+\end{equation}
+Here the first branch of the minimum in Lemma~
+\ref{lem:dmop-population-discount-bias} is retained so that the dependence
+on the model-forgetting rate $\varrho$ remains explicit.
+Substitution into Equation~
+(\ref{eq:generic-mse-particle-population-split}) proves the first bound.
+For $0\leq\alpha<1$,
+\begin{align}
+\sum_{r=0}^{N-1}\alpha^r
+&\leq\frac1{1-\alpha},                                    \notag\\
+\sum_{r=1}^{N-1}(N-r)(1-\alpha^r)\varrho^r
+&\leq
+N\sum_{r=1}^{\infty}(1-\alpha^r)\varrho^r                \notag\\
+&=
+N\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}.
+\end{align}
+Substitution of these two inequalities proves Equation~
+(\ref{eq:verified-dmop-alpha-mse-bound}).
+\end{proof}
 
 \iffalse
 Equation~(\ref{eq:dmop-alpha-coordinate-pathwise-bound}) gives
@@ -9526,9 +10763,10 @@ Equation~(\ref{eq:verified-full-population-discount-bias}).
 \fi
 
 \begin{remark}[Neutral-model check]
-The dependence on $\alpha$ in Lemma~\ref{lem:dmop-alpha-variance} is
-conservative but cannot be replaced by a bound involving only the current
-particle cloud.  For example, take iid ${\rm Uniform}[0,1]$ states,
+The following calculation checks the $\alpha=0$ endpoint and the
+fixed-$\alpha<1$ orders in
+Lemma~\ref{lem:dmop-alpha-variance}.  Take
+iid ${\rm Uniform}[0,1]$ states,
 constant weights at $\theta=\phi=0$, and
 \begin{equation}
 \Pr_\theta(Y_n=1\mid X_n=x)
@@ -9549,12 +10787,13 @@ N(2-J^{-1})
 \end{equation}
 Thus the variance has order $N/J$ for every fixed $\alpha<1$, and its
 genealogical contribution has order $N/\{J(1-\alpha^2)\}$ before horizon
-saturation.  At $\alpha=0$, this agrees with the DMOP-$0$ bound preceding
-Theorem~\ref{thm:dmop-alpha-truncation-mse}.  The example is consistent
-with the lag-moment bound proved in Lemma~
-\ref{lem:dmop-alpha-variance}.
+saturation.  At $\alpha=0$, this has order $N/J$.  This calculation
+also shows that the factor $(1-\alpha)^{-2}$ in the general upper bound is
+conservative in this model; the theorem does not claim that dependence on
+$\alpha$ is sharp.
 \end{remark}
 
+\iffalse
 \begin{remark}[Choice of $\alpha$ in the fixed-observation upper bound]
 The identity $1-\alpha^r=(1-\alpha)\sum_{q=0}^{r-1}\alpha^q$
 and $1-\alpha^q\leq q(1-\alpha)$ imply, uniformly in $N$,
@@ -9779,6 +11018,92 @@ of that result and the identification of its likelihood-ratio estimator
 with the DMOP-$1$ estimator in the model under study.
 
 \end{remark}
+\fi
+
+\begin{remark}[What the general bound establishes about $\alpha$]
+The finite particle term in Lemma~\ref{lem:dmop-alpha-variance} is
+\begin{equation}
+pG'(\theta)^2
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\label{eq:generic-alpha-particle-bound-summary}
+\end{equation}
+Thus $\alpha=0$ gives the DMOP-$0$ particle order
+$pG'(\theta)^2(N/J+N^2/J^2)$, and every fixed $\alpha<1$ has the same
+$N/J$ leading order when $J\geq N$, multiplied by a constant depending on
+$\alpha$.  The deterioration occurs through the effective memory
+$\sum_{r=0}^{N-1}\alpha^r$ as $\alpha\uparrow1$.  This is precisely the
+forgetting induced by discounting: a contribution of age $r$ is multiplied
+by $\alpha^r$ before the lag terms are summed.
+
+The population term moves in the opposite direction.  The finite bound in
+Theorem~\ref{thm:refined-dmop-alpha-mse} decreases to zero as
+$\alpha\uparrow1$.  Hence the upper bound exhibits the intended
+bias--variance tradeoff.  The neutral calculation in Equation~
+(\ref{eq:neutral-dmop-alpha-exact-variance}) shows that the theorem's
+$(1-\alpha)^{-2}$ dependence is conservative in some models.
+
+Oscillation normalization is a separate matter.  A particle MSE bound
+proved for $\operatorname{osc}(f)\leq1$ is multiplied by
+$\operatorname{osc}(f)^2$ when it is applied to an unnormalized
+functional.  Thus a generic path-space bound of order $N^2/J$ for an
+oscillation-one functional becomes $N^4/J$ if it is applied once to a
+full score whose oscillation is of order $N$.  Lemma~
+\ref{lem:dmop-alpha-variance} does not make that application: it first
+controls each $h_s$, whose oscillation is bounded independently of $N$,
+and only then performs the discounted lag sum.  The $N^4/J$ calculation
+is therefore a generic norm-rescaling upper bound, not an additional
+factor to insert into Theorem~\ref{thm:refined-dmop-alpha-mse} and not the
+quadratic asymptotic-variance lower bound of \citet{poyiadjis11}.
+\end{remark}
+
+\begin{remark}[Choosing $\alpha$ in the upper bound]
+This calculation concerns the proved upper bound, not the unknown exact
+MSE.  Since
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r
+\leq\min\{N,(1-\alpha)^{-1}\}
+\end{equation}
+and the fixed model constants include $\varrho/(1-\varrho)$, Theorem~
+\ref{thm:refined-dmop-alpha-mse} gives
+\begin{equation}
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\lesssim
+pG'(\theta)^2
+\left[
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\min\{N^2,(1-\alpha)^{-2}\}
++N^2(1-\alpha)^2
+\right].
+\label{eq:alpha-tuning-soft-lag-bound}
+\end{equation}
+Before the effective memory reaches the horizon, balancing the two terms
+in Equation~(\ref{eq:alpha-tuning-soft-lag-bound}) gives the choices and
+attained upper bounds
+\begin{equation}
+\begin{array}{c|c|c}
+\text{regime}&1-\alpha&\text{MSE upper bound}/\{pG'(\theta)^2\}\\
+\hline
+J\lesssim N&J^{-1/2}&N^2/J\\[2pt]
+N\lesssim J\lesssim N^3&(NJ)^{-1/4}&N^{3/2}/J^{1/2}\\[2pt]
+J\gtrsim N^3&0&N^3/J.
+\end{array}
+\label{eq:alpha-tuning-soft-lag-regimes}
+\end{equation}
+In the last regime, $\alpha=1$ uses the finite sum in Equation~
+(\ref{eq:dmop-alpha-finite-memory}); more generally,
+$1-\alpha\lesssim\sqrt{N/J}$ attains the same order.  The first-regime
+$J^{-1/2}$ behavior reflects the conservative squared effective-memory
+bound in Lemma~\ref{lem:dmop-alpha-variance}.  The neutral-model calculation
+shows that this dependence on $\alpha$ need not be sharp.
+The three rows use the manuscript's $\lesssim$ convention and therefore
+suppress the same particle-system logarithmic factor as Lemma~
+\ref{lem:dmop-alpha-variance}.
+\end{remark}
+
 
 \iffalse
 \begin{remark}[The location--log-weight-gradient pair and a sharper rate]
@@ -10191,6 +11516,7 @@ discount memory spans arbitrarily many mixing times.
 \end{remark}
 \fi
 
+\iffalse
 \begin{remark}[Fixed lag and geometric memory]
 For $0\leq k<N$, the fixed-lag score and its population truncation error
 are, respectively,
@@ -10461,6 +11787,115 @@ and the assumptions do not force the right side to vanish.  Hence the
 generic geometric-discount population bias is first order in
 $1-\alpha$, even though its coefficient contains the forgetting powers
 $\varrho^r$.
+\end{remark}
+\fi
+
+\iffalse
+\begin{remark}[Fixed lag and historical particle error]
+For $0\leq k<N$, the fixed-lag score and its population truncation error
+are, respectively,
+\begin{align}
+&\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),
+\label{eq:verified-fixed-lag-telescope}
+\\
+&\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
+\label{eq:verified-fixed-lag-population-error}
+\end{align}
+Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
+\begin{equation}
+\left\|\operatorname{Bias}^{\rm pop}_k\right\|_2
+\leq
+C(N-k-1)\sqrt p\,G'(\theta)
+\frac{\varrho^{k+1}}{1-\varrho}.
+\label{eq:verified-fixed-lag-population-bias}
+\end{equation}
+
+For the particle term, apply Equation~
+(\ref{eq:chan-historical-l2-specialization}) separately to every
+historical functional in Equation~
+(\ref{eq:verified-fixed-lag-telescope}) and use Minkowski's inequality.
+For $J\geq cN$, this gives
+\begin{align}
+&\E\Bigg\|
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right)                 \notag\\
+&\hspace{18mm}
+-\sum_{s=1}^{N-k-1}\rho_{s+k}(h_s)
+-\rho_N\left(\sum_{s=N-k}^{N}h_s\right)
+\Bigg\|_2^2                                                \notag\\
+&\quad\lesssim
+\frac{pG'(\theta)^2}{J}
+\left\{
+\sum_{s=1}^{N-k-1}\sqrt{s+k}
++\sqrt N(k+1)
+\right\}^2.
+\label{eq:generic-fixed-lag-particle-bound}
+\end{align}
+Together with the pathwise $CpG'(\theta)^2N^2$ cap, this is at most
+\begin{equation}
+CpG'(\theta)^2\min\left\{N^2,\frac{N^3}{J}\right\}.
+\end{equation}
+The historical factor is $s+k$, rather than $k$: although $h_s$ is
+displayed as one retained lag, its simulator gradient may contain the
+entire genealogy before time $s$.  Thus Assumptions
+{\refAssumpBoundedProcess}--{\refAssumpDifferentiableSimulator} do not
+give the sharper $N(k+1)/J$ particle term.  Combining Equations~
+(\ref{eq:verified-fixed-lag-population-bias}) and
+(\ref{eq:generic-fixed-lag-particle-bound}) gives the corresponding
+fixed-lag MSE bound.
+\end{remark}
+
+\fi
+
+\begin{remark}[Geometric discounting and lag truncation]
+The lag-truncated expressions used in Lemma~
+\ref{lem:dmop-alpha-variance} are analytical devices, not alternative
+implementations of DMOP-$\alpha$.  For $0\leq k<N$, the truncated score
+and its population truncation error are
+\begin{align}
+\nabla_\theta\hat s_k^1(\theta)
+&=
+\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
++m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),                \notag\\
+\nabla_\theta\ell(\theta)-\nabla_\theta s_k^1(\theta)
+&=
+\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
+\end{align}
+Lemma~\ref{lem:derivative-measure-forgetting} gives
+\begin{equation}
+\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta s_k^1(\theta)
+\right\|_2
+\leq
+C(N-k-1)\sqrt p\,G'(\theta)
+\frac{\varrho^{k+1}}{1-\varrho}.
+\end{equation}
+The finite-window particle calculation in Equations~
+(\ref{eq:fixed-lag-variance-s13}) and
+(\ref{eq:fixed-lag-particle-bias-s13}) gives
+\begin{align}
+\Var\{\nabla_\theta\hat s_k^1(\theta)\}
+&\lesssim
+\frac{NpG'(\theta)^2(k+1)^2}{J},                           \notag\\
+\left\|
+\E\nabla_\theta\hat s_k^1(\theta)
+-\nabla_\theta s_k^1(\theta)
+\right\|_2
+&\lesssim
+\frac{N\sqrt p\,G'(\theta)(k+1)}{J}.
+\end{align}
+Geometric discounting recovers the implemented estimator exactly by
+Equation~(\ref{eq:dmop-alpha-fixed-lag-mixture-s13}); no cutoff is selected
+by the algorithm.  Thus DMOP-$\alpha$ is exactly a geometric average of
+the analytical lag truncations and, in this precise sense, approximates a
+hard lag cutoff.  The identity
+\begin{equation}
+\sum_{k=0}^{N-1}\beta_k(k+1)
+=\sum_{r=0}^{N-1}\alpha^r
+\end{equation}
+shows why every fixed $\alpha<1$ has an $N/J$ leading particle-variance
+order and why $\alpha=0$ reduces exactly to the DMOP-$0$ order.
 \end{remark}
 
 \iffalse
