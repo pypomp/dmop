@@ -10952,6 +10952,29 @@ For $0\leq\alpha<1$, this implies
 \end{align}
 The finite sum beginning at $q=1$ is empty for $N\leq2$.
 At $\varrho=\tfrac12$, the displayed population terms are zero.
+In particular, the two endpoints satisfy
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^0(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\left[
+\frac NJ+\frac{N^2}{J^2}
++(N-1)^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\right\}^2
+\right],
+\label{eq:verified-dmop-zero-mse-bound}
+\\
+&\E\left\|
+\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2
+\lesssim pG'(\theta)^2
+\min\left\{N^2,\frac{N^3}{J}\right\}.
+\label{eq:verified-dmop-one-mse-bound}
+\end{align}
+At $\alpha=0$, the variance is at most order $NpG'(\theta)^2/J$;
+at $\alpha=1$, the population discounting bias is exactly zero.
 Remark~\ref{rem:population-bias-cancellation} gives a complementary
 bound retaining signed cancellation.
 \end{thm}
@@ -11022,6 +11045,51 @@ Alternatively, Equation~(\ref{eq:population-bias-cancellation-bound})
 may be substituted in Equation~
 (\ref{eq:generic-mse-particle-population-split}), taking the smaller
 population bound without changing the particle contribution.
+
+For $\alpha=0$, the geometric sum is one and every summand with
+$q\geq1$ is zero.  Substitution in Equation~
+(\ref{eq:verified-dmop-alpha-mse-finite-sum}) gives Equation~
+(\ref{eq:verified-dmop-zero-mse-bound}); Equation~
+(\ref{eq:refined-dmop-alpha-variance}) gives the stated variance.
+For $\alpha=1$, use the terminal-block estimate directly, without
+separately bounding and squaring the particle bias.  Equation~
+(\ref{eq:dmop-alpha-fixed-lag-mixture-s13}) and the two telescopes in
+Equations~(\ref{eq:fixed-lag-score-telescope-s13})--
+(\ref{eq:fixed-lag-population-telescope-s13}), with $k=N-1$, give
+\begin{align}
+\nabla_\theta\hat\ell^1(\theta)
+&=m(\xi_N)\left(\sum_{s=1}^{N}h_s\right),
+&\nabla_\theta\ell^1(\theta)
+&=\rho_N\left(\sum_{s=1}^{N}h_s\right)
+=\nabla_\theta\ell(\theta).
+\end{align}
+Consequently, Equation~(\ref{eq:fixed-lag-terminal-l2-s13}) implies
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad=
+\sum_{i=1}^{p}\E\left|
+m(\xi_N)\left(\sum_{s=1}^{N}h_{s,i}\right)
+-\rho_N\left(\sum_{s=1}^{N}h_{s,i}\right)
+\right|^2
+\leq\frac{CN^3pG'(\theta)^2}{J}.
+\label{eq:dmop-one-terminal-direct-mse}
+\end{align}
+Since $\|h_s\|_2\leq\sqrt p\,G'(\theta)$, the same difference
+satisfies, pathwise,
+\begin{align}
+\left\|
+\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2
+&\leq
+m(\xi_N)\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)
++\rho_N\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)       \notag\\
+&\leq 2N\sqrt p\,G'(\theta).
+\end{align}
+Squaring and combining with Equation~
+(\ref{eq:dmop-one-terminal-direct-mse}) proves Equation~
+(\ref{eq:verified-dmop-one-mse-bound}).
 \end{proof}
 
 \iffalse
@@ -11109,6 +11177,15 @@ saturation.  At $\alpha=0$, this has order $N/J$.  This calculation
 also shows that the factor $(1-\alpha)^{-2}$ in the general upper bound is
 conservative in this model; the theorem does not claim that dependence on
 $\alpha$ is sharp.
+At $\alpha=1$ and $J/N\to\infty$, the same exact formula gives
+\begin{equation}
+\Var\left\{\nabla_\theta\hat\ell^1(\theta)\right\}
+\sim\frac{\sigma^2}{J}
+\left\{2N+\sum_{r=1}^{N-1}(N-r)\right\}
+=\frac{\sigma^2N(N+3)}{2J}.
+\end{equation}
+Thus the general $N^3/J$ endpoint upper bound is also conservative
+in this model.
 \end{remark}
 
 \iffalse
@@ -11346,10 +11423,14 @@ pG'(\theta)^2
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:generic-alpha-particle-bound-summary}
 \end{equation}
-Thus $\alpha=0$ gives the DMOP-$0$ particle order
-$pG'(\theta)^2(N/J+N^2/J^2)$, and every fixed $\alpha<1$ has the same
-$N/J$ leading order when $J\geq N$, multiplied by a constant depending on
-$\alpha$.  The deterioration occurs through the effective memory
+Thus $\alpha=0$ gives the DMOP-$0$ particle-MSE order
+$pG'(\theta)^2(N/J+N^2/J^2)$.  Its variance bound is
+$NpG'(\theta)^2/J$, whereas its MSE relative to the full score also
+contains the population term displayed in Equation~
+(\ref{eq:verified-dmop-zero-mse-bound}).  Every fixed $\alpha<1$
+has an $N/J$ particle-variance upper bound and, when $J\geq N$, the
+same leading particle-MSE order, with constants depending on $\alpha$.
+The deterioration occurs through the effective memory
 $\sum_{r=0}^{N-1}\alpha^r$ as $\alpha\uparrow1$.  This is precisely the
 forgetting induced by discounting: a contribution of age $r$ is multiplied
 by $\alpha^r$ before the lag terms are summed.
@@ -11360,6 +11441,12 @@ $\alpha\uparrow1$.  Hence the upper bound exhibits the intended
 bias--variance tradeoff.  The neutral calculation in Equation~
 (\ref{eq:neutral-dmop-alpha-exact-variance}) shows that the theorem's
 $(1-\alpha)^{-2}$ dependence is conservative in some models.
+At $\alpha=1$, Equation~(\ref{eq:verified-dmop-one-mse-bound}) uses
+the terminal-block $L^2$ estimate in Lemma~\ref{lem:dmop-alpha-variance}
+to remove the unnecessary
+$N^4/J^2$ term obtained by substituting into Equation~
+(\ref{eq:generic-alpha-particle-bound-summary}).  It does not assert
+that the remaining $N^3/J$ upper bound is sharp.
 
 Oscillation normalization is a separate matter.  A particle MSE bound
 proved for $\operatorname{osc}(f)\leq1$ is multiplied by
@@ -11376,61 +11463,104 @@ quadratic asymptotic-variance lower bound of \citet{poyiadjis11}.
 \end{remark}
 
 \begin{remark}[Choosing $\alpha$ in the upper bound]
+\label{rem:alpha-tuning-upper-bound}
 This calculation concerns the proved upper bound, not the unknown exact
-MSE.  Since
+MSE.  For $0\leq\alpha<1$,
 \begin{equation}
 \sum_{r=0}^{N-1}\alpha^r
 \leq\min\{N,(1-\alpha)^{-1}\}
 \end{equation}
-and the coarser population bound in Equation~
-(\ref{eq:dmop-full-population-discount-bias}) has fixed model constants
-including $\varrho/(1-\varrho)$, the proof of Theorem~
-\ref{thm:refined-dmop-alpha-mse} also gives
-\begin{equation}
-\E\left\|
+and Theorem~\ref{thm:refined-dmop-alpha-mse} give
+\begin{align}
+&\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2
-\lesssim
-pG'(\theta)^2
-\left[
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\min\{N^2,(1-\alpha)^{-2}\}
-+N^2(1-\alpha)^2
-\right].
+\min\{N^2,(1-\alpha)^{-2}\}\\
+&+N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\end{aligned}
 \label{eq:alpha-tuning-soft-lag-bound}
+\end{align}
+For fixed $\tfrac12<\varrho<1$, before the effective memory reaches
+the horizon, balancing these two terms is equivalent to
+\begin{equation}
+\frac1{NJ}+\frac1{J^2}
+\asymp
+\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{3-2\varrho}{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2(1-\alpha)^4.
+\label{eq:alpha-tuning-varrho-balance}
 \end{equation}
-Before the effective memory reaches the horizon, balancing the two terms
-in Equation~(\ref{eq:alpha-tuning-soft-lag-bound}) gives the choices and
-attained upper bounds
+Suppressing these fixed model constants gives the following
+rate-attaining choices for $N\geq2$:
 \begin{equation}
 \begin{array}{c|c|c}
 \text{regime}&1-\alpha&\text{MSE upper bound}/\{pG'(\theta)^2\}\\
 \hline
-J\lesssim N&J^{-1/2}&N^2/J\\[2pt]
-N\lesssim J\lesssim N^3&(NJ)^{-1/4}&N^{3/2}/J^{1/2}\\[2pt]
-J\gtrsim N^3&0&N^3/J.
+J\lesssim N&\asymp J^{-1/2}&N^2/J\\[2pt]
+N\lesssim J\lesssim N^3&\asymp(NJ)^{-1/4}&N^{3/2}/J^{1/2}\\[2pt]
+J\gtrsim N^3&\asymp N^2/J\ \text{or }0&N^3/J.
 \end{array}
 \label{eq:alpha-tuning-soft-lag-regimes}
 \end{equation}
-In the last regime, $\alpha=1$ uses the finite sum in Equation~
-(\ref{eq:dmop-alpha-finite-memory}); more generally,
-$1-\alpha\lesssim\sqrt{N/J}$ attains the same order.  The first-regime
-$J^{-1/2}$ behavior reflects the conservative squared effective-memory
-bound in Lemma~\ref{lem:dmop-alpha-variance}.  The neutral-model calculation
-shows that this dependence on $\alpha$ need not be sharp.
-The three rows use the manuscript's $\lesssim$ convention and therefore
-suppress the same particle-system logarithmic factor as Lemma~
-\ref{lem:dmop-alpha-variance}.
-The sharper transition constants in Equation~
-(\ref{eq:population-discount-sharp-transition-bound}) improve the
-model-dependent bound, not these general powers of $N$ and $J$.
+For the last row, $1-\alpha\asymp N^2/J$ implies
+$1-\alpha\lesssim N^{-1}$, and
+\begin{equation}
+\left(\frac NJ+\frac{N^2}{J^2}\right)N^2
++N^2\left(\frac{N^2}{J}\right)^2
+\lesssim\frac{N^3}{J},\qquad J\gtrsim N^3.
+\end{equation}
+The choice $\alpha=1$ instead uses Equation~
+(\ref{eq:verified-dmop-one-mse-bound}) directly.  It is rate-attaining,
+not an exact minimizer of the finite right-hand side of Equation~
+(\ref{eq:verified-dmop-alpha-mse-finite-sum}): for $N\geq2$,
+\begin{equation}
+\left.\frac{\partial}{\partial\alpha}
+\left\{
+\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}\right|_{\alpha=1}
+=\left(\frac NJ+\frac{N^2}{J^2}\right)N^2(N-1)>0,
+\end{equation}
+whereas the squared population term has derivative zero there.
+Thus moving slightly left of $1$ decreases that finite upper bound,
+without necessarily changing its rate or decreasing the actual MSE.
+The table suppresses the same logarithmic factor as Lemma~
+\ref{lem:dmop-alpha-variance}; its $J^{-1/2}$ choice in the first row
+is a rate for $1-\alpha$, not for the MSE, whose upper bound is $N^2/J$.
+
+The sharper $\varrho$ factors change the tuning constants, not the
+displayed general powers when $\varrho$ is fixed in $(\tfrac12,1)$.
 At $\varrho=\tfrac12$, the population term is zero and $\alpha=0$
-minimizes the particle upper bound.
-If the signed coefficient in Equation~
-(\ref{eq:population-bias-signed-derivative}) is small, Equation~
-(\ref{eq:population-bias-cancellation-bound}) should instead be used
-for the population term; the table does not exploit such cancellation.
+minimizes the finite particle upper bound.  For $N=1$ all choices of
+$\alpha$ give the same estimator.  Finally, if the signed sum in
+Equation~(\ref{eq:population-bias-signed-derivative}) vanishes,
+Remark~\ref{rem:population-bias-cancellation} gives, before horizon
+saturation and with fixed model constants,
+\begin{align}
+1-\alpha&\asymp
+\left(\frac1{NJ}+\frac1{J^2}\right)^{1/6},                 \notag\\
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2
+&\lesssim pG'(\theta)^2N^2
+\left(\frac1{NJ}+\frac1{J^2}\right)^{2/3}.
+\label{eq:alpha-tuning-signed-cancellation}
+\end{align}
+Indeed, the particle contribution is of order
+$(N/J+N^2/J^2)(1-\alpha)^{-2}$ and the squared population contribution
+is then at most order $N^2(1-\alpha)^4$.
+The vanishing signed sum is not guaranteed by the assumptions;
+the general table does not impose it.
 \end{remark}
 
 
@@ -12192,15 +12322,18 @@ and its population truncation error are
 \sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
 \end{align}
 Equation~(\ref{eq:population-discount-vector-boundary-comparison}) with
-$q=k$ gives
+$q=k$ gives, for $\tfrac12<\varrho<1$,
 \begin{equation}
 \left\|
 \nabla_\theta\ell(\theta)-\nabla_\theta s_k^1(\theta)
 \right\|_2
 \leq
-C(N-k-1)\sqrt p\,G'(\theta)
-\varrho^{k+1}.
+2(N-k-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\left(\frac{2\varrho-1}{3-2\varrho}\right)^k.
 \end{equation}
+At $\varrho=\tfrac12$ the population error is zero for every $k$;
+at $k=N-1$ it is zero for every $\varrho$.
 The finite-window particle calculation in Equations~
 (\ref{eq:fixed-lag-variance-s13}) and
 (\ref{eq:fixed-lag-particle-bias-s13}) gives
