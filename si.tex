@@ -2819,32 +2819,33 @@ pG'(\theta)^2
 \end{align}
 For $0\leq\alpha<1$,
 \begin{align}
-\E\left\|
+&\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2
-&\lesssim
-pG'(\theta)^2
-\left[
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+\left\{
-\varrho(1-\alpha)
-\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-\right\}^2
-\right]
-\notag\\
-&\lesssim
-pG'(\theta)^2
-\left[
-\frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-+N^2
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
+&+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
+{(1+\sqrt{2(1-\varrho)})^2}
 \left\{
-\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}
-\right\}^2
-\right].
+N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
+\right\}^2\Bigg]
+\end{aligned}                                               \notag\\
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
+\frac{N}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}\\
+&+N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\end{aligned}
 \label{eq:verified-theorem-five-mse}
 \end{align}
 For the same range of $\alpha$, the population component of the
@@ -2855,12 +2856,16 @@ fixed-observation bias satisfies
 -\nabla_\theta\ell(\theta)
 \right\|_2
 \leq
-CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}.
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}.
 \label{eq:verified-theorem-five-population-bias}
 \end{equation}
-Here $\varrho\in(0,1)$.  Apart from the particle-system mixing and
+Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$ is the same
+constant as in Equation~(\ref{eq:population-forgetting-varrho}).
+The sum beginning at $q=1$ is empty for $N\leq2$; at
+$\varrho=\tfrac12$ the displayed population terms are zero.  Apart from the particle-system mixing and
 logarithmic-threshold factor hidden by $\lesssim$, the suppressed constants depend only on the
 fixed model bounds and not on $N,J$, or $\alpha$.
 Section~\ref{appendix:sharper-biasvar} gives the complete proof.  The
@@ -9175,24 +9180,25 @@ C(N-1)\sqrt p\,G'(\theta)
 For $N=1$, the finite sum is empty, the displayed fraction is zero, and
 the full-score difference is zero.
 The dependence on the transition bounds can be sharpened further.
-With the existing $\epsilon=\underbar M/\bar M$, for $0<\epsilon<1$,
+With the existing $\varrho=1-\underbar M/(2\bar M)$ from Equation~
+(\ref{eq:population-forgetting-varrho}), for $\tfrac12<\varrho<1$,
 \begin{align}
 &\left\|\nabla_\theta\ell(\theta)
 -\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
 &\quad\leq
 2\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}(1-\alpha)
 \sum_{q=0}^{N-2}(N-1-q)
-\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+\left\{\alpha\frac{2\varrho-1}{3-2\varrho}\right\}^{q}       \notag\\
 &\quad\leq
 2(N-1)\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-\frac{(1-\alpha)(1+\epsilon)}
-{1-\alpha+(1+\alpha)\epsilon}.
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}.
 \label{eq:population-discount-sharp-transition-bound}
 \end{align}
 If every transition is independent of its starting location, in
-particular if $\epsilon=1$, the population discounting bias is zero
+particular if $\varrho=\tfrac12$, the population discounting bias is zero
 for every $N$ and $\alpha$.
 \end{lem}
 
@@ -9356,7 +9362,9 @@ $\mu\{L-\mu(L)\}=0$, this gives
 The last inequality is $\mu(L)+ab/\mu(L)\geq2\sqrt{ab}$.
 When $a=b$, $L$ is constant and the difference is zero.
 
-For $0<\epsilon<1$, apply Equation~
+Equation~(\ref{eq:population-forgetting-varrho}) gives
+$\underbar M/\bar M=2(1-\varrho)$ and $\tfrac12\leq\varrho<1$.
+For $\tfrac12<\varrho<1$, apply Equation~
 (\ref{eq:population-discount-bayes-range-bound}) to the two backward
 kernels at $x$ and $x'$.  In this application set
 \begin{equation}
@@ -9366,16 +9374,16 @@ L(u)=
 \end{equation}
 Equation~(\ref{eq:posterior-backward-kernel}) and (A2) give
 \begin{equation}
-\epsilon\leq L(u)\leq\epsilon^{-1},
+2(1-\varrho)\leq L(u)\leq\{2(1-\varrho)\}^{-1},
 \qquad
 B_t(f)(x)=\frac{B_t(fL)(x')}{B_t(L)(x')}.
 \end{equation}
-Taking $\mu=B_t(x',\cdot)$, $a=\epsilon$, and $b=\epsilon^{-1}$
+Taking $\mu=B_t(x',\cdot)$, $a=2(1-\varrho)$, and $b=\{2(1-\varrho)\}^{-1}$
 in Equation~(\ref{eq:population-discount-bayes-range-bound}) therefore
 gives
 \begin{equation}
 \operatorname{osc}\{B_t(f)\}
-\leq\frac{1-\epsilon}{1+\epsilon}\operatorname{osc}(f).
+\leq\frac{2\varrho-1}{3-2\varrho}\operatorname{osc}(f).
 \label{eq:population-discount-sharp-backward-contraction}
 \end{equation}
 Applying this inequality to the $q$ kernels in Equation~
@@ -9386,7 +9394,7 @@ $\operatorname{osc}(\bar h_{s,i})\leq2G'(\theta)$, yields
 x\longmapsto\E_{\rho_N}\{h_{s,i}\mid X_{s+q}=x\}
 \right]
 &\leq
-2G'(\theta)\left(\frac{1-\epsilon}{1+\epsilon}\right)^q
+2G'(\theta)\left(\frac{2\varrho-1}{3-2\varrho}\right)^q
 \leq2G'(\theta)\varrho^q.
 \label{eq:population-discount-partial-smoother-oscillation}
 \end{align}
@@ -9397,14 +9405,14 @@ Next, the future likelihood already defined in Equation~
 \begin{align}
 L_{s+q,N}(x)
 &=\int M_{s+q+1}(x,du)G_{s+q+1}(u)L_{s+q+1,N}(u),          \notag\\
-L_{s+q,N}(x)&\geq\epsilon L_{s+q,N}(x')
+L_{s+q,N}(x)&\geq2(1-\varrho) L_{s+q,N}(x')
 \qquad\text{for every }x,x'.
 \label{eq:population-discount-future-likelihood-ratio}
 \end{align}
 The second line follows by applying
-$M_{s+q+1}(x,\cdot)\geq\epsilon M_{s+q+1}(x',\cdot)$ to the
+$M_{s+q+1}(x,\cdot)\geq2(1-\varrho) M_{s+q+1}(x',\cdot)$ to the
 nonnegative integrand.  Thus its supremum divided by its infimum is
-at most $\epsilon^{-1}$.  Apply Equation~
+at most $\{2(1-\varrho)\}^{-1}$.  Apply Equation~
 (\ref{eq:population-discount-bayes-range-bound}) with $\mu=\pi_{s+q}$
 and $L=L_{s+q,N}$ to obtain
 \begin{align}
@@ -9413,7 +9421,7 @@ and $L=L_{s+q,N}$ to obtain
 -\pi_{s+q}(f)
 \right|
 &\leq
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}\operatorname{osc}(f).
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}\operatorname{osc}(f).
 \label{eq:population-discount-future-tilt-contraction}
 \end{align}
 The tower property and the common conditional expectation in Equation~
@@ -9437,25 +9445,25 @@ Consequently, Equations~
 \begin{align}
 |\rho_N(h_{s,i})-\rho_{s+q}(h_{s,i})|
 &\leq
-2G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+2G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\left(\frac{2\varrho-1}{3-2\varrho}\right)^q                \notag\\
 &\leq2G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-coordinate-boundary-comparison}
 \end{align}
 For the second inequality, each of
-$(1-\sqrt\epsilon)/(1+\sqrt\epsilon)$ and
-$(1-\epsilon)/(1+\epsilon)$ is at most $1-\epsilon\leq\varrho$.
+$(1-\sqrt{2(1-\varrho)})/(1+\sqrt{2(1-\varrho)})$ and
+$(2\varrho-1)/(3-2\varrho)$ is at most $2\varrho-1\leq\varrho$.
 Summing the squared coordinate bounds and taking square roots gives
 \begin{align}
 \|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
 &\leq
-2\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+2\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\left(\frac{2\varrho-1}{3-2\varrho}\right)^q                \notag\\
 &\leq2\sqrt p\,G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-vector-boundary-comparison}
 \end{align}
 If every transition is independent of its starting location, as (A2)
-implies when $\epsilon=1$, then $L_{s+q,N}$ is constant, Equation~
+implies when $\varrho=\tfrac12$, then $L_{s+q,N}$ is constant, Equation~
 (\ref{eq:population-discount-two-boundary-expectations}) has equal
 right-hand sides, and the full bias is zero.
 
@@ -9510,25 +9518,25 @@ Equations~(\ref{eq:population-discount-boundary-comparison-bound}) and
 (\ref{eq:dmop-full-population-discount-bias}).
 To obtain the sharper bound, retain the first line of Equation~
 (\ref{eq:population-discount-vector-boundary-comparison}) in the same
-finite sum.  For $0<\epsilon<1$,
+finite sum.  For $\tfrac12<\varrho<1$,
 \begin{align}
 &\left\|\nabla_\theta\ell(\theta)
 -\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
 &\quad\leq
 2\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}(1-\alpha)
 \sum_{q=0}^{N-2}(N-1-q)
-\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+\left\{\alpha\frac{2\varrho-1}{3-2\varrho}\right\}^{q}       \notag\\
 &\quad\leq
 2(N-1)\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}(1-\alpha)
 \sum_{q=0}^{\infty}
-\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+\left\{\alpha\frac{2\varrho-1}{3-2\varrho}\right\}^{q}       \notag\\
 &\quad=
 2(N-1)\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-\frac{(1-\alpha)(1+\epsilon)}
-{1-\alpha+(1+\alpha)\epsilon}.
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}.
 \end{align}
 The ratio in the geometric series is strictly less than one even at
 $\alpha=1$.  This proves Equation~
@@ -9567,32 +9575,32 @@ Subtracting $(1-\alpha)$ times Equation~
 \end{align}
 Thus Equation~(\ref{eq:population-discount-vector-boundary-comparison}),
 the triangle inequality, and reversal of the finite sums give, for
-$0<\epsilon<1$,
+$\tfrac12<\varrho<1$,
 \begin{align}
 &\left\|
 \nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
 -(1-\alpha)
 \left.\frac{\partial}{\partial\alpha}
 \nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}
-\right\|_2                                                   \notag\\
+\right\|_2                                                   \notag\\*
 &\quad\leq
-2\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+2\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
 (1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(1-\alpha^q)
-\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+\left(\frac{2\varrho-1}{3-2\varrho}\right)^q                \notag\\
 &\quad\leq
-2(N-1)\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+2(N-1)\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
 (1-\alpha)
-\left\{\frac{1+\epsilon}{2\epsilon}
--\frac{1+\epsilon}{1-\alpha+(1+\alpha)\epsilon}\right\}     \notag\\
+\left\{\frac{3-2\varrho}{4(1-\varrho)}
+-\frac{3-2\varrho}{3-2\varrho-\alpha(2\varrho-1)}\right\}     \notag\\
 &\quad=
 (N-1)\sqrt p\,G'(\theta)
-\frac{(1-\sqrt\epsilon)^2(1+\epsilon)(1-\alpha)^2}
-{\epsilon\{1-\alpha+(1+\alpha)\epsilon\}}.
+\frac{(1-\sqrt{2(1-\varrho)})^2(3-2\varrho)(1-\alpha)^2}
+{2(1-\varrho)\{3-2\varrho-\alpha(2\varrho-1)\}}.
 \label{eq:population-bias-signed-remainder-bound}
 \end{align}
 The last equality uses
-$1-\epsilon=(1-\sqrt\epsilon)(1+\sqrt\epsilon)$.
-For $\epsilon=1$, the score difference and its signed derivative are
+$2\varrho-1=(1-\sqrt{2(1-\varrho)})(1+\sqrt{2(1-\varrho)})$.
+For $\varrho=\tfrac12$, the score difference and its signed derivative are
 both zero, so the same bound holds.
 In particular, the population bias is bounded by
 \begin{align}
@@ -9603,8 +9611,8 @@ In particular, the population bias is bounded by
 \left\|\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}\right\|_2
 +
 (N-1)\sqrt p\,G'(\theta)
-\frac{(1-\sqrt\epsilon)^2(1+\epsilon)(1-\alpha)^2}
-{\epsilon\{1-\alpha+(1+\alpha)\epsilon\}}.
+\frac{(1-\sqrt{2(1-\varrho)})^2(3-2\varrho)(1-\alpha)^2}
+{2(1-\varrho)\{3-2\varrho-\alpha(2\varrho-1)\}}.
 \label{eq:population-bias-cancellation-bound}
 \end{align}
 This inequality holds for every fixed observation sequence and adds no
@@ -10901,44 +10909,51 @@ Equation~(\ref{eq:verified-dmop-one-mse-bound}).
 \begin{thm}[MSE bounds for DMOP-$\alpha$]
 \label{thm:refined-dmop-alpha-mse}
 Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
-\ref{lem:dmop-population-discount-bias}, for $\alpha\in[0,1]$,
+\ref{lem:dmop-population-discount-bias}, take the same
+$\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$.
+For $\alpha\in[0,1]$,
 \begin{align}
 &\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2                                                \notag\\
-&\quad\lesssim
-pG'(\theta)^2\Bigg[
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+\left\{
-\varrho(1-\alpha)
-\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-\right\}^2
-\Bigg]
-\label{eq:verified-dmop-alpha-mse-finite-sum}.
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
+&+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
+{(1+\sqrt{2(1-\varrho)})^2}
+\left\{
+N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
+\right\}^2\Bigg].
+\end{aligned}
+\label{eq:verified-dmop-alpha-mse-finite-sum}
 \end{align}
-For $0\leq\alpha<1$, this finite bound implies
-\begin{equation}
-\E\left\|
+For $0\leq\alpha<1$, this implies
+\begin{align}
+&\E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)
-\right\|_2^2
-\lesssim
-pG'(\theta)^2
-\left[
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-+N^2\left\{
-\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}
-\right\}^2
-\right].
++\frac{N^2}{J^2(1-\alpha)^2}\\
+&+N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\end{aligned}
 \label{eq:verified-dmop-alpha-mse-bound}
-\end{equation}
-Sharper alternatives for the population term are given in Equation~
-(\ref{eq:population-discount-sharp-transition-bound}) and
-Remark~\ref{rem:population-bias-cancellation}.
+\end{align}
+The finite sum beginning at $q=1$ is empty for $N\leq2$.
+At $\varrho=\tfrac12$, the displayed population terms are zero.
+Remark~\ref{rem:population-bias-cancellation} gives a complementary
+bound retaining signed cancellation.
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -10966,38 +10981,47 @@ CpG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \end{equation}
-Lemma~\ref{lem:dmop-population-discount-bias} gives
-\begin{equation}
-\left\|
-\nabla_\theta\ell^\alpha(\theta)
--\nabla_\theta\ell(\theta)
-\right\|_2^2
-\leq
-CpG'(\theta)^2
-\left\{
-\varrho(1-\alpha)
-\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-\right\}^2.
-\end{equation}
-Substitution into Equation~
-(\ref{eq:generic-mse-particle-population-split}) proves the first bound.
-For $0\leq\alpha<1$,
+The sharper bound in Equation~
+(\ref{eq:population-discount-sharp-transition-bound}) of Lemma~
+\ref{lem:dmop-population-discount-bias} gives
 \begin{align}
-\sum_{r=0}^{N-1}\alpha^r
-&\leq\frac1{1-\alpha},                                    \notag\\
-\varrho(1-\alpha)
-\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-&\leq
-N\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}.
+&\left\|
+\nabla_\theta\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\
+&\quad\leq 4pG'(\theta)^2\,\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
+{(1+\sqrt{2(1-\varrho)})^2}
+\left\{
+N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
+\right\}^2.
 \end{align}
-Substitution of these two inequalities proves Equation~
-(\ref{eq:verified-dmop-alpha-mse-bound}).
-The same proof permits replacing the population contribution by twice
-the square of the right-hand side of Equation~
-(\ref{eq:population-discount-sharp-transition-bound}) or Equation~
-(\ref{eq:population-bias-cancellation-bound}), taking the smaller
-available bound.  This does not change the particle contribution.
+Here the $q=0$ summand has been written separately as $N-1$.
+For $\varrho=\tfrac12$, both sides of this last inequality are zero
+by Lemma~\ref{lem:dmop-population-discount-bias}.
+Substitution into Equation~
+(\ref{eq:generic-mse-particle-population-split}), absorbing fixed
+numerical factors into $\lesssim$, proves the first bound.
+For $0\leq\alpha<1$,
+\begin{equation}
+\sum_{r=0}^{N-1}\alpha^r\leq\frac1{1-\alpha}.
+\end{equation}
+Also,
+\begin{align}
+&N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q             \notag\\
+&\quad\leq
+(N-1)\left\{1+\sum_{q=1}^{\infty}
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q\right\}     \notag\\
+&\quad=
+\frac{(N-1)(3-2\varrho)}{3-2\varrho-\alpha(2\varrho-1)}.
+\end{align}
+The geometric ratio is in $[0,1)$, including when
+$\varrho=\tfrac12$.  These inequalities and $N-1\leq N$ prove
+Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).
+Alternatively, Equation~(\ref{eq:population-bias-cancellation-bound})
+may be substituted in Equation~
+(\ref{eq:generic-mse-particle-population-split}), taking the smaller
+population bound without changing the particle contribution.
 \end{proof}
 
 \iffalse
@@ -11358,8 +11382,10 @@ MSE.  Since
 \sum_{r=0}^{N-1}\alpha^r
 \leq\min\{N,(1-\alpha)^{-1}\}
 \end{equation}
-and the fixed model constants include $\varrho/(1-\varrho)$, Theorem~
-\ref{thm:refined-dmop-alpha-mse} gives
+and the coarser population bound in Equation~
+(\ref{eq:dmop-full-population-discount-bias}) has fixed model constants
+including $\varrho/(1-\varrho)$, the proof of Theorem~
+\ref{thm:refined-dmop-alpha-mse} also gives
 \begin{equation}
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)
@@ -11399,6 +11425,8 @@ suppress the same particle-system logarithmic factor as Lemma~
 The sharper transition constants in Equation~
 (\ref{eq:population-discount-sharp-transition-bound}) improve the
 model-dependent bound, not these general powers of $N$ and $J$.
+At $\varrho=\tfrac12$, the population term is zero and $\alpha=0$
+minimizes the particle upper bound.
 If the signed coefficient in Equation~
 (\ref{eq:population-bias-signed-derivative}) is small, Equation~
 (\ref{eq:population-bias-cancellation-bound}) should instead be used
