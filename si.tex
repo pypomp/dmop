@@ -7668,7 +7668,7 @@ algorithm and not an additional randomization.  In this precise sense,
 geometric discounting is a soft lag truncation whose effective memory is
 computed below.
 
-There are two different coefficients at lag zero.  The number
+There are two different coefficients at lag zero.  For $N\geq2$, the number
 $\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
 score $\nabla_\theta\hat s_0^1(\theta)$.  By contrast, every hard-$k$
 score contains $\Delta_{n,0}^J$, so the coefficient of the zero-lag
@@ -7684,6 +7684,7 @@ In particular, at $\alpha=0$,
 \nabla_\theta\ell_n^0(\theta)=\Delta_{n,0}.
 \label{eq:dmop-zero-exact-lag-coefficient-s13}
 \end{equation}
+For $N=1$, the only mixture weight is $\beta_0=1$ for every $\alpha$.
 
 The mean lag in this censored geometric mixture satisfies
 \begin{align}
@@ -9173,6 +9174,26 @@ C(N-1)\sqrt p\,G'(\theta)
 \end{align}
 For $N=1$, the finite sum is empty, the displayed fraction is zero, and
 the full-score difference is zero.
+The dependence on the transition bounds can be sharpened further.
+With the existing $\epsilon=\underbar M/\bar M$, for $0<\epsilon<1$,
+\begin{align}
+&\left\|\nabla_\theta\ell(\theta)
+-\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
+&\quad\leq
+2\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)
+\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+&\quad\leq
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+\frac{(1-\alpha)(1+\epsilon)}
+{1-\alpha+(1+\alpha)\epsilon}.
+\label{eq:population-discount-sharp-transition-bound}
+\end{align}
+If every transition is independent of its starting location, in
+particular if $\epsilon=1$, the population discounting bias is zero
+for every $N$ and $\alpha$.
 \end{lem}
 
 \begin{proof}[Proof.]
@@ -9298,135 +9319,147 @@ are the same function of $x$:
 \end{cases}
 \label{eq:population-discount-common-conditional-past}
 \end{align}
-Here $\bar h_{s,i}$ is the conditional projection in Equation~
-(\ref{eq:population-score-current-projection}); its invariance under later
-posterior laws is Equation~
-(\ref{eq:population-score-projection-conditional}).  Also, $B_t$ is the
-posterior backward kernel in Equation~
-(\ref{eq:posterior-backward-kernel}).  Equation~
-(\ref{eq:conditional-past-score-oscillation}) and $q$ successive
-applications of Equation~
-(\ref{eq:posterior-backward-oscillation-contraction}) give
-\begin{align}
-&\operatorname{osc}\!\left[
-x\longmapsto
-\E_{\rho_N}\{h_{s,i}\mid X_{s+q}=x\}
-\right]                                                       \notag\\
-&\qquad\leq
-2G'(\theta)(1-\epsilon)^q
+Here $\bar h_{s,i}$ and $B_t$ are already defined in Equations~
+(\ref{eq:population-score-current-projection}) and
+(\ref{eq:posterior-backward-kernel}).  We first sharpen the bound on the
+change of a probability expectation under a positive likelihood.
+
+For a probability measure $\mu$, a positive function $L$ with
+$0<a\leq L\leq b$, and a bounded real function $f$, suppose first that
+$a<b$.  Convexity of the absolute value gives, pointwise,
+\begin{equation}
+|L-\mu(L)|
 \leq
-2G'(\theta)\varrho^q.
+\frac{b-L}{b-a}\{\mu(L)-a\}
++\frac{L-a}{b-a}\{b-\mu(L)\}.
+\label{eq:population-discount-likelihood-chord}
+\end{equation}
+Subtract the midpoint of the range of $f$ inside
+$\mu[f\{L-\mu(L)\}]$, and then integrate Equation~
+(\ref{eq:population-discount-likelihood-chord}).  Since
+$\mu\{L-\mu(L)\}=0$, this gives
+\begin{align}
+\left|\frac{\mu(fL)}{\mu(L)}-\mu(f)\right|
+&\leq
+\frac{\operatorname{osc}(f)}{2\mu(L)}
+\mu|L-\mu(L)|                                               \notag\\*
+&\leq
+\operatorname{osc}(f)
+\frac{\{b-\mu(L)\}\{\mu(L)-a\}}{\mu(L)(b-a)}                 \notag\\*
+&=
+\operatorname{osc}(f)
+\frac{a+b-\mu(L)-ab/\mu(L)}{b-a}                            \notag\\*
+&\leq
+\operatorname{osc}(f)\frac{\sqrt b-\sqrt a}{\sqrt b+\sqrt a}.
+\label{eq:population-discount-bayes-range-bound}
+\end{align}
+The last inequality is $\mu(L)+ab/\mu(L)\geq2\sqrt{ab}$.
+When $a=b$, $L$ is constant and the difference is zero.
+
+For $0<\epsilon<1$, apply Equation~
+(\ref{eq:population-discount-bayes-range-bound}) to the two backward
+kernels at $x$ and $x'$.  In this application set
+\begin{equation}
+L(u)=
+\frac{f_{X_t\mid X_{t-1}}(x\mid u;\theta)}
+{f_{X_t\mid X_{t-1}}(x'\mid u;\theta)}.
+\end{equation}
+Equation~(\ref{eq:posterior-backward-kernel}) and (A2) give
+\begin{equation}
+\epsilon\leq L(u)\leq\epsilon^{-1},
+\qquad
+B_t(f)(x)=\frac{B_t(fL)(x')}{B_t(L)(x')}.
+\end{equation}
+Taking $\mu=B_t(x',\cdot)$, $a=\epsilon$, and $b=\epsilon^{-1}$
+in Equation~(\ref{eq:population-discount-bayes-range-bound}) therefore
+gives
+\begin{equation}
+\operatorname{osc}\{B_t(f)\}
+\leq\frac{1-\epsilon}{1+\epsilon}\operatorname{osc}(f).
+\label{eq:population-discount-sharp-backward-contraction}
+\end{equation}
+Applying this inequality to the $q$ kernels in Equation~
+(\ref{eq:population-discount-common-conditional-past}), starting from
+$\operatorname{osc}(\bar h_{s,i})\leq2G'(\theta)$, yields
+\begin{align}
+\operatorname{osc}\!\left[
+x\longmapsto\E_{\rho_N}\{h_{s,i}\mid X_{s+q}=x\}
+\right]
+&\leq
+2G'(\theta)\left(\frac{1-\epsilon}{1+\epsilon}\right)^q
+\leq2G'(\theta)\varrho^q.
 \label{eq:population-discount-partial-smoother-oscillation}
 \end{align}
-The observations after time $s+q$ supply one additional contraction.
-Since $s+q<N$, Equation~
-(\ref{eq:population-score-future-likelihood}) and the Markov property give
+This also covers $q=0$, when the product contains no backward kernel.
+
+Next, the future likelihood already defined in Equation~
+(\ref{eq:population-score-future-likelihood}) satisfies, since $s+q<N$,
 \begin{align}
 L_{s+q,N}(x)
-&=
-\int M_{s+q+1}(x,du)G_{s+q+1}(u)L_{s+q+1,N}(u).
-\label{eq:population-discount-future-likelihood-recursion}
-\end{align}
-For every $x,x'$, Assumption~{\refAssumpBoundedProcess} gives
-\begin{align}
-L_{s+q,N}(x)
-&\geq
-\epsilon
-\int M_{s+q+1}(x',du)G_{s+q+1}(u)L_{s+q+1,N}(u)             \notag\\
-&=
-\epsilon L_{s+q,N}(x').
+&=\int M_{s+q+1}(x,du)G_{s+q+1}(u)L_{s+q+1,N}(u),          \notag\\
+L_{s+q,N}(x)&\geq\epsilon L_{s+q,N}(x')
+\qquad\text{for every }x,x'.
 \label{eq:population-discount-future-likelihood-ratio}
 \end{align}
-Consequently,
-\begin{equation}
-\frac{L_{s+q,N}(x)}{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}
-\geq\epsilon.
-\label{eq:population-discount-future-tilt-minorization}
-\end{equation}
-Indeed, the denominator is no larger than
-$\sup_{x'}L_{s+q,N}(x')$, while Equation~
-(\ref{eq:population-discount-future-likelihood-ratio}) bounds the
-numerator below by $\epsilon\sup_{x'}L_{s+q,N}(x')$.
-
-For $\epsilon<1$, subtracting $\epsilon$ from the left side of
-Equation~(\ref{eq:population-discount-future-tilt-minorization}) and
-dividing by $1-\epsilon$ produces a nonnegative function whose
-$\rho_{s+q}$ expectation is one.  Hence, for every bounded real
-function $f$ of $X_{s+q}$,
+The second line follows by applying
+$M_{s+q+1}(x,\cdot)\geq\epsilon M_{s+q+1}(x',\cdot)$ to the
+nonnegative integrand.  Thus its supremum divided by its infimum is
+at most $\epsilon^{-1}$.  Apply Equation~
+(\ref{eq:population-discount-bayes-range-bound}) with $\mu=\pi_{s+q}$
+and $L=L_{s+q,N}$ to obtain
 \begin{align}
-&\frac{\rho_{s+q}\{f(X_{s+q})L_{s+q,N}(X_{s+q})\}}
-{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}                         \notag\\
-&\quad=
-\epsilon\rho_{s+q}\{f(X_{s+q})\}                          \notag\\
-&\qquad+
-(1-\epsilon)\rho_{s+q}\!\left[
-f(X_{s+q})
-\frac{
-L_{s+q,N}(X_{s+q})/
-\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}-\epsilon
-}{1-\epsilon}
-\right].
-\label{eq:population-discount-future-tilt-splitting}
-\end{align}
-Subtracting $\rho_{s+q}\{f(X_{s+q})\}$ from both sides of Equation~
-(\ref{eq:population-discount-future-tilt-splitting}) and using that both
-terms multiplied by $\epsilon$ and $1-\epsilon$ are probability
-expectations gives
-\begin{align}
-&\left|
-\frac{\rho_{s+q}\{f(X_{s+q})L_{s+q,N}(X_{s+q})\}}
-{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}}
--\rho_{s+q}\{f(X_{s+q})\}
-\right|                                                       \notag\\
-&\qquad\leq
-(1-\epsilon)\operatorname{osc}(f).
+\left|
+\frac{\pi_{s+q}(fL_{s+q,N})}{\pi_{s+q}(L_{s+q,N})}
+-\pi_{s+q}(f)
+\right|
+&\leq
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}\operatorname{osc}(f).
 \label{eq:population-discount-future-tilt-contraction}
 \end{align}
-If $\epsilon=1$, the two expectations in Equation~
-(\ref{eq:population-discount-future-tilt-contraction}) are equal, so the
-same inequality holds.
-
-Equation~(\ref{eq:canonical-extended-posterior-path-law}), conditioning
-on $X_{s+q}$, and Equation~
-(\ref{eq:population-discount-common-conditional-past}) give
+The tower property and the common conditional expectation in Equation~
+(\ref{eq:population-discount-common-conditional-past}) identify the
+two quantities being compared:
 \begin{align}
 \rho_N(h_{s,i})
 &=
 \frac{
 \rho_{s+q}\!\left[
-\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}
-L_{s+q,N}(X_{s+q})
-\right]
-}
-{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}},                       \notag\\
+\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}L_{s+q,N}(X_{s+q})
+\right]}
+{\rho_{s+q}\{L_{s+q,N}(X_{s+q})\}},                         \notag\\*
 \rho_{s+q}(h_{s,i})
-&=
-\rho_{s+q}\!\left[
-\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}
-\right].
+&=\rho_{s+q}\!\left[\E_{\rho_{s+q}}\{h_{s,i}\mid X_{s+q}\}\right].
 \label{eq:population-discount-two-boundary-expectations}
 \end{align}
-Apply Equation~(\ref{eq:population-discount-future-tilt-contraction})
-to the common conditional expectation in Equation~
-(\ref{eq:population-discount-common-conditional-past}).  The tower
-identities in Equation~
-(\ref{eq:population-discount-two-boundary-expectations}) and Equation~
-(\ref{eq:population-discount-partial-smoother-oscillation}) give
+Consequently, Equations~
+(\ref{eq:population-discount-partial-smoother-oscillation})--
+(\ref{eq:population-discount-two-boundary-expectations}) give
 \begin{align}
 |\rho_N(h_{s,i})-\rho_{s+q}(h_{s,i})|
 &\leq
-2G'(\theta)(1-\epsilon)^{q+1}                              \notag\\
-&\leq
-2G'(\theta)\varrho^{q+1}.
+2G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+&\leq2G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-coordinate-boundary-comparison}
 \end{align}
-Summing the squared coordinate bounds and taking square roots yield
+For the second inequality, each of
+$(1-\sqrt\epsilon)/(1+\sqrt\epsilon)$ and
+$(1-\epsilon)/(1+\epsilon)$ is at most $1-\epsilon\leq\varrho$.
+Summing the squared coordinate bounds and taking square roots gives
 \begin{align}
 \|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
 &\leq
-2\sqrt p\,G'(\theta)\varrho^{q+1}.
+2\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+&\leq2\sqrt p\,G'(\theta)\varrho^{q+1}.
 \label{eq:population-discount-vector-boundary-comparison}
 \end{align}
+If every transition is independent of its starting location, as (A2)
+implies when $\epsilon=1$, then $L_{s+q,N}$ is constant, Equation~
+(\ref{eq:population-discount-two-boundary-expectations}) has equal
+right-hand sides, and the full bias is zero.
+
+\medskip\noindent\emph{Step 5: sum the boundary comparisons.}\quad
 Insert Equation~
 (\ref{eq:population-discount-vector-boundary-comparison}) into Equation~
 (\ref{eq:population-discount-full-boundary-comparison}), apply the
@@ -9475,7 +9508,112 @@ $1-\alpha\varrho$ and collecting terms therefore gives
 Equations~(\ref{eq:population-discount-boundary-comparison-bound}) and
 (\ref{eq:population-discount-finite-boundary-sum}) prove Equation~
 (\ref{eq:dmop-full-population-discount-bias}).
+To obtain the sharper bound, retain the first line of Equation~
+(\ref{eq:population-discount-vector-boundary-comparison}) in the same
+finite sum.  For $0<\epsilon<1$,
+\begin{align}
+&\left\|\nabla_\theta\ell(\theta)
+-\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
+&\quad\leq
+2\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\sum_{q=0}^{N-2}(N-1-q)
+\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+&\quad\leq
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}(1-\alpha)
+\sum_{q=0}^{\infty}
+\left\{\alpha\frac{1-\epsilon}{1+\epsilon}\right\}^{q}       \notag\\
+&\quad=
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+\frac{(1-\alpha)(1+\epsilon)}
+{1-\alpha+(1+\alpha)\epsilon}.
+\end{align}
+The ratio in the geometric series is strictly less than one even at
+$\alpha=1$.  This proves Equation~
+(\ref{eq:population-discount-sharp-transition-bound}).
 \end{proof}
+
+\begin{remark}[Signed cancellation in the population bias]
+\label{rem:population-bias-cancellation}
+The preceding bounds take absolute values separately for each original
+time.  A complementary bound retains their signed first-order sum.
+Since the population score is a finite polynomial in $\alpha$,
+\begin{align}
+\left.\frac{\partial}{\partial\alpha}
+\nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}
+&=\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}                \notag\\
+&=\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}
+\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
+\label{eq:population-bias-signed-derivative}
+\end{align}
+The first equality follows by differentiating Equation~
+(\ref{eq:population-conditional-score-path-decomposition}) and summing
+over $n$.  For the second, divide Equation~
+(\ref{eq:population-discount-full-boundary-comparison}) by
+$1-\alpha$ and let $\alpha\uparrow1$; all sums are finite.
+Subtracting $(1-\alpha)$ times Equation~
+(\ref{eq:population-bias-signed-derivative}) from Equation~
+(\ref{eq:population-discount-full-boundary-comparison}) gives exactly
+\begin{align}
+&\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+-(1-\alpha)
+\left.\frac{\partial}{\partial\alpha}
+\nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}             \notag\\
+&\quad=-(1-\alpha)\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}
+(1-\alpha^q)\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
+\label{eq:population-bias-signed-remainder}
+\end{align}
+Thus Equation~(\ref{eq:population-discount-vector-boundary-comparison}),
+the triangle inequality, and reversal of the finite sums give, for
+$0<\epsilon<1$,
+\begin{align}
+&\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
+-(1-\alpha)
+\left.\frac{\partial}{\partial\alpha}
+\nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}
+\right\|_2                                                   \notag\\
+&\quad\leq
+2\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(1-\alpha^q)
+\left(\frac{1-\epsilon}{1+\epsilon}\right)^q                \notag\\
+&\quad\leq
+2(N-1)\sqrt p\,G'(\theta)\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
+(1-\alpha)
+\left\{\frac{1+\epsilon}{2\epsilon}
+-\frac{1+\epsilon}{1-\alpha+(1+\alpha)\epsilon}\right\}     \notag\\
+&\quad=
+(N-1)\sqrt p\,G'(\theta)
+\frac{(1-\sqrt\epsilon)^2(1+\epsilon)(1-\alpha)^2}
+{\epsilon\{1-\alpha+(1+\alpha)\epsilon\}}.
+\label{eq:population-bias-signed-remainder-bound}
+\end{align}
+The last equality uses
+$1-\epsilon=(1-\sqrt\epsilon)(1+\sqrt\epsilon)$.
+For $\epsilon=1$, the score difference and its signed derivative are
+both zero, so the same bound holds.
+In particular, the population bias is bounded by
+\begin{align}
+&\|\nabla_\theta\ell(\theta)
+-\nabla_\theta\ell^\alpha(\theta)\|_2                         \notag\\
+&\quad\leq
+(1-\alpha)
+\left\|\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}\right\|_2
++
+(N-1)\sqrt p\,G'(\theta)
+\frac{(1-\sqrt\epsilon)^2(1+\epsilon)(1-\alpha)^2}
+{\epsilon\{1-\alpha+(1+\alpha)\epsilon\}}.
+\label{eq:population-bias-cancellation-bound}
+\end{align}
+This inequality holds for every fixed observation sequence and adds no
+cancellation assumption.  If the signed sum vanishes, it gives
+$O\{N(1-\alpha)^2\}$ bias and $O\{N^2(1-\alpha)^4\}$ squared bias
+with fixed model constants, without correcting the estimator.
+The existing assumptions do not require that vanishing, as the following
+example shows.
+\end{remark}
 
 \begin{remark}[Sharpness of the fixed-observation population order]
 The powers of $N$ and $1-\alpha$ in Equation~
@@ -10798,6 +10936,9 @@ pG'(\theta)^2
 \right].
 \label{eq:verified-dmop-alpha-mse-bound}
 \end{equation}
+Sharper alternatives for the population term are given in Equation~
+(\ref{eq:population-discount-sharp-transition-bound}) and
+Remark~\ref{rem:population-bias-cancellation}.
 \end{thm}
 
 \begin{proof}[Proof.]
@@ -10852,6 +10993,11 @@ N\frac{\varrho(1-\alpha)}
 \end{align}
 Substitution of these two inequalities proves Equation~
 (\ref{eq:verified-dmop-alpha-mse-bound}).
+The same proof permits replacing the population contribution by twice
+the square of the right-hand side of Equation~
+(\ref{eq:population-discount-sharp-transition-bound}) or Equation~
+(\ref{eq:population-bias-cancellation-bound}), taking the smaller
+available bound.  This does not change the particle contribution.
 \end{proof}
 
 \iffalse
@@ -11250,6 +11396,13 @@ shows that this dependence on $\alpha$ need not be sharp.
 The three rows use the manuscript's $\lesssim$ convention and therefore
 suppress the same particle-system logarithmic factor as Lemma~
 \ref{lem:dmop-alpha-variance}.
+The sharper transition constants in Equation~
+(\ref{eq:population-discount-sharp-transition-bound}) improve the
+model-dependent bound, not these general powers of $N$ and $J$.
+If the signed coefficient in Equation~
+(\ref{eq:population-bias-signed-derivative}) is small, Equation~
+(\ref{eq:population-bias-cancellation-bound}) should instead be used
+for the population term; the table does not exploit such cancellation.
 \end{remark}
 
 
