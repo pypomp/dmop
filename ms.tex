@@ -703,30 +703,39 @@ pG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \]
-For $0\leq\alpha<1$, the full-score MSE has the two-line bound
+For $0\leq\alpha<1$, the full-score MSE satisfies
 \[
 \begin{aligned}
 &\E\|\nabla_\theta\hat\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)\|_2^2\\
-&\quad\lesssim pG'(\theta)^2\left[
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \left(\frac NJ+\frac{N^2}{J^2}\right)
-\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
-+\left\{
-\varrho(1-\alpha)
-\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q
-\right\}^2
-\right]\\
-&\quad\lesssim pG'(\theta)^2\left[
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
+&+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
+{(1+\sqrt{2(1-\varrho)})^2}
+\left\{
+N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
+\right\}^2\Bigg]
+\end{aligned}\\
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
 \frac{N}{J(1-\alpha)^2}
-+\frac{N^2}{J^2(1-\alpha)^2}
-+N^2\left\{
-\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}
-\right\}^2
-\right].
++\frac{N^2}{J^2(1-\alpha)^2}\\
+&+N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\end{aligned}
 \end{aligned}
 \]
-Here $\varrho\in(0,1)$.  The notation $\lesssim$ hides the same
+Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$ is unchanged.
+The sum beginning at $q=1$ is empty for $N\leq2$; the population
+terms are zero at $\varrho=\tfrac12$.  The notation $\lesssim$ hides the same
 particle-system mixing and logarithmic-threshold factor as the preceding variance argument;
 apart from that factor, the suppressed constants are independent of
 $N,J$, and $\alpha$.  The finite geometric sum is
@@ -736,9 +745,10 @@ The population part of the fixed-observation bias is bounded by
 \|\nabla_\theta\ell^\alpha(\theta)
 -\nabla_\theta\ell(\theta)\|_2
 \leq
-CN\sqrt p\,G'(\theta)
-\frac{\varrho(1-\alpha)}
-{1-\alpha\varrho}.
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}.
 \]
 For each fixed $\alpha<1$ and $J\geq N$, the leading particle term is
 $NpG'(\theta)^2/J$, multiplied by a constant depending on $\alpha$.}
@@ -786,17 +796,9 @@ CN\sqrt p\,G'(\theta)
 \]
 The factor $\varrho^{q+1}$ therefore remains in the bound; discounting and
 model forgetting enter together rather than as unrelated approximations.
-S14 sharpens these constants using the existing
-$\epsilon=\underbar M/\bar M$: for $0<\epsilon<1$ the population bias is
-at most
-\[
-2(N-1)\sqrt p\,G'(\theta)
-\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-\frac{(1-\alpha)(1+\epsilon)}
-{1-\alpha+(1+\alpha)\epsilon},
-\]
-and it is zero when $\epsilon=1$.
-It also retains the signed first-order coefficient
+The sharper population term in the proposed theorem retains the
+transition constants through the same $\varrho$.
+S14 also retains the signed first-order coefficient
 $\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}$, with an explicit
 $O\{N(1-\alpha)^2\}$ remainder.  Cancellation of this coefficient can
 improve the population order without an estimator correction, but is
