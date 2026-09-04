@@ -1680,9 +1680,29 @@ properties with $c=\gamma-\kappa$ and $C=\Gamma+\kappa$ under
 guarantees the chosen $c,C$ bounds for every realization.
 
 \begin{proof}[Proof of Theorem~{\thmMopConvergence}.]
-Let $\tau$ and $\mathcal E_M$ be the stopping time and simultaneous gradient
-event defined in Theorem~{\thmMopConvergence}.  If $\mathcal F_m$ is the
-history before the $m$th particle-filter call, then $\theta_m$ and
+Let $\mathcal D$ be the convex region in Theorem~{\thmMopConvergence}, and set
+\begin{equation}
+G'_{\mathcal D}=\sup_{\theta\in\mathcal D}G'(\theta),\qquad
+J_0=\left\lceil
+K_N^{\rm pf}\log\!\left(\frac{6pM}{\delta}\right)
+\max\left\{4,
+\frac{4pN^2(G'_{\mathcal D})^2}{\epsilon^2}
+\right\}\right\rceil.                                      \label{eq:s2-theorem-particle-count}
+\end{equation}
+Thus it is enough to take $J\geq J_0$.  With
+$g_m=-\nabla_\theta\hat\ell_J^{A,1}(\theta_m)$, define
+\begin{equation}
+\tau=\min\big\{m\in\{0,\ldots,M-1\}:\|g_m\|_2\leq\sigma\epsilon\big\},
+\qquad \min\varnothing=M,                                  \label{eq:s2-stopping-time}
+\end{equation}
+and
+\begin{equation}
+\mathcal E_M=
+\bigcap_{m=0}^{\min\{\tau,M-1\}}
+\big\{\|g_m-\nabla f(\theta_m)\|_2\leq\epsilon\big\}.    \label{eq:s2-gradient-event}
+\end{equation}
+If $\mathcal F_m$ is the history before the $m$th particle-filter call, then
+$\theta_m$ and
 $\{m\leq\min(\tau,M-1)\}$ are $\mathcal F_m$-measurable.  Lemma~
 \ref{lemma:grad_bound}, with failure probability $\delta/M$, gives
 \begin{equation}
