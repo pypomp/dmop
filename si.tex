@@ -2226,33 +2226,53 @@ $L^{B,\theta}$ should generally be preferred in practice, since there is no reas
 
 
 
-We now provide a result showing that under sufficient regularity conditions, one can interchange the order of differentiation and expectation of functionals of off-parameter resampled particle estimates, showing that if an off-parameter resampled particle estimate is consistent for some estimand, its derivative is consistent for the derivative of the estimand as well.
-
-One may wonder why this may be necessary, given that we have already shown strong consistency for measurable bounded functionals in Theorem \ref{thm:off-parameter-targeting}. If we require the gradient to be bounded as well, then the gradient is also a bounded functional. The answer is that the strong consistency is for expectations under the filtering distribution, so Theorem \ref{thm:off-parameter-targeting} only establishes strong consistency of the gradient of the estimate to its expectation under the filtering distribution, $\nabla_\theta \eta_n^J(h_\theta)  \stackrel{a.s.}{\to} \eta_n(\nabla_\theta h_\theta)$, which is not a-priori the gradient of the estimand $\nabla_\theta \eta_n(h_\theta)$. We require an interchange of the derivative and expectation, which we show is possible when the particle estimates have two continuous uniformly bounded derivatives over all $J$ below.
+We now show that, under sufficient local regularity conditions, one can interchange differentiation and the particle limit. We retain the Arzel\`a--Ascoli argument, working on a compact neighborhood of the evaluation parameter. Consistency is used for the estimates themselves: differentiating a weighted particle estimate also differentiates its particles, weights, and normalizer, so boundedness alone does not make its derivative an empirical average to which Theorem \ref{thm:off-parameter-targeting} applies.
 
 \begin{thm}[Off-Parameter Particle Filters Yield Strongly Consistent Estimates of Derivatives of Functionals]
 \label{thm:consistent-derivatives}
-    Let $h_\theta : \gX \to \R$ be a measurable bounded functional of particles, where $\eta_n^J(h_\theta)$ has two continuous derivatives uniformly bounded over all $J$ by $H^*$ for almost every $\omega\in\Omega$ and $\theta \in \Theta$. If it holds that $\eta_n^J(h_\theta) \stackrel{a.s.}{\to} \eta(h_\theta) = h^*_\theta$, then we also have that $\nabla_\theta \eta_n^J(h_\theta)  \stackrel{a.s.}{\to} \eta_n(\nabla_\theta h_\theta) = \nabla_\theta \eta_n(h_\theta) = \nabla_\theta h^*_\theta$. 
+Let $K$ be a closed ball of positive radius centered at $\phi$ and contained in the interior of $\Theta\subset\mathbb R^p$. Let $F_J(\theta)$ be scalar particle estimates, such as $\eta_n^J(h_\theta)$, defined on a common probability space. On one probability-one event, suppose every $F_J$ has two continuous derivatives on a neighborhood of $K$, with
+\[
+\sup_{J\geq1}\sup_{\theta\in K}\|\nabla_\theta F_J(\theta)\|_2\leq G^*,
+\qquad
+\sup_{J\geq1}\sup_{\theta\in K}\|\nabla_\theta^2 F_J(\theta)\|_{\mathrm{op}}\leq H^*
+\]
+for finite constants $G^*,H^*$. Suppose $F_J(\theta)\to h_\theta^*$ almost surely for each fixed $\theta\in K$, where $h^*$ is deterministic. Then $h^*$ is continuously differentiable in the interior of $K$, and almost surely
+\[
+\nabla_\theta F_J(\theta)\longrightarrow\nabla_\theta h_\theta^*
+\]
+uniformly on every compact subset of that interior, in particular at $\theta=\phi$.
 \end{thm}
 \begin{proof}[Proof.]
-    Fix $\omega \in \Omega$. The sequence $(\nabla_\theta \eta_n^J(h_\theta)(\omega))_{J \in \mathbb{N}}$ is uniformly bounded over all $J$, by assumption. The sequence is also uniformly equicontinuous. To see this, by assumption, the second derivative of $\eta_n^J(h_\theta)(\omega)|_{\theta=\theta'}$ is also uniformly bounded over all $J$ for almost every $\omega\in \Omega$ and every $\theta' \in \Theta$. A set of functions with derivatives bounded by the same constant is uniformly Lipschitz, and therefore uniformly equicontinuous. So the sequence $(\eta_n^J(h_\theta)\omega))_{J \in \mathbb{N}}$ is uniformly equicontinuous over $\theta$ for almost every $\omega \in \Omega$. 
-    Explicitly, for almost every $\omega \in \Omega$ and every $\epsilon>0$, there exists some $\delta(\omega)>0$ such that for every $||\theta - \theta'||_{\infty}<\delta$ and every $J \in \mathbb{N}$ we have that
-    \begin{equation}
-    \big||\eta_n^J(h_\theta)(\omega)-\eta_n^J(h_{\theta'})(\omega)\big||_\infty < \epsilon.
-    \end{equation}
-    Then, by Arzela-Ascoli, there exists a uniformly convergent subsequence. We claim that there is only one subsequential limit. When the gradient is bounded, we can treat the gradient as a bounded functional. So by Theorem \ref{thm:off-parameter-targeting} the sequence $(\eta_n^J(h_\theta)(\omega))_{J \in \mathbb{N}}$ converges pointwise for $\theta=\phi$ and almost every $\omega \in \Omega$, and there is therefore only one subsequential limit. The sequence therefore converges uniformly to its limit $\lim_{J \to \infty} \eta_n^J(h_\theta)(\omega).$ Therefore, with uniform convergence for the derivatives established, we can swap the limit and derivative, and obtain that for almost every $\omega \in \Omega$, 
-    \begin{equation}
-    \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega) = \nabla_\theta \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega).
-    \end{equation}
-Again from Theorem \ref{thm:off-parameter-targeting}, we know that
-    \begin{equation}\eta_n^J(h_\theta)(\omega) \to \eta_n(h_\theta) = h^*_\theta\end{equation} for almost every $\omega\in\Omega$.
-    We then have that for almost every $\omega \in \Omega$, 
-    \begin{equation}
-    \lim_{J \to \infty} \eta_n^J(h_\theta)(\omega) = \nabla_\theta \eta_n(h_\theta) = \nabla_\theta h^*_\theta,
-    \end{equation}
-    as we wanted. 
-    \end{proof}
-Theorem~{\thmMopGradConsistency} is proved as a corollary of Theorem~\ref{thm:consistent-derivatives}, where we apply $\eta_n^J (h_\theta) = \hat\lik^1_J(\theta)$, $\eta_n(h_\theta) = \lik(\theta) = h_\theta^*$, and then use the continuous mapping theorem. 
+For each fixed pair $x,y\in K$, pointwise almost-sure convergence and the gradient bound give $|h_y^*-h_x^*|\leq G^*\|y-x\|_2$. Thus the deterministic function $h^*$ is Lipschitz, and in particular continuous, on $K$.
+
+Choose a countable dense subset $D$ of $K$. Intersect the probability-one event of the derivative bounds with the events of convergence at each $\theta\in D$, and fix $\omega$ in this intersection. Suppress $\omega$ below. By the gradient bound, the functions $F_J$ are uniformly Lipschitz on the convex set $K$. Convergence on $D$, compactness of $K$, and continuity of $h^*$ therefore imply $F_J\to h^*$ uniformly on $K$: for any $\epsilon>0$, choose a sufficiently fine finite net in $D$, use convergence at its finitely many points, and use the common Lipschitz bound and uniform continuity of $h^*$ between those points.
+
+The gradients are uniformly bounded and, by the Hessian bound, uniformly equicontinuous. Explicitly, for $\theta,\theta'\in K$,
+\begin{equation}
+\|\nabla_\theta F_J(\theta)-\nabla_\theta F_J(\theta')\|_2
+\leq H^*\|\theta-\theta'\|_2.
+\end{equation}
+Thus, by Arzel\`a--Ascoli, every subsequence of gradients has a further subsequence converging uniformly on $K$ to a continuous function $g$. We claim that every such limit is $\nabla_\theta h^*$ in the interior of $K$. For $x,y\in K$, the fundamental theorem of calculus gives
+\begin{equation}
+F_J(y)-F_J(x)
+=\int_0^1\nabla_\theta F_J\bigl(x+t(y-x)\bigr)^{\mathsf T}(y-x)\,dt.
+\end{equation}
+Passing to the limit along the convergent subsequence yields
+\begin{equation}
+h_y^*-h_x^*
+=\int_0^1 g\bigl(x+t(y-x)\bigr)^{\mathsf T}(y-x)\,dt.
+\end{equation}
+Taking $y=x+te_i$ for each coordinate direction and letting $t\to0$ shows that $\partial_{\theta_i}h_x^*=g_i(x)$ for every interior $x$. Since $g$ is continuous, $h^*$ is continuously differentiable there. Every subsequential gradient limit is therefore the same on the interior, and hence on $K$ by continuity. Relative compactness and uniqueness of this limit imply convergence of the full gradient sequence. In particular, almost surely, for interior $\theta$,
+\begin{equation}
+\lim_{J\to\infty}\nabla_\theta F_J(\theta)
+=\nabla_\theta\lim_{J\to\infty}F_J(\theta)
+=\nabla_\theta h_\theta^*,
+\end{equation}
+with convergence uniform on every compact subset of the interior, as required.
+\end{proof}
+For $F_J(\theta)=\eta_n^J(h_\theta)$, the conclusion is convergence to $\nabla_\theta\eta_n(h_\theta)$. No identity with $\eta_n(\nabla_\theta h_\theta)$ is asserted, since the target distribution can itself depend on $\theta$.
+
+Theorem~{\thmMopGradConsistency} follows by taking $F_J(\theta)=\hat\ell_J^1(\theta)$ and $h_\theta^*=\ell(\theta)$. Keep the reference parameter $\phi$ fixed throughout $K$. For $\alpha=1$, the off-parameter consistency result and Lemma~\ref{lem:lik-proper-weight} give $\hat\lik_J^1(\theta)\to\lik(\theta)>0$ almost surely for each fixed $\theta\in K$, not only at $\theta=\phi$. The continuous mapping theorem gives the corresponding convergence of the log likelihoods. The neighborhood form of Assumption~\refAssumpLocalBoundedDerivative\ supplies their uniform gradient and Hessian bounds, and Assumption~\refAssumpDifferentiableSimulator\ supplies their pathwise smoothness with the simulator draws and reference-filter resampling indices held fixed. Applying the theorem to these log likelihoods establishes score consistency at $\phi$ directly.
 
 
 \section{Proof of Theorem~{\thmMopBiasvar} (Bias-Variance Analysis)}
