@@ -564,7 +564,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
 Without the IF2 prior, NUTS with the MOP-$\alpha$ estimate alone tended to diverge.
 In contrast, particle Metropolis-Hastings, with or without said prior, fails to effectively explore the parameter space.
 We display these results in the supplement (Section~\suppSecBayesFigs). 
-\kevin{The sharper bias--variance analysis is Section~S7. Consequently, change the three preamble values S7, S8, and S9 for the Bayesian figures, baseline justification, and algorithmic-parameter sections to S8, S9, and S10, respectively.}
+\kevin{Section~S7 contains the new bias--variance analysis. Change the preamble references for the Bayesian figures, baseline justification, and algorithmic parameters from S7, S8, S9 to S8, S9, S10.}
 This speedup in the mixing time of particle MCMC by over three orders of magnitude provides hope that particle Bayesian inference might be increasingly employed for the complex scientific models commonly encountered in areas like epidemiology.
 
 
@@ -577,41 +577,61 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 \begin{enumerate}[label=(A\arabic*),itemsep=-1ex, , font=\small] 
     \item \textbf{Continuity of the Likelihood.} $\ell(\theta)$ has more than two continuous derivatives in a neighborhood $\left\{\theta: \ell(\theta)>\lambda_1\right\}$ for some $\lambda_1<\sup _{\varphi} \ell(\varphi)$.\label{assump:conti-lik}
     \item \textbf{Bounded Process Model.} There exist $\underbar{M}, \bar{M}$ such that $0 < \underbar{M} \leq f_{X_n|X_{n-1}}(x_n | x_{n-1};\theta) \leq \bar{M} < \infty$.\label{assump:bounded-process}
-    \item \textbf{Bounded Measurement Model.} There exist $\underbar{G}, \bar{G}$ such that $0<\underbar{G} \leq f_{Y_n \mid X_n}\left(y_n^* \mid x_n; \theta\right) \leq \bar{G}<\infty$.  In a neighborhood of the parameter under consideration, the total fixed-random-number derivatives through the reparameterized simulated state are uniformly bounded: for every $n,j$, every realization of the fixed simulator variables and reference-filter resampling indices, and all $1\leq a,b\leq p$, $|\partial_{\theta_a}^{\mathrm{tot}}\log g_{n,j}^{A,F,\theta}|\leq G'(\theta)<\infty$ and $|\partial_{\theta_a\theta_b}^{2,\mathrm{tot}}\log g_{n,j}^{A,F,\theta}|\leq G''(\theta)<\infty$.\label{assump:bounded-measurement}
-    \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, such that the MOP-$\alpha$ derivatives at $\theta=\phi$ satisfy $\|\nabla_\theta\hat\ell^\alpha(\theta)\|_2\leq G(\theta)$ and $\|\nabla_\theta^2\hat\ell^\alpha(\theta)\|_{\mathrm{op}}\leq H(\theta)$ almost surely for all $\alpha$.\label{assump:local-bounded-derivative}
-    \item \textbf{Differentiable Density Ratios and Simulator.} The base random-number law of the reparameterized simulator does not depend on $\theta$.  For fixed base simulator variables and fixed reference-filter resampling indices, the complete recursively simulated path and its composed log measurement densities have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
+    \item \textbf{Bounded Measurement Model.} Uniformly in $n,j$, states, simulator draws, reference-filter resampling indices, and $\theta$ near $\phi$,
+    $0<\underbar G\leq f_{Y_n\mid X_n}(y_n^*\mid x_n;\theta)\leq\bar G<\infty$,
+    $|\partial_{\theta_a}\log g_{n,j}^{A,F,\theta}|\leq G'(\theta)<\infty$, and
+    $|\partial_{\theta_a\theta_b}^2\log g_{n,j}^{A,F,\theta}|\leq G''(\theta)<\infty$
+    for $1\leq a,b\leq p$. The derivatives include the dependence of the simulated state on $\theta$.\label{assump:bounded-measurement}
+    \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, such that the MOP-$\alpha$ derivatives at $\theta=\phi$ satisfy $\|\nabla_\theta\hat\ell_J^\alpha(\theta)\|_2\leq G(\theta)$ and $\|\nabla_\theta^2\hat\ell_J^\alpha(\theta)\|_{\mathrm{op}}\leq H(\theta)$ almost surely, uniformly in $J$ and $\alpha$. For $\alpha=1$, these bounds hold on one probability-one event simultaneously for all $J$ and all $\theta$ in a fixed closed ball $K$ of positive radius centered at $\phi$ and contained in the interior of $\Theta$. All estimates are coupled on one probability space, with the simulator draws and reference-filter resampling indices generated at $\phi$ held fixed as $\theta$ varies.\label{assump:local-bounded-derivative}
+    \item \textbf{Differentiable Density Ratios and Simulator.} The draws have a law independent of $\theta$. For fixed draws and reference-filter resampling indices, the simulated path and its log measurement densities have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
 \end{enumerate}
 \arxiv{}{\vspace*{-3ex}}
 
-\kevin{Suggested clarification to (A3) and (A5).  The total derivative
-in (A3) is, by the chain rule,
+\kevin{Add for the particle-error bounds:
+\textbf{(A6) Measurement-sensitivity decay.}
+The simulator is $C^1$ in its incoming state. For a continuation
+$X_n^\theta(x_t,\omega_{t+1:n})$ from $x_t$, with $X_t^\theta(x_t)=x_t$,
 \[
-\left.\nabla_\theta^{\rm tot}\log g_n^\theta\right|_{\theta=\phi}
+\left\|D_{x_t}\log f_{Y_n\mid X_n}
+\bigl(y_n^*\mid X_n^\theta(x_t,\omega_{t+1:n});\theta\bigr)\right\|_2
+\leq C\kappa^{n-t},\qquad C<\infty,\quad 0<\kappa<1.
+\]
+The bound is uniform in $t\leq n$, states, draws, and $\theta$ near $\phi$.
+The parameter derivatives of the initial state, simulator, and log measurement
+density are bounded, holding incoming states fixed.
+\textbf{Alternative (A6-J).} The log measurement density is $C^1$ in
+$(x,\theta)$, and (A2) holds for $\theta$ near $\phi$ for the joint Markov process
+$(X_n^\theta,\partial_\theta X_n^\theta)$ relative to a common finite
+measure on its invariant state space.
+Either condition suffices for the particle bounds; see S7 for the
+sufficient condition and example.}
+
+\kevin{For (A3), write $g_n^\theta(x)=f_{Y_n\mid X_n}(y_n^*\mid x;\theta)$,
+suppressing particle indices. With the draws and resampling indices fixed,
+\[
+\left.\nabla_\theta\log g_n^\theta(X_n^\theta)\right|_{\theta=\phi}
 =
-\left.\partial_\theta\log f_{Y_n\mid X_n}(y_n^*\mid X_n;\theta)
-\right|_{\theta=\phi}
+\left.\nabla_\theta\log g_n^\theta(X_n^\phi)\right|_{\theta=\phi}
 +
-\left.\partial_x\log f_{Y_n\mid X_n}(y_n^*\mid X_n;\theta)
-\,\partial_\theta X_n^\theta\right|_{\theta=\phi}.
+\partial_x\log g_n^\phi(X_n^\phi)
+\,\left.\partial_\theta X_n^\theta\right|_{\theta=\phi}.
 \]
-It is the time-$n$ total measurement gradient on the simulated particle.
-The log-weight gradient satisfies
+Thus $X_n^\phi$ is held fixed in the first term on the right.
+The weight recursion gives
 \[
+\begin{aligned}
 \left.\nabla_\theta\log w_n^{F,\theta}\right|_{\theta=\phi}
-=\alpha
+&=\alpha
 \left.\nabla_\theta\log w_{n-1}^{F,\theta}\right|_{\theta=\phi}
-+\left.\nabla_\theta^{\rm tot}\log g_n^\theta\right|_{\theta=\phi},
++\left.\nabla_\theta\log g_n^\theta(X_n^\theta)\right|_{\theta=\phi}\\
+&=\sum_{k=1}^n\alpha^{n-k}
+\left.\nabla_\theta\log g_k^\theta(X_k^\theta)\right|_{\theta=\phi}.
+\end{aligned}
 \]
-and hence
-\[
-\left.\nabla_\theta\log w_n^{F,\theta}\right|_{\theta=\phi}
-=\sum_{k=1}^n\alpha^{n-k}
-\left.\nabla_\theta^{\rm tot}\log g_k^\theta\right|_{\theta=\phi}.
-\]
-Thus every time-$k$ simulator contribution is discounted by
-$\alpha^{n-k}$.  Section~S7 applies the historical particle estimates of
-\citet{chanDelMoral18} to analytical lag truncations and then recovers the
-finite discounted sum by an exact geometric-mixture identity.}
+The time-$k$ gradient receives coefficient $\alpha^{n-k}$. Under (A6),
+we further decompose it by the age of each simulator contribution; under
+(A6-J), it is a current function of the joint pair. Section~S7 applies
+\citet{chanDelMoral18} to the resulting finite windows.}
 
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
@@ -659,7 +679,7 @@ As such we directly show the consistency of the MOP-$1$ gradient estimate below.
 \end{thm}
 
 We present a proof outline here, postponing the full argument to the supplement (Section~\suppSecProofConsistency).
-Assumption \ref{assump:local-bounded-derivative} lets us show uniform equicontinuity of the sequence for almost every $\omega \in \Omega$, allowing us to apply Arzela-Ascoli and Theorem \ref{thm:mop-targeting} to establish uniform convergence for the derivatives as a sequence $(\nabla_\theta \hat\lik_J^1(\theta)(\omega))_{J \in \mathbb{N}}$. This is a sufficient condition for swapping the limit and derivative to show that for almost every $\omega \in \Omega$, $\lim_{J \to \infty} \nabla_\theta \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lim_{J \to \infty} \hat\lik_J^1(\theta)(\omega) = \nabla_\theta \lik(\theta).$
+On the compact neighborhood $K$ in Assumption \ref{assump:local-bounded-derivative}, Theorem \ref{thm:mop-targeting} with $\alpha=1$ gives pointwise almost-sure convergence of $\hat\ell_J^1(\theta)$ to $\ell(\theta)$, including when $\theta\ne\phi$. Intersecting these events over a countable dense subset of $K$, the gradient bound upgrades this to uniform convergence on $K$. The Hessian bound makes the gradients uniformly equicontinuous, so Arzel\`a--Ascoli gives uniformly convergent gradient subsequences. Passing to the limit in the fundamental theorem of calculus identifies each such limit as $\nabla_\theta\ell(\theta)$ in the interior of $K$. Thus the full gradient sequence converges locally uniformly there almost surely, and in particular $\nabla_\theta\hat\ell_J^1(\phi)\to\nabla_\theta\ell(\phi)$.
 
 
 %\subsection{DMOP-$\alpha$ Error, Bias and Variance}
@@ -689,7 +709,7 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
 \arxiv{}{\vspace*{-1ex}}
 
 \kevin{Suggested replacement for Theorem~\ref{thm:mop-biasvar}.
-Under (A2), the clarified forms of (A3) and (A5), fixed observations,
+Under (A2), the clarified forms of (A3) and (A5), either (A6) or (A6-J), fixed observations,
 multinomial resampling, $J\geq2$, $\theta=\phi$, and
 $\alpha\in[0,1]$, write $\nabla_\theta\ell^\alpha(\theta)$ for the
 deterministic population DMOP-$\alpha$ score.  Then
@@ -734,12 +754,12 @@ N-1+\sum_{q=1}^{N-2}(N-1-q)
 \end{aligned}
 \end{aligned}
 \]
-Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$ is unchanged.
-The sum beginning at $q=1$ is empty for $N\leq2$; the population
-terms are zero at $\varrho=\tfrac12$.  The notation $\lesssim$ hides the same
-particle-system mixing and logarithmic-threshold factor as the preceding variance argument;
-apart from that factor, the suppressed constants are independent of
-$N,J$, and $\alpha$.  The finite geometric sum is
+Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$.
+The sum over $q$ is empty for $N\leq2$, and the population terms vanish
+at $\varrho=\tfrac12$. As in the preceding variance argument,
+$\lesssim$ hides the particle mixing and logarithmic factors; the other
+constants depend on the model and stability bounds, independently of
+$N,J,\alpha$. The finite geometric sum is
 $(1-\alpha^N)/(1-\alpha)$ for $\alpha<1$ and is $N$ at $\alpha=1$.
 The population part of the fixed-observation bias is bounded by
 \[
@@ -754,38 +774,27 @@ The population part of the fixed-observation bias is bounded by
 For each fixed $\alpha<1$ and $J\geq N$, the leading particle term is
 $NpG'(\theta)^2/J$, multiplied by a constant depending on $\alpha$.}
 
-\kevin{Interpretation.  The algorithm uses geometric discounting and no
-hard lag cutoff.  Lag-truncated scores are used only as analytical devices.
-If
+\kevin{For the lag-truncated scores defined in S7, set
 \[
 \beta_k=(1-\alpha)\alpha^k\quad(0\leq k<N-1),
 \qquad \beta_{N-1}=\alpha^{N-1},
 \]
-then $\sum_k\beta_k=1$, $\sum_{k=r}^{N-1}\beta_k=\alpha^r$, and hence
-the implemented discounted score satisfies the exact identity
+Since $\sum_k\beta_k=1$ and $\sum_{k=r}^{N-1}\beta_k=\alpha^r$,
 \[
 \nabla_\theta\hat\ell^\alpha(\theta)
 =\sum_{k=0}^{N-1}\beta_k\nabla_\theta\hat s_k^1(\theta).
 \]
-For $N\geq2$, $\beta_0=1-\alpha$ is the mixture weight on the entire hard-zero-lag
-score, whereas the coefficient of the zero-lag contribution is
-$\sum_{k=0}^{N-1}\beta_k=1$, because every hard-$k$ score contains it.
-Thus $\nabla_\theta\hat\ell_n^0(\theta)=\Delta_{n,0}^J$ exactly.
-For $N=1$, the only mixture weight is $\beta_0=1$.
-Thus DMOP-$\alpha$ is exactly a geometric average of the analytical lag
-truncations and, in this precise sense, approximates a hard lag cutoff.  A
-contribution of age $r$ is multiplied by $\alpha^r$, and its effective
-memory is
+For $N\geq2$, the mixture assigns weight $1-\alpha$ to the zero-lag score.
+Every truncated score contains $\Delta_{n,0}^J$, so that contribution has
+coefficient one and $\nabla_\theta\hat\ell_n^0(\theta)=\Delta_{n,0}^J$.
+For $N=1$, $\beta_0=1$. The mean window length is
 \[
 \sum_{k=0}^{N-1}\beta_k(k+1)
 =\sum_{r=0}^{N-1}\alpha^r.
 \]
-Applying the finite-window variance and weak-bias bounds before taking this
-geometric average gives the particle terms in the theorem.  This order of
-argument avoids applying a particle theorem once to the complete
-unnormalized score.
-For the full-score population term, posterior backward contraction over
-$q$ steps and the first future transition give
+Apply the finite-window variance and bias bounds, then average with these
+weights. For the population term, contraction over $q$ backward steps
+and the first future transition gives
 \[
 \|\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)\|_2
 \leq
@@ -795,15 +804,11 @@ C\sqrt p\,G'(\theta)\varrho(1-\alpha)
 CN\sqrt p\,G'(\theta)
 \frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
 \]
-The factor $\varrho^{q+1}$ therefore remains in the bound; discounting and
-model forgetting enter together rather than as unrelated approximations.
-The sharper population term in the proposed theorem retains the
-transition constants through the same $\varrho$.
-S14 also retains the signed first-order coefficient
-$\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}$, with an explicit
-$O\{N(1-\alpha)^2\}$ remainder.  Cancellation of this coefficient can
-improve the population order without an estimator correction, but is
-not imposed by the mixing assumptions.}
+The theorem uses the sharper transition constants from S14.
+That lemma also gives a first-order expansion with coefficient
+$\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}$ and remainder
+$O\{N(1-\alpha)^2\}$. If this coefficient vanishes, the population bias
+has second order in $1-\alpha$; mixing alone does not ensure cancellation.}
 
 We provide an outline, deferring the full proof to the supplement (Section~\suppSecProofBiasVar).
 The variance bound can be reduced to the approximation error between the score estimate from DMOP-$\alpha$ and a variant called DMOP-$(\alpha,k)$ where the discounted weights are truncated at lag $k$. 
@@ -812,23 +817,28 @@ The covariance of the derivative of MOP-$(\alpha,k)$ are controlled with Davydov
 The MSE bound considers the error between the target derivative and DMOP-$(1,k)$, and the error between DMOP-$(1,k)$ and DMOP-$\alpha$. 
 The latter can be shown to be $\tilde{O}\big(Np \, G'(\theta)^2(k+\psi_k(\alpha))\big)$, and the former can be controlled with a result on the the forgetting of the particle filter from \cite{karjalainen23} and the very same $L^p$ error bound mentioned above. 
 
-\kevin{Suggested replacement proof outline.
-Update the supplement-section cross-reference in this paragraph from
-Section~S6 to Section~S7.
-The clarified (A3) and (A5) justify differentiation under each finite-horizon
-simulator expectation.
-Posterior backward-kernel contraction gives geometric decay of the population lag
-coefficients and hence the population discount bias.
-For the particle term, use the lag-truncated score
-$\nabla_\theta\hat s_k^1(\theta)$ only inside the proof.  Its terms telescope
-by creation time, so the time-$s$ contribution is evaluated after age $k$,
-not after age $s+k$.  For one historical input over $q$ subsequent
-selection--mutation steps, Theorems~3.3 and~3.5 of
-\citet{chanDelMoral18} are applied to the prediction genealogies.
-Conditional multinomial resampling and the exact bounded Bayes-ratio
-expansion then pass those estimates to the filtered averages; Lemma~2.3
-of \citet{karjalainen23} controls the prediction cloud at the beginning
-of the window.  Together these steps give
+\kevin{Replacement proof outline; the full proof is in S7.
+Assumptions (A3) and (A5) justify differentiation under finite-horizon
+expectations. Posterior backward-kernel contraction then bounds the
+population lag coefficients.
+For the particle term, the lag-truncated score
+$\nabla_\theta\hat s_k^1(\theta)$ telescopes by creation time.
+Under (A6), expand the time-$s$ gradient by the chain rule and enlarge
+$G'(\theta)$ to bound its parameter derivatives coordinatewise.
+Each age-$r$ contribution is bounded by $CG'(\theta)\kappa^r$ and depends
+on a window starting at $\max(0,s-r-1)$. At time $s+q$, this window
+contains at most $q+r+2$ times. Apply Theorems~3.3 and~3.5 of
+\citet{chanDelMoral18} to these finite prediction genealogies.
+The Bayes-ratio expansion and conditional multinomial resampling give the
+filtered-average bounds. Lemma~2.3 of \citet{karjalainen23} controls the
+prediction cloud at the start of each window. Sum over ages using
+\[
+\sum_{r\geq0}\kappa^r\sqrt{q+r+2}\leq C_\kappa\sqrt{q+1},
+\qquad
+\sum_{r\geq0}\kappa^r(q+r+2)\leq C_\kappa(q+1).
+\]
+Under (A6-J), $h_s$ is a bounded function of the current joint state.
+Either condition gives
 \[
 \E|m(\xi_{s+q})(h_{s,i})-\rho_{s+q}(h_{s,i})|^2
 \leq \frac{C(q+1)G'(\theta)^2}{J},
@@ -836,14 +846,11 @@ of the window.  Together these steps give
 |\E m(\xi_{s+q})(h_{s,i})-\rho_{s+q}(h_{s,i})|
 \leq \frac{C(q+1)G'(\theta)}{J}.
 \]
-The terminal block is treated as one additive historical functional; its
-second moment and bias are bounded by
+Minkowski's inequality bounds the terminal second moment and bias by
 $C(k+1)^3G'(\theta)^2/J$ and $C(k+1)^2G'(\theta)/J$,
-respectively.  Cauchy--Schwarz controls overlapping windows.  For
-nonoverlapping windows, Davydov's inequality is applied after the correct
-$t-s-k$ separation.  Summing these covariances, with $\lesssim$ retaining
-the manuscript's convention of hiding the particle-system mixing and
-logarithmic-threshold factor, gives
+respectively. Use Cauchy--Schwarz for overlapping windows and Davydov's
+inequality for separated windows, with gap $t-s-k-r-1$ under (A6) or
+$t-s-k$ under (A6-J). Summing covariances and then ages gives
 \[
 \Var\{\nabla_\theta\hat s_k^1(\theta)\}
 \lesssim\frac{NpG'(\theta)^2(k+1)^2}{J},
@@ -852,15 +859,13 @@ logarithmic-threshold factor, gives
 -\nabla_\theta s_k^1(\theta)\|_2
 \lesssim\frac{N\sqrt p\,G'(\theta)(k+1)}{J}.
 \]
-The exact geometric-mixture identity
+Finally,
 \[
 \nabla_\theta\hat\ell^\alpha(\theta)
 =\sum_{k=0}^{N-1}\beta_k\nabla_\theta\hat s_k^1(\theta)
 \]
-then recovers DMOP-$\alpha$ itself.  It is an algebraic identity, not a
-fixed-lag implementation or an added randomization.  Minkowski's inequality
-and $\sum_k\beta_k(k+1)=\sum_{r=0}^{N-1}\alpha^r$ give the displayed
-particle bounds.}
+and $\sum_k\beta_k(k+1)=\sum_{r=0}^{N-1}\alpha^r$ give the particle
+bounds by Minkowski's inequality.}
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
@@ -881,34 +886,30 @@ DMOP-$\alpha$ achieves a lower MSE than DMOP-$1$, as $\alpha, k$ can be as large
 We also show that DMOP-$0$ achieves a MSE of $\tilde{O}\big(NpG'(\theta)^2(J^{-1}+(1-\epsilon)^{\lfloor1/c\log(J)\rfloor})\big)$, where the second term corresponds to uncontrolled mixing error.
 Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to reduce said mixing error, leading to uncontrolled asymptotic bias. 
 
-\kevin{Suggested correction to this endpoint discussion.
+\kevin{Replace the endpoint discussion with:
 The particle upper bound is
 \[
 CpG'(\theta)^2
 \left(\frac NJ+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \]
-Consequently DMOP-$0$ and every fixed $\alpha<1$ have leading variance
-order $N/J$ when $J\geq N$, with the constant increasing with the effective
-discount memory.  At $\alpha=1$, this conservative argument gives
-$N^3/J+N^4/J^2$; it does not claim that this endpoint dependence is sharp.
-The population bias moves in the opposite direction and vanishes at
-$\alpha=1$.
+Every fixed $\alpha<1$, including DMOP-$0$, has variance of order at most
+$N/J$ and, for $J\geq N$, the same particle-MSE order. The constant
+increases with the discount memory. At $\alpha=1$, the terminal
+second-moment calculation gives the possibly loose upper bound
+$\min\{N^2,N^3/J\}$, and the population discount bias is zero.
 Theorem~1 of \citet{poyiadjis11} gives a quadratic lower bound for the
-central-limit asymptotic variance of their already unnormalized additive path
-estimator; no additional $N^2$ normalization factor should be applied.
+central-limit asymptotic variance of their unnormalized additive path
+estimator.
 A separate generic norm-one path-space RMSE bound of order $N/\sqrt J$ becomes
 $N^2/\sqrt J$, and hence $N^4/J$ in MSE, after rescaling by the
 $O(N)$ oscillation of the full unnormalized score.
-That quartic quantity is a generic upper bound, not the Poyiadjis lower-bound rate.
-DMOP-$1$'s reparameterization score contributions are not generally particlewise
-identical to the complete-data likelihood-ratio score contributions of
-\citet{poyiadjis11}, so their lower bound
-does not automatically transfer to DMOP-$1$.
-There is also no DMOP-$0$ MSE lower bound under the present assumptions.
-In the supplement's proof, each bounded one-time contribution is controlled
-before the discounted lag sum is taken, so no additional $N^2$ rescaling is
-appropriate.}
+This norm-rescaling upper bound is separate from the Poyiadjis lower bound.
+The latter does not automatically transfer to DMOP-$1$, whose
+reparameterization contributions can differ from the likelihood-ratio
+contributions particle by particle. The assumptions give no DMOP-$0$
+MSE lower bound. The SI controls each bounded one-time contribution
+before summing lags, so its bounds require no further $N^2$ rescaling.}
 
 
 
@@ -965,12 +966,9 @@ Discounting the weights by some $\alpha \in [0,1]$ is not the only way to interp
 As the proof of Theorem \ref{thm:mop-biasvar} implies, we can also truncate the weights at a fixed lag, corresponding to the MOP-$(1,k)$ algorithm mentioned. 
 The analysis is similar, with comparable rates but with a slightly less convenient implementation. 
 
-\kevin{Suggested clarification.  DMOP-$\alpha$ itself is geometrically
-discounted; the proof does not replace it by a fixed-lag algorithm.  The
-auxiliary lag truncations are used because their geometric average is
-exactly DMOP-$\alpha$.  A separately implemented MOP-$(1,k)$ method may
-still be mentioned here, but it is not required for Theorem~
-\ref{thm:mop-biasvar}.}
+\kevin{The proof of Theorem~\ref{thm:mop-biasvar} writes DMOP-$\alpha$
+as a geometric average of lag-truncated scores. A separately implemented
+MOP-$(1,k)$ method is optional.}
 
 
 \section*{Acknowledgments}
