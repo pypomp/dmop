@@ -1,0 +1,83 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.65in]{geometry}
+\usepackage{amsmath,amssymb,hyperref,microtype}
+\newcommand{\R}{\mathbb R}
+\newcommand{\rank}{\operatorname{rank}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\pagestyle{empty}
+
+\begin{document}
+\begin{center}
+{\Large\bf Applicability of the Ditlevsen and Samson Gaussian approximation to Dacca}
+\end{center}
+
+I don't think the Gaussian transition approximation used by Ditlevsen and Samson (DS) carries
+over directly to Dacca.  Hypoellipticity itself is not the issue.  
+It is well known that
+a process can have a rank-deficient instantaneous diffusion and a smooth
+positive-time transition density.  Here, the problem is the number of stochastic
+directions recovered by the order-1.5 approximation.
+
+In DS equations (2) through (4), the state is
+$(V,U^\mathsf T)^\mathsf T\in\R^{p+1}$, where $V$ is scalar and
+$U\in\R^p$.  The $U$ coordinates are driven by $p$ independent Brownian
+motions through a positive diagonal matrix $\Gamma$.  The diffusion rank is
+therefore $p=d-1$, leaving one direction to be supplied through the drift.
+Write $G=\Gamma\Gamma^\mathsf T$ and $r=\partial_u a$.  The leading covariance
+in their equation (33) is
+\[
+ \Sigma_\Delta=
+ \begin{bmatrix}
+  \Delta^3rGr^\mathsf T/3&\Delta^2rG/2\\
+  \Delta^2Gr^\mathsf T/2&\Delta G
+ \end{bmatrix}.
+\]
+The Schur complement of $\Delta G$ is
+\[
+ \frac{\Delta^3}{3}rGr^\mathsf T-
+ \frac{\Delta^2}{2}rG(\Delta G)^{-1}
+ \frac{\Delta^2}{2}Gr^\mathsf T
+ =\frac{\Delta^3}{12}rGr^\mathsf T>0
+\]
+under condition (C1).  Hence
+\[
+ \det\Sigma_\Delta=\frac{\Delta^{p+3}}{12}
+ \det(G)rGr^\mathsf T>0.
+\]
+Equation (33) is stated to leading order, so this calculation gives the
+small-step nondegeneracy mechanism.  In the harmonic-oscillator example, the
+displayed covariance has determinant $\sigma^4\Delta^4/12$ for every
+$\Delta>0$.
+
+Dacca instead has the active state
+$X=(S,I,R^1,R^2,R^3,M)^\mathsf T\in\R^6$ and one Brownian vector,
+\[
+ g(x)=\sigma SI\,e,\qquad e=(-1,1,0,0,0,0)^\mathsf T.
+\]
+Its diffusion rank is one when $SI\ne0$ and zero on the boundary.  Propagating
+this scalar-noise direction through the first drift derivative gives
+\[
+ Q_h^{(1.5)}=A_2H_2A_2^\mathsf T,\qquad
+ A_2=[h^{1/2}g,\ h^{3/2}Db\,g],\qquad
+ H_2=\begin{bmatrix}1&1/2\\1/2&1/3\end{bmatrix}.
+\]
+It follows that $\rank Q_h^{(1.5)}\le2<6$ for every $h>0$.  The
+state-dependent diffusion coefficient does not supply more directions because
+$g=q e$. That is, the $Dg$ and Milstein terms remain parallel to $e$, while $Db\,g$
+adds only the first bracket direction.  So $Q_h^{(1.5)}$ has zero
+determinant, and so the inverse, log determinant, and six-dimensional
+Gaussian density are undefined. We would have to add a ridge correction.  
+At the manuscript parameter and state point, the matrix formed from
+$g,[b^S,g],\ldots,\operatorname{ad}_{b^S}^{5}g$, where $b^S$ is the
+Stratonovich drift, first reaches rank six when the fifth nested drift bracket
+is included.  Here ``depth'' counts bracket nesting, not the number of numerical
+substeps.  This suggests that the true positive-time transition may have a
+smooth density, but it does not make the first-bracket Gaussian nonsingular.
+
+{\footnotesize
+S. Ditlevsen and A. Samson, \emph{Hypoelliptic diffusions: filtering and
+inference from complete and partial observations}, equations (2) through (4), (33),
+(38), condition (C1), and Section 5.1.
+\href{https://arxiv.org/abs/1707.04235}{arXiv:1707.04235}.}
+\end{document}

@@ -1,0 +1,34 @@
+{
+  "stages": [
+    "fit"
+  ],
+  "output": "results/smc_benchmark_10",
+  "seed": 631409,
+  "starts": 10,
+  "nsteps": [
+    5,
+    10,
+    20
+  ],
+  "particles": 100,
+  "iterations": 5000,
+  "learning_rate": 0.05,
+  "burnin": 30,
+  "gain_exponent": 0.9,
+  "order": 2,
+  "relative_floor": 1e-07,
+  "gradient_clip": 100.0,
+  "maximum_backtracks": 6,
+  "maximum_consecutive_rejections": 10,
+  "maximum_path_retries": 3,
+  "backtrack_factor": 0.5,
+  "maximum_acceptable_invalid_fraction": 0.5,
+  "maximum_elapsed_seconds": 1000.0,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "trace_every_seconds": 100.0,
+  "trace_eval_particles": 1000,
+  "trace_eval_replicates": 4,
+  "workers": 10,
+  "worker_index": 0
+}

@@ -1,0 +1,331 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,microtype,float}
+\newfloat{algorithm}{htbp}{loa}
+\floatname{algorithm}{Algorithm}
+\newcommand{\N}{\mathcal N}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\E}{\mathbb E}
+\newcommand{\rank}{\operatorname{rank}}
+\title{A Ditlevsen--Karppinen transition-density competitor for the
+Dacca cholera benchmark}
+\author{Computational note}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Question and evaluation target}
+
+Reviewer~1 proposed constructing tractable Gaussian transitions using the
+strong-order-1.5 approximation of Ditlevsen and Samson (DS), then using those
+transitions in SAEM, Fisher-identity gradient estimation, PGAS, or a particle
+Gibbs method stabilized by Karppinen, Singh, and Vihola (KSV).  The statistical
+criterion in the DMOP paper is not the complete-path pseudo-likelihood.  It is
+the log likelihood of the Euler-discretized POMP, independently evaluated by a
+bootstrap particle filter.  Accordingly, a candidate method is successful only
+if its estimated parameter vector has a competitive Euler-model log likelihood.
+
+The paper used 100 searches from the same wide box, compared methods under
+similar elapsed time, evaluated selected parameter vectors with 5,000 particles
+and 36 replications, and emphasized both the right tail and median of the final
+log likelihoods.  Its best comparable-effort result is $-3744.17$ for
+IFAD-$0.97$; extended IFAD-$0.97$ reaches $-3744.19$ with median $-3744.22$.
+
+\section{Dacca state representation}
+
+For the benchmark, $c=\alpha=1$, $\rho=Y_0=0$, and $\delta=0.02$ are fixed.
+Thus the inapparent-infection coordinate remains zero.  In population-fraction
+coordinates, the active state is
+\[
+ X=(S,I,R^1,R^2,R^3,M)^\mathsf T\in\mathbb R^6,
+\]
+where $M$ accumulates disease deaths within a month and is reset after each
+measurement.  With drift $b_\theta(X,t)$, the single diffusion vector field is
+\[
+ g_\theta(X,t)=\sigma S I\,(-1,1,0,0,0,0)^\mathsf T,
+ \qquad \dd X_t=b_\theta(X_t,t)\dd t+g_\theta(X_t,t)\dd B_t.
+\]
+The observation model is exactly the manuscript model,
+$Y_n\mid X_{t_n}\sim\N(P_{t_n}M_{t_n},
+\tau^2P_{t_n}^2M_{t_n}^2)$.
+
+\section{Diffusion rank, transition rank, and bracket depth}
+
+It is essential not to confuse the two ranks.  Hypoellipticity means that the
+\emph{instantaneous diffusion matrix is not full rank} while the finite-time
+transition nevertheless has a smooth density.  DS assume
+$V\in\mathbb R$, $U\in\mathbb R^p$, and
+\[
+ C(v,u)=\begin{bmatrix}0_{1\times p}\\\Gamma(v,u)\end{bmatrix},
+ \qquad
+ \Gamma(v,u)=\operatorname{diag}\{\sigma_1(v,u),\ldots,
+ \sigma_p(v,u)\},\quad \sigma_j>0.
+\]
+Thus $C$ has rank $p<p+1$ by construction.  The directly forced rough block
+already supplies $p$ directions and the first drift bracket supplies the one
+missing smooth direction.  The order-1.5 term is exactly what gives their
+leading approximate covariance a nonzero variance of order $\Delta^3$ in that
+smooth coordinate for sufficiently small $\Delta$.
+
+Equivalently, the DS instantaneous diffusion has rank $d-1$ in a $d$-state
+system.  Dacca has $d=6$ active coordinates but diffusion rank one, hence
+codimension five rather than one.  Diffusion rank is invariant under an
+invertible change of state coordinates, so state dependence of the coefficient
+$\sigma SI$ does not put Dacca into the DS model class.
+
+Dacca is potentially hypoelliptic too, but it is not in this depth-one form.
+Its active state has dimension six and its instantaneous diffusion has rank one
+away from $SI=0$ and rank zero on that boundary.  At the manuscript parameter
+and state point, the normalized columns formed with the
+Stratonovich drift $b^{\mathrm S}=b-\tfrac12(Dg)g$,
+\[
+ g,\ [b^{\mathrm S},g],\ [b^{\mathrm S},[b^{\mathrm S},g]],\ldots
+\]
+gain numerical ranks $1,2,3,4,5,6$ only through bracket depth five.  This is
+evidence along one repeated drift-bracket chain that the true finite-time SDE
+transition can be full-dimensional; it is neither a proof of global
+hypoellipticity nor an argument that the diffusion should be full rank.
+
+The difficulty is instead that a literal first-bracket generalization of the
+DS leading covariance does not contain all those directions.  Let
+$J_b=\partial b_\theta/\partial x$.  Locally freezing the state-dependent
+diffusion gives
+
+\begin{align}
+ Q^{(1.5)}_h(x)
+ &=hgg^\mathsf T
+ +\frac{h^2}{2}\{(J_bg)g^\mathsf T+g(J_bg)^\mathsf T\}
+ +\frac{h^3}{3}(J_bg)(J_bg)^\mathsf T\\
+ &=A_2H_2A_2^\mathsf T,\\
+ A_2&=\begin{bmatrix}h^{1/2}g&h^{3/2}J_bg\end{bmatrix},
+ & (H_2)_{ij}&=\frac{1}{i+j+1},\quad i,j\in\{0,1\}.
+\end{align}
+Therefore
+\[
+ \rank\{Q^{(1.5)}_h(x)\}\leq 2<6.
+\]
+This conclusion is not invalidated by the state dependence highlighted by the
+reviewer.  Here $g(x)=q(x)e$ with the constant direction
+$e=(-1,1,0,0,0,0)^\mathsf T$, so $(Dg)w=e\{(Dq)w\}$ is collinear with $g$ for
+every $w$.  The Milstein and other diffusion-derivative terms in the full
+strong-order-1.5 expansion therefore remain on the directly forced line; the
+first drift-propagation term adds only the $J_bg$ direction.  The paper gives
+its nondegenerate Gaussian construction for the $1+p$ structure with $p$
+directly forced directions, not a six-state/one-driver, depth-five analogue.
+This rank-two statement concerns the approximate \emph{finite-step
+covariance}, not the rank-one instantaneous diffusion.  It shows that the DS
+nondegeneracy argument for their $1+p$ depth-one model cannot simply be copied
+to this longer-chain system.  Further stochastic Taylor/bracket terms, or a
+block construction that accumulates them, are required.  The implementation
+also uses the DS second-order mean
+\[
+ m_{\theta,h}(x)=x+h b_\theta(x)+\frac{h^2}{2}\mathcal L_\theta
+ b_\theta(x),
+\]
+where $\mathcal L_\theta$ is the It\^o generator.
+
+Adding a nugget makes numerical evaluation possible but changes the statistical
+model, with the nugget dominating directions that the first-bracket expansion
+leaves exactly deterministic.  Results labeled ``DS-local+nugget QML'' disclose
+this change and are not presented as a literal execution of DS Algorithm~2.
+
+\section{Which time scale is being compared}
+
+One Euler step per measurement interval is indeed the measurement time scale.
+The important distinction is between transition \emph{schemes} on that same
+grid.  With $r$ substeps per month,
+\[
+ r=1:\ \text{one monthly DS transition},\qquad
+ r=20:\ \text{twenty DS transitions of length $1/20$ month}.
+\]
+DS demonstrate inference with their discretization points at the observation
+times.  Introducing $r-1$ intermediate latent states per month is an extension.
+In every case below, goodness is assessed against the \emph{same} numerical
+model used by the DMOP manuscript: the Euler POMP with 20 substeps per month.
+A one-step Euler likelihood is therefore neither the target nor evidence about
+the one-step DS fit.
+
+Grid equality also says nothing about numerical stability.  The published
+Dacca point has a three-stage immunity rate $3\epsilon=57.3$ per year.  Applied
+to a decay mode with rate $\lambda$, the DS second-order conditional mean has
+stability polynomial $R(z)=1-z+z^2/2$, $z=h\lambda$, whose real-axis
+absolute-stability interval is $0\leq z\leq2$.  The monthly, half-monthly, and
+five-substep values of $h(3\epsilon)$ are respectively $4.78$, $2.39$, and
+$0.96$.  Thus failure at $r=1,2$ and viability beginning at $r=5$ are the
+expected coarse-step behavior of this mean, not evidence that the measurement
+and one-step grids were different.
+
+\section{Higher-bracket completion as a diagnostic}
+
+To test the strongest nearby density-based idea, define the local
+controllability expansion
+\begin{align}
+ A_q(x,h)&=\left[
+ h^{1/2}g,\frac{h^{3/2}}{1!}J_bg,\ldots,
+ \frac{h^{q-1/2}}{(q-1)!}J_b^{q-1}g\right],\\
+ (H_q)_{ij}&=\frac{1}{i+j+1},\qquad
+ Q_h^{(q)}(x)=A_qH_qA_q^\mathsf T.
+\end{align}
+This is the covariance obtained by integrating the Taylor expansion of
+$\exp(J_bs)g$ over a step.  For $q=2$ it reproduces the DS leading covariance;
+for $q=6$ the unscaled Dacca local controllability matrix is generically full
+rank.  The mean remains the DS second-order generator expansion.  This
+``DS--Krylov'' completion is a new local-linear Gaussian approximation, not a
+claim about the scope of the DS paper.  At fine $h$, its smallest directions
+scale as high odd powers of $h$, so the transition becomes extremely
+ill-conditioned even when it is algebraically full rank.  It is implemented as
+a rank diagnostic and optional sensitivity analysis.  The primary executable
+competitor instead uses the literal two-column DS leading covariance plus a
+reported relative numerical nugget; neither choice is presented as an exact
+application of DS to Dacca.
+
+The earlier extended-Kalman quasi-likelihood optimizer has been withdrawn and
+is not used as a DS result.  The executable competitor now uses a bootstrap
+particle filter at every parameter iteration, draws one path from the forward
+genealogy, evaluates the complete Gaussian pseudo-likelihood on that path, and
+takes a projected stochastic Fisher-score step.  The score average uses the DS
+gain schedule.  Because the Dacca complete pseudo-likelihood has not been
+shown to have DS's curved exponential-family form, there is no SAEM M-step in
+the executable method: this is stochastic gradient ascent, not DS Algorithm~2.
+Every candidate is judged afterward by the original Euler-20 particle filter
+rather than by its training pseudo-likelihood.
+
+More precisely, write $\widetilde p_{\Delta,\theta}$ for the regularized DS
+Gaussian pseudo-model with latent path $X$.  Fisher's identity gives
+\[
+ \nabla_\theta \widetilde\ell_\Delta(\theta;y)
+ =\E_\theta\!\left[
+   \nabla_\theta\log \widetilde p_{\Delta,\theta}(X,y)\mid y
+ \right].
+\]
+At iteration $m$, forward SMC approximates
+$\widetilde p_{\Delta,\theta_{m-1}}(X\mid y)$ and one complete genealogy
+$X^{(m)}$ is drawn from its terminal weighted empirical measure.  Automatic
+differentiation is then applied to
+$\log \widetilde p_{\Delta,\theta}(X^{(m)},y)$ while holding $X^{(m)}$ fixed.
+Thus
+\[
+ \widehat z_m=
+ \left.\nabla_\theta\log \widetilde p_{\Delta,\theta}(X^{(m)},y)
+ \right|_{\theta=\theta_{m-1}}
+\]
+is a one-path SMC approximation of the pseudo-model observed score.  It is not
+an estimate of the original Dacca SDE/Euler score: the latter transition
+density is unavailable, and the first-bracket Dacca covariance is singular
+until the disclosed nugget is added.  No derivative is taken through particle
+simulation, resampling, or ancestor selection.  Updating
+$s_m=(1-a_m)s_{m-1}+a_m\widehat z_m$ and stepping along $s_m$ is a
+Robbins--Monro score method.  In contrast, proper SAEM updates a
+parameter-independent sufficient statistic $S(X^{(m)},y)$ and maximizes its
+surrogate exactly (or with a justified generalized-EM step).
+
+\section{Why KSV is relevant, and why it is not a direct patch}
+
+At $r=1$ there are no artificial within-month latent points, so KSV does not
+solve the monthly Taylor-approximation or rank-depth issues.  It can become
+relevant when DS is extended to $r>1$.  In ordinary particle backward sampling,
+the ancestor weight contains
+$p_h(x_{t+h}\mid x_t)$.  As $h$ decreases, this density concentrates and almost
+all backward weight is assigned to the existing ancestor.  Increasing the
+number of Euler steps between monthly observations therefore degrades path
+mixing.  KSV replace unit-step backward sampling by bridge updates spanning a
+fixed physical-time block.  Their method directly targets this failure mode.
+
+There is an important algorithmic distinction.  DS Algorithm~2 draws a fresh
+path from an ordinary forward SMC approximation at every SAEM iteration; it
+does not require a conditional-particle-filter Markov kernel.  KSV specifically
+stabilize the backward update of a CPF/particle-Gibbs kernel.  Consequently KSV
+is not required merely to run the DS-style forward-SMC competitor with twenty
+substeps.  It would be relevant if that independent imputation were replaced
+by particle Gibbs or another CPF path update.
+
+KSV Assumption~7 requires evaluation of multi-step densities
+$M_{u\mid\ell}(x_u\mid x_\ell)$ and simulation from bridge conditionals
+$M_k(x_k\mid x_{k-1},x_u)$.  The nonlinear, state-dependent DS local transition
+does not supply these objects.  A valid combination must introduce a tractable
+time-varying linear-Gaussian proposal $M$ and put the density correction into
+the Feynman--Kac potentials.  KSV also does not repair the rank-two DS
+transition, and Dacca's complete likelihood is not the curved exponential
+family required for DS's closed-form SAEM M-step.  One must either derive a
+valid generalized-EM surrogate or use a separately labeled score method.
+
+\begin{algorithm}[ht]
+\caption{Full DS--Krylov--KSV stochastic-approximation score ascent
+(design, not the executed baseline)}
+\label{alg:combined}
+\textbf{Input:} observations $y_{1:N}$; initial $\theta_0$; Euler step $h$;
+particles $J$; SA gains $a_m$; physical-time block endpoints $\mathcal T$.
+\begin{enumerate}
+\item Construct the higher-bracket completed transition
+\[
+p^{K}_{\theta,h}(x_k\mid x_{k-1})=
+\N\!\left(m_{\theta,h}(x_{k-1}),Q^{(6)}_{\theta,h}(x_{k-1})\right).
+\]
+\item At the current reference path, construct a globally time-varying
+linear-Gaussian proposal $M_{\theta,1:T}$ whose multi-step marginals and bridge
+conditionals are available by Kalman recursions.
+\item Define correction potentials
+\[
+ G_{\theta,k}(x_{k-1},x_k)=
+ \frac{p^{K}_{\theta,h}(x_k\mid x_{k-1})}
+      {M_{\theta,k}(x_k\mid x_{k-1})}
+ \times g_\theta(y_n\mid x_k)^{\mathbf 1\{k=t_n\}}.
+\]
+\item For $m=1,2,\ldots$:
+  \begin{enumerate}
+  \item Run a conditional particle filter for
+  $(M_{\theta_{m-1}},G_{\theta_{m-1}})$.
+  \item Apply KSV bridge backward sampling over $\mathcal T$, proceeding from
+  the final block to the first and using the Gaussian bridge conditionals of
+  $M$, to obtain $X^{(m)}_{0:T}$.
+  \item Compute the complete-data score
+  $z_m=\nabla_\theta\{\log p_\theta(X^{(m)}_0)+
+  \sum_k\log p^K_{\theta,h}(X^{(m)}_k\mid X^{(m)}_{k-1})+
+  \sum_n\log g_\theta(y_n\mid X^{(m)}_{t_n})\}$.
+  \item Update the stochastic approximation
+  $s_m=(1-a_m)s_{m-1}+a_mz_m$.
+  \item Take a constrained stochastic-score parameter step, e.g.
+  $\theta_m=\Pi_\Theta\{\theta_{m-1}+\eta_m\operatorname{Adam}(s_m)\}$.
+  \end{enumerate}
+\end{enumerate}
+\textbf{Output:} $\widehat\theta$ and an independent Euler-particle-filter
+estimate of $\ell_{\rm Euler}(\widehat\theta)$.
+\end{algorithm}
+
+Algorithm~\ref{alg:combined} is the minimal coherent combination of the two
+papers for Dacca.  It is materially more than ``put KSV inside DS'': it requires
+a higher-order rank completion, an auxiliary Gaussian bridge model, exact
+importance correction for that proposal, a forward conditional-particle pool,
+and a numerical M-step.
+
+The code implements a narrower fixed-lower/fixed-upper blocked-interior
+conditional SMC kernel derived from the bridge construction in KSV
+Algorithm~8.  Its auxiliary bridge conditionals and $p^K/M$ corrections are
+internally consistent, but it cannot reconnect the upper endpoint to a
+different lower-boundary forward particle.  It is therefore neither full
+Algorithm~8 nor CPF--BBS, and its fraction of changed interiors is not KSV's
+probability of lower-boundary update (PLU).  Short Dacca checks found mixed
+effects on parameter progress and no repair of the one-ancestor forward
+genealogy.  It is excluded from the headline baseline unless a full forward
+CPF--BBS implementation passes a separate invariance and mixing validation.
+
+The executed numerical score method is a Fisher-identity Robbins--Monro
+extension, rather than the closed-form curved-exponential-family SAEM used by
+DS.  Neither it nor the blocked-interior diagnostic is used to claim that full
+Algorithm~\ref{alg:combined} has been run.
+
+\begin{thebibliography}{9}
+\bibitem{ditlevsen19}
+S. Ditlevsen and A. Samson (2019).
+Hypoelliptic diffusions: filtering and inference from complete and partial
+observations. \emph{Journal of the Royal Statistical Society, Series B},
+81, 361--384.  \href{https://arxiv.org/abs/1707.04235}{arXiv:1707.04235}.
+
+\bibitem{karppinen24}
+S. Karppinen, S. S. Singh, and M. Vihola (2024).
+Conditional particle filters with bridge backward sampling.
+\emph{Journal of Computational and Graphical Statistics}, 33, 363--378.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,31 @@
+{
+  "stages": [
+    "fit",
+    "final-eval",
+    "trace-eval"
+  ],
+  "output": "results/smc_benchmark",
+  "seed": 631409,
+  "starts": 100,
+  "nsteps": [
+    5,
+    10,
+    20
+  ],
+  "particles": 100,
+  "iterations": 80,
+  "learning_rate": 0.05,
+  "burnin": 30,
+  "gain_exponent": 0.9,
+  "order": 2,
+  "relative_floor": 1e-07,
+  "gradient_clip": 100.0,
+  "maximum_backtracks": 6,
+  "backtrack_factor": 0.5,
+  "maximum_acceptable_invalid_fraction": 0.5,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "trace_every": 10,
+  "trace_eval_particles": 1000,
+  "trace_eval_replicates": 4
+}

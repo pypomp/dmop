@@ -1,0 +1,45 @@
+{
+  "output": "results/validation",
+  "seed": 631409,
+  "starts": 3,
+  "ho_score_iterations": 160,
+  "ho_learning_rate": 0.003,
+  "filter_nsteps": [
+    1,
+    2,
+    5,
+    10,
+    20
+  ],
+  "filter_particles": 128,
+  "fit_config": [
+    [
+      5,
+      0
+    ],
+    [
+      5,
+      1
+    ],
+    [
+      5,
+      2
+    ],
+    [
+      20,
+      0
+    ]
+  ],
+  "fit_particles": 128,
+  "iterations": 10,
+  "learning_rate": 0.001,
+  "burnin": 5,
+  "gain_exponent": 0.9,
+  "order": 2,
+  "relative_floor": 1e-07,
+  "independent_particles": 512,
+  "independent_replicates": 4,
+  "euler_particles": 2000,
+  "euler_replicates": 4,
+  "skip_euler": false
+}
