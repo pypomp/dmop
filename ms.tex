@@ -13,7 +13,7 @@
 \newcommand\suppSecProofConsistency{S5}
 \newcommand\suppSecProofBiasVar{S6}
 \newcommand\suppSecBayesFigs{S7}
-\newcommand\suppSecBaselineJustification{S8}
+%\newcommand\suppSecBaselineJustification{S8}
 \newcommand\suppSecAlgorithmicParameters{S9}
 
 \usepackage{natbib}
@@ -132,8 +132,9 @@ We implement our algorithm using JAX \citep{jax}, which also enables us to take 
 Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
 Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
-Empirically, the benchmark tests suggest that IFAD is the most significant methodological advance since \cite{ionides15} for plug-and-play statistical inference on POMP models.
-The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
+Empirically, the benchmark tests suggest that IFAD is a significant methodological advance over the IF2 algorithm of \cite{ionides15} for plug-and-play statistical inference on POMP models.
+\newEdit{\editPlugAndPlay}
+%The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
 We also demonstrate empirical advances using DMOP-$\alpha$ for Bayesian inference.
 In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{homan14} in conjunction with an empirical Bayes-type prior estimated with IF2 to reduce the burn-in period of particle MCMC \citep{andrieu10} on the Dhaka cholera model of \cite{king08} from the $700,000$ iterations in \cite{fasiolo16} to just $500$.
@@ -425,7 +426,7 @@ with Brownian motion $B(t)$, cholera death rate $m$, recovery rate $\gamma$, mea
 where the coefficients $(\beta_j)_{j=1}^6$ model seasonality in the force of infection, $\beta_{\text{trend}}$ models the trend in the force of infection, and the $\omega_j$ represent seasonality of a non-human environmental reservoir of disease.
 The measurement model for observed monthly cholera deaths is
     $Y_n \sim \gN(M_n, \tau^2M_n^2)$,
-where $M_n=\gamma\int_{t_{n-1}}^{t_n}I(s)\, ds$ is the modeled cholera deaths in that month.
+where $M_n= m\int_{t_{n-1}}^{t_n}I(s)\, ds$ is the modeled cholera deaths in that month.
 
 We numerically solve this SDE using Euler's method with a time step of $1/20$ months, matching \citep{king08}.
 This example is a partially observed hypo-elliptical SDE, and methodology specific to this model class has been previously studied \citep{ditlevsen19}.
