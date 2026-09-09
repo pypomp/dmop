@@ -2,22 +2,32 @@
 
 This directory tests Reviewer 1's proposed hypoelliptic transition-density
 competitor as a computational-statistics method. The final 100-start Dacca
-experiment has **not** been launched. It is gated on small validation runs.
+experiment has **not** been launched. The earlier ten-start local-transition
+pilot is now a diagnostic only. A ten-start, 800-second pilot of the monthly
+block transition is complete and is the current decision gate.
 
 ## What is implemented
 
 1. A paper-faithful implementation of Ditlevsen and Samson's conditional
    proposal particle filter for their harmonic oscillator, checked against the
    analytic linear-Gaussian filter.
-2. The DS second-order mean and first-bracket Gaussian covariance for the
-   active Dacca coordinates, with an explicitly reported numerical nugget.
-3. A bootstrap path-space SMC for Dacca's noisy monthly death observations.
-   At every stochastic-approximation iteration it imputes a new complete path
-   and evaluates its complete Gaussian pseudo-likelihood and score. Dacca is
+2. The DS second-order mean and the full moment covariance of the scalar-noise
+   strong-order-1.5 Taylor step. The covariance includes the multiplicative-
+   noise terms involving `L0 g`, `L1 g`, and `L1 L1 g`; it reduces to DS
+   equation (34) for the additive-noise harmonic oscillator.
+3. A 20-step monthly Gaussian block transition. The code propagates the DS
+   mean and covariance through the internal steps, integrates out the 19
+   intermediate states under a time-varying linearization, and adds one
+   `1e-12` relative covariance floor at the monthly endpoint. No floor is
+   added to the internal transitions.
+4. A bootstrap path-space SMC for Dacca's noisy monthly death observations.
+   Particles are sampled and scored only at monthly endpoints. At every
+   stochastic-approximation iteration the method imputes a monthly path and
+   evaluates its complete block-Gaussian pseudo-likelihood and score. Dacca is
    not a demonstrated curved exponential-family example, so there is no SAEM
-   M-step: the implementation performs projected Gaussian pseudo-score ascent
-   instead. This is not the score of the original Dacca process.
-4. A fixed-lower/fixed-upper blocked-interior conditional SMC kernel derived
+   M-step: the implementation performs projected pseudo-score ascent instead.
+   This is not the score of the original Dacca process.
+5. A fixed-lower/fixed-upper blocked-interior conditional SMC kernel derived
    from the bridge construction in Karppinen--Singh--Vihola (KSV) Algorithm 8.
    It is explicitly not labeled full CPF-BBS because it cannot reconnect the
    upper endpoint to another lower-boundary forward particle.
@@ -40,10 +50,13 @@ smooth coordinate and a directly forced rough block of dimension `d-1`; its
 first drift bracket makes the leading order-1.5 covariance nondegenerate. At
 the manuscript state, Dacca's numerical rank diagnostic fills the state only
 through bracket depth five; this is not a proof of global hypoellipticity. Its
-literal first-bracket covariance is rank at most two in six dimensions. The
-runnable SMC adds a disclosed nugget;
-the optional six-direction controllability expansion is a new approximation,
-not a claim made in the DS paper.
+local order-1.5 covariance is rank at most two in six dimensions. The monthly
+block covariance can nevertheless become full dimensional because the local
+covariances are transported through different drift linearizations and summed.
+It remains extremely ill-conditioned, so the runnable block SMC adds one
+disclosed floor to the endpoint covariance. The optional six-direction
+controllability expansion is a separate diagnostic, not a claim made in the DS
+paper.
 
 Dacca also observes no state coordinate exactly. It observes a noisy monthly
 death count. Therefore the Dacca SMC uses a bootstrap proposal rather than the
@@ -90,13 +103,33 @@ a real SMC fitting signal, but also show that the current optimizer is not yet
 robust enough for the unattended final 100-start run. The exact preflight
 summaries and qualifications are in `results/validation/PREFLIGHT.md`.
 
-Every viable full-series forward genealogy has only one surviving early
-ancestor. The fixed-endpoint bridge changes within-month interiors but cannot
-change that genealogy and had mixed effects on short-fit progress. KSV is not
-needed for the DS Algorithm 2 baseline, which reruns an independent forward SMC
-at each stochastic-approximation iteration. The blocked kernel is therefore
-excluded from the planned headline fit; a true KSV comparison would require a
-full forward CPF-BBS implementation and a separate invariance/mixing check.
+The superseded local-transition ten-start pilot allowed up to 1,000 seconds for each fit and
+used the manuscript's final evaluation effort of 5,000 Euler-20 particles and
+36 replications. For 5, 10, and 20 inference substeps per month, respectively,
+the Euler-20 medians were -3847.94, -3821.47, and -3846.53; maxima were
+-3786.13, -3776.58, and -3761.41. Ten and twenty substeps each produced one
+fit above -3780; five produced none. The complete summary and PNG figures are
+in `results/smc_benchmark_10/`. Those numbers must not be presented as results
+from the monthly block method.
+
+The monthly block pilot used ten bounding-box starts, 100 particles per score
+update, and an 800-second limit. Final estimates were evaluated independently
+with 5,000 Euler-20 particles and 36 replications. The best, median, and 10th
+percentile log likelihoods were -3873.47, -4440.63, and -5108.83; no fit
+exceeded -3780. Comparable-effort IFAD-0.97 has best and median values -3744.17
+and -3745.77. The block method therefore remains clearly worse under this
+budget. Seven fits ended with `tau=0.5`, its upper bound, and three with
+`sigma=5`, also its upper bound. The elapsed-time checks show that several runs
+improve early and deteriorate later: the pilot median is about -4050 at 500
+seconds and -4442 at 800 seconds. Results and PNG figures are in
+`results/block_smc_10/`.
+
+The block method has no within-month particle genealogy because it integrates
+out the 19 internal states. KSV is therefore unnecessary for this experiment.
+It would become relevant if the intermediate states were explicitly retained
+inside a conditional particle filter. The existing fixed-endpoint bridge code
+is excluded from the planned headline fit; a true KSV comparison would require
+a full forward CPF-BBS implementation and a separate invariance/mixing check.
 
 ## Reproduction
 
@@ -124,7 +157,8 @@ validation only.
 ## Layout
 
 - `ditlevsen/validation_ho.py`: literal DS oscillator filter and analytic oracle.
-- `ditlevsen/smc.py`: Dacca filter, path imputation, and score update.
+- `ditlevsen/block_smc.py`: monthly block filter, path imputation, and score update.
+- `ditlevsen/smc.py`: superseded local-transition filter and score update.
 - `ditlevsen/smc_benchmark.py`: resumable global-box benchmark and independent
   Euler-20 likelihood evaluation.
 - `ditlevsen/kbridge.py`: optional fixed-endpoint blocked-interior bridge kernel.
@@ -140,6 +174,7 @@ validation only.
 - `results/validation/`: current numerical preflight results; these are not the
   final 100-start experiment. The PNGs show the likelihood comparison,
   manuscript-style parameter panel, elapsed-time trace, and substep viability.
+- `results/block_smc_10/`: ten-start, 800-second monthly block pilot and PNGs.
 - `results/withdrawn_qml/`: rejected EKF/QML diagnostics, not final results.
 
 Nothing here commits, pushes, or changes the Pypomp package.

@@ -14,6 +14,7 @@ from .model import (
 )
 from .transition import (
     completed_covariance,
+    ditlevsen_block_transition,
     ditlevsen_mean,
     ditlevsen_covariance,
     gaussian_transition,
@@ -30,6 +31,7 @@ __all__ = [
     "block_transition",
     "bridge_conditional",
     "decode_parameters",
+    "ditlevsen_block_transition",
     "ditlevsen_mean",
     "default_unconstrained_parameters",
     "ditlevsen_covariance",

@@ -1,10 +1,11 @@
 """Resumable benchmark for the Dacca Ditlevsen-style pseudo-score method.
 
-The fitting target is the regularized Gaussian transition pseudo-model.  The
-scientific target is always the manuscript's Euler-20 POMP likelihood, which is
-evaluated independently with Pypomp.  Keeping those columns and stages
-separate prevents the surrogate score from being reported as the unavailable
-score of the original Dacca process.
+Each internal step uses the Ditlevsen--Samson order-1.5 moments.  Their
+linearized Gaussian recursions are composed into a monthly endpoint
+transition, and SMC is run only at observation times.  The scientific target
+remains the manuscript's Euler-20 POMP likelihood, evaluated independently
+with Pypomp, so the block-Gaussian surrogate is never reported as the original
+Dacca likelihood.
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .benchmark import _parameter_columns, make_starts
+from .block_smc import fit_block_pseudo_score
 from .data import load_dacca_data
 from .model import physical_parameter_dict
 from .smc import fit_pseudo_score
@@ -29,9 +31,12 @@ FIT_SIGNATURE_KEYS = (
     "seed",
     "starts",
     "nsteps",
+    "transition",
     "particles",
     "iterations",
     "learning_rate",
+    "learning_rate_decay_start",
+    "learning_rate_decay_exponent",
     "burnin",
     "gain_exponent",
     "order",
@@ -67,6 +72,12 @@ def _atomic_npz(path: Path, **arrays: Any) -> None:
     os.replace(temporary, path)
 
 
+def _atomic_csv(path: Path, frame: pd.DataFrame) -> None:
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    frame.to_csv(temporary, index=False)
+    os.replace(temporary, path)
+
+
 def _configuration(args: argparse.Namespace) -> dict[str, Any]:
     return {key: _json_ready(value) for key, value in vars(args).items()}
 
@@ -76,6 +87,7 @@ def _prepare_output(args: argparse.Namespace) -> None:
     (args.output / "checkpoints").mkdir(exist_ok=True)
     (args.output / "evaluations").mkdir(exist_ok=True)
     (args.output / "trace_evaluations").mkdir(exist_ok=True)
+    (args.output / "selected_evaluations").mkdir(exist_ok=True)
     path = args.output / "configuration.json"
     configuration = _configuration(args)
     if path.exists():
@@ -112,6 +124,14 @@ def _trace_evaluation_path(
     )
 
 
+def _selected_evaluation_path(output: Path, nstep: int, start: int) -> Path:
+    return (
+        output
+        / "selected_evaluations"
+        / f"best_block_r{nstep:02d}_start{start:03d}.json"
+    )
+
+
 def _fit_seed(seed: int, nstep: int, start: int) -> int:
     return seed + 1_000_003 * nstep + 10_007 * start
 
@@ -128,19 +148,14 @@ def _fit_one(
         print(f"fit exists: r={nstep} start={start_index}", flush=True)
         return
     data = load_dacca_data(nstep)
-    result = fit_pseudo_score(
-        start,
-        data,
+    common = dict(
         particles=args.particles,
         iterations=args.iterations,
         learning_rate=args.learning_rate,
         burnin=args.burnin,
         gain_exponent=args.gain_exponent,
         seed=_fit_seed(args.seed, nstep, start_index),
-        order=args.order,
-        relative_floor=args.relative_floor,
         gradient_clip=args.gradient_clip,
-        bridge_particles=0,
         maximum_backtracks=args.maximum_backtracks,
         maximum_consecutive_rejections=args.maximum_consecutive_rejections,
         maximum_path_retries=args.maximum_path_retries,
@@ -150,6 +165,24 @@ def _fit_one(
         ),
         maximum_elapsed_seconds=args.maximum_elapsed_seconds,
     )
+    if args.transition == "block":
+        result = fit_block_pseudo_score(
+            start,
+            data,
+            endpoint_relative_floor=args.relative_floor,
+            learning_rate_decay_start=args.learning_rate_decay_start,
+            learning_rate_decay_exponent=args.learning_rate_decay_exponent,
+            **common,
+        )
+    else:
+        result = fit_pseudo_score(
+            start,
+            data,
+            order=args.order,
+            relative_floor=args.relative_floor,
+            bridge_particles=0,
+            **common,
+        )
     _atomic_npz(
         checkpoint,
         start=np.asarray(start),
@@ -191,20 +224,38 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
         # with the manuscript's unmonitored timing, one-time JIT compilation is
         # not charged to the optimization trace.
         data = load_dacca_data(nstep)
-        fit_pseudo_score(
-            starts[0],
-            data,
-            particles=args.particles,
-            iterations=0,
-            learning_rate=args.learning_rate,
-            burnin=args.burnin,
-            gain_exponent=args.gain_exponent,
-            seed=_fit_seed(args.seed, nstep, 10_000),
-            order=args.order,
-            relative_floor=args.relative_floor,
-            gradient_clip=args.gradient_clip,
-            bridge_particles=0,
-        )
+        if args.transition == "block":
+            fit_block_pseudo_score(
+                starts[0],
+                data,
+                particles=args.particles,
+                iterations=0,
+                learning_rate=args.learning_rate,
+                learning_rate_decay_start=args.learning_rate_decay_start,
+                learning_rate_decay_exponent=(
+                    args.learning_rate_decay_exponent
+                ),
+                burnin=args.burnin,
+                gain_exponent=args.gain_exponent,
+                seed=_fit_seed(args.seed, nstep, 10_000),
+                endpoint_relative_floor=args.relative_floor,
+                gradient_clip=args.gradient_clip,
+            )
+        else:
+            fit_pseudo_score(
+                starts[0],
+                data,
+                particles=args.particles,
+                iterations=0,
+                learning_rate=args.learning_rate,
+                burnin=args.burnin,
+                gain_exponent=args.gain_exponent,
+                seed=_fit_seed(args.seed, nstep, 10_000),
+                order=args.order,
+                relative_floor=args.relative_floor,
+                gradient_clip=args.gradient_clip,
+                bridge_particles=0,
+            )
         for start_index in _assigned_starts(args):
             _fit_one(args, start_index, starts[start_index], nstep)
         write_fit_tables(args)
@@ -228,7 +279,11 @@ def write_fit_tables(args: argparse.Namespace) -> None:
             parameter_trace = fit["parameter_trace"]
             summary_rows.append(
                 {
-                    "method": "DS regularized pseudo-score",
+                    "method": (
+                        "DS order-1.5 block Gaussian"
+                        if args.transition == "block"
+                        else "DS regularized pseudo-score"
+                    ),
                     "inference_nstep": nstep,
                     "start": start_index,
                     "start_type": "global-box",
@@ -250,7 +305,11 @@ def write_fit_tables(args: argparse.Namespace) -> None:
             for iteration in range(parameter_trace.shape[0]):
                 trace_rows.append(
                     {
-                        "method": "DS regularized pseudo-score",
+                        "method": (
+                            "DS order-1.5 block Gaussian"
+                            if args.transition == "block"
+                            else "DS regularized pseudo-score"
+                        ),
                         "inference_nstep": nstep,
                         "start": start_index,
                         "iteration": iteration,
@@ -278,9 +337,10 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                         **_parameter_columns(parameter_trace[iteration]),
                     }
                 )
-    pd.DataFrame(summary_rows).to_csv(args.output / "fit_summary.csv", index=False)
-    pd.DataFrame(trace_rows).to_csv(
-        args.output / "optimization_training_traces.csv", index=False
+    _atomic_csv(args.output / "fit_summary.csv", pd.DataFrame(summary_rows))
+    _atomic_csv(
+        args.output / "optimization_training_traces.csv",
+        pd.DataFrame(trace_rows),
     )
 
 
@@ -292,11 +352,10 @@ def _euler_evaluate(
     seed: int,
 ) -> tuple[float, float]:
     import pypomp as pp
-    from pypomp.core.parameters import PompParameters
 
     model = pp.models.dacca(nstep=20, dt=None)
     model.pfilter(
-        theta=PompParameters(physical_parameter_dict(unconstrained)),
+        theta=pp.PompParameters(physical_parameter_dict(unconstrained)),
         J=particles,
         reps=replicates,
         key=jax.random.key(seed),
@@ -328,7 +387,11 @@ def evaluate_finals(args: argparse.Namespace) -> None:
                 loglik = standard_error = float("nan")
                 status = f"failed:{type(error).__name__}"
             row = {
-                "method": "DS regularized pseudo-score",
+                "method": (
+                    "DS order-1.5 block Gaussian"
+                    if args.transition == "block"
+                    else "DS regularized pseudo-score"
+                ),
                 "inference_nstep": nstep,
                 "evaluation_nstep": 20,
                 "start": start_index,
@@ -348,7 +411,7 @@ def evaluate_finals(args: argparse.Namespace) -> None:
                 flush=True,
             )
     rows = [json.loads(path.read_text()) for path in sorted((args.output / "evaluations").glob("euler_*.json"))]
-    pd.DataFrame(rows).to_csv(args.output / "final_evaluations.csv", index=False)
+    _atomic_csv(args.output / "final_evaluations.csv", pd.DataFrame(rows))
 
 
 def _checkpoint_iterations(elapsed: np.ndarray, every_seconds: float) -> list[int]:
@@ -391,7 +454,11 @@ def evaluate_traces(args: argparse.Namespace) -> None:
                     loglik = standard_error = float("nan")
                     status = f"failed:{type(error).__name__}"
                 row = {
-                    "method": "DS regularized pseudo-score",
+                    "method": (
+                        "DS order-1.5 block Gaussian"
+                        if args.transition == "block"
+                        else "DS regularized pseudo-score"
+                    ),
                     "inference_nstep": nstep,
                     "evaluation_nstep": 20,
                     "start": start_index,
@@ -412,9 +479,85 @@ def evaluate_traces(args: argparse.Namespace) -> None:
                     flush=True,
                 )
     rows = [json.loads(path.read_text()) for path in sorted((args.output / "trace_evaluations").glob("euler_*.json"))]
-    pd.DataFrame(rows).to_csv(
-        args.output / "optimization_euler_traces.csv", index=False
+    _atomic_csv(
+        args.output / "optimization_euler_traces.csv", pd.DataFrame(rows)
     )
+
+
+def evaluate_selected(args: argparse.Namespace) -> None:
+    """Evaluate the best block-likelihood iterate from every search."""
+
+    for nstep in args.nsteps:
+        for start_index in _assigned_starts(args):
+            checkpoint = _checkpoint_path(args.output, nstep, start_index)
+            if not checkpoint.exists():
+                continue
+            destination = _selected_evaluation_path(
+                args.output, nstep, start_index
+            )
+            if destination.exists():
+                continue
+            fit = _load_checkpoint(checkpoint)
+            pseudo = np.asarray(fit["pseudo_loglik_trace"], dtype=float)
+            finite = np.flatnonzero(np.isfinite(pseudo))
+            if finite.size == 0:
+                raise ValueError(
+                    f"no finite pseudo likelihoods in {checkpoint}"
+                )
+            selected_iteration = int(finite[np.argmax(pseudo[finite])])
+            selected_parameters = fit["parameter_trace"][selected_iteration]
+            seed = _eval_seed(
+                args.seed,
+                nstep,
+                start_index,
+                1_000_000 + selected_iteration,
+            )
+            try:
+                loglik, standard_error = _euler_evaluate(
+                    selected_parameters,
+                    particles=args.eval_particles,
+                    replicates=args.eval_replicates,
+                    seed=seed,
+                )
+                status = "ok" if np.isfinite(loglik) else "non-finite"
+            except (FloatingPointError, RuntimeError, ValueError) as error:
+                loglik = standard_error = float("nan")
+                status = f"failed:{type(error).__name__}"
+            row = {
+                "method": "DS order-1.5 block Gaussian",
+                "selection": "maximum-block-pseudo-loglik",
+                "inference_nstep": nstep,
+                "evaluation_nstep": 20,
+                "start": start_index,
+                "selected_iteration": selected_iteration,
+                "selected_elapsed_seconds": float(
+                    fit["elapsed_trace"][selected_iteration]
+                ),
+                "selected_pseudo_loglik": float(pseudo[selected_iteration]),
+                "euler20_loglik": loglik,
+                "euler20_se": standard_error,
+                "eval_particles": args.eval_particles,
+                "eval_replicates": args.eval_replicates,
+                "evaluation_seed": seed,
+                "evaluation_status": status,
+                **_parameter_columns(selected_parameters),
+            }
+            _atomic_json(destination, row)
+            print(
+                f"selected eval r={nstep} start={start_index} "
+                f"iteration={selected_iteration}: Euler-20={loglik:.2f} "
+                f"(SE {standard_error:.2f}; {status})",
+                flush=True,
+            )
+    rows = [
+        json.loads(path.read_text())
+        for path in sorted(
+            (args.output / "selected_evaluations").glob(
+                "best_block_*.json"
+            )
+        )
+    ]
+    _atomic_csv(args.output / "selected_evaluations.csv", pd.DataFrame(rows))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -422,20 +565,27 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--stages",
         nargs="+",
-        choices=("fit", "final-eval", "trace-eval"),
-        default=("fit", "final-eval", "trace-eval"),
+        choices=("fit", "final-eval", "trace-eval", "selected-eval"),
+        default=("fit", "final-eval", "trace-eval", "selected-eval"),
     )
     parser.add_argument("--output", type=Path, default=Path("results/smc_benchmark"))
     parser.add_argument("--seed", type=int, default=631409)
     parser.add_argument("--starts", type=int, default=100)
     parser.add_argument("--nsteps", nargs="+", type=int, default=(5, 10, 20))
+    parser.add_argument(
+        "--transition", choices=("block", "local"), default="block"
+    )
     parser.add_argument("--particles", type=int, default=100)
     parser.add_argument("--iterations", type=int, default=5000)
     parser.add_argument("--learning-rate", type=float, default=0.05)
+    parser.add_argument("--learning-rate-decay-start", type=int, default=30)
+    parser.add_argument(
+        "--learning-rate-decay-exponent", type=float, default=0.0
+    )
     parser.add_argument("--burnin", type=int, default=30)
     parser.add_argument("--gain-exponent", type=float, default=0.9)
     parser.add_argument("--order", type=int, default=2)
-    parser.add_argument("--relative-floor", type=float, default=1e-7)
+    parser.add_argument("--relative-floor", type=float, default=1e-12)
     parser.add_argument("--gradient-clip", type=float, default=100.0)
     parser.add_argument("--maximum-backtracks", type=int, default=6)
     parser.add_argument("--maximum-consecutive-rejections", type=int, default=10)
@@ -444,7 +594,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--maximum-acceptable-invalid-fraction", type=float, default=0.5
     )
-    parser.add_argument("--maximum-elapsed-seconds", type=float, default=1000.0)
+    parser.add_argument("--maximum-elapsed-seconds", type=float, default=800.0)
     parser.add_argument("--eval-particles", type=int, default=5000)
     parser.add_argument("--eval-replicates", type=int, default=36)
     parser.add_argument("--trace-every-seconds", type=float, default=100.0)
@@ -477,6 +627,8 @@ def main() -> None:
         evaluate_finals(args)
     if "trace-eval" in args.stages:
         evaluate_traces(args)
+    if "selected-eval" in args.stages:
+        evaluate_selected(args)
 
 
 if __name__ == "__main__":

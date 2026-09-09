@@ -1,0 +1,33 @@
+{
+  "stages": [
+    "fit"
+  ],
+  "output": "results/block_preflight_start0",
+  "seed": 631409,
+  "starts": 10,
+  "nsteps": [
+    20
+  ],
+  "transition": "block",
+  "particles": 100,
+  "iterations": 20,
+  "learning_rate": 0.05,
+  "burnin": 30,
+  "gain_exponent": 0.9,
+  "order": 2,
+  "relative_floor": 1e-14,
+  "gradient_clip": 100.0,
+  "maximum_backtracks": 6,
+  "maximum_consecutive_rejections": 10,
+  "maximum_path_retries": 3,
+  "backtrack_factor": 0.5,
+  "maximum_acceptable_invalid_fraction": 0.5,
+  "maximum_elapsed_seconds": 180.0,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "trace_every_seconds": 100.0,
+  "trace_eval_particles": 1000,
+  "trace_eval_replicates": 4,
+  "workers": 10,
+  "worker_index": 0
+}

@@ -87,48 +87,44 @@ evidence along one repeated drift-bracket chain that the true finite-time SDE
 transition can be full-dimensional; it is neither a proof of global
 hypoellipticity nor an argument that the diffusion should be full rank.
 
-The difficulty is instead that a literal first-bracket generalization of the
-DS leading covariance does not contain all those directions.  Let
-$J_b=\partial b_\theta/\partial x$.  Locally freezing the state-dependent
-diffusion gives
-
-\begin{align}
- Q^{(1.5)}_h(x)
- &=hgg^\mathsf T
- +\frac{h^2}{2}\{(J_bg)g^\mathsf T+g(J_bg)^\mathsf T\}
- +\frac{h^3}{3}(J_bg)(J_bg)^\mathsf T\\
- &=A_2H_2A_2^\mathsf T,\\
- A_2&=\begin{bmatrix}h^{1/2}g&h^{3/2}J_bg\end{bmatrix},
- & (H_2)_{ij}&=\frac{1}{i+j+1},\quad i,j\in\{0,1\}.
-\end{align}
-Therefore
+The local order-1.5 approximation still does not contain all six directions.
+For one Brownian driver, let $L_0$ be the It\^o generator and let
+$L_1f=(Df)g$.  Write
 \[
- \rank\{Q^{(1.5)}_h(x)\}\leq 2<6.
+ A=L_1b,\qquad C=L_0g,\qquad D=L_1g,\qquad E=L_1L_1g.
 \]
-This conclusion is not invalidated by the state dependence highlighted by the
-reviewer.  Here $g(x)=q(x)e$ with the constant direction
-$e=(-1,1,0,0,0,0)^\mathsf T$, so $(Dg)w=e\{(Dq)w\}$ is collinear with $g$ for
-every $w$.  The Milstein and other diffusion-derivative terms in the full
-strong-order-1.5 expansion therefore remain on the directly forced line; the
-first drift-propagation term adds only the $J_bg$ direction.  The paper gives
-its nondegenerate Gaussian construction for the $1+p$ structure with $p$
-directly forced directions, not a six-state/one-driver, depth-five analogue.
-This rank-two statement concerns the approximate \emph{finite-step
-covariance}, not the rank-one instantaneous diffusion.  It shows that the DS
-nondegeneracy argument for their $1+p$ depth-one model cannot simply be copied
-to this longer-chain system.  Further stochastic Taylor/bracket terms, or a
-block construction that accumulates them, are required.  The implementation
-also uses the DS second-order mean
+The random part of the scalar-noise strong Taylor step can be written
+\begin{align}
+ Z_h={}&g\eta+A\xi+C(h\eta-\xi)
+       +\tfrac12D(\eta^2-h)+\tfrac16E(\eta^3-3h\eta),\label{eq:strong15-noise}\\
+ \operatorname{var}(\eta)={}&h,\qquad
+ \operatorname{var}(\xi)=h^3/3,\qquad
+ \operatorname{cov}(\eta,\xi)=h^2/2.
+\end{align}
+All terms in \eqref{eq:strong15-noise} have mean zero.  With
+$u=g+\tfrac h2(A+C)$ and $v=A-C$, their exact moment covariance is
+\begin{equation}
+ Q_h^{(1.5)}=huu^\mathsf T+\frac{h^3}{12}vv^\mathsf T
+ +\frac{h^2}{2}DD^\mathsf T+\frac{h^3}{6}EE^\mathsf T.
+ \label{eq:strong15-covariance}
+\end{equation}
+For additive noise, $C=D=E=0$, and \eqref{eq:strong15-covariance}
+reduces to the covariance used by DS; for their harmonic oscillator it is
+exactly their equation~(34).  The implementation retains all four terms
+because Dacca has multiplicative noise.  It uses the matching second-order
+mean
 \[
  m_{\theta,h}(x)=x+h b_\theta(x)+\frac{h^2}{2}\mathcal L_\theta
- b_\theta(x),
+ b_\theta(x).
 \]
-where $\mathcal L_\theta$ is the It\^o generator.
 
-Adding a nugget makes numerical evaluation possible but changes the statistical
-model, with the nugget dominating directions that the first-bracket expansion
-leaves exactly deterministic.  Results labeled ``DS-local+nugget QML'' disclose
-this change and are not presented as a literal execution of DS Algorithm~2.
+For Dacca, $g(x)=q(x)e$ with
+$e=(-1,1,0,0,0,0)^\mathsf T$.  The vectors $C,D,E$ are therefore collinear
+with $g$, while $A=(Db)g$ supplies at most one further direction.  Hence
+$\rank\{Q_h^{(1.5)}\}\leq2<6$.  This concerns the approximate finite-step
+covariance, not the rank-one instantaneous diffusion.  DS prove
+nondegeneracy for a $1+p$ system with $p$ directly forced directions; that
+argument does not by itself cover Dacca's six-state, one-driver system.
 
 \section{Which time scale is being compared}
 
@@ -174,47 +170,76 @@ rank.  The mean remains the DS second-order generator expansion.  This
 ``DS--Krylov'' completion is a new local-linear Gaussian approximation, not a
 claim about the scope of the DS paper.  At fine $h$, its smallest directions
 scale as high odd powers of $h$, so the transition becomes extremely
-ill-conditioned even when it is algebraically full rank.  It is implemented as
-a rank diagnostic and optional sensitivity analysis.  The primary executable
-competitor instead uses the literal two-column DS leading covariance plus a
-reported relative numerical nugget; neither choice is presented as an exact
-application of DS to Dacca.
+ill-conditioned even when it is algebraically full rank.  It is retained as a
+rank diagnostic and is not the transition used in the main experiment.
 
-The earlier extended-Kalman quasi-likelihood optimizer has been withdrawn and
-is not used as a DS result.  The executable competitor now uses a bootstrap
-particle filter at every parameter iteration, draws one path from the forward
-genealogy, evaluates the complete Gaussian pseudo-likelihood on that path, and
-takes a projected stochastic Fisher-score step.  The score average uses the DS
-gain schedule.  Because the Dacca complete pseudo-likelihood has not been
-shown to have DS's curved exponential-family form, there is no SAEM M-step in
-the executable method: this is stochastic gradient ascent, not DS Algorithm~2.
-Every candidate is judged afterward by the original Euler-20 particle filter
-rather than by its training pseudo-likelihood.
+\section{Monthly block transition}
 
-More precisely, write $\widetilde p_{\Delta,\theta}$ for the regularized DS
-Gaussian pseudo-model with latent path $X$.  Fisher's identity gives
+The executable method applies the order-1.5 approximation at each of the 20
+internal steps and integrates out the 19 intermediate states before running
+SMC.  For a month beginning at $x$, set $\mu_0=x$ and $P_0=0$.  Holding the
+forcing fixed at its value for internal step $j$, compute
+\begin{align}
+ \mu_{j+1}&=m_{\theta,h}(\mu_j),\\
+ F_j&=\left.\frac{\partial m_{\theta,h}(z)}{\partial z}\right|_{z=\mu_j},\\
+ P_{j+1}&=F_jP_jF_j^\mathsf T+Q^{(1.5)}_{\theta,h}(\mu_j),
+ \qquad j=0,\ldots,19. \label{eq:block-recursion}
+\end{align}
+Equation~\eqref{eq:block-recursion} is a time-varying linear-Gaussian moment
+closure around the propagated mean.  Conditional on that linearization, the
+intermediate states integrate out exactly, giving the monthly approximation
 \[
- \nabla_\theta \widetilde\ell_\Delta(\theta;y)
+ \widetilde p^{\rm block}_{\theta}(x_{n+1}\mid x_n)
+ =\N\{x_{n+1};\mu_{20}(x_n),P_{20}(x_n)\}.
+\]
+Although every local $Q^{(1.5)}$ has rank at most two, the transported terms
+$F_{19}\cdots F_{j+1}Q_jF_{j+1}^\mathsf T\cdots F_{19}^\mathsf T$ need not
+share a two-dimensional range.  Their sum can therefore give a
+full-dimensional monthly covariance.  In finite precision it is extremely
+ill-conditioned.  The code adds $10^{-12}$ times its largest marginal variance
+to the diagonal once, after the 20 steps; no ridge is added within a step.
+
+The bootstrap filter samples and scores one endpoint per month, applies the
+death-count measurement density there, and resamples.  Its latent path thus
+contains monthly endpoints only.  KSV bridge backward sampling is not needed
+for these runs because the 19 internal states are not part of the SMC path.
+Increasing the number of internal steps changes the transition approximation
+and its cost, but it does not lengthen the particle genealogy.  This block
+variant therefore does not test the fine-grid path-degeneracy mechanism that
+motivates KSV.
+
+The earlier extended-Kalman quasi-likelihood optimizer and the local-nugget
+particle fit are not used as headline DS results.  At every parameter
+iteration, the executable block method runs the monthly bootstrap filter,
+draws one endpoint path from its forward genealogy, and takes a projected
+stochastic Fisher-score step.  Because the Dacca complete pseudo-likelihood
+has not been shown to have DS's curved exponential-family form, this is
+stochastic gradient ascent rather than the M-step in DS Algorithm~2.  Every
+candidate is judged afterward by the original Euler-20 particle filter.
+
+More precisely, write $\widetilde p^{\rm block}_\theta$ for the monthly
+Gaussian pseudo-model with latent endpoint path $X$.  Fisher's identity gives
+\[
+ \nabla_\theta \widetilde\ell^{\rm block}(\theta;y)
  =\E_\theta\!\left[
-   \nabla_\theta\log \widetilde p_{\Delta,\theta}(X,y)\mid y
+   \nabla_\theta\log \widetilde p^{\rm block}_\theta(X,y)\mid y
  \right].
 \]
 At iteration $m$, forward SMC approximates
-$\widetilde p_{\Delta,\theta_{m-1}}(X\mid y)$ and one complete genealogy
+$\widetilde p^{\rm block}_{\theta_{m-1}}(X\mid y)$ and one complete genealogy
 $X^{(m)}$ is drawn from its terminal weighted empirical measure.  Automatic
 differentiation is then applied to
-$\log \widetilde p_{\Delta,\theta}(X^{(m)},y)$ while holding $X^{(m)}$ fixed.
-Thus
+$\log \widetilde p^{\rm block}_\theta(X^{(m)},y)$ while holding $X^{(m)}$
+fixed.  Thus
 \[
  \widehat z_m=
- \left.\nabla_\theta\log \widetilde p_{\Delta,\theta}(X^{(m)},y)
+ \left.\nabla_\theta\log \widetilde p^{\rm block}_\theta(X^{(m)},y)
  \right|_{\theta=\theta_{m-1}}
 \]
-is a one-path SMC approximation of the pseudo-model observed score.  It is not
-an estimate of the original Dacca SDE/Euler score: the latter transition
-density is unavailable, and the first-bracket Dacca covariance is singular
-until the disclosed nugget is added.  No derivative is taken through particle
-simulation, resampling, or ancestor selection.  Updating
+is a one-path SMC approximation of the block pseudo-model observed score.  It
+is not an estimate of the original Dacca SDE/Euler score, whose transition
+density is unavailable.  No derivative is taken through particle simulation,
+resampling, or ancestor selection.  Updating
 $s_m=(1-a_m)s_{m-1}+a_m\widehat z_m$ and stepping along $s_m$ is a
 Robbins--Monro score method.  In contrast, proper SAEM updates a
 parameter-independent sufficient statistic $S(X^{(m)},y)$ and maximizes its
@@ -224,8 +249,9 @@ surrogate exactly (or with a justified generalized-EM step).
 
 At $r=1$ there are no artificial within-month latent points, so KSV does not
 solve the monthly Taylor-approximation or rank-depth issues.  It can become
-relevant when DS is extended to $r>1$.  In ordinary particle backward sampling,
-the ancestor weight contains
+relevant when DS is extended to $r>1$ and the intermediate states are retained
+in the particle path.  In ordinary particle backward sampling, the ancestor
+weight contains
 $p_h(x_{t+h}\mid x_t)$.  As $h$ decreases, this density concentrates and almost
 all backward weight is assigned to the existing ancestor.  Increasing the
 number of Euler steps between monthly observations therefore degrades path
@@ -236,9 +262,9 @@ There is an important algorithmic distinction.  DS Algorithm~2 draws a fresh
 path from an ordinary forward SMC approximation at every SAEM iteration; it
 does not require a conditional-particle-filter Markov kernel.  KSV specifically
 stabilize the backward update of a CPF/particle-Gibbs kernel.  Consequently KSV
-is not required merely to run the DS-style forward-SMC competitor with twenty
-substeps.  It would be relevant if that independent imputation were replaced
-by particle Gibbs or another CPF path update.
+is not required for the monthly block competitor: its internal states have
+already been integrated out.  It would become relevant if those states were
+explicitly imputed with particle Gibbs or another CPF path update.
 
 KSV Assumption~7 requires evaluation of multi-step densities
 $M_{u\mid\ell}(x_u\mid x_\ell)$ and simulation from bridge conditionals
