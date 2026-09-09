@@ -132,20 +132,136 @@ def ditlevsen_covariance(
     *,
     relative_floor: float = 0.0,
 ) -> jax.Array:
-    """First-bracket DS leading-covariance generalization to Dacca.
+    """Moment covariance of the scalar-noise strong order-1.5 scheme.
 
-    Dacca is outside the paper's one-smooth/full-rank-rough model class, so
-    calling this a literal application of their scheme would be inaccurate.
+    For one Brownian driver, write ``L0`` for the Ito generator and ``L1``
+    for differentiation along the diffusion vector.  The random part of the
+    strong Taylor scheme is
+
+    ``g*eta + (L1 b)*xi + (L0 g)*(dt*eta-xi)``
+    ``+ (L1 g)*(eta**2-dt)/2 + (L1 L1 g)*(eta**3-3*dt*eta)/6``,
+
+    where ``var(eta)=dt``, ``var(xi)=dt**3/3`` and
+    ``cov(eta,xi)=dt**2/2``.  The expression below is its exact covariance.
+    It reduces to Ditlevsen--Samson equation (34) for the additive-noise
+    harmonic oscillator.  Dacca is outside their one-smooth/full-rank-rough
+    model class, so this remains a model-specific extension of their scheme.
     """
 
-    return local_gaussian_covariance(
-        state,
-        unconstrained,
-        covariates,
-        dt,
-        order=2,
-        relative_floor=relative_floor,
+    drift_value = drift(state, unconstrained, covariates)
+    diffusion_value = diffusion(state, unconstrained, covariates)
+    drift_jacobian = jax.jacfwd(drift, argnums=0)(
+        state, unconstrained, covariates
     )
+    diffusion_jacobian = jax.jacfwd(diffusion, argnums=0)(
+        state, unconstrained, covariates
+    )
+    diffusion_hessian = jax.jacfwd(
+        jax.jacfwd(diffusion, argnums=0), argnums=0
+    )(state, unconstrained, covariates)
+
+    l1_drift = drift_jacobian @ diffusion_value
+    l1_diffusion = diffusion_jacobian @ diffusion_value
+    l0_diffusion = (
+        diffusion_jacobian @ drift_value
+        + 0.5
+        * jnp.einsum(
+            "i,kij,j->k",
+            diffusion_value,
+            diffusion_hessian,
+            diffusion_value,
+        )
+    )
+
+    def l1_diffusion_field(candidate):
+        candidate_diffusion = diffusion(
+            candidate, unconstrained, covariates
+        )
+        candidate_jacobian = jax.jacfwd(diffusion, argnums=0)(
+            candidate, unconstrained, covariates
+        )
+        return candidate_jacobian @ candidate_diffusion
+
+    l1_l1_diffusion = (
+        jax.jacfwd(l1_diffusion_field)(state) @ diffusion_value
+    )
+
+    eta_coefficient = diffusion_value + 0.5 * dt * (
+        l1_drift + l0_diffusion
+    )
+    independent_integral_coefficient = l1_drift - l0_diffusion
+    covariance = (
+        dt * jnp.outer(eta_coefficient, eta_coefficient)
+        + (dt**3 / 12.0)
+        * jnp.outer(
+            independent_integral_coefficient,
+            independent_integral_coefficient,
+        )
+        + (dt**2 / 2.0) * jnp.outer(l1_diffusion, l1_diffusion)
+        + (dt**3 / 6.0)
+        * jnp.outer(l1_l1_diffusion, l1_l1_diffusion)
+    )
+    covariance = 0.5 * (covariance + covariance.T)
+    scale = jnp.maximum(jnp.max(jnp.diag(covariance)), 1e-20)
+    return covariance + relative_floor * scale * jnp.eye(state.shape[0])
+
+
+def ditlevsen_block_transition(
+    state: jax.Array,
+    unconstrained: jax.Array,
+    step_covariates: jax.Array,
+    dt: float | jax.Array,
+    *,
+    endpoint_relative_floor: float = 0.0,
+) -> tuple[jax.Array, jax.Array]:
+    """Compose order-1.5 moments into one Gaussian endpoint transition.
+
+    Every internal step uses the DS second-order mean and the moment covariance
+    of the strong order-1.5 stochastic Taylor scheme, with no local ridge.
+    Linearizing the conditional mean along
+    the propagated deterministic path gives a time-varying linear-Gaussian
+    chain, so its intermediate states can be integrated out exactly:
+
+    P[j+1] = F[j] P[j] F[j]' + Q[j].
+
+    The optional floor is applied once to the resulting endpoint covariance,
+    never to the internal covariances.
+    """
+
+    dimension = state.shape[0]
+
+    def internal_step(carry, forcing):
+        mean, covariance = carry
+        transition = jax.jacfwd(ditlevsen_mean, argnums=0)(
+            mean, unconstrained, forcing, dt
+        )
+        local_covariance = ditlevsen_covariance(
+            mean,
+            unconstrained,
+            forcing,
+            dt,
+            relative_floor=0.0,
+        )
+        next_mean = ditlevsen_mean(mean, unconstrained, forcing, dt)
+        next_covariance = (
+            transition @ covariance @ transition.T + local_covariance
+        )
+        next_covariance = 0.5 * (next_covariance + next_covariance.T)
+        return (next_mean, next_covariance), None
+
+    (mean, covariance), _ = jax.lax.scan(
+        internal_step,
+        (
+            state,
+            jnp.zeros((dimension, dimension), dtype=jnp.float64),
+        ),
+        step_covariates,
+    )
+    scale = jnp.maximum(jnp.max(jnp.diag(covariance)), 1e-20)
+    covariance = covariance + (
+        endpoint_relative_floor * scale * jnp.eye(dimension)
+    )
+    return mean, covariance
 
 
 def completed_covariance(

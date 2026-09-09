@@ -50,6 +50,7 @@ METHOD_COLORS = {
     "Ditlevsen": "#000000",
 }
 BEST_KNOWN = -3744.17
+TRACE_LOWER_LIMIT = -3900
 PARAMETERS = [
     "sigma",
     "tau",
@@ -81,9 +82,17 @@ def _read_csv(path: Path) -> pd.DataFrame:
 
 
 def _raincloud_panel(
-    frame: pd.DataFrame, order: list[str], letter: str, filename: Path
+    frame: pd.DataFrame,
+    order: list[str],
+    letter: str,
+    filename: Path,
+    *,
+    lower_cutoff: float | None = -3780.0,
 ) -> None:
-    frame = frame.loc[np.isfinite(frame["logLik"])].copy()
+    keep = np.isfinite(frame["logLik"])
+    if lower_cutoff is not None:
+        keep &= frame["logLik"] >= lower_cutoff
+    frame = frame.loc[keep].copy()
     if frame.empty:
         raise ValueError(f"no finite likelihoods for panel {letter}")
     frame["Model"] = pd.Categorical(frame["Model"], categories=order, ordered=True)
@@ -101,9 +110,16 @@ def _raincloud_panel(
     minimum = float(frame["logLik"].min())
     maximum = float(frame["logLik"].max())
     span = maximum - minimum
-    tick_step = 10 if span <= 120 else 50 if span <= 400 else 200
+    if span <= 100.0:
+        tick_step = 10
+    elif span <= 500.0:
+        tick_step = 100
+    elif span <= 2000.0:
+        tick_step = 250
+    else:
+        tick_step = 500
     tick_minimum = int(np.floor(minimum / tick_step) * tick_step)
-    tick_maximum = int(np.floor(maximum / tick_step) * tick_step)
+    tick_maximum = int(np.ceil(maximum / tick_step) * tick_step)
     ticks = list(range(tick_minimum, tick_maximum + tick_step, tick_step))
     plot = (
         ggplot(frame, aes(y="logLik", fill="Model", color="Model"))
@@ -175,27 +191,24 @@ def plot_likelihoods(
     output: Path,
     nstep: int,
 ) -> None:
-    comparable = reference.loc[
-        reference["effort"].eq("comparable")
-        & (reference["euler_loglik"] >= -3780),
+    comparable_all = reference.loc[
+        reference["effort"].eq("comparable"),
         ["method", "euler_loglik"],
     ].rename(columns={"method": "Model", "euler_loglik": "logLik"})
     ds = evaluations.loc[
         evaluations["inference_nstep"].eq(nstep), ["euler20_loglik"]
     ].rename(columns={"euler20_loglik": "logLik"})
     ds["Model"] = "Ditlevsen"
-    panel_a = pd.concat([comparable, ds], ignore_index=True)
-    extended = reference.loc[
-        reference["effort"].eq("extended")
-        & (reference["euler_loglik"] >= -3780),
+    panel_a = pd.concat([comparable_all, ds], ignore_index=True)
+    extended_all = reference.loc[
+        reference["effort"].eq("extended"),
         ["method", "euler_loglik"],
     ].rename(columns={"method": "Model", "euler_loglik": "logLik"})
 
     left = output / f"likelihood_comparable_r{nstep:02d}.png"
     right = output / "likelihood_extended_reference.png"
     _raincloud_panel(panel_a, [*METHOD_ORDER, "Ditlevsen"], "A", left)
-    if not right.exists():
-        _raincloud_panel(extended, METHOD_ORDER, "B", right)
+    _raincloud_panel(extended_all, METHOD_ORDER, "B", right)
     with Image.open(left) as left_image, Image.open(right) as right_image:
         gap = 20
         combined = Image.new(
@@ -210,6 +223,50 @@ def plot_likelihoods(
         combined.paste(right_image.convert("RGB"), (left_image.width + gap, 0))
         combined.save(output / f"likelihood_comparison_r{nstep:02d}.png", dpi=(220, 220))
 
+    comparable_display = comparable_all.loc[
+        comparable_all["logLik"] >= TRACE_LOWER_LIMIT
+    ]
+    extended_display = extended_all.loc[
+        extended_all["logLik"] >= TRACE_LOWER_LIMIT
+    ]
+    full_panel_a = pd.concat([comparable_display, ds], ignore_index=True)
+    full_left = output / f"likelihood_comparable_full_r{nstep:02d}.png"
+    full_right = output / "likelihood_extended_reference_full.png"
+    _raincloud_panel(
+        full_panel_a,
+        [*METHOD_ORDER, "Ditlevsen"],
+        "A",
+        full_left,
+        lower_cutoff=None,
+    )
+    _raincloud_panel(
+        extended_display,
+        METHOD_ORDER,
+        "B",
+        full_right,
+        lower_cutoff=None,
+    )
+    with Image.open(full_left) as left_image, Image.open(
+        full_right
+    ) as right_image:
+        gap = 20
+        combined = Image.new(
+            "RGB",
+            (
+                left_image.width + gap + right_image.width,
+                max(left_image.height, right_image.height),
+            ),
+            "white",
+        )
+        combined.paste(left_image.convert("RGB"), (0, 0))
+        combined.paste(
+            right_image.convert("RGB"), (left_image.width + gap, 0)
+        )
+        combined.save(
+            output / f"likelihood_comparison_full_r{nstep:02d}.png",
+            dpi=(220, 220),
+        )
+
 
 def plot_parameters(
     fit_summary: pd.DataFrame,
@@ -218,7 +275,7 @@ def plot_parameters(
     nstep: int,
 ) -> None:
     original = reference.loc[
-        reference["effort"].eq("comparable"), ["method", *PARAMETERS]
+        reference["effort"].eq("extended"), ["method", *PARAMETERS]
     ].rename(columns={"method": "source"})
     ditlevsen = fit_summary.loc[
         fit_summary["inference_nstep"].eq(nstep), [*PARAMETERS]
@@ -286,8 +343,8 @@ def _ditlevsen_trace_summary(
     for start, group in subset.groupby("start"):
         group = group.sort_values("elapsed_seconds")
         for elapsed in grid:
-            available = group.loc[group["elapsed_seconds"] <= elapsed]
-            row = group.iloc[0] if available.empty else available.iloc[-1]
+            distance = np.abs(group["elapsed_seconds"].to_numpy() - elapsed)
+            row = group.iloc[int(np.argmin(distance))]
             rows.append(
                 {
                     "start": float(start),
@@ -319,7 +376,9 @@ def plot_trace(
     original = reference.loc[reference["effort"].eq("comparable")].copy()
     original["source"] = original["method"]
     transition = (
-        original.loc[original["stage"].eq("train")]
+        original.loc[
+            original["stage"].eq("train"), ["method", "elapsed_seconds"]
+        ]
         .sort_values("elapsed_seconds")
         .groupby("method", as_index=False)
         .first()
@@ -337,23 +396,21 @@ def plot_trace(
     frame["source"] = pd.Categorical(
         frame["source"], categories=source_order, ordered=True
     )
-    non_if2 = frame.loc[
-        frame["source"].isin(["IFAD-0", "IFAD-0.97", "IFAD-1"])
-    ]
+    non_if2 = frame.loc[frame["source"].ne("IF2")]
     if2 = frame.loc[frame["source"].eq("IF2")]
     plot = (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
-        + geom_line(size=1.2)
-        + geom_line(aes(y="q10"), data=non_if2, alpha=0.2, size=0.6, show_legend=False)
-        + geom_line(aes(y="maximum"), data=non_if2, alpha=0.2, size=0.6, show_legend=False)
-        + geom_line(aes(y="q10"), data=if2, alpha=0.35, size=0.6, show_legend=False)
-        + geom_line(aes(y="maximum"), data=if2, alpha=0.35, size=0.6, show_legend=False)
         + geom_ribbon(
             aes(ymin="q10", ymax="maximum", fill="source"),
             alpha=0.10,
             color=None,
             show_legend=False,
         )
+        + geom_line(size=1.2)
+        + geom_line(aes(y="q10"), data=non_if2, alpha=0.2, size=0.6, show_legend=False)
+        + geom_line(aes(y="maximum"), data=non_if2, alpha=0.2, size=0.6, show_legend=False)
+        + geom_line(aes(y="q10"), data=if2, alpha=0.35, size=0.6, show_legend=False)
+        + geom_line(aes(y="maximum"), data=if2, alpha=0.35, size=0.6, show_legend=False)
         + geom_vline(
             aes(xintercept="elapsed_seconds", color="source"),
             data=transition,
@@ -384,10 +441,16 @@ def plot_trace(
             panel_grid_major=element_line(color="#e5e5e5", size=0.8),
             panel_grid_minor=element_blank(),
         )
-        + coord_cartesian(xlim=(0, budget), ylim=(-3800, None))
     )
-    plot.save(
+    (plot + coord_cartesian(xlim=(0, budget), ylim=(TRACE_LOWER_LIMIT, None))).save(
         output / f"optimization_elapsed_r{nstep:02d}.png",
+        width=7,
+        height=3.8,
+        dpi=220,
+        verbose=False,
+    )
+    (plot + coord_cartesian(xlim=(0, budget), ylim=(-5600.0, None))).save(
+        output / f"optimization_elapsed_full_r{nstep:02d}.png",
         width=7,
         height=3.8,
         dpi=220,
@@ -432,15 +495,25 @@ def write_captions(output: Path, count: int, budget: float) -> None:
 \caption{{Raincloud plots of the Dacca searches. \textbf{{A}}, comparable
 computational effort, with {count} Ditlevsen fits limited to {budget:g} seconds.
 \textbf{{B}}, the manuscript's extended-effort reference runs; Ditlevsen was
-not run at the extended budget. The range in panel A is expanded below the
-manuscript cutoff when needed to retain the Ditlevsen results.}}
+not run at the extended budget. Each Ditlevsen search contributes the iterate
+with the highest block pseudo-log-likelihood. Log likelihoods below $-3780$
+are omitted.}}
 
-\caption{{Final estimates for nine Dacca parameters at comparable computational
-effort. Each Ditlevsen density contains {count} bounding-box starts.}}
+\caption{{Expanded raincloud comparison showing all {count} Ditlevsen pilot
+fits and manuscript fits above $-3900$.}}
+
+\caption{{Final estimates for nine Dacca parameters. The original methods use
+the manuscript's extended-effort runs; each Ditlevsen density contains {count}
+bounding-box starts limited to {budget:g} seconds and selected by block
+pseudo-log-likelihood.}}
 
 \caption{{Optimization progress against elapsed time at comparable
-computational effort. The displayed range follows the manuscript's $-3800$
-cutoff. Runs that terminate early are held at their final estimate.}}
+computational effort. The manuscript's lower display limit is relaxed from
+$-3800$ to $-3900$ to show the Ditlevsen pilot. Runs that terminate early are
+held at their final estimate.}}
+
+\caption{{The same elapsed-time comparison with a $-5600$ lower limit, showing
+the Ditlevsen median and its 10th-percentile-to-maximum envelope.}}
 
 \caption{{Independently evaluated Euler-20 log-likelihoods after fitting with
 5, 10, or 20 process substeps per month.}}
@@ -460,8 +533,13 @@ def main() -> None:
     args = build_parser().parse_args()
     output = args.output or args.data / "figures"
     output.mkdir(parents=True, exist_ok=True)
-    evaluations = _read_csv(args.data / "final_evaluations.csv")
-    fit_summary = _read_csv(args.data / "fit_summary.csv")
+    selected_path = args.data / "selected_evaluations.csv"
+    if selected_path.exists():
+        evaluations = _read_csv(selected_path)
+        fit_summary = evaluations
+    else:
+        evaluations = _read_csv(args.data / "final_evaluations.csv")
+        fit_summary = _read_csv(args.data / "fit_summary.csv")
     traces = _read_csv(args.data / "optimization_euler_traces.csv")
     likelihood = _read_csv(args.reference / "manuscript_likelihood.csv")
     parameters = _read_csv(args.reference / "manuscript_parameters.csv")

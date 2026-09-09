@@ -11,6 +11,7 @@ from ditlevsen.model import (
 )
 from ditlevsen.transition import (
     completed_covariance,
+    ditlevsen_block_transition,
     ditlevsen_mean,
     ditlevsen_covariance,
     lie_bracket_diagnostics,
@@ -57,6 +58,33 @@ def test_completed_covariance_is_symmetric_positive_with_floor():
     )
     np.testing.assert_allclose(covariance, covariance.T, atol=1e-15)
     assert np.linalg.eigvalsh(covariance).min() > 0
+
+
+def test_monthly_block_composes_unregularized_order_1p5_moments():
+    data = load_dacca_data(20, max_observations=1)
+    unconstrained = jnp.asarray(default_unconstrained_parameters())
+    state = initial_state(unconstrained)
+    mean, covariance = ditlevsen_block_transition(
+        state,
+        unconstrained,
+        jnp.asarray(data.step_covariates[0]),
+        1 / 240,
+        endpoint_relative_floor=0.0,
+    )
+    covariance = np.asarray(covariance)
+    assert np.all(np.isfinite(np.asarray(mean)))
+    np.testing.assert_allclose(covariance, covariance.T, atol=1e-15)
+    eigenvalues = np.linalg.eigvalsh(covariance)
+    assert eigenvalues.min() >= -1e-14 * eigenvalues.max()
+
+    _, stabilized = ditlevsen_block_transition(
+        state,
+        unconstrained,
+        jnp.asarray(data.step_covariates[0]),
+        1 / 240,
+        endpoint_relative_floor=1e-12,
+    )
+    assert np.isfinite(np.linalg.cholesky(np.asarray(stabilized))).all()
 
 
 def test_ditlevsen_mean_and_bracket_depth_are_finite():
