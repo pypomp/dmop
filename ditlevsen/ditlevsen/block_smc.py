@@ -17,7 +17,94 @@ from .transition import ditlevsen_block_transition
 jax.config.update("jax_enable_x64", True)
 
 
-@partial(jax.jit, static_argnames=("particles",))
+def _batched_mvn_logpdf(
+    values: jax.Array,
+    means: jax.Array,
+    cholesky: jax.Array,
+) -> jax.Array:
+    """Multivariate normal log densities for a particle batch."""
+
+    differences = values - means
+    standardized = jax.vmap(
+        lambda factor, difference: jax.scipy.linalg.solve_triangular(
+            factor, difference, lower=True
+        )
+    )(cholesky, differences)
+    dimension = means.shape[1]
+    return -0.5 * (
+        dimension * jnp.log(jnp.asarray(2.0 * jnp.pi, dtype=jnp.float64))
+        + 2.0
+        * jnp.sum(jnp.log(jnp.diagonal(cholesky, axis1=1, axis2=2)), axis=1)
+        + jnp.sum(standardized**2, axis=1)
+    )
+
+
+def _draw_block_proposal(
+    means: jax.Array,
+    covariances: jax.Array,
+    innovations: jax.Array,
+    observation: jax.Array,
+    observation_population: jax.Array,
+    tau: jax.Array,
+    *,
+    guided: bool,
+) -> tuple[jax.Array, jax.Array]:
+    """Draw from the bootstrap or observation-guided Gaussian proposal."""
+
+    transition_cholesky = jnp.linalg.cholesky(covariances)
+    if not guided:
+        proposed = means + jnp.einsum(
+            "nij,nj->ni", transition_cholesky, innovations
+        )
+        return proposed, jnp.zeros((means.shape[0],), dtype=jnp.float64)
+
+    predicted_deaths = observation_population * means[:, 5]
+    surrogate_scale = tau * jnp.maximum(jnp.abs(predicted_deaths), 1e-6)
+    cross_covariance = observation_population * covariances[:, :, 5]
+    innovation_variance = (
+        observation_population**2 * covariances[:, 5, 5]
+        + surrogate_scale**2
+    )
+    proposal_means = means + cross_covariance * (
+        (observation - predicted_deaths) / innovation_variance
+    )[:, None]
+    proposal_covariances = covariances - (
+        cross_covariance[:, :, None] * cross_covariance[:, None, :]
+        / innovation_variance[:, None, None]
+    )
+    proposal_covariances = 0.5 * (
+        proposal_covariances
+        + jnp.swapaxes(proposal_covariances, 1, 2)
+    )
+    proposal_scale = jnp.maximum(
+        jnp.max(jnp.diagonal(proposal_covariances, axis1=1, axis2=2), axis=1),
+        1e-20,
+    )
+    proposal_covariances = proposal_covariances + (
+        1e-12
+        * proposal_scale[:, None, None]
+        * jnp.eye(means.shape[1], dtype=jnp.float64)[None, :, :]
+    )
+    proposal_cholesky = jnp.linalg.cholesky(proposal_covariances)
+    proposed = proposal_means + jnp.einsum(
+        "nij,nj->ni", proposal_cholesky, innovations
+    )
+    prior_logpdf = _batched_mvn_logpdf(
+        proposed, means, transition_cholesky
+    )
+    proposal_logpdf = _batched_mvn_logpdf(
+        proposed, proposal_means, proposal_cholesky
+    )
+    return proposed, prior_logpdf - proposal_logpdf
+
+
+def _is_guided(proposal: str) -> bool:
+    if proposal not in ("bootstrap", "guided"):
+        raise ValueError("proposal must be 'bootstrap' or 'guided'")
+    return proposal == "guided"
+
+
+@partial(jax.jit, static_argnames=("particles", "guided"))
 def _block_filter_kernel(
     unconstrained: jax.Array,
     step_covariates: jax.Array,
@@ -27,6 +114,7 @@ def _block_filter_kernel(
     *,
     particles: int,
     endpoint_relative_floor: float,
+    guided: bool,
 ) -> tuple[jax.Array, jax.Array, jax.Array]:
     """Bootstrap filter with one composed Gaussian draw per month."""
 
@@ -55,11 +143,18 @@ def _block_filter_kernel(
             )
 
         means, covariances = jax.vmap(moments)(states)
-        cholesky = jnp.linalg.cholesky(covariances)
         innovations = jax.random.normal(
             noise_key, (particles, state0.shape[0]), dtype=jnp.float64
         )
-        proposed = means + jnp.einsum("nij,nj->ni", cholesky, innovations)
+        proposed, proposal_correction = _draw_block_proposal(
+            means,
+            covariances,
+            innovations,
+            observation,
+            observation_population,
+            theta["tau"],
+            guided=guided,
+        )
         finite = jnp.all(jnp.isfinite(proposed), axis=1)
         nonnegative = jnp.all(proposed >= 0.0, axis=1)
         valid = valid & finite & nonnegative
@@ -76,7 +171,8 @@ def _block_filter_kernel(
         )
         raw_log_weights = jnp.where(
             valid & finite_scale,
-            jnp.logaddexp(gaussian, log_tolerance),
+            proposal_correction
+            + jnp.logaddexp(gaussian, log_tolerance),
             -jnp.inf,
         )
         survived = jnp.any(jnp.isfinite(raw_log_weights))
@@ -117,11 +213,13 @@ def block_bootstrap_filter(
     particles: int = 100,
     seed: int = 631409,
     endpoint_relative_floor: float = 1e-12,
+    proposal: str = "bootstrap",
 ) -> SMCFilterResult:
     """Run the monthly DS order-1.5 block Gaussian particle filter."""
 
     if particles < 2:
         raise ValueError("particles must be at least two")
+    guided = _is_guided(proposal)
     increments, ess, invalid_fraction = _block_filter_kernel(
         jnp.asarray(unconstrained, dtype=jnp.float64),
         jnp.asarray(data.step_covariates, dtype=jnp.float64),
@@ -130,6 +228,7 @@ def block_bootstrap_filter(
         jax.random.key(seed),
         particles=particles,
         endpoint_relative_floor=endpoint_relative_floor,
+        guided=guided,
     )
     increments = np.asarray(increments)
     return SMCFilterResult(
@@ -140,7 +239,7 @@ def block_bootstrap_filter(
     )
 
 
-@partial(jax.jit, static_argnames=("particles",))
+@partial(jax.jit, static_argnames=("particles", "guided"))
 def _block_path_filter_kernel(
     unconstrained: jax.Array,
     step_covariates: jax.Array,
@@ -150,6 +249,7 @@ def _block_path_filter_kernel(
     *,
     particles: int,
     endpoint_relative_floor: float,
+    guided: bool,
 ):
     """Monthly path-space filter retaining endpoints and ancestry."""
 
@@ -193,11 +293,18 @@ def _block_path_filter_kernel(
             )
 
         means, covariances = jax.vmap(moments)(states)
-        cholesky = jnp.linalg.cholesky(covariances)
         innovations = jax.random.normal(
             noise_key, (particles, state0.shape[0]), dtype=jnp.float64
         )
-        proposed = means + jnp.einsum("nij,nj->ni", cholesky, innovations)
+        proposed, proposal_correction = _draw_block_proposal(
+            means,
+            covariances,
+            innovations,
+            observation,
+            observation_population,
+            theta["tau"],
+            guided=guided,
+        )
         finite = jnp.all(jnp.isfinite(proposed), axis=1)
         nonnegative = jnp.all(proposed >= 0.0, axis=1)
         valid = valid & finite & nonnegative
@@ -214,7 +321,8 @@ def _block_path_filter_kernel(
         )
         raw_log_weights = jnp.where(
             valid & finite_scale,
-            jnp.logaddexp(gaussian, log_tolerance),
+            proposal_correction
+            + jnp.logaddexp(gaussian, log_tolerance),
             -jnp.inf,
         )
         survived = jnp.any(jnp.isfinite(raw_log_weights))
@@ -234,7 +342,14 @@ def _block_path_filter_kernel(
             valid,
             normalized_log_weights,
             random_key,
-        ), (states, ancestors, increment, ess, invalid_fraction)
+        ), (
+            states,
+            ancestors,
+            normalized_log_weights,
+            increment,
+            ess,
+            invalid_fraction,
+        )
 
     months = jnp.arange(step_covariates.shape[0])
     (_, final_valid, final_log_weights, final_key), outputs = jax.lax.scan(
@@ -244,16 +359,117 @@ def _block_path_filter_kernel(
     )
     final_key, selection_key = jax.random.split(final_key)
     selected = jax.random.categorical(selection_key, final_log_weights)
-    endpoints, ancestors, increments, ess, invalid_fraction = outputs
+    (
+        endpoints,
+        ancestors,
+        normalized_log_weights,
+        increments,
+        ess,
+        invalid_fraction,
+    ) = outputs
     return (
         endpoints,
         ancestors,
+        normalized_log_weights,
         selected,
         final_valid[selected],
         increments,
         ess,
         invalid_fraction,
     )
+
+
+@jax.jit
+def _block_backward_sample_kernel(
+    unconstrained: jax.Array,
+    endpoints: jax.Array,
+    ancestors: jax.Array,
+    normalized_log_weights: jax.Array,
+    step_covariates: jax.Array,
+    selected_final: jax.Array,
+    key: jax.Array,
+    endpoint_relative_floor: float,
+) -> tuple[jax.Array, jax.Array]:
+    """Draw endpoints by FFBSi, falling back to a valid forward ancestor."""
+
+    particles = endpoints.shape[1]
+    dimension = endpoints.shape[2]
+    nstep = step_covariates.shape[1]
+    dt = 1.0 / (12.0 * nstep)
+    log_two_pi = jnp.log(jnp.asarray(2.0 * jnp.pi, dtype=jnp.float64))
+    uniform_log_weight = -jnp.log(
+        jnp.asarray(float(particles), dtype=jnp.float64)
+    )
+    final_state = endpoints[-1, selected_final]
+
+    def backward_step(carry, inputs):
+        next_state, next_index, fallback_count, random_key = carry
+        states, filter_log_weights, covariates, forward_ancestors = inputs
+        transition_starts = states.at[:, 5].set(0.0)
+
+        def moments(state):
+            return ditlevsen_block_transition(
+                state,
+                unconstrained,
+                covariates,
+                dt,
+                endpoint_relative_floor=endpoint_relative_floor,
+            )
+
+        means, covariances = jax.vmap(moments)(transition_starts)
+        cholesky = jnp.linalg.cholesky(covariances)
+        differences = next_state[None, :] - means
+        standardized = jax.vmap(
+            lambda factor, difference: jax.scipy.linalg.solve_triangular(
+                factor, difference, lower=True
+            )
+        )(cholesky, differences)
+        transition_loglik = -0.5 * (
+            dimension * log_two_pi
+            + 2.0 * jnp.sum(
+                jnp.log(jnp.diagonal(cholesky, axis1=1, axis2=2)), axis=1
+            )
+            + jnp.sum(standardized**2, axis=1)
+        )
+        backward_log_weights = filter_log_weights + transition_loglik
+        finite = jnp.isfinite(backward_log_weights)
+        survived = jnp.any(finite)
+        sampling_log_weights = jnp.where(
+            survived,
+            backward_log_weights,
+            uniform_log_weight,
+        )
+        random_key, selection_key = jax.random.split(random_key)
+        backward_selected = jax.random.categorical(
+            selection_key, sampling_log_weights
+        )
+        selected = jnp.where(
+            survived,
+            backward_selected,
+            forward_ancestors[next_index],
+        )
+        selected_state = states[selected]
+        return (
+            selected_state,
+            selected,
+            fallback_count + (~survived).astype(jnp.int32),
+            random_key,
+        ), selected_state
+
+    (_, _, fallback_count, _), reverse_states = jax.lax.scan(
+        backward_step,
+        (final_state, selected_final, jnp.asarray(0, dtype=jnp.int32), key),
+        (
+            endpoints[:-1][::-1],
+            normalized_log_weights[:-1][::-1],
+            step_covariates[1:][::-1],
+            ancestors[1:][::-1],
+        ),
+    )
+    selected_endpoints = jnp.concatenate(
+        (reverse_states[::-1], final_state[None, :]), axis=0
+    )
+    return selected_endpoints, fallback_count
 
 
 def sample_block_smoothing_path(
@@ -263,11 +479,13 @@ def sample_block_smoothing_path(
     particles: int = 100,
     seed: int = 631409,
     endpoint_relative_floor: float = 1e-12,
+    proposal: str = "bootstrap",
 ) -> SMCPathResult:
-    """Draw one monthly endpoint path from the forward genealogy."""
+    """Draw one monthly endpoint path with an FFBSi particle smoother."""
 
     if particles < 2:
         raise ValueError("particles must be at least two")
+    guided = _is_guided(proposal)
     outputs = _block_path_filter_kernel(
         jnp.asarray(unconstrained, dtype=jnp.float64),
         jnp.asarray(data.step_covariates, dtype=jnp.float64),
@@ -276,27 +494,33 @@ def sample_block_smoothing_path(
         jax.random.key(seed),
         particles=particles,
         endpoint_relative_floor=endpoint_relative_floor,
+        guided=guided,
     )
     (
         endpoint_array,
         ancestor_array,
+        normalized_log_weight_array,
         selected,
         selected_valid,
         increments,
         ess,
         invalid_fraction,
     ) = (np.asarray(value) for value in outputs)
-
-    particle_index = int(selected)
-    selected_endpoints: list[np.ndarray] = []
-    for month in range(endpoint_array.shape[0] - 1, -1, -1):
-        selected_endpoints.append(endpoint_array[month, particle_index, :])
-        particle_index = int(ancestor_array[month, particle_index])
-    selected_endpoints.reverse()
+    selected_endpoints, backward_fallbacks = _block_backward_sample_kernel(
+        jnp.asarray(unconstrained, dtype=jnp.float64),
+        jnp.asarray(endpoint_array, dtype=jnp.float64),
+        jnp.asarray(ancestor_array),
+        jnp.asarray(normalized_log_weight_array, dtype=jnp.float64),
+        jnp.asarray(data.step_covariates, dtype=jnp.float64),
+        jnp.asarray(selected),
+        jax.random.key(seed + 32452843),
+        jnp.asarray(endpoint_relative_floor, dtype=jnp.float64),
+    )
+    selected_endpoints = np.asarray(selected_endpoints)
     path = np.concatenate(
         (
             np.asarray(initial_state(jnp.asarray(unconstrained)))[None, :],
-            np.asarray(selected_endpoints),
+            selected_endpoints,
         ),
         axis=0,
     )
@@ -311,7 +535,9 @@ def sample_block_smoothing_path(
         ess=np.asarray(ess),
         invalid_fraction=np.asarray(invalid_fraction),
         unique_initial_ancestors=int(len(np.unique(lineages))),
-        valid_path=bool(selected_valid),
+        valid_path=bool(selected_valid)
+        and bool(np.isfinite(selected_endpoints).all()),
+        backward_fallbacks=int(np.asarray(backward_fallbacks)),
     )
 
 
@@ -429,18 +655,23 @@ def fit_block_pseudo_score(
     gain_exponent: float = 0.9,
     seed: int = 631409,
     endpoint_relative_floor: float = 1e-12,
+    proposal: str = "bootstrap",
     gradient_clip: float = 100.0,
     maximum_backtracks: int = 6,
     maximum_consecutive_rejections: int = 10,
     maximum_path_retries: int = 3,
     backtrack_factor: float = 0.5,
     maximum_acceptable_invalid_fraction: float = 0.5,
+    likelihood_guard_particles: int = 50,
+    likelihood_guard_interval: int = 10,
+    maximum_guard_loglik_drop: float = 5.0,
     maximum_elapsed_seconds: float | None = None,
 ) -> SMCScoreFitResult:
     """Fit the monthly block pseudo-model by SMC Fisher-score ascent."""
 
     if iterations < 0:
         raise ValueError("iterations must be nonnegative")
+    _is_guided(proposal)
     if learning_rate <= 0.0:
         raise ValueError("learning_rate must be positive")
     if learning_rate_decay_start < 0:
@@ -463,6 +694,12 @@ def fit_block_pseudo_score(
         raise ValueError(
             "maximum_acceptable_invalid_fraction must be in [0, 1)"
         )
+    if likelihood_guard_particles != 0 and likelihood_guard_particles < 2:
+        raise ValueError("likelihood_guard_particles must be zero or at least two")
+    if likelihood_guard_interval < 1:
+        raise ValueError("likelihood_guard_interval must be positive")
+    if maximum_guard_loglik_drop < 0.0:
+        raise ValueError("maximum_guard_loglik_drop must be nonnegative")
     if maximum_elapsed_seconds is not None and maximum_elapsed_seconds <= 0.0:
         raise ValueError("maximum_elapsed_seconds must be positive")
 
@@ -495,32 +732,30 @@ def fit_block_pseudo_score(
     minimum_ess_trace: list[float] = []
     invalid_trace: list[float] = []
     ancestor_trace: list[int] = []
+    backward_fallback_trace: list[int] = []
     accepted_step_trace: list[float] = []
     backtrack_trace: list[int] = []
     elapsed_trace: list[float] = []
     started = perf_counter()
     completed_updates = 0
     termination_reason = "completed"
-    pending_path_result: SMCPathResult | None = None
-    backtracking_scale = 1.0
+    retained_parameters = parameters
+    guard_checks = 0
     consecutive_rejections = 0
 
     for iteration in range(iterations + 1):
         parameter_trace.append(np.asarray(parameters))
-        if pending_path_result is None:
-            for retry in range(maximum_path_retries + 1):
-                path_result = sample_block_smoothing_path(
-                    np.asarray(parameters),
-                    data,
-                    particles=particles,
-                    seed=seed + 104729 * iteration + 15485863 * retry,
-                    endpoint_relative_floor=endpoint_relative_floor,
-                )
-                if path_result.valid_path and np.isfinite(path_result.loglik):
-                    break
-        else:
-            path_result = pending_path_result
-            pending_path_result = None
+        for retry in range(maximum_path_retries + 1):
+            path_result = sample_block_smoothing_path(
+                np.asarray(parameters),
+                data,
+                particles=particles,
+                seed=seed + 104729 * iteration + 15485863 * retry,
+                endpoint_relative_floor=endpoint_relative_floor,
+                proposal=proposal,
+            )
+            if path_result.valid_path and np.isfinite(path_result.loglik):
+                break
 
         targets = jnp.asarray(path_result.path[1:], dtype=jnp.float64)
         complete_value, score = value_and_score(parameters, targets)
@@ -534,6 +769,7 @@ def fit_block_pseudo_score(
         minimum_ess_trace.append(float(np.min(path_result.ess)))
         invalid_trace.append(float(np.max(path_result.invalid_fraction)))
         ancestor_trace.append(path_result.unique_initial_ancestors)
+        backward_fallback_trace.append(path_result.backward_fallbacks)
         accepted_step_trace.append(np.nan)
         backtrack_trace.append(0)
         elapsed_trace.append(perf_counter() - started)
@@ -578,48 +814,90 @@ def fit_block_pseudo_score(
             learning_rate_decay_start,
             learning_rate_decay_exponent,
         )
-        for backtrack in range(maximum_backtracks + 1):
-            trial_step = (
-                scheduled_step
-                * backtracking_scale
-                * backtrack_factor**backtrack
-            )
-            candidate = project_parameters(parameters + trial_step * direction)
-            candidate_path = sample_block_smoothing_path(
-                np.asarray(candidate),
+        guard_iteration = bool(likelihood_guard_particles) and (
+            (iteration + 1) % likelihood_guard_interval == 0
+        )
+        if guard_iteration:
+            guard_checks += 1
+            guard_seed = seed + 49979687 + 104729 * iteration
+            guard_reference = block_bootstrap_filter(
+                np.asarray(retained_parameters),
                 data,
-                particles=particles,
-                seed=seed + 104729 * (iteration + 1),
+                particles=likelihood_guard_particles,
+                seed=guard_seed,
                 endpoint_relative_floor=endpoint_relative_floor,
+                proposal=proposal,
             )
-            acceptable_invalidity = (
-                float(np.max(candidate_path.invalid_fraction))
-                <= maximum_acceptable_invalid_fraction
-            )
+        else:
+            guard_reference = None
+        for backtrack in range(maximum_backtracks + 1):
+            trial_step = scheduled_step * backtrack_factor**backtrack
+            candidate = project_parameters(parameters + trial_step * direction)
+            if guard_iteration:
+                guard_candidate = block_bootstrap_filter(
+                    np.asarray(candidate),
+                    data,
+                    particles=likelihood_guard_particles,
+                    seed=guard_seed,
+                    endpoint_relative_floor=endpoint_relative_floor,
+                    proposal=proposal,
+                )
+                candidate_finite = np.isfinite(guard_candidate.loglik)
+                acceptable_invalidity = (
+                    float(np.max(guard_candidate.invalid_fraction))
+                    <= maximum_acceptable_invalid_fraction
+                )
+                acceptable_likelihood = (
+                    candidate_finite
+                    and (
+                        guard_reference is None
+                        or not np.isfinite(guard_reference.loglik)
+                        or guard_candidate.loglik
+                        >= guard_reference.loglik - maximum_guard_loglik_drop
+                    )
+                )
+            else:
+                candidate_finite = bool(
+                    np.all(np.isfinite(np.asarray(candidate)))
+                )
+                acceptable_invalidity = True
+                acceptable_likelihood = True
             if (
-                candidate_path.valid_path
-                and np.isfinite(candidate_path.loglik)
+                candidate_finite
                 and acceptable_invalidity
+                and acceptable_likelihood
             ):
                 parameters = candidate
-                pending_path_result = candidate_path
+                if not likelihood_guard_particles:
+                    retained_parameters = candidate
+                elif guard_iteration and (
+                    guard_reference is None
+                    or not np.isfinite(guard_reference.loglik)
+                    or guard_candidate.loglik >= guard_reference.loglik
+                ):
+                    retained_parameters = candidate
                 accepted_step_trace[-1] = trial_step
                 backtrack_trace[-1] = backtrack
-                backtracking_scale *= backtrack_factor**backtrack
                 completed_updates += 1
                 consecutive_rejections = 0
                 break
         else:
             accepted_step_trace[-1] = 0.0
             backtrack_trace[-1] = maximum_backtracks + 1
+            if guard_iteration:
+                parameters = retained_parameters
+                averaged_score = jnp.zeros_like(parameters)
+                first_moment = jnp.zeros_like(parameters)
+                second_moment = jnp.zeros_like(parameters)
             consecutive_rejections += 1
             if consecutive_rejections >= maximum_consecutive_rejections:
                 termination_reason = "consecutive-rejections"
                 break
 
     nan_trace = np.full(len(parameter_trace), np.nan)
+    returned_parameters = retained_parameters if guard_checks else parameters
     return SMCScoreFitResult(
-        unconstrained=np.asarray(parameters),
+        unconstrained=np.asarray(returned_parameters),
         parameter_trace=np.asarray(parameter_trace),
         marginal_loglik_trace=np.asarray(marginal_trace),
         complete_loglik_trace=np.asarray(complete_trace),
@@ -628,6 +906,7 @@ def fit_block_pseudo_score(
         minimum_ess_trace=np.asarray(minimum_ess_trace),
         maximum_invalid_fraction_trace=np.asarray(invalid_trace),
         unique_initial_ancestors_trace=np.asarray(ancestor_trace),
+        backward_fallback_trace=np.asarray(backward_fallback_trace),
         bridge_update_fraction_trace=nan_trace,
         bridge_median_ess_trace=nan_trace,
         accepted_step_size_trace=np.asarray(accepted_step_trace),
