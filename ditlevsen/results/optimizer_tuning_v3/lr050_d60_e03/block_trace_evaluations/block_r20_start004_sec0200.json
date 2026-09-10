@@ -1,0 +1,19 @@
+{
+  "method": "DS order-1.5 block Gaussian",
+  "inference_nstep": 20,
+  "start": 4,
+  "target_elapsed_seconds": 200,
+  "iteration": 58,
+  "elapsed_seconds": 199.25866879196838,
+  "training_pseudo_loglik": -4871.969947787917,
+  "block_loglik": -4837.168144181536,
+  "block_loglik_se": 0.9999984674766872,
+  "eval_particles": 500,
+  "eval_replicates": 4,
+  "replicate_logliks": [
+    -4855.267068823746,
+    -4835.78185096981,
+    -4855.937599800068,
+    -4849.462672007905
+  ]
+}

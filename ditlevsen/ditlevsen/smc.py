@@ -43,6 +43,7 @@ class SMCPathResult:
     invalid_fraction: np.ndarray
     unique_initial_ancestors: int
     valid_path: bool
+    backward_fallbacks: int = 0
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,7 @@ class SMCScoreFitResult:
     minimum_ess_trace: np.ndarray
     maximum_invalid_fraction_trace: np.ndarray
     unique_initial_ancestors_trace: np.ndarray
+    backward_fallback_trace: np.ndarray
     bridge_update_fraction_trace: np.ndarray
     bridge_median_ess_trace: np.ndarray
     accepted_step_size_trace: np.ndarray
@@ -589,6 +591,7 @@ def fit_pseudo_score(
     minimum_ess_trace: list[float] = []
     invalid_trace: list[float] = []
     ancestor_trace: list[int] = []
+    backward_fallback_trace: list[int] = []
     bridge_update_trace: list[float] = []
     bridge_ess_trace: list[float] = []
     accepted_step_trace: list[float] = []
@@ -649,6 +652,7 @@ def fit_pseudo_score(
         minimum_ess_trace.append(float(np.min(path_result.ess)))
         invalid_trace.append(float(np.max(path_result.invalid_fraction)))
         ancestor_trace.append(path_result.unique_initial_ancestors)
+        backward_fallback_trace.append(path_result.backward_fallbacks)
         accepted_step_trace.append(np.nan)
         backtrack_trace.append(0)
         elapsed_trace.append(perf_counter() - started)
@@ -738,6 +742,7 @@ def fit_pseudo_score(
         minimum_ess_trace=np.asarray(minimum_ess_trace),
         maximum_invalid_fraction_trace=np.asarray(invalid_trace),
         unique_initial_ancestors_trace=np.asarray(ancestor_trace),
+        backward_fallback_trace=np.asarray(backward_fallback_trace),
         bridge_update_fraction_trace=np.asarray(bridge_update_trace),
         bridge_median_ess_trace=np.asarray(bridge_ess_trace),
         accepted_step_size_trace=np.asarray(accepted_step_trace),

@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .benchmark import _parameter_columns, make_starts
-from .block_smc import fit_block_pseudo_score
+from .block_smc import block_bootstrap_filter, fit_block_pseudo_score
 from .data import load_dacca_data
 from .model import physical_parameter_dict
 from .smc import fit_pseudo_score
@@ -32,6 +32,7 @@ FIT_SIGNATURE_KEYS = (
     "starts",
     "nsteps",
     "transition",
+    "proposal",
     "particles",
     "iterations",
     "learning_rate",
@@ -47,6 +48,9 @@ FIT_SIGNATURE_KEYS = (
     "maximum_path_retries",
     "backtrack_factor",
     "maximum_acceptable_invalid_fraction",
+    "likelihood_guard_particles",
+    "likelihood_guard_interval",
+    "maximum_guard_loglik_drop",
     "maximum_elapsed_seconds",
 )
 
@@ -87,6 +91,7 @@ def _prepare_output(args: argparse.Namespace) -> None:
     (args.output / "checkpoints").mkdir(exist_ok=True)
     (args.output / "evaluations").mkdir(exist_ok=True)
     (args.output / "trace_evaluations").mkdir(exist_ok=True)
+    (args.output / "block_trace_evaluations").mkdir(exist_ok=True)
     (args.output / "selected_evaluations").mkdir(exist_ok=True)
     path = args.output / "configuration.json"
     configuration = _configuration(args)
@@ -132,12 +137,35 @@ def _selected_evaluation_path(output: Path, nstep: int, start: int) -> Path:
     )
 
 
+def _block_trace_evaluation_path(
+    output: Path, nstep: int, start: int, target_seconds: int
+) -> Path:
+    return (
+        output
+        / "block_trace_evaluations"
+        / f"block_r{nstep:02d}_start{start:03d}_sec{target_seconds:04d}.json"
+    )
+
+
 def _fit_seed(seed: int, nstep: int, start: int) -> int:
     return seed + 1_000_003 * nstep + 10_007 * start
 
 
 def _eval_seed(seed: int, nstep: int, start: int, iteration: int) -> int:
     return seed + 30_000_001 + 100_003 * nstep + 997 * start + iteration
+
+
+def _block_eval_seed(
+    seed: int, nstep: int, start: int, target_seconds: int, replicate: int
+) -> int:
+    return (
+        seed
+        + 60_000_001
+        + 100_003 * nstep
+        + 997 * start
+        + 37 * target_seconds
+        + replicate
+    )
 
 
 def _fit_one(
@@ -163,6 +191,9 @@ def _fit_one(
         maximum_acceptable_invalid_fraction=(
             args.maximum_acceptable_invalid_fraction
         ),
+        likelihood_guard_particles=args.likelihood_guard_particles,
+        likelihood_guard_interval=args.likelihood_guard_interval,
+        maximum_guard_loglik_drop=args.maximum_guard_loglik_drop,
         maximum_elapsed_seconds=args.maximum_elapsed_seconds,
     )
     if args.transition == "block":
@@ -170,6 +201,7 @@ def _fit_one(
             start,
             data,
             endpoint_relative_floor=args.relative_floor,
+            proposal=args.proposal,
             learning_rate_decay_start=args.learning_rate_decay_start,
             learning_rate_decay_exponent=args.learning_rate_decay_exponent,
             **common,
@@ -195,6 +227,7 @@ def _fit_one(
         minimum_ess_trace=result.minimum_ess_trace,
         maximum_invalid_fraction_trace=result.maximum_invalid_fraction_trace,
         unique_initial_ancestors_trace=result.unique_initial_ancestors_trace,
+        backward_fallback_trace=result.backward_fallback_trace,
         accepted_step_size_trace=result.accepted_step_size_trace,
         backtrack_count_trace=result.backtrack_count_trace,
         elapsed_trace=result.elapsed_trace,
@@ -229,7 +262,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
                 starts[0],
                 data,
                 particles=args.particles,
-                iterations=0,
+                iterations=1,
                 learning_rate=args.learning_rate,
                 learning_rate_decay_start=args.learning_rate_decay_start,
                 learning_rate_decay_exponent=(
@@ -239,7 +272,17 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
                 gain_exponent=args.gain_exponent,
                 seed=_fit_seed(args.seed, nstep, 10_000),
                 endpoint_relative_floor=args.relative_floor,
+                proposal=args.proposal,
                 gradient_clip=args.gradient_clip,
+                maximum_backtracks=0,
+                maximum_consecutive_rejections=1,
+                maximum_path_retries=args.maximum_path_retries,
+                maximum_acceptable_invalid_fraction=(
+                    args.maximum_acceptable_invalid_fraction
+                ),
+                likelihood_guard_particles=args.likelihood_guard_particles,
+                likelihood_guard_interval=1,
+                maximum_guard_loglik_drop=args.maximum_guard_loglik_drop,
             )
         else:
             fit_pseudo_score(
@@ -277,6 +320,10 @@ def write_fit_tables(args: argparse.Namespace) -> None:
             fit = _load_checkpoint(path)
             termination = str(fit["termination_reason"])
             parameter_trace = fit["parameter_trace"]
+            backward_fallback_trace = fit.get(
+                "backward_fallback_trace",
+                np.zeros(parameter_trace.shape[0], dtype=int),
+            )
             summary_rows.append(
                 {
                     "method": (
@@ -297,6 +344,9 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                     "minimum_ess": float(np.min(fit["minimum_ess_trace"])),
                     "maximum_invalid_fraction": float(
                         np.max(fit["maximum_invalid_fraction_trace"])
+                    ),
+                    "maximum_backward_fallbacks": int(
+                        np.max(backward_fallback_trace)
                     ),
                     "total_backtracks": int(np.sum(fit["backtrack_count_trace"])),
                     **_parameter_columns(fit["unconstrained"]),
@@ -327,6 +377,9 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                         ),
                         "unique_initial_ancestors": int(
                             fit["unique_initial_ancestors_trace"][iteration]
+                        ),
+                        "backward_fallbacks": int(
+                            backward_fallback_trace[iteration]
                         ),
                         "accepted_step_size": float(
                             fit["accepted_step_size_trace"][iteration]
@@ -426,6 +479,121 @@ def _checkpoint_iterations(elapsed: np.ndarray, every_seconds: float) -> list[in
     return sorted({0, *values.tolist(), elapsed.size - 1})
 
 
+def _checkpoint_targets(
+    elapsed: np.ndarray, every_seconds: float
+) -> list[tuple[int, int]]:
+    """Map fixed wall-clock targets to their nearest stored iterates."""
+
+    elapsed = np.asarray(elapsed, dtype=float)
+    if elapsed.size == 0:
+        return []
+    targets = np.arange(0.0, elapsed[-1] + every_seconds, every_seconds)
+    targets = targets[targets <= elapsed[-1] + every_seconds / 2.0]
+    pairs: list[tuple[int, int]] = []
+    for target in targets:
+        iteration = int(np.argmin(np.abs(elapsed - target)))
+        pairs.append((int(round(target)), iteration))
+    final_pair = (int(round(elapsed[-1])), elapsed.size - 1)
+    if not pairs or pairs[-1][1] != final_pair[1]:
+        pairs.append(final_pair)
+    return pairs
+
+
+def _combine_loglik_replicates(values: np.ndarray) -> tuple[float, float]:
+    """Log of the average likelihood and its delta-method standard error."""
+
+    values = np.asarray(values, dtype=float)
+    if values.ndim != 1 or values.size == 0:
+        raise ValueError("values must be a nonempty vector")
+    if not np.all(np.isfinite(values)):
+        return float("nan"), float("nan")
+    maximum = float(np.max(values))
+    relative = np.exp(values - maximum)
+    mean_relative = float(np.mean(relative))
+    combined = maximum + float(np.log(mean_relative))
+    if values.size == 1:
+        return combined, float("nan")
+    standard_error = float(
+        np.std(relative, ddof=1)
+        / np.sqrt(values.size)
+        / mean_relative
+    )
+    return combined, standard_error
+
+
+def evaluate_block_traces(args: argparse.Namespace) -> None:
+    """Evaluate stored iterates under an independent block particle filter."""
+
+    for nstep in args.nsteps:
+        data = load_dacca_data(nstep)
+        for start_index in _assigned_starts(args):
+            checkpoint = _checkpoint_path(args.output, nstep, start_index)
+            if not checkpoint.exists():
+                continue
+            fit = _load_checkpoint(checkpoint)
+            for target_seconds, iteration in _checkpoint_targets(
+                fit["elapsed_trace"], args.trace_every_seconds
+            ):
+                destination = _block_trace_evaluation_path(
+                    args.output, nstep, start_index, target_seconds
+                )
+                if destination.exists():
+                    continue
+                replicate_values = []
+                for replicate in range(args.block_eval_replicates):
+                    seed = _block_eval_seed(
+                        args.seed,
+                        nstep,
+                        start_index,
+                        target_seconds,
+                        replicate,
+                    )
+                    result = block_bootstrap_filter(
+                        fit["parameter_trace"][iteration],
+                        data,
+                        particles=args.block_eval_particles,
+                        seed=seed,
+                        endpoint_relative_floor=args.relative_floor,
+                        proposal=args.proposal,
+                    )
+                    replicate_values.append(result.loglik)
+                loglik, standard_error = _combine_loglik_replicates(
+                    np.asarray(replicate_values)
+                )
+                row = {
+                    "method": "DS order-1.5 block Gaussian",
+                    "inference_nstep": nstep,
+                    "start": start_index,
+                    "target_elapsed_seconds": target_seconds,
+                    "iteration": iteration,
+                    "elapsed_seconds": float(fit["elapsed_trace"][iteration]),
+                    "training_pseudo_loglik": float(
+                        fit["pseudo_loglik_trace"][iteration]
+                    ),
+                    "block_loglik": loglik,
+                    "block_loglik_se": standard_error,
+                    "eval_particles": args.block_eval_particles,
+                    "eval_replicates": args.block_eval_replicates,
+                    "replicate_logliks": replicate_values,
+                }
+                _atomic_json(destination, row)
+                print(
+                    f"block eval r={nstep} start={start_index} "
+                    f"target={target_seconds}s: {loglik:.2f} "
+                    f"(SE {standard_error:.2f})",
+                    flush=True,
+                )
+    rows = [
+        json.loads(path.read_text())
+        for path in sorted(
+            (args.output / "block_trace_evaluations").glob("block_*.json")
+        )
+    ]
+    _atomic_csv(
+        args.output / "optimization_block_traces.csv", pd.DataFrame(rows)
+    )
+
+
 def evaluate_traces(args: argparse.Namespace) -> None:
     for nstep in args.nsteps:
         for start_index in _assigned_starts(args):
@@ -485,7 +653,7 @@ def evaluate_traces(args: argparse.Namespace) -> None:
 
 
 def evaluate_selected(args: argparse.Namespace) -> None:
-    """Evaluate the best block-likelihood iterate from every search."""
+    """Evaluate the best independently scored block-likelihood iterate."""
 
     for nstep in args.nsteps:
         for start_index in _assigned_starts(args):
@@ -499,12 +667,30 @@ def evaluate_selected(args: argparse.Namespace) -> None:
                 continue
             fit = _load_checkpoint(checkpoint)
             pseudo = np.asarray(fit["pseudo_loglik_trace"], dtype=float)
-            finite = np.flatnonzero(np.isfinite(pseudo))
-            if finite.size == 0:
-                raise ValueError(
-                    f"no finite pseudo likelihoods in {checkpoint}"
+            block_paths = sorted(
+                (args.output / "block_trace_evaluations").glob(
+                    f"block_r{nstep:02d}_start{start_index:03d}_sec*.json"
                 )
-            selected_iteration = int(finite[np.argmax(pseudo[finite])])
+            )
+            block_rows = [json.loads(path.read_text()) for path in block_paths]
+            finite_block = [
+                row for row in block_rows if np.isfinite(row["block_loglik"])
+            ]
+            if finite_block:
+                selected_block = max(
+                    finite_block, key=lambda row: row["block_loglik"]
+                )
+                selected_iteration = int(selected_block["iteration"])
+                selection = "maximum-held-out-block-loglik"
+            else:
+                finite = np.flatnonzero(np.isfinite(pseudo))
+                if finite.size == 0:
+                    raise ValueError(
+                        f"no finite pseudo likelihoods in {checkpoint}"
+                    )
+                selected_iteration = int(finite[np.argmax(pseudo[finite])])
+                selected_block = None
+                selection = "maximum-training-block-pseudo-loglik"
             selected_parameters = fit["parameter_trace"][selected_iteration]
             seed = _eval_seed(
                 args.seed,
@@ -525,7 +711,7 @@ def evaluate_selected(args: argparse.Namespace) -> None:
                 status = f"failed:{type(error).__name__}"
             row = {
                 "method": "DS order-1.5 block Gaussian",
-                "selection": "maximum-block-pseudo-loglik",
+                "selection": selection,
                 "inference_nstep": nstep,
                 "evaluation_nstep": 20,
                 "start": start_index,
@@ -534,6 +720,21 @@ def evaluate_selected(args: argparse.Namespace) -> None:
                     fit["elapsed_trace"][selected_iteration]
                 ),
                 "selected_pseudo_loglik": float(pseudo[selected_iteration]),
+                "selected_block_loglik": (
+                    float(selected_block["block_loglik"])
+                    if selected_block is not None
+                    else float("nan")
+                ),
+                "selected_block_loglik_se": (
+                    float(selected_block["block_loglik_se"])
+                    if selected_block is not None
+                    else float("nan")
+                ),
+                "selected_block_target_seconds": (
+                    int(selected_block["target_elapsed_seconds"])
+                    if selected_block is not None
+                    else -1
+                ),
                 "euler20_loglik": loglik,
                 "euler20_se": standard_error,
                 "eval_particles": args.eval_particles,
@@ -565,8 +766,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--stages",
         nargs="+",
-        choices=("fit", "final-eval", "trace-eval", "selected-eval"),
-        default=("fit", "final-eval", "trace-eval", "selected-eval"),
+        choices=(
+            "fit",
+            "block-eval",
+            "final-eval",
+            "trace-eval",
+            "selected-eval",
+        ),
+        default=(
+            "fit",
+            "final-eval",
+            "trace-eval",
+            "selected-eval",
+        ),
     )
     parser.add_argument("--output", type=Path, default=Path("results/smc_benchmark"))
     parser.add_argument("--seed", type=int, default=631409)
@@ -574,6 +786,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--nsteps", nargs="+", type=int, default=(5, 10, 20))
     parser.add_argument(
         "--transition", choices=("block", "local"), default="block"
+    )
+    parser.add_argument(
+        "--proposal", choices=("bootstrap", "guided"), default="guided"
     )
     parser.add_argument("--particles", type=int, default=100)
     parser.add_argument("--iterations", type=int, default=5000)
@@ -594,10 +809,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--maximum-acceptable-invalid-fraction", type=float, default=0.5
     )
+    parser.add_argument("--likelihood-guard-particles", type=int, default=50)
+    parser.add_argument("--likelihood-guard-interval", type=int, default=10)
+    parser.add_argument("--maximum-guard-loglik-drop", type=float, default=5.0)
     parser.add_argument("--maximum-elapsed-seconds", type=float, default=800.0)
     parser.add_argument("--eval-particles", type=int, default=5000)
     parser.add_argument("--eval-replicates", type=int, default=36)
     parser.add_argument("--trace-every-seconds", type=float, default=100.0)
+    parser.add_argument("--block-eval-particles", type=int, default=1000)
+    parser.add_argument("--block-eval-replicates", type=int, default=4)
     parser.add_argument("--trace-eval-particles", type=int, default=1000)
     parser.add_argument("--trace-eval-replicates", type=int, default=4)
     parser.add_argument("--workers", type=int, default=1)
@@ -613,6 +833,10 @@ def main() -> None:
         raise ValueError("nsteps must be positive")
     if args.trace_every_seconds <= 0.0:
         raise ValueError("trace-every-seconds must be positive")
+    if args.block_eval_particles < 2:
+        raise ValueError("block-eval-particles must be at least two")
+    if args.block_eval_replicates < 1:
+        raise ValueError("block-eval-replicates must be positive")
     if args.workers < 1:
         raise ValueError("workers must be positive")
     if not 0 <= args.worker_index < args.workers:
@@ -623,6 +847,8 @@ def main() -> None:
         run_fits(args, starts)
     else:
         write_fit_tables(args)
+    if "block-eval" in args.stages:
+        evaluate_block_traces(args)
     if "final-eval" in args.stages:
         evaluate_finals(args)
     if "trace-eval" in args.stages:

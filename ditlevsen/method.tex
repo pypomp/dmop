@@ -199,10 +199,13 @@ full-dimensional monthly covariance.  In finite precision it is extremely
 ill-conditioned.  The code adds $10^{-12}$ times its largest marginal variance
 to the diagonal once, after the 20 steps; no ridge is added within a step.
 
-The bootstrap filter samples and scores one endpoint per month, applies the
-death-count measurement density there, and resamples.  Its latent path thus
-contains monthly endpoints only.  KSV bridge backward sampling is not needed
-for these runs because the 19 internal states are not part of the SMC path.
+The particle filter proposes and scores one endpoint per month.  Its Gaussian
+guide freezes the heteroskedastic observation variance at the block-predicted
+death count and conditions on the resulting linear-Gaussian surrogate.  The
+weight contains the exact block-model importance ratio $p/q$ and the original
+measurement density.  Its latent path thus contains monthly endpoints only.
+KSV bridge backward sampling is not needed for these runs because the 19
+internal states are not part of the SMC path.
 Increasing the number of internal steps changes the transition approximation
 and its cost, but it does not lengthen the particle genealogy.  This block
 variant therefore does not test the fine-grid path-degeneracy mechanism that
@@ -210,9 +213,10 @@ motivates KSV.
 
 The earlier extended-Kalman quasi-likelihood optimizer and the local-nugget
 particle fit are not used as headline DS results.  At every parameter
-iteration, the executable block method runs the monthly bootstrap filter,
-draws one endpoint path from its forward genealogy, and takes a projected
-stochastic Fisher-score step.  Because the Dacca complete pseudo-likelihood
+iteration, the executable block method runs the guided monthly filter, draws
+one endpoint path with forward-filtering backward simulation (FFBSi), and
+takes a projected stochastic Fisher-score step.  Because the Dacca complete
+pseudo-likelihood
 has not been shown to have DS's curved exponential-family form, this is
 stochastic gradient ascent rather than the M-step in DS Algorithm~2.  Every
 candidate is judged afterward by the original Euler-20 particle filter.
@@ -226,9 +230,9 @@ Gaussian pseudo-model with latent endpoint path $X$.  Fisher's identity gives
  \right].
 \]
 At iteration $m$, forward SMC approximates
-$\widetilde p^{\rm block}_{\theta_{m-1}}(X\mid y)$ and one complete genealogy
-$X^{(m)}$ is drawn from its terminal weighted empirical measure.  Automatic
-differentiation is then applied to
+$\widetilde p^{\rm block}_{\theta_{m-1}}(X\mid y)$ and FFBSi draws one path
+$X^{(m)}$ through the endpoint particle clouds using the block transition
+density.  Automatic differentiation is then applied to
 $\log \widetilde p^{\rm block}_\theta(X^{(m)},y)$ while holding $X^{(m)}$
 fixed.  Thus
 \[

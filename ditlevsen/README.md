@@ -1,10 +1,10 @@
 # Ditlevsen transition-density benchmark on Dacca
 
 This directory tests Reviewer 1's proposed hypoelliptic transition-density
-competitor as a computational-statistics method. The final 100-start Dacca
-experiment has **not** been launched. The earlier ten-start local-transition
-pilot is now a diagnostic only. A ten-start, 800-second pilot of the monthly
-block transition is complete and is the current decision gate.
+competitor as a computational-statistics method. The corrected 100-start
+Dacca experiment is running in `results/block_smc_guided_100/`. Each search is
+an independent draw from the manuscript box and has an 800-second limit. The
+earlier local-transition and monthly bootstrap pilots are diagnostics only.
 
 ## What is implemented
 
@@ -20,13 +20,17 @@ block transition is complete and is the current decision gate.
    intermediate states under a time-varying linearization, and adds one
    `1e-12` relative covariance floor at the monthly endpoint. No floor is
    added to the internal transitions.
-4. A bootstrap path-space SMC for Dacca's noisy monthly death observations.
-   Particles are sampled and scored only at monthly endpoints. At every
-   stochastic-approximation iteration the method imputes a monthly path and
-   evaluates its complete block-Gaussian pseudo-likelihood and score. Dacca is
-   not a demonstrated curved exponential-family example, so there is no SAEM
-   M-step: the implementation performs projected pseudo-score ascent instead.
-   This is not the score of the original Dacca process.
+4. A guided path-space SMC for Dacca's noisy monthly death observations.
+   Particles are proposed and scored only at monthly endpoints. The Gaussian
+   proposal freezes the heteroskedastic observation variance at the predicted
+   death count and conditions the block transition on that linear-Gaussian
+   surrogate. The particle weight includes the exact block-model `p/q`
+   correction and the original measurement density. At
+   every stochastic-approximation iteration, FFBSi imputes a monthly path and
+   the method evaluates its complete block-Gaussian pseudo-likelihood and
+   score. Dacca is not a demonstrated curved exponential-family example, so
+   there is no SAEM M-step: the implementation performs projected pseudo-score
+   ascent instead. This is not the score of the original Dacca process.
 5. A fixed-lower/fixed-upper blocked-interior conditional SMC kernel derived
    from the bridge construction in Karppinen--Singh--Vihola (KSV) Algorithm 8.
    It is explicitly not labeled full CPF-BBS because it cannot reconnect the
@@ -59,8 +63,12 @@ controllability expansion is a separate diagnostic, not a claim made in the DS
 paper.
 
 Dacca also observes no state coordinate exactly. It observes a noisy monthly
-death count. Therefore the Dacca SMC uses a bootstrap proposal rather than the
-paper's conditional proposal `p(U_i | V_i, V_{i-1}, U_{i-1})`.
+death count. The Dacca SMC therefore uses an observation-guided Gaussian
+proposal formed by freezing the observation variance at the block-predicted
+death count. The importance weight uses the original measurement density and
+the exact block-model `p/q` correction. This is analogous in purpose to the
+paper's conditional proposal `p(U_i | V_i, V_{i-1}, U_{i-1})`, but it is not
+the same proposal because the observation structures differ.
 
 ## Validation status
 
@@ -98,10 +106,11 @@ A 20-update preflight at learning rate 0.05 improved fresh Euler-20 estimates by
 completed; the first stopped after 19 updates when backtracking could not keep
 the maximum invalid-particle fraction below 50%. A separate aggressive
 60-update stress test improved Euler-20 from about -6209 to -4015 in 82 seconds,
-but was non-monotone and drove `tau` to its upper bound. These checks establish
-a real SMC fitting signal, but also show that the current optimizer is not yet
-robust enough for the unattended final 100-start run. The exact preflight
-summaries and qualifications are in `results/validation/PREFLIGHT.md`.
+but was non-monotone and drove `tau` to its upper bound. These checks established
+a real SMC fitting signal and motivated the guided proposal, FFBSi smoother,
+learning-rate decay, and periodic likelihood guard used in the current run.
+The exact preflight summaries and qualifications are in
+`results/validation/PREFLIGHT.md`.
 
 The superseded local-transition ten-start pilot allowed up to 1,000 seconds for each fit and
 used the manuscript's final evaluation effort of 5,000 Euler-20 particles and
@@ -112,8 +121,8 @@ fit above -3780; five produced none. The complete summary and PNG figures are
 in `results/smc_benchmark_10/`. Those numbers must not be presented as results
 from the monthly block method.
 
-The monthly block pilot used ten bounding-box starts, 100 particles per score
-update, and an 800-second limit. Final estimates were evaluated independently
+The superseded monthly bootstrap pilot used ten bounding-box starts, 100
+particles per score update, and an 800-second limit. Final estimates were evaluated independently
 with 5,000 Euler-20 particles and 36 replications. The best, median, and 10th
 percentile log likelihoods were -3873.47, -4440.63, and -5108.83; no fit
 exceeded -3780. Comparable-effort IFAD-0.97 has best and median values -3744.17
@@ -122,7 +131,15 @@ budget. Seven fits ended with `tau=0.5`, its upper bound, and three with
 `sigma=5`, also its upper bound. The elapsed-time checks show that several runs
 improve early and deteriorate later: the pilot median is about -4050 at 500
 seconds and -4442 at 800 seconds. Results and PNG figures are in
-`results/block_smc_10/`.
+`results/block_smc_10/`. These results predate the guided proposal, FFBSi
+smoother, and periodic likelihood guard, and are not the headline comparison.
+
+The current 100-start run uses the order-1.5 monthly block transition, the
+observation-guided proposal with exact importance correction, FFBSi path
+sampling, and a periodic common-random-number block-likelihood guard. Each
+selected checkpoint will be evaluated with the manuscript's Euler-20 model
+using 5,000 particles and 36 replications. Only those Euler-20 values enter the
+headline likelihood and elapsed-time figures.
 
 The block method has no within-month particle genealogy because it integrates
 out the 19 internal states. KSV is therefore unnecessary for this experiment.
@@ -174,7 +191,8 @@ validation only.
 - `results/validation/`: current numerical preflight results; these are not the
   final 100-start experiment. The PNGs show the likelihood comparison,
   manuscript-style parameter panel, elapsed-time trace, and substep viability.
-- `results/block_smc_10/`: ten-start, 800-second monthly block pilot and PNGs.
+- `results/block_smc_10/`: superseded ten-start monthly bootstrap pilot.
+- `results/block_smc_guided_100/`: current guided-FFBSi 100-start benchmark.
 - `results/withdrawn_qml/`: rejected EKF/QML diagnostics, not final results.
 
 Nothing here commits, pushes, or changes the Pypomp package.
