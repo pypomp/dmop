@@ -7196,7 +7196,14 @@ $X_{u-1}^\theta$ fixed. The chain rule, iterated from time zero, gives
 \partial_{\theta_i}\process_u(X_{u-1}^\theta;\theta,\omega_u).
 \label{eq:simulator-gradient-chain-expansion}
 \end{equation}
-Under (A6), define the local contributions
+Under (A6), decompose the coordinate-$i$ measurement gradient at time $s$
+by the age of its chain-rule contributions. The superscript $[r]$ is an
+age index, not a power or derivative order: for $1\leq r<s$,
+$h_{s,i}^{[r]}$ is the contribution from the simulator's partial parameter
+derivative at time $s-r$, propagated to the measurement at time $s$.
+This age differs from the discount lag $n-s$, which gives the coefficient
+$\alpha^{n-s}$ when the time-$s$ measurement gradient contributes at time $n$.
+Define
 \begin{align}
 h_{s,i}^{[0]}
 &=
@@ -7223,7 +7230,10 @@ D_x\log f_{Y_s\mid X_s}
 \partial_{\theta_i}X_0^\theta.
 \label{eq:measurement-gradient-age-components}
 \end{align}
-The derivative in the first term of $h_{s,i}^{[0]}$ holds $x$ fixed.
+Here $h_{s,i}^{[0]}$ combines the direct parameter derivative of the
+log measurement density, holding $x$ fixed, with the contribution from the
+time-$s$ simulator's partial parameter derivative. The endpoint
+$h_{s,i}^{[s]}$ is the contribution from the initial-state derivative.
 Multiplying Equation~(\ref{eq:simulator-gradient-chain-expansion}) by
 the spatial log measurement derivative gives
 \begin{equation}
