@@ -472,12 +472,22 @@ def write_captions(
     failed_early: int,
     displayed_fits: int,
     full_median: float,
+    selection_seconds: float | None,
     has_substep_plot: bool,
 ) -> None:
     trace_replication = (
         "one replicate"
         if trace_replicates == 1
         else f"{trace_replicates} replicates"
+    )
+    selection_text = (
+        ""
+        if selection_seconds is None
+        else (
+            f" Parameters were taken at the first completed score evaluation "
+            f"crossing {selection_seconds:g} seconds; fits that failed earlier "
+            "use their last available iterate."
+        )
     )
     text = rf"""% Captions for the PNG benchmark figures.
 
@@ -491,12 +501,12 @@ manuscript's extended-effort reference runs with its original
 ${REFERENCE_LIKELIHOOD_LOWER_LIMIT:g}$ cutoff; Ditlevsen was not run at the
 extended budget. Ditlevsen fitting used $J={fit_particles}$; each retained
 checkpoint was evaluated under the Euler--20 model with $J={eval_particles}$
-and {eval_replicates} replicates.}}
+and {eval_replicates} replicates.{selection_text}}}
 
 \caption{{Selected estimates for nine Dacca parameters. The original methods
 use the manuscript's extended-effort runs. The Ditlevsen density contains
 {count} bounding-box starts limited to {budget:g} seconds, using the retained
-checkpoint from each fit.}}
+checkpoint from each fit.{selection_text}}}
 
 \caption{{Optimization progress against elapsed time. The manuscript's
 extended-effort trajectories and the Ditlevsen fits are displayed through
@@ -574,6 +584,11 @@ def main() -> None:
         int(fit_runs["termination_reason"].ne("time-budget").sum()),
         int((evaluations["euler20_loglik"] >= LIKELIHOOD_LOWER_LIMIT).sum()),
         float(evaluations["euler20_loglik"].median()),
+        (
+            None
+            if pd.isna(configuration.get("output_selection_seconds", np.nan))
+            else float(configuration["output_selection_seconds"])
+        ),
         has_substep_plot,
     )
 
