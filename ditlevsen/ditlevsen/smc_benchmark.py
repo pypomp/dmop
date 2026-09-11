@@ -52,7 +52,14 @@ FIT_SIGNATURE_KEYS = (
     "likelihood_guard_interval",
     "maximum_guard_loglik_drop",
     "maximum_elapsed_seconds",
+    "output_selection_seconds",
 )
+EVALUATION_STAGES = {
+    "block-eval",
+    "final-eval",
+    "trace-eval",
+    "selected-eval",
+}
 
 
 def _json_ready(value: Any) -> Any:
@@ -109,6 +116,21 @@ def _prepare_output(args: argparse.Namespace) -> None:
             )
     else:
         _atomic_json(path, configuration)
+    if args.worker_index == 0 and EVALUATION_STAGES.intersection(args.stages):
+        _atomic_json(
+            args.output / "evaluation_configuration.json",
+            {
+                "stages": list(args.stages),
+                "evaluation_model": "Dacca Euler-20 POMP",
+                "final_eval_particles": args.eval_particles,
+                "final_eval_replicates": args.eval_replicates,
+                "trace_eval_particles": args.trace_eval_particles,
+                "trace_eval_replicates": args.trace_eval_replicates,
+                "trace_every_seconds": args.trace_every_seconds,
+                "block_eval_particles": args.block_eval_particles,
+                "block_eval_replicates": args.block_eval_replicates,
+            },
+        )
 
 
 def _checkpoint_path(output: Path, nstep: int, start: int) -> Path:
@@ -188,9 +210,7 @@ def _fit_one(
         maximum_consecutive_rejections=args.maximum_consecutive_rejections,
         maximum_path_retries=args.maximum_path_retries,
         backtrack_factor=args.backtrack_factor,
-        maximum_acceptable_invalid_fraction=(
-            args.maximum_acceptable_invalid_fraction
-        ),
+        maximum_acceptable_invalid_fraction=(args.maximum_acceptable_invalid_fraction),
         likelihood_guard_particles=args.likelihood_guard_particles,
         likelihood_guard_interval=args.likelihood_guard_interval,
         maximum_guard_loglik_drop=args.maximum_guard_loglik_drop,
@@ -215,10 +235,19 @@ def _fit_one(
             bridge_particles=0,
             **common,
         )
+    selected_iteration = _output_iteration(
+        result.elapsed_trace, args.output_selection_seconds
+    )
+    selected_parameters = result.parameter_trace[selected_iteration]
     _atomic_npz(
         checkpoint,
         start=np.asarray(start),
-        unconstrained=result.unconstrained,
+        unconstrained=selected_parameters,
+        terminal_unconstrained=result.unconstrained,
+        output_selected_iteration=np.asarray(selected_iteration),
+        output_selected_elapsed_seconds=np.asarray(
+            result.elapsed_trace[selected_iteration]
+        ),
         parameter_trace=result.parameter_trace,
         pseudo_loglik_trace=result.marginal_loglik_trace,
         complete_pseudologlik_trace=result.complete_loglik_trace,
@@ -242,7 +271,8 @@ def _fit_one(
         f"status={result.termination_reason}, "
         f"pseudo={result.marginal_loglik_trace[0]:.2f} -> "
         f"{result.marginal_loglik_trace[-1]:.2f}, "
-        f"time={result.elapsed_seconds:.2f}s",
+        f"time={result.elapsed_seconds:.2f}s, "
+        f"selected={result.elapsed_trace[selected_iteration]:.2f}s",
         flush=True,
     )
 
@@ -265,9 +295,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
                 iterations=1,
                 learning_rate=args.learning_rate,
                 learning_rate_decay_start=args.learning_rate_decay_start,
-                learning_rate_decay_exponent=(
-                    args.learning_rate_decay_exponent
-                ),
+                learning_rate_decay_exponent=(args.learning_rate_decay_exponent),
                 burnin=args.burnin,
                 gain_exponent=args.gain_exponent,
                 seed=_fit_seed(args.seed, nstep, 10_000),
@@ -339,15 +367,25 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                     "updates_completed": int(fit["completed_updates"]),
                     "termination_reason": termination,
                     "elapsed_seconds": float(fit["elapsed_seconds"]),
+                    "output_selected_iteration": int(
+                        fit.get(
+                            "output_selected_iteration",
+                            np.asarray(parameter_trace.shape[0] - 1),
+                        )
+                    ),
+                    "output_selected_elapsed_seconds": float(
+                        fit.get(
+                            "output_selected_elapsed_seconds",
+                            fit["elapsed_seconds"],
+                        )
+                    ),
                     "initial_pseudo_loglik": float(fit["pseudo_loglik_trace"][0]),
                     "final_pseudo_loglik": float(fit["pseudo_loglik_trace"][-1]),
                     "minimum_ess": float(np.min(fit["minimum_ess_trace"])),
                     "maximum_invalid_fraction": float(
                         np.max(fit["maximum_invalid_fraction_trace"])
                     ),
-                    "maximum_backward_fallbacks": int(
-                        np.max(backward_fallback_trace)
-                    ),
+                    "maximum_backward_fallbacks": int(np.max(backward_fallback_trace)),
                     "total_backtracks": int(np.sum(fit["backtrack_count_trace"])),
                     **_parameter_columns(fit["unconstrained"]),
                 }
@@ -364,9 +402,7 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                         "start": start_index,
                         "iteration": iteration,
                         "elapsed_seconds": float(fit["elapsed_trace"][iteration]),
-                        "pseudo_loglik": float(
-                            fit["pseudo_loglik_trace"][iteration]
-                        ),
+                        "pseudo_loglik": float(fit["pseudo_loglik_trace"][iteration]),
                         "complete_pseudologlik": float(
                             fit["complete_pseudologlik_trace"][iteration]
                         ),
@@ -378,15 +414,11 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                         "unique_initial_ancestors": int(
                             fit["unique_initial_ancestors_trace"][iteration]
                         ),
-                        "backward_fallbacks": int(
-                            backward_fallback_trace[iteration]
-                        ),
+                        "backward_fallbacks": int(backward_fallback_trace[iteration]),
                         "accepted_step_size": float(
                             fit["accepted_step_size_trace"][iteration]
                         ),
-                        "backtrack_count": int(
-                            fit["backtrack_count_trace"][iteration]
-                        ),
+                        "backtrack_count": int(fit["backtrack_count_trace"][iteration]),
                         **_parameter_columns(parameter_trace[iteration]),
                     }
                 )
@@ -463,7 +495,10 @@ def evaluate_finals(args: argparse.Namespace) -> None:
                 f"Euler-20={loglik:.2f} (SE {standard_error:.2f}; {status})",
                 flush=True,
             )
-    rows = [json.loads(path.read_text()) for path in sorted((args.output / "evaluations").glob("euler_*.json"))]
+    rows = [
+        json.loads(path.read_text())
+        for path in sorted((args.output / "evaluations").glob("euler_*.json"))
+    ]
     _atomic_csv(args.output / "final_evaluations.csv", pd.DataFrame(rows))
 
 
@@ -477,6 +512,20 @@ def _checkpoint_iterations(elapsed: np.ndarray, every_seconds: float) -> list[in
     values = np.searchsorted(elapsed, targets, side="left")
     values = np.clip(values, 0, elapsed.size - 1)
     return sorted({0, *values.tolist(), elapsed.size - 1})
+
+
+def _output_iteration(elapsed: np.ndarray, selection_seconds: float | None) -> int:
+    """Select the first completed evaluation crossing a fixed time threshold."""
+
+    elapsed = np.asarray(elapsed, dtype=float)
+    if elapsed.size == 0:
+        raise ValueError("elapsed trace must be nonempty")
+    if selection_seconds is None:
+        return elapsed.size - 1
+    return min(
+        int(np.searchsorted(elapsed, selection_seconds, side="left")),
+        elapsed.size - 1,
+    )
 
 
 def _checkpoint_targets(
@@ -514,9 +563,7 @@ def _combine_loglik_replicates(values: np.ndarray) -> tuple[float, float]:
     if values.size == 1:
         return combined, float("nan")
     standard_error = float(
-        np.std(relative, ddof=1)
-        / np.sqrt(values.size)
-        / mean_relative
+        np.std(relative, ddof=1) / np.sqrt(values.size) / mean_relative
     )
     return combined, standard_error
 
@@ -589,9 +636,7 @@ def evaluate_block_traces(args: argparse.Namespace) -> None:
             (args.output / "block_trace_evaluations").glob("block_*.json")
         )
     ]
-    _atomic_csv(
-        args.output / "optimization_block_traces.csv", pd.DataFrame(rows)
-    )
+    _atomic_csv(args.output / "optimization_block_traces.csv", pd.DataFrame(rows))
 
 
 def evaluate_traces(args: argparse.Namespace) -> None:
@@ -608,7 +653,14 @@ def evaluate_traces(args: argparse.Namespace) -> None:
                     args.output, nstep, start_index, iteration
                 )
                 if destination.exists():
-                    continue
+                    previous = json.loads(destination.read_text())
+                    matching_effort = (
+                        previous.get("eval_particles") == args.trace_eval_particles
+                        and previous.get("eval_replicates")
+                        == args.trace_eval_replicates
+                    )
+                    if matching_effort:
+                        continue
                 seed = _eval_seed(args.seed, nstep, start_index, iteration)
                 try:
                     loglik, standard_error = _euler_evaluate(
@@ -646,10 +698,11 @@ def evaluate_traces(args: argparse.Namespace) -> None:
                     f"iteration={iteration}: Euler-20={loglik:.2f}",
                     flush=True,
                 )
-    rows = [json.loads(path.read_text()) for path in sorted((args.output / "trace_evaluations").glob("euler_*.json"))]
-    _atomic_csv(
-        args.output / "optimization_euler_traces.csv", pd.DataFrame(rows)
-    )
+    rows = [
+        json.loads(path.read_text())
+        for path in sorted((args.output / "trace_evaluations").glob("euler_*.json"))
+    ]
+    _atomic_csv(args.output / "optimization_euler_traces.csv", pd.DataFrame(rows))
 
 
 def evaluate_selected(args: argparse.Namespace) -> None:
@@ -660,9 +713,7 @@ def evaluate_selected(args: argparse.Namespace) -> None:
             checkpoint = _checkpoint_path(args.output, nstep, start_index)
             if not checkpoint.exists():
                 continue
-            destination = _selected_evaluation_path(
-                args.output, nstep, start_index
-            )
+            destination = _selected_evaluation_path(args.output, nstep, start_index)
             if destination.exists():
                 continue
             fit = _load_checkpoint(checkpoint)
@@ -677,17 +728,13 @@ def evaluate_selected(args: argparse.Namespace) -> None:
                 row for row in block_rows if np.isfinite(row["block_loglik"])
             ]
             if finite_block:
-                selected_block = max(
-                    finite_block, key=lambda row: row["block_loglik"]
-                )
+                selected_block = max(finite_block, key=lambda row: row["block_loglik"])
                 selected_iteration = int(selected_block["iteration"])
                 selection = "maximum-held-out-block-loglik"
             else:
                 finite = np.flatnonzero(np.isfinite(pseudo))
                 if finite.size == 0:
-                    raise ValueError(
-                        f"no finite pseudo likelihoods in {checkpoint}"
-                    )
+                    raise ValueError(f"no finite pseudo likelihoods in {checkpoint}")
                 selected_iteration = int(finite[np.argmax(pseudo[finite])])
                 selected_block = None
                 selection = "maximum-training-block-pseudo-loglik"
@@ -753,9 +800,7 @@ def evaluate_selected(args: argparse.Namespace) -> None:
     rows = [
         json.loads(path.read_text())
         for path in sorted(
-            (args.output / "selected_evaluations").glob(
-                "best_block_*.json"
-            )
+            (args.output / "selected_evaluations").glob("best_block_*.json")
         )
     ]
     _atomic_csv(args.output / "selected_evaluations.csv", pd.DataFrame(rows))
@@ -784,19 +829,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=631409)
     parser.add_argument("--starts", type=int, default=100)
     parser.add_argument("--nsteps", nargs="+", type=int, default=(5, 10, 20))
-    parser.add_argument(
-        "--transition", choices=("block", "local"), default="block"
-    )
-    parser.add_argument(
-        "--proposal", choices=("bootstrap", "guided"), default="guided"
-    )
+    parser.add_argument("--transition", choices=("block", "local"), default="block")
+    parser.add_argument("--proposal", choices=("bootstrap", "guided"), default="guided")
     parser.add_argument("--particles", type=int, default=100)
     parser.add_argument("--iterations", type=int, default=5000)
     parser.add_argument("--learning-rate", type=float, default=0.05)
     parser.add_argument("--learning-rate-decay-start", type=int, default=30)
-    parser.add_argument(
-        "--learning-rate-decay-exponent", type=float, default=0.0
-    )
+    parser.add_argument("--learning-rate-decay-exponent", type=float, default=0.0)
     parser.add_argument("--burnin", type=int, default=30)
     parser.add_argument("--gain-exponent", type=float, default=0.9)
     parser.add_argument("--order", type=int, default=2)
@@ -813,6 +852,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--likelihood-guard-interval", type=int, default=10)
     parser.add_argument("--maximum-guard-loglik-drop", type=float, default=5.0)
     parser.add_argument("--maximum-elapsed-seconds", type=float, default=800.0)
+    parser.add_argument("--output-selection-seconds", type=float)
     parser.add_argument("--eval-particles", type=int, default=5000)
     parser.add_argument("--eval-replicates", type=int, default=36)
     parser.add_argument("--trace-every-seconds", type=float, default=100.0)
@@ -833,6 +873,11 @@ def main() -> None:
         raise ValueError("nsteps must be positive")
     if args.trace_every_seconds <= 0.0:
         raise ValueError("trace-every-seconds must be positive")
+    if (
+        args.output_selection_seconds is not None
+        and args.output_selection_seconds <= 0.0
+    ):
+        raise ValueError("output-selection-seconds must be positive")
     if args.block_eval_particles < 2:
         raise ValueError("block-eval-particles must be at least two")
     if args.block_eval_replicates < 1:

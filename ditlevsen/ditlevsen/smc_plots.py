@@ -51,7 +51,8 @@ METHOD_COLORS = {
 }
 BEST_KNOWN = -3744.17
 TRACE_LOWER_LIMIT = -4300
-LIKELIHOOD_REFERENCE_LOWER_LIMIT = -3780
+LIKELIHOOD_LOWER_LIMIT = -4300
+REFERENCE_LIKELIHOOD_LOWER_LIMIT = -3800
 PARAMETERS = [
     "sigma",
     "tau",
@@ -113,7 +114,7 @@ def _raincloud_panel(
     span = maximum - minimum
     if span <= 100.0:
         tick_step = 10
-    elif span <= 500.0:
+    elif span <= 1000.0:
         tick_step = 100
     elif span <= 2000.0:
         tick_step = 250
@@ -206,55 +207,22 @@ def plot_likelihoods(
         ["method", "euler_loglik"],
     ].rename(columns={"method": "Model", "euler_loglik": "logLik"})
 
-    display_order = [*METHOD_ORDER, "Ditlevsen"]
-
-    strict_left = output / f"likelihood_comparable_cutoff_r{nstep:02d}.png"
-    strict_right = output / "likelihood_extended_reference_cutoff.png"
-    _raincloud_panel(panel_a, display_order, "A", strict_left)
-    _raincloud_panel(extended_all, display_order, "B", strict_right)
-    with Image.open(strict_left) as left_image, Image.open(
-        strict_right
-    ) as right_image:
-        gap = 20
-        combined = Image.new(
-            "RGB",
-            (
-                left_image.width + gap + right_image.width,
-                max(left_image.height, right_image.height),
-            ),
-            "white",
-        )
-        combined.paste(left_image.convert("RGB"), (0, 0))
-        combined.paste(
-            right_image.convert("RGB"), (left_image.width + gap, 0)
-        )
-        combined.save(
-            output / f"likelihood_comparison_cutoff_r{nstep:02d}.png",
-            dpi=(220, 220),
-        )
-
-    comparable_display = comparable_all.loc[
-        comparable_all["logLik"] >= LIKELIHOOD_REFERENCE_LOWER_LIMIT
-    ]
-    extended_display = extended_all.loc[
-        extended_all["logLik"] >= LIKELIHOOD_REFERENCE_LOWER_LIMIT
-    ]
-    headline_panel_a = pd.concat([comparable_display, ds], ignore_index=True)
+    comparable_order = [*METHOD_ORDER, "Ditlevsen"]
     left = output / f"likelihood_comparable_r{nstep:02d}.png"
     right = output / "likelihood_extended_reference.png"
     _raincloud_panel(
-        headline_panel_a,
-        display_order,
+        panel_a,
+        comparable_order,
         "A",
         left,
-        lower_cutoff=None,
+        lower_cutoff=LIKELIHOOD_LOWER_LIMIT,
     )
     _raincloud_panel(
-        extended_display,
-        display_order,
+        extended_all,
+        METHOD_ORDER,
         "B",
         right,
-        lower_cutoff=None,
+        lower_cutoff=REFERENCE_LIKELIHOOD_LOWER_LIMIT,
     )
     with Image.open(left) as left_image, Image.open(right) as right_image:
         gap = 20
@@ -269,6 +237,8 @@ def plot_likelihoods(
         combined.paste(left_image.convert("RGB"), (0, 0))
         combined.paste(right_image.convert("RGB"), (left_image.width + gap, 0))
         combined.save(output / f"likelihood_comparison_r{nstep:02d}.png", dpi=(220, 220))
+    left.unlink()
+    right.unlink()
 
 
 def plot_parameters(
@@ -346,8 +316,10 @@ def _ditlevsen_trace_summary(
     for start, group in subset.groupby("start"):
         group = group.sort_values("elapsed_seconds")
         for elapsed in grid:
-            distance = np.abs(group["elapsed_seconds"].to_numpy() - elapsed)
-            row = group.iloc[int(np.argmin(distance))]
+            available = group.loc[group["elapsed_seconds"] <= elapsed]
+            if available.empty:
+                continue
+            row = available.iloc[-1]
             rows.append(
                 {
                     "start": float(start),
@@ -376,7 +348,7 @@ def plot_trace(
     nstep: int,
     budget: float,
 ) -> None:
-    original = reference.loc[reference["effort"].eq("comparable")].copy()
+    original = reference.loc[reference["effort"].eq("extended")].copy()
     original["source"] = original["method"]
     transition = (
         original.loc[
@@ -452,15 +424,6 @@ def plot_trace(
         dpi=220,
         verbose=False,
     )
-    (plot + coord_cartesian(xlim=(0, budget), ylim=(-5600.0, None))).save(
-        output / f"optimization_elapsed_full_r{nstep:02d}.png",
-        width=7,
-        height=3.8,
-        dpi=220,
-        verbose=False,
-    )
-
-
 def plot_substeps(evaluations: pd.DataFrame, output: Path) -> bool:
     frame = evaluations.loc[np.isfinite(evaluations["euler20_loglik"])].copy()
     if frame["inference_nstep"].nunique() < 2:
@@ -497,32 +460,52 @@ def plot_substeps(evaluations: pd.DataFrame, output: Path) -> bool:
 
 
 def write_captions(
-    output: Path, count: int, budget: float, has_substep_plot: bool
+    output: Path,
+    count: int,
+    budget: float,
+    fit_particles: int,
+    eval_particles: int,
+    eval_replicates: int,
+    trace_particles: int,
+    trace_replicates: int,
+    reached_budget: int,
+    failed_early: int,
+    displayed_fits: int,
+    full_median: float,
+    has_substep_plot: bool,
 ) -> None:
+    trace_replication = (
+        "one replicate"
+        if trace_replicates == 1
+        else f"{trace_replicates} replicates"
+    )
     text = rf"""% Captions for the PNG benchmark figures.
 
 \caption{{Raincloud plots of the Dacca searches. \textbf{{A}}, comparable
 computational effort, with {count} Ditlevsen fits limited to {budget:g} seconds;
-all Ditlevsen values are shown, while manuscript values below
-${LIKELIHOOD_REFERENCE_LOWER_LIMIT:g}$ are omitted. \textbf{{B}}, the
-manuscript's extended-effort reference runs; Ditlevsen was not run at the
-extended budget. Each Ditlevsen search contributes the checkpoint selected by
-an independent block-particle-filter likelihood.}}
-
-\caption{{The same raincloud comparison with the manuscript's $-3780$ display
-cutoff. All {count} Ditlevsen values fall below the plotting window. The empty
-Ditlevsen row is retained so that methods align across panels.}}
+{displayed_fits} of {count} Ditlevsen fits are visible above the
+${LIKELIHOOD_LOWER_LIMIT:g}$ display cutoff, and their full-sample median is
+${full_median:.2f}$. Of these fits, {reached_budget} reached the time budget and
+{failed_early} ended early after a numerical failure. \textbf{{B}}, the
+manuscript's extended-effort reference runs with its original
+${REFERENCE_LIKELIHOOD_LOWER_LIMIT:g}$ cutoff; Ditlevsen was not run at the
+extended budget. Ditlevsen fitting used $J={fit_particles}$; each retained
+checkpoint was evaluated under the Euler--20 model with $J={eval_particles}$
+and {eval_replicates} replicates.}}
 
 \caption{{Selected estimates for nine Dacca parameters. The original methods
 use the manuscript's extended-effort runs. The Ditlevsen density contains
-{count} bounding-box starts limited to {budget:g} seconds and selected by an
-independent block-particle-filter likelihood.}}
+{count} bounding-box starts limited to {budget:g} seconds, using the retained
+checkpoint from each fit.}}
 
-\caption{{Optimization progress against elapsed time at comparable
-computational effort. The lower display limit is {TRACE_LOWER_LIMIT:g}.}}
+\caption{{Optimization progress against elapsed time. The manuscript's
+extended-effort trajectories and the Ditlevsen fits are displayed through
+{budget:g} seconds. Ditlevsen traces were evaluated under the Euler--20 model
+with $J={trace_particles}$ and {trace_replication}. Heavy lines show medians;
+shading extends from the 10th percentile to the maximum. Failed searches are
+carried forward from their last available checkpoints. The lower display limit
+is {TRACE_LOWER_LIMIT:g}.}}
 
-\caption{{The same elapsed-time comparison with a $-5600$ lower limit, showing
-the Ditlevsen median and its 10th-percentile-to-maximum envelope.}}
 """
     if has_substep_plot:
         text += r"""
@@ -545,15 +528,22 @@ def main() -> None:
     args = build_parser().parse_args()
     output = args.output or args.data / "figures"
     output.mkdir(parents=True, exist_ok=True)
-    for obsolete in output.glob("likelihood_*full*.png"):
-        obsolete.unlink()
+    for pattern in (
+        "likelihood_*cutoff*.png",
+        "likelihood_comparable_*.png",
+        "likelihood_extended_reference.png",
+        "optimization_elapsed_full_*.png",
+    ):
+        for obsolete in output.glob(pattern):
+            obsolete.unlink()
+    fit_runs = _read_csv(args.data / "fit_summary.csv")
     selected_path = args.data / "selected_evaluations.csv"
     if selected_path.exists():
         evaluations = _read_csv(selected_path)
-        fit_summary = evaluations
+        parameter_estimates = evaluations
     else:
         evaluations = _read_csv(args.data / "final_evaluations.csv")
-        fit_summary = _read_csv(args.data / "fit_summary.csv")
+        parameter_estimates = fit_runs
     traces = _read_csv(args.data / "optimization_euler_traces.csv")
     likelihood = _read_csv(args.reference / "manuscript_likelihood.csv")
     parameters = _read_csv(args.reference / "manuscript_parameters.csv")
@@ -562,7 +552,7 @@ def main() -> None:
     nsteps = sorted(evaluations["inference_nstep"].unique())
     for nstep in nsteps:
         plot_likelihoods(evaluations, likelihood, output, int(nstep))
-        plot_parameters(fit_summary, parameters, output, int(nstep))
+        plot_parameters(parameter_estimates, parameters, output, int(nstep))
         plot_trace(
             traces,
             reference_traces,
@@ -573,8 +563,17 @@ def main() -> None:
     has_substep_plot = plot_substeps(evaluations, output)
     write_captions(
         output,
-        int(configuration["starts"]),
+        int(len(evaluations)),
         float(configuration["maximum_elapsed_seconds"]),
+        int(configuration["particles"]),
+        int(evaluations["eval_particles"].iloc[0]),
+        int(evaluations["eval_replicates"].iloc[0]),
+        int(traces["eval_particles"].iloc[0]),
+        int(traces["eval_replicates"].iloc[0]),
+        int(fit_runs["termination_reason"].eq("time-budget").sum()),
+        int(fit_runs["termination_reason"].ne("time-budget").sum()),
+        int((evaluations["euler20_loglik"] >= LIKELIHOOD_LOWER_LIMIT).sum()),
+        float(evaluations["euler20_loglik"].median()),
         has_substep_plot,
     )
 

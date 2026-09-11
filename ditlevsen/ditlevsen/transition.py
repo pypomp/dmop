@@ -41,20 +41,27 @@ def ditlevsen_mean(
     local transition, consistently with the manuscript's numerical model.
     """
 
-    drift_value = drift(state, unconstrained, covariates)
-    drift_jacobian = jax.jacfwd(drift, argnums=0)(
-        state, unconstrained, covariates
-    )
+    def drift_field(candidate):
+        return drift(candidate, unconstrained, covariates)
+
+    drift_value = drift_field(state)
     diffusion_value = diffusion(state, unconstrained, covariates)
-    drift_hessian = jax.jacfwd(jax.jacfwd(drift, argnums=0), argnums=0)(
-        state, unconstrained, covariates
+
+    _, drift_along_drift = jax.jvp(
+        drift_field, (state,), (drift_value,)
     )
-    diffusion_curvature = jnp.einsum(
-        "i,kij,j->k", diffusion_value, drift_hessian, diffusion_value
+
+    def drift_along_fixed_diffusion(candidate):
+        return jax.jvp(
+            drift_field, (candidate,), (diffusion_value,)
+        )[1]
+
+    _, diffusion_curvature = jax.jvp(
+        drift_along_fixed_diffusion,
+        (state,),
+        (diffusion_value,),
     )
-    generator_drift = (
-        drift_jacobian @ drift_value + 0.5 * diffusion_curvature
-    )
+    generator_drift = drift_along_drift + 0.5 * diffusion_curvature
     return state + dt * drift_value + 0.5 * dt**2 * generator_drift
 
 
@@ -148,42 +155,46 @@ def ditlevsen_covariance(
     model class, so this remains a model-specific extension of their scheme.
     """
 
-    drift_value = drift(state, unconstrained, covariates)
-    diffusion_value = diffusion(state, unconstrained, covariates)
-    drift_jacobian = jax.jacfwd(drift, argnums=0)(
-        state, unconstrained, covariates
-    )
-    diffusion_jacobian = jax.jacfwd(diffusion, argnums=0)(
-        state, unconstrained, covariates
-    )
-    diffusion_hessian = jax.jacfwd(
-        jax.jacfwd(diffusion, argnums=0), argnums=0
-    )(state, unconstrained, covariates)
+    def drift_field(candidate):
+        return drift(candidate, unconstrained, covariates)
 
-    l1_drift = drift_jacobian @ diffusion_value
-    l1_diffusion = diffusion_jacobian @ diffusion_value
-    l0_diffusion = (
-        diffusion_jacobian @ drift_value
-        + 0.5
-        * jnp.einsum(
-            "i,kij,j->k",
-            diffusion_value,
-            diffusion_hessian,
-            diffusion_value,
-        )
+    def diffusion_field(candidate):
+        return diffusion(candidate, unconstrained, covariates)
+
+    drift_value = drift_field(state)
+    diffusion_value = diffusion_field(state)
+    _, l1_drift = jax.jvp(
+        drift_field, (state,), (diffusion_value,)
     )
+    _, l1_diffusion = jax.jvp(
+        diffusion_field, (state,), (diffusion_value,)
+    )
+    _, diffusion_along_drift = jax.jvp(
+        diffusion_field, (state,), (drift_value,)
+    )
+
+    def diffusion_along_fixed_diffusion(candidate):
+        return jax.jvp(
+            diffusion_field, (candidate,), (diffusion_value,)
+        )[1]
+
+    _, diffusion_curvature = jax.jvp(
+        diffusion_along_fixed_diffusion,
+        (state,),
+        (diffusion_value,),
+    )
+    l0_diffusion = diffusion_along_drift + 0.5 * diffusion_curvature
 
     def l1_diffusion_field(candidate):
-        candidate_diffusion = diffusion(
-            candidate, unconstrained, covariates
-        )
-        candidate_jacobian = jax.jacfwd(diffusion, argnums=0)(
-            candidate, unconstrained, covariates
-        )
-        return candidate_jacobian @ candidate_diffusion
+        candidate_diffusion = diffusion_field(candidate)
+        return jax.jvp(
+            diffusion_field,
+            (candidate,),
+            (candidate_diffusion,),
+        )[1]
 
-    l1_l1_diffusion = (
-        jax.jacfwd(l1_diffusion_field)(state) @ diffusion_value
+    _, l1_l1_diffusion = jax.jvp(
+        l1_diffusion_field, (state,), (diffusion_value,)
     )
 
     eta_coefficient = diffusion_value + 0.5 * dt * (
@@ -232,9 +243,14 @@ def ditlevsen_block_transition(
 
     def internal_step(carry, forcing):
         mean, covariance = carry
-        transition = jax.jacfwd(ditlevsen_mean, argnums=0)(
-            mean, unconstrained, forcing, dt
-        )
+
+        def mean_with_value(candidate):
+            value = ditlevsen_mean(candidate, unconstrained, forcing, dt)
+            return value, value
+
+        transition, next_mean = jax.jacfwd(
+            mean_with_value, has_aux=True
+        )(mean)
         local_covariance = ditlevsen_covariance(
             mean,
             unconstrained,
@@ -242,7 +258,6 @@ def ditlevsen_block_transition(
             dt,
             relative_floor=0.0,
         )
-        next_mean = ditlevsen_mean(mean, unconstrained, forcing, dt)
         next_covariance = (
             transition @ covariance @ transition.T + local_covariance
         )
