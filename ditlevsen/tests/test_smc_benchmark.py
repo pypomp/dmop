@@ -24,6 +24,13 @@ def test_start_shards_partition_indices():
 def test_elapsed_checkpoints_include_endpoints_without_duplicates():
     elapsed = np.asarray([1.0, 40.0, 101.0, 205.0, 206.0])
     assert _checkpoint_iterations(elapsed, 100.0) == [0, 2, 3, 4]
+    assert _checkpoint_iterations(elapsed, 100.0, every_update=True) == [
+        0,
+        1,
+        2,
+        3,
+        4,
+    ]
 
 
 def test_output_iteration_uses_terminal_or_first_time_crossing():

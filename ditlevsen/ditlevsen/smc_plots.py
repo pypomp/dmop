@@ -311,29 +311,32 @@ def _ditlevsen_trace_summary(
         traces["inference_nstep"].eq(nstep)
         & np.isfinite(traces["euler20_loglik"])
     ].copy()
-    grid = np.arange(0.0, budget + 0.1, 100.0)
-    rows: list[dict[str, float]] = []
+    if subset.empty:
+        return pd.DataFrame(
+            columns=["elapsed_seconds", "median", "q10", "maximum", "source"]
+        )
+    maximum_iteration = int(subset["iteration"].max())
+    iterations = np.arange(maximum_iteration + 1)
+    rows: list[pd.DataFrame] = []
     for start, group in subset.groupby("start"):
-        group = group.sort_values("elapsed_seconds")
-        for elapsed in grid:
-            available = group.loc[group["elapsed_seconds"] <= elapsed]
-            if available.empty:
-                continue
-            row = available.iloc[-1]
-            rows.append(
-                {
-                    "start": float(start),
-                    "elapsed_seconds": elapsed,
-                    "euler20_loglik": float(row["euler20_loglik"]),
-                }
-            )
-    carried = pd.DataFrame(rows)
+        carried = (
+            group.sort_values("iteration")
+            .drop_duplicates("iteration", keep="last")
+            .set_index("iteration")[["elapsed_seconds", "euler20_loglik"]]
+            .reindex(iterations)
+            .ffill()
+        )
+        carried["start"] = float(start)
+        carried["iteration"] = iterations
+        rows.append(carried.reset_index(drop=True))
+    carried = pd.concat(rows, ignore_index=True)
     summary = (
-        carried.groupby("elapsed_seconds")["euler20_loglik"]
+        carried.groupby("iteration")
         .agg(
-            median="median",
-            q10=lambda values: values.quantile(0.10),
-            maximum="max",
+            elapsed_seconds=("elapsed_seconds", "median"),
+            median=("euler20_loglik", "median"),
+            q10=("euler20_loglik", lambda values: values.quantile(0.10)),
+            maximum=("euler20_loglik", "max"),
         )
         .reset_index()
     )
@@ -424,6 +427,8 @@ def plot_trace(
         dpi=220,
         verbose=False,
     )
+
+
 def plot_substeps(evaluations: pd.DataFrame, output: Path) -> bool:
     frame = evaluations.loc[np.isfinite(evaluations["euler20_loglik"])].copy()
     if frame["inference_nstep"].nunique() < 2:
@@ -473,6 +478,7 @@ def write_captions(
     displayed_fits: int,
     full_median: float,
     selection_seconds: float | None,
+    trace_every_update: bool,
     has_substep_plot: bool,
 ) -> None:
     trace_replication = (
@@ -488,6 +494,11 @@ def write_captions(
             f"crossing {selection_seconds:g} seconds; fits that failed earlier "
             "use their last available iterate."
         )
+    )
+    trace_resolution = (
+        " The Ditlevsen curve uses every completed optimizer update."
+        if trace_every_update
+        else ""
     )
     text = rf"""% Captions for the PNG benchmark figures.
 
@@ -513,7 +524,7 @@ extended-effort trajectories and the Ditlevsen fits are displayed through
 {budget:g} seconds. Ditlevsen traces were evaluated under the Euler--20 model
 with $J={trace_particles}$ and {trace_replication}. Heavy lines show medians;
 shading extends from the 10th percentile to the maximum. Failed searches are
-carried forward from their last available checkpoints. The lower display limit
+carried forward from their last available checkpoints.{trace_resolution} The lower display limit
 is {TRACE_LOWER_LIMIT:g}.}}
 
 """
@@ -559,6 +570,13 @@ def main() -> None:
     parameters = _read_csv(args.reference / "manuscript_parameters.csv")
     reference_traces = _read_csv(args.reference / "manuscript_trace_summary.csv")
     configuration = pd.read_json(args.data / "configuration.json", typ="series")
+    trace_every_update = all(
+        np.array_equal(
+            np.sort(group["iteration"].astype(int).unique()),
+            np.arange(int(group["iteration"].max()) + 1),
+        )
+        for _, group in traces.groupby("start")
+    )
     nsteps = sorted(evaluations["inference_nstep"].unique())
     for nstep in nsteps:
         plot_likelihoods(evaluations, likelihood, output, int(nstep))
@@ -589,6 +607,7 @@ def main() -> None:
             if pd.isna(configuration.get("output_selection_seconds", np.nan))
             else float(configuration["output_selection_seconds"])
         ),
+        trace_every_update,
         has_substep_plot,
     )
 

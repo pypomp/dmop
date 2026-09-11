@@ -146,8 +146,8 @@ from 100 to 5,000. Independent Euler-20 evaluation with 5,000 particles and 36
 replicates gave a median log likelihood of -4020.64 and a best value of
 -3819.36; none of the 50 fits exceeded -3800. The matching Figure 3, Figure 4,
 and elapsed-time PNGs are in its `figures/` directory. The elapsed-time curve
-uses separate Euler-20 evaluations with 5,000 particles at each displayed
-checkpoint.
+uses separate Euler-20 evaluations with 5,000 particles at every recorded
+optimizer step.
 
 The initial 5,000-particle implementation required about 33.4 seconds per
 ordinary score update. Replacing materialized Hessians by equivalent
@@ -205,6 +205,23 @@ exceeded -3900, and none exceeded -3800. Comparable-effort IFAD-0.97 has median
 -3745.77 and best value -3744.04. The requested expectation is therefore
 supported strongly: IFAD outperforms this Ditlevsen-style extension on Dacca
 under the common elapsed-time and Euler-20 evaluation criteria.
+
+The final elapsed-time trace contains all 4,536 stored optimizer evaluations;
+the earlier 100-second subsampling is not used. After 200 seconds, the block
+surrogate and Euler-20 values have Spearman correlation 0.94 over the visited
+points. Selecting each run's highest-surrogate checkpoint costs only 2.96
+Euler log-likelihood units at the median relative to an oracle choice among
+all of that run's checkpoints. Yet the oracle median is still -4051.94, and no
+checkpoint exceeds -3800. A direct common-seed block-filter check also scores
+the best comparable-effort IFAD-0.97 vector at -3829.71, versus -4032.73 for
+the best selected Ditlevsen vector. The good Euler region is therefore not
+excluded by the Gaussian surrogate. The main problem is reaching it from the
+wide box with noisy score ascent and few updates. In the paired first 50
+starts, the 100-particle fits completed a median 94 updates versus 47 at 5,000
+particles and were better by 45.6 Euler log-likelihood units at the median.
+The original paper instead used 100 particles, 80 SAEM iterations,
+data-informed initialization, and exact model-specific M-steps for problems
+with only three to six parameters.
 
 The block method has no within-month particle genealogy because it integrates
 out the 19 internal states. KSV is therefore unnecessary for this experiment.

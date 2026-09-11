@@ -71,7 +71,7 @@ def _json_ready(value: Any) -> Any:
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
-    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     temporary.write_text(json.dumps(value, indent=2) + "\n")
     os.replace(temporary, path)
 
@@ -127,6 +127,7 @@ def _prepare_output(args: argparse.Namespace) -> None:
                 "trace_eval_particles": args.trace_eval_particles,
                 "trace_eval_replicates": args.trace_eval_replicates,
                 "trace_every_seconds": args.trace_every_seconds,
+                "trace_every_update": args.trace_every_update,
                 "block_eval_particles": args.block_eval_particles,
                 "block_eval_replicates": args.block_eval_replicates,
             },
@@ -502,12 +503,16 @@ def evaluate_finals(args: argparse.Namespace) -> None:
     _atomic_csv(args.output / "final_evaluations.csv", pd.DataFrame(rows))
 
 
-def _checkpoint_iterations(elapsed: np.ndarray, every_seconds: float) -> list[int]:
-    """Choose roughly equally spaced wall-clock checkpoints, including both ends."""
+def _checkpoint_iterations(
+    elapsed: np.ndarray, every_seconds: float, every_update: bool = False
+) -> list[int]:
+    """Choose every update or wall-clock checkpoints, including both ends."""
 
     elapsed = np.asarray(elapsed, dtype=float)
     if elapsed.size == 0:
         return []
+    if every_update:
+        return list(range(elapsed.size))
     targets = np.arange(0.0, elapsed[-1] + every_seconds, every_seconds)
     values = np.searchsorted(elapsed, targets, side="left")
     values = np.clip(values, 0, elapsed.size - 1)
@@ -647,7 +652,9 @@ def evaluate_traces(args: argparse.Namespace) -> None:
                 continue
             fit = _load_checkpoint(checkpoint)
             for iteration in _checkpoint_iterations(
-                fit["elapsed_trace"], args.trace_every_seconds
+                fit["elapsed_trace"],
+                args.trace_every_seconds,
+                every_update=args.trace_every_update,
             ):
                 destination = _trace_evaluation_path(
                     args.output, nstep, start_index, iteration
@@ -856,6 +863,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--eval-particles", type=int, default=5000)
     parser.add_argument("--eval-replicates", type=int, default=36)
     parser.add_argument("--trace-every-seconds", type=float, default=100.0)
+    parser.add_argument("--trace-every-update", action="store_true")
     parser.add_argument("--block-eval-particles", type=int, default=1000)
     parser.add_argument("--block-eval-replicates", type=int, default=4)
     parser.add_argument("--trace-eval-particles", type=int, default=1000)
