@@ -5,14 +5,14 @@ PYTHON ?= /home/kevin/anaconda3/envs/pypomp/bin/python
 all: method.pdf invertibility_note.pdf
 
 test:
-	PYTHONPATH=. $(PYTHON) -m pytest -q tests
+	PYTHONPATH=.:../../pypomp $(PYTHON) -m pytest -q tests
 
 validate:
-	PYTHONPATH=.:../.. $(PYTHON) -m ditlevsen.validate
+	PYTHONPATH=.:../../pypomp $(PYTHON) -m ditlevsen.validate
 
 withdrawn-qml-figures:
-	PYTHONPATH=.:../.. $(PYTHON) -m ditlevsen.reference_results --output results/reference
-	PYTHONPATH=.:../.. $(PYTHON) -m ditlevsen.plot_results --data results/withdrawn_qml/data --krylov-data results/withdrawn_qml/data_krylov --reference results/reference --timed-data results/withdrawn_qml/data_timed --output results/withdrawn_qml
+	PYTHONPATH=.:../../pypomp $(PYTHON) -m ditlevsen.reference_results --output results/reference
+	PYTHONPATH=.:../../pypomp $(PYTHON) -m ditlevsen.plot_results --data results/withdrawn_qml/data --krylov-data results/withdrawn_qml/data_krylov --reference results/reference --timed-data results/withdrawn_qml/data_timed --output results/withdrawn_qml
 
 method.pdf: method.tex
 	pdflatex -interaction=nonstopmode -halt-on-error method.tex

@@ -269,19 +269,12 @@ def _block_path_filter_kernel(
     def observation_interval(carry, inputs):
         states, valid, normalized_log_weights, random_key = carry
         month, covariates, observation_population, observation = inputs
-        random_key, resample_key = jax.random.split(random_key)
-        sampled_ancestors = jax.random.categorical(
-            resample_key, normalized_log_weights, shape=(particles,)
-        )
-        ancestors = jax.lax.cond(
-            month == 0,
-            lambda _: identity_ancestors,
-            lambda _: sampled_ancestors,
-            operand=None,
-        )
-        states = states[ancestors].at[:, 5].set(0.0)
-        valid = valid[ancestors]
-        random_key, noise_key = jax.random.split(random_key)
+
+        # The FFBSi backward pass needs p(x[m+1] | x[m]) for every filtering
+        # particle x[m].  Compute those moments before resampling and retain
+        # them.  The forward proposal then gathers the same moments by its
+        # sampled ancestry, avoiding a second 20-step propagation in FFBSi.
+        transition_starts = states.at[:, 5].set(0.0)
 
         def moments(state):
             return ditlevsen_block_transition(
@@ -292,7 +285,24 @@ def _block_path_filter_kernel(
                 endpoint_relative_floor=endpoint_relative_floor,
             )
 
-        means, covariances = jax.vmap(moments)(states)
+        transition_means, transition_covariances = jax.vmap(moments)(
+            transition_starts
+        )
+        random_key, resample_key = jax.random.split(random_key)
+        sampled_ancestors = jax.random.categorical(
+            resample_key, normalized_log_weights, shape=(particles,)
+        )
+        ancestors = jax.lax.cond(
+            month == 0,
+            lambda _: identity_ancestors,
+            lambda _: sampled_ancestors,
+            operand=None,
+        )
+        states = transition_starts[ancestors]
+        valid = valid[ancestors]
+        means = transition_means[ancestors]
+        covariances = transition_covariances[ancestors]
+        random_key, noise_key = jax.random.split(random_key)
         innovations = jax.random.normal(
             noise_key, (particles, state0.shape[0]), dtype=jnp.float64
         )
@@ -349,6 +359,8 @@ def _block_path_filter_kernel(
             increment,
             ess,
             invalid_fraction,
+            transition_means,
+            transition_covariances,
         )
 
     months = jnp.arange(step_covariates.shape[0])
@@ -366,7 +378,18 @@ def _block_path_filter_kernel(
         increments,
         ess,
         invalid_fraction,
+        transition_means,
+        transition_covariances,
     ) = outputs
+    lineages = jax.lax.fori_loop(
+        1,
+        ancestors.shape[0],
+        lambda month, current: current[ancestors[month]],
+        jnp.arange(particles),
+    )
+    unique_initial_ancestors = jnp.sum(
+        jnp.bincount(lineages, length=particles) > 0
+    )
     return (
         endpoints,
         ancestors,
@@ -376,26 +399,26 @@ def _block_path_filter_kernel(
         increments,
         ess,
         invalid_fraction,
+        unique_initial_ancestors,
+        transition_means,
+        transition_covariances,
     )
 
 
 @jax.jit
 def _block_backward_sample_kernel(
-    unconstrained: jax.Array,
     endpoints: jax.Array,
     ancestors: jax.Array,
     normalized_log_weights: jax.Array,
-    step_covariates: jax.Array,
+    transition_means: jax.Array,
+    transition_covariances: jax.Array,
     selected_final: jax.Array,
     key: jax.Array,
-    endpoint_relative_floor: float,
 ) -> tuple[jax.Array, jax.Array]:
-    """Draw endpoints by FFBSi, falling back to a valid forward ancestor."""
+    """Draw endpoints by FFBSi using moments retained by the forward pass."""
 
     particles = endpoints.shape[1]
     dimension = endpoints.shape[2]
-    nstep = step_covariates.shape[1]
-    dt = 1.0 / (12.0 * nstep)
     log_two_pi = jnp.log(jnp.asarray(2.0 * jnp.pi, dtype=jnp.float64))
     uniform_log_weight = -jnp.log(
         jnp.asarray(float(particles), dtype=jnp.float64)
@@ -404,19 +427,13 @@ def _block_backward_sample_kernel(
 
     def backward_step(carry, inputs):
         next_state, next_index, fallback_count, random_key = carry
-        states, filter_log_weights, covariates, forward_ancestors = inputs
-        transition_starts = states.at[:, 5].set(0.0)
-
-        def moments(state):
-            return ditlevsen_block_transition(
-                state,
-                unconstrained,
-                covariates,
-                dt,
-                endpoint_relative_floor=endpoint_relative_floor,
-            )
-
-        means, covariances = jax.vmap(moments)(transition_starts)
+        (
+            states,
+            filter_log_weights,
+            means,
+            covariances,
+            forward_ancestors,
+        ) = inputs
         cholesky = jnp.linalg.cholesky(covariances)
         differences = next_state[None, :] - means
         standardized = jax.vmap(
@@ -462,7 +479,8 @@ def _block_backward_sample_kernel(
         (
             endpoints[:-1][::-1],
             normalized_log_weights[:-1][::-1],
-            step_covariates[1:][::-1],
+            transition_means[1:][::-1],
+            transition_covariances[1:][::-1],
             ancestors[1:][::-1],
         ),
     )
@@ -497,26 +515,31 @@ def sample_block_smoothing_path(
         guided=guided,
     )
     (
-        endpoint_array,
-        ancestor_array,
-        normalized_log_weight_array,
+        endpoints,
+        ancestors,
+        normalized_log_weights,
         selected,
         selected_valid,
         increments,
         ess,
         invalid_fraction,
-    ) = (np.asarray(value) for value in outputs)
+        unique_initial_ancestors,
+        transition_means,
+        transition_covariances,
+    ) = outputs
     selected_endpoints, backward_fallbacks = _block_backward_sample_kernel(
-        jnp.asarray(unconstrained, dtype=jnp.float64),
-        jnp.asarray(endpoint_array, dtype=jnp.float64),
-        jnp.asarray(ancestor_array),
-        jnp.asarray(normalized_log_weight_array, dtype=jnp.float64),
-        jnp.asarray(data.step_covariates, dtype=jnp.float64),
-        jnp.asarray(selected),
+        endpoints,
+        ancestors,
+        normalized_log_weights,
+        transition_means,
+        transition_covariances,
+        selected,
         jax.random.key(seed + 32452843),
-        jnp.asarray(endpoint_relative_floor, dtype=jnp.float64),
     )
     selected_endpoints = np.asarray(selected_endpoints)
+    increments = np.asarray(increments)
+    ess = np.asarray(ess)
+    invalid_fraction = np.asarray(invalid_fraction)
     path = np.concatenate(
         (
             np.asarray(initial_state(jnp.asarray(unconstrained)))[None, :],
@@ -525,17 +548,14 @@ def sample_block_smoothing_path(
         axis=0,
     )
 
-    lineages = np.arange(particles)
-    for month in range(1, ancestor_array.shape[0]):
-        lineages = lineages[ancestor_array[month]]
     return SMCPathResult(
         path=path,
         loglik=float(np.sum(increments)),
-        loglik_increments=np.asarray(increments),
-        ess=np.asarray(ess),
-        invalid_fraction=np.asarray(invalid_fraction),
-        unique_initial_ancestors=int(len(np.unique(lineages))),
-        valid_path=bool(selected_valid)
+        loglik_increments=increments,
+        ess=ess,
+        invalid_fraction=invalid_fraction,
+        unique_initial_ancestors=int(np.asarray(unique_initial_ancestors)),
+        valid_path=bool(np.asarray(selected_valid))
         and bool(np.isfinite(selected_endpoints).all()),
         backward_fallbacks=int(np.asarray(backward_fallbacks)),
     )
@@ -895,9 +915,12 @@ def fit_block_pseudo_score(
                 break
 
     nan_trace = np.full(len(parameter_trace), np.nan)
-    returned_parameters = retained_parameters if guard_checks else parameters
     return SMCScoreFitResult(
-        unconstrained=np.asarray(returned_parameters),
+        # The guard rejects numerically unsafe proposals during fitting.  It
+        # must not silently replace the terminal iterate with a much older
+        # block-surrogate optimum: on Dacca the surrogate and Euler-20 targets
+        # are not aligned closely enough for that to be a valid stopping rule.
+        unconstrained=np.asarray(parameters),
         parameter_trace=np.asarray(parameter_trace),
         marginal_loglik_trace=np.asarray(marginal_trace),
         complete_loglik_trace=np.asarray(complete_trace),

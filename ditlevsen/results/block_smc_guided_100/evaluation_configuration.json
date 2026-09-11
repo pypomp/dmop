@@ -1,0 +1,13 @@
+{
+  "stages": [
+    "trace-eval"
+  ],
+  "evaluation_model": "Dacca Euler-20 POMP",
+  "final_eval_particles": 5000,
+  "final_eval_replicates": 36,
+  "trace_eval_particles": 5000,
+  "trace_eval_replicates": 1,
+  "trace_every_seconds": 100.0,
+  "block_eval_particles": 1000,
+  "block_eval_replicates": 4
+}

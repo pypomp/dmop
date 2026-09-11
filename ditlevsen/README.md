@@ -2,9 +2,14 @@
 
 This directory tests Reviewer 1's proposed hypoelliptic transition-density
 competitor as a computational-statistics method. The corrected 100-start
-Dacca experiment is running in `results/block_smc_guided_100/`. Each search is
-an independent draw from the manuscript box and has an 800-second limit. The
-earlier local-transition and monthly bootstrap pilots are diagnostics only.
+Dacca experiment is running in
+`results/block_smc_guided_j5000_final_100/`. Its 5,000-particle settings were
+chosen using `results/particle_sweep_cached/` and
+`results/j5000_focused_tuning/`. The 50 completed fits from the earlier
+100-particle attempt are retained as a diagnostic in
+`results/block_smc_guided_100/`. Every search starts from an independent draw
+from the manuscript box. The local-transition and monthly bootstrap pilots are
+diagnostics only.
 
 ## What is implemented
 
@@ -134,12 +139,62 @@ seconds and -4442 at 800 seconds. Results and PNG figures are in
 `results/block_smc_10/`. These results predate the guided proposal, FFBSi
 smoother, and periodic likelihood guard, and are not the headline comparison.
 
-The current 100-start run uses the order-1.5 monthly block transition, the
-observation-guided proposal with exact importance correction, FFBSi path
-sampling, and a periodic common-random-number block-likelihood guard. Each
-selected checkpoint will be evaluated with the manuscript's Euler-20 model
-using 5,000 particles and 36 replications. Only those Euler-20 values enter the
-headline likelihood and elapsed-time figures.
+The guided-FFBSi attempt in `results/block_smc_guided_100/` was stopped after
+50 of its planned 100 starts when the fitting particle count was increased
+from 100 to 5,000. Independent Euler-20 evaluation with 5,000 particles and 36
+replicates gave a median log likelihood of -4020.64 and a best value of
+-3819.36; none of the 50 fits exceeded -3800. The matching Figure 3, Figure 4,
+and elapsed-time PNGs are in its `figures/` directory. The elapsed-time curve
+uses separate Euler-20 evaluations with 5,000 particles at each displayed
+checkpoint.
+
+The initial 5,000-particle implementation required about 33.4 seconds per
+ordinary score update. Replacing materialized Hessians by equivalent
+directional derivatives and keeping the forward particle cloud on the GPU
+through the backward pass first reduced this to about 19.6 seconds on the same
+hardware. The filter was also recomputing every 20-step transition during
+backward sampling. Retaining those Gaussian means and covariances from the
+forward pass reduced a warmed-up smoothing-path draw from 17.0 to 10.7 seconds;
+a full warmed-up path-and-score update took 15.6 seconds in a separate timing
+run. The revised and former paths agree bit for bit at fixed seeds in the
+short validation cases. For comparison, one IFAD Adam iteration in the
+manuscript timing data takes about 3.5 seconds. The remaining difference is
+structural: a DS update propagates a 6-dimensional mean and 6-by-6 covariance
+through 20 internal steps for every particle and evaluates all backward
+transition densities. IFAD performs one Euler simulation/filter pass and has
+no backward smoother. As in SAEM-SMC, the stochastic-approximation update uses
+one sampled smoothing path. Raising the particle count improves the
+approximation to that path's smoothing distribution, but it does not average
+5,000 independent complete-path scores. This is why the extra particles can
+cost much more than they improve learning per second.
+
+The 400-second tuning sweep compared 100, 500, 1,000, and 5,000 fitting
+particles and two learning rates at each count. All candidates were scored with
+the Euler-20 model using 5,000 particles and 36 replicates. The best single
+screening result was -3869.48 at 100 fitting particles and learning rate 0.10.
+The best results at 500, 1,000, and 5,000 particles were -3891.60, -3940.57,
+and -3970.87. The corresponding runs completed 86, 67, and 26 updates, versus
+106 at 100 particles. Thus, under a fixed time budget, improved smoothing did
+not compensate for the loss of optimizer updates on this start.
+
+A focused 5,000-particle screen then compared learning rates 0.10, 0.15, and
+0.20 and SA burn-ins from 5 to 30 updates. Learning rate 0.20 was best; its
+burn-in-5 and burn-in-30 Euler-20 results were -3970.87 and -3971.13. The
+burn-in-5 fit had the better block objective and starts decaying its learning
+rate earlier, so that configuration is being checked at the full 800-second
+budget before the final 100-start experiment. The final experiment will use
+5,000 fitting particles, as requested, even though the time-budget screen
+favored fewer particles.
+
+The 800-second check showed genuine late deterioration. Euler-20 evaluations
+with 5,000 particles and 36 replicates improved from -6206.05 initially to
+-3919.90 at 715 seconds, then fell to -4069.20 at 809 seconds. The block guard
+instead retained a stale iterate from about 549 seconds, whose final Euler-20
+evaluation was -4072.32. The guard is therefore used only to reject unsafe
+steps, not as a checkpoint-selection criterion. The final searches use a fixed
+700-second early-stopping threshold (the completed update can carry elapsed
+time slightly past that threshold), which remains below the requested
+800-second cap.
 
 The block method has no within-month particle genealogy because it integrates
 out the 19 internal states. KSV is therefore unnecessary for this experiment.
@@ -153,13 +208,13 @@ a full forward CPF-BBS implementation and a separate invariance/mixing check.
 From this directory:
 
 ```bash
-PYTHONPATH=.:../.. \
+PYTHONPATH=.:../../pypomp \
   /home/kevin/anaconda3/envs/pypomp/bin/python -m pytest -q tests
 
-PYTHONPATH=.:../.. \
+PYTHONPATH=.:../../pypomp \
   /home/kevin/anaconda3/envs/pypomp/bin/python -m ditlevsen.validate
 
-PYTHONPATH=.:../.. \
+PYTHONPATH=.:../../pypomp \
   /home/kevin/anaconda3/envs/pypomp/bin/python -m ditlevsen.validation_plots
 ```
 
@@ -178,6 +233,8 @@ validation only.
 - `ditlevsen/smc.py`: superseded local-transition filter and score update.
 - `ditlevsen/smc_benchmark.py`: resumable global-box benchmark and independent
   Euler-20 likelihood evaluation.
+- `ditlevsen/particle_sweep.py` and `ditlevsen/particle_sweep_plot.py`:
+  resumable particle-count and learning-rate screen and its PNG summary.
 - `ditlevsen/kbridge.py`: optional fixed-endpoint blocked-interior bridge kernel.
 - `ditlevsen/transition.py`: local hypoelliptic Gaussian approximations.
 - `ditlevsen/bridge.py`: exact linear-Gaussian block and bridge conditionals.
@@ -192,7 +249,10 @@ validation only.
   final 100-start experiment. The PNGs show the likelihood comparison,
   manuscript-style parameter panel, elapsed-time trace, and substep viability.
 - `results/block_smc_10/`: superseded ten-start monthly bootstrap pilot.
-- `results/block_smc_guided_100/`: current guided-FFBSi 100-start benchmark.
+- `results/block_smc_guided_100/`: stopped 50-start guided-FFBSi diagnostic.
+- `results/block_smc_guided_j5000_final_100/`: active final 100-start run with
+  5,000 fitting particles, an 800-second trajectory, and fixed 700-second
+  output selection.
 - `results/withdrawn_qml/`: rejected EKF/QML diagnostics, not final results.
 
 Nothing here commits, pushes, or changes the Pypomp package.
