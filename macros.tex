@@ -1,6 +1,8 @@
 
 \newcommand\articleTitle{Automatic Differentiation to Improve Parameter Estimation for Partially Observed Markov Processes}
 
+\newcommand\editClaim{Empirically, the benchmark tests suggest that IFAD is a significant methodological advance over the IF2 algorithm of \cite{ionides15} for plug-and-play statistical inference on POMP models.}
+
 
 %% edits for the revision
 \newcommand\editPlugAndPlay{Plug-and-play methods are necessary when transition densities are not available, but can have advantages even when they are.
@@ -40,7 +42,7 @@ The plug-and-play property also facilitates the development of statistical softw
 \newcount\comments  % 0 suppresses notes to selves in text
 \comments=1  % TODO: change to 0 for final version
 \newcommand{\genComment}[2]{\ifnum\comments=1{\textcolor{#1}{\textsf{\footnotesize #2}}}\fi}
-\newcommand{\ed}[1]{\genComment{red}{[EI:#1]}}
+\newcommand{\edward}[1]{\genComment{orange}{[EI:#1]}}
 \newcommand{\giles}[1]{\genComment{green}{[GH:#1]}}
 \newcommand{\kevin}[1]{\genComment{blue}{[KT:#1]}}
 
