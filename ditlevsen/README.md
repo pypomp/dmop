@@ -1,16 +1,16 @@
 # Ditlevsen transition-density benchmark on Dacca
 
 This directory tests Reviewer 1's proposed hypoelliptic transition-density
-competitor as a computational-statistics method. The corrected 100-start
-Dacca fits and final likelihood evaluations are complete in
-`results/block_smc_guided_j5000_final_100/`; the manuscript-style PNGs are in
-its `figures/` subdirectory. Its 5,000-particle settings were
-chosen using `results/particle_sweep_cached/` and
-`results/j5000_focused_tuning/`. The 50 completed fits from the earlier
-100-particle attempt are retained as a diagnostic in
-`results/block_smc_guided_100/`. Every search starts from an independent draw
-from the manuscript box. The local-transition and monthly bootstrap pilots are
-diagnostics only.
+competitor as a computational-statistics method. Corrected 100-start Dacca
+experiments using 100 and 5,000 fitting particles are complete in
+`results/block_smc_guided_j100_final_100/` and
+`results/block_smc_guided_j5000_final_100/`; each directory contains the
+manuscript-style PNGs. Their settings were chosen using
+`results/particle_sweep_cached/` and `results/j5000_focused_tuning/`. The 50
+completed fits from the earlier 100-particle attempt are retained as a
+diagnostic in `results/block_smc_guided_100/`. Every search starts from an
+independent draw from the manuscript box. The local-transition and monthly
+bootstrap pilots are diagnostics only.
 
 ## What is implemented
 
@@ -206,6 +206,26 @@ exceeded -3900, and none exceeded -3800. Comparable-effort IFAD-0.97 has median
 supported strongly: IFAD outperforms this Ditlevsen-style extension on Dacca
 under the common elapsed-time and Euler-20 evaluation criteria.
 
+The follow-up 100-start experiment used 100 fitting particles, learning rate
+0.10, and the same fixed 700-second output rule. Ninety-five fits reached the
+800-second limit and five ended early. Independent Euler-20 evaluation with
+5,000 particles and 36 replicates gave a median of -4100.34, a 10th percentile
+of -5250.85, and a best value of -3872.97. Twenty-nine fits exceeded -4000,
+five exceeded -3900, and none exceeded -3800. On the 100 paired starts, its
+likelihood exceeded the 5,000-particle fit 53 times and the median paired
+difference was only 3.69 log units. Lowering the fitting particle count did
+not materially change the central result or close the gap to IFAD-0.97.
+
+This parallel run completed a median 55 accepted updates, compared with 47 at
+5,000 particles. Four fits shared one RTX 3090, so each 100-particle update
+took 14.8 seconds at the median; the single-fit tuning run took about 3.4
+seconds per update. The likelihood comparison is valid for the recorded
+wall-clock experiment, but the update counts do not measure exclusive-device
+scaling. The earlier 50-start 100-particle run, which had less device
+contention and used learning rate 0.05, completed a median 94 updates and had a
+better median likelihood of -4020.64. Thus the optimizer remains sensitive to
+both scheduling and learning-rate choice.
+
 The final elapsed-time trace contains all 4,536 stored optimizer evaluations;
 the earlier 100-second subsampling is not used. After 200 seconds, the block
 surrogate and Euler-20 values have Spearman correlation 0.94 over the visited
@@ -277,6 +297,9 @@ only.
   manuscript-style parameter panel, elapsed-time trace, and substep viability.
 - `results/block_smc_10/`: superseded ten-start monthly bootstrap pilot.
 - `results/block_smc_guided_100/`: stopped 50-start guided-FFBSi diagnostic.
+- `results/block_smc_guided_j100_final_100/`: final 100-start run with 100
+  fitting particles, an 800-second trajectory, and fixed 700-second output
+  selection.
 - `results/block_smc_guided_j5000_final_100/`: final 100-start run with
   5,000 fitting particles, an 800-second trajectory, and fixed 700-second
   output selection.
