@@ -11,7 +11,8 @@ All reported comparisons are evaluated afterward with the common ordinary
 Euler-20 particle-filter likelihood, as for the other methods in the DMOP
 benchmark. Every stored optimizer update is evaluated for the elapsed-time
 trace; the final estimate uses an independent 5,000-particle evaluation with
-36 replicates.
+36 replicates. The selected estimate is the valid checkpoint with the largest
+DPF likelihood before 700 seconds. Euler-20 values are not used to select it.
 
 The transport geometry contains the full physical particle state: `S`, `I`,
 `Mn`, `R1`, `R2`, and `R3`. The Pypomp `count` field is an invalid-state
