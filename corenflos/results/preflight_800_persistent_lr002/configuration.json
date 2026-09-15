@@ -1,0 +1,29 @@
+{
+  "stages": [
+    "fit"
+  ],
+  "output": "results/preflight_800_persistent_lr002",
+  "seed": 631409,
+  "starts": 1,
+  "nstep": 20,
+  "particles": 100,
+  "ess_threshold": 0.5,
+  "epsilon": 0.5,
+  "sinkhorn_scaling": 0.75,
+  "sinkhorn_threshold": 0.001,
+  "sinkhorn_iterations": 100,
+  "optimizer": "adam",
+  "learning_rate": 0.02,
+  "learning_rate_decay": 0.002,
+  "gradient_clip": 100.0,
+  "maximum_updates": 5000,
+  "maximum_elapsed_seconds": 800.0,
+  "output_selection_seconds": 700.0,
+  "change_seed": true,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "trace_eval_particles": 5000,
+  "trace_eval_replicates": 1,
+  "workers": 1,
+  "worker_index": 0
+}
