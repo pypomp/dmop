@@ -34,3 +34,11 @@ parameters and every optimizer update are scored afterward with Pypomp's
 ordinary Euler-20 particle filter. Consequently the figures report the same
 scientific target used for IFAD, IF2, and Ditlevsen rather than the biased
 training likelihood.
+
+Optimization is projected Adam on the manuscript's bounding box. This is not
+part of the Corenflos filter itself. If the stochastic filter becomes invalid,
+or remains more than 30 log-likelihood units below its best value for ten
+updates, the optimizer returns to its best valid DPF checkpoint, clears Adam's
+moments, and halves the learning rate. The reported estimate is the valid
+checkpoint with the largest DPF likelihood before 700 seconds; Euler-20 values
+are never used to select a checkpoint.

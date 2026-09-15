@@ -22,8 +22,12 @@ from .transport import TransportConfig
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=Path("results/particle_profile.csv"))
-    parser.add_argument("--particles", nargs="+", type=int, default=(25, 50, 100, 250, 500))
+    parser.add_argument(
+        "--output", type=Path, default=Path("results/particle_profile.csv")
+    )
+    parser.add_argument(
+        "--particles", nargs="+", type=int, default=(25, 50, 100, 250, 500)
+    )
     parser.add_argument("--replicates", type=int, default=3)
     parser.add_argument("--seed", type=int, default=631409)
     parser.add_argument("--epsilon", type=float, default=0.5)
@@ -47,9 +51,7 @@ def main() -> None:
         compiled = False
         for parameter_name, parameters in parameter_sets.items():
             for replicate in range(args.replicates):
-                key = jax.random.key(
-                    args.seed + 1_000_003 * particles + 97 * replicate
-                )
+                key = jax.random.key(args.seed + 1_000_003 * particles + 97 * replicate)
                 started = time.perf_counter()
                 result, gradient = evaluator(parameters, key)
                 jax.block_until_ready(gradient)
