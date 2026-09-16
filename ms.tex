@@ -144,9 +144,9 @@ To the best of our knowledge, attaining rapid mixing on this challenging problem
 
 Consider an unobserved Markov process $\{X(t),t  \geq t_0\}$, with discrete-time observations $Y_1,...,Y_N$ realized at values $y_1^*,\dots,y_N^*$ with times $t_1,\dots, t_N$.
 The process is parameterized by an unknown parameter $\theta \in \Theta \subseteq \R^p$, where the state $X(t)$ takes values in the state space $\gX \subseteq \R^d$, the observations $Y_n$ take values in $\gY,$ and we write $X_n = X(t_n)$. We suppose that the discrete-time latent process model has a density $f_{X_n|X_{n-1}}\left(x_{n} \mid x_{n-1}; \theta\right)$.
-The existence of this density is necessary to define the likelihood function, but plug-and-play algorithms do not explicitly evaluate it.
+Although we assume this density exists, plug-and-play inference algorithms do not explicitly evaluate it.
 Instead, they have access to a corresponding simulator, which write as $\process_n\left(x_n\mid x_{n-1}; \theta\right)$.
-We set $f_{Y_n|X_n}\left(y_n \mid x_n; \theta\right)$ to be the measurement density, which  can be directly evaluated. 
+We set $f_{Y_n|X_n}\left(y_n \mid x_n; \theta\right)$ to be the measurement density, which can be directly evaluated. 
 We call $f_{X_{1:n}|Y_{1:n}}(x_{1:n}|y_{1:n}^*; \theta)$ the posterior distribution of states, and $f_{X_{n}|Y_{1:n}}(x_n|y_{1:n}^*; \theta)$ the filtering distribution at time $t_n$.
 All joint and conditional densities are defined on a probability space $(\Omega, \Sigma, \prob)$ which is also assumed to enable construction of independent replicates and all random variables defined in our algorithms.
 For the algorithmic interpretation of our theory, we identify the random number seed with an element of the sample space $\omega \in \Omega$.
@@ -164,7 +164,7 @@ MOP-$\alpha$ is a mathematical construction designed to avoid this discontinuity
 We begin with a filter that resamples particles with weights calculated at a baseline parameter value, $\phi$, and then corrects these weights to target the filtering distribution at another parameter value, $\theta$, yielding the name {\it measurement off-parameter}.
 The terminology is chosen by analogy with similar {\it off-policy} algorithms used for reinforcement learning in which a policy that was not implemented is evaluated by reweighting the rewards of the policy that was actually applied.
 If we fix $\omega$ and $\phi$, the sample indices do not change with $\theta$, but the re-weighting scheme does, allowing MOP-$\alpha$ to be differentiated with respect to $\theta$.
-When $\theta = \phi$, we have $w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta} = 1$ and MOP-$\alpha$ reduces  to the standard particle filter; this is the setting we use in practice,  but use the construction allows us to define a derivative.
+When $\theta = \phi$, we have $w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta} = 1$ and MOP-$\alpha$ reduces  to the standard particle filter; this is the setting we use in practice,  but the construction allows us to define a derivative.
 One can think of MOP-$\alpha$ as reconstructing local smooth approximations of the discontinuous likelihood estimates produced by a particle filter for a fixed number of particles $J$ and fixed seed $\omega$.
 These approximate the likelihood at $\theta$ in a neighborhood around $\phi$, with the intent that differentiating these smooth log-likelihood reconstructions yields a score estimate.
 
@@ -245,9 +245,9 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
 	    \textbf{Return:} log-likelihood estimate $\hat{\loglik}^A(\theta)= \log\big(\hat{\lik}^A(\theta)\big) = \sum_{n=1}^N \log L_n^{A,\theta,\alpha}$ or $\hat{\loglik}^B(\theta)=\log\big(\hat{\lik}^B(\theta)\big) = \sum_{n=1}^N \log L_n^{B,\theta,\alpha}$, and gradient estimate $\hat{\mathcal{D}}^A(\theta)$ or $\hat{\mathcal{D}}^B(\theta)$.
 \end{algorithm}
 
-MOP-$\alpha$ has similarities with \cite{svensson18}, in which particles from a previous run at $\phi$ are reweighted to evaluate the likelihood at any sufficiently nearby parameter $\theta$ for $0$-th order optimization.
+MOP-$\alpha$ has similarities with the algorithm of \cite{svensson18}, in which particles from a previous run at $\phi$ are reweighted to evaluate the likelihood at any sufficiently nearby parameter $\theta$ for $0$-th order optimization.
 However, their method is not plug-and-play because they use transition densities to reweight particles, and the variance of their log-likelihood estimate has an exponential dependence in the horizon, $N$, when $\theta\neq\phi$.
-Our approach bypasses these issues -- the first since the reparameterization trick allows us to consider particle paths dependent on $\theta$, and the second as using AD allows us to only evaluate the likelihood and score estimates when $\theta=\phi$. 
+Our approach bypasses these issues: the first since the reparameterization trick allows us to consider particle paths dependent on $\theta$, and the second as using AD allows us to only evaluate the likelihood and score estimates when $\theta=\phi$. 
 
 \subsection{Some algorithmic details}
 
@@ -286,24 +286,27 @@ This leads to numerical instability and high variance unless $N$ is small.
 For $\alpha<1$, the weights from previous timesteps are discounted as in Equation~(\ref{eq:weighting-scheme}), allowing for lower variance at the expense of bias in the gradient estimate.
 
 When $\alpha=1$, MOP-$1$ maintains complete memory of each particle's ancestral trajectory.
-Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$1$ recovers the consistent but high-variance score estimate of \cite{poyiadjis11}. 
-When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and DMOP-$0$ recovers the low-variance but asymptotically biased score estimate of \cite{naesseth18}.
+%Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$1$ recovers the consistent but high-variance score estimate of \cite{poyiadjis11}. 
+\newEdit{\editPoyiadjisCorrespondence}
+
+When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$0$ recovers the low-variance but asymptotically biased score estimate of \cite{naesseth18}.
 \cite{scibior21} showed that this matches the gradient of a vanilla particle filter when resampling terms are dropped. 
 
 \begin{thm}[DMOP-$0$ and DMOP-$1$ Functional Forms]
     \label{thm:mop-functional-forms}
-    Writing $\nabla_\theta \hat\ell^\alpha(\theta)$ for the gradient estimate yielded by DMOP-$\alpha$ %when $\theta=\phi$ 
-    and using the after-resampling conditional likelihood estimate so that $\hat\loglik(\theta)= \log \hat\lik(\theta) = \log \prod_{n=1}^N L_n^{A, \theta, \alpha}$, when $\alpha=0$,
-    \begin{equation} \nonumber
+    Write $\nabla_\theta \hat\ell^\alpha(\theta)$ for the gradient estimate yielded by DMOP-$\alpha$ 
+    and use the after-resampling conditional likelihood estimate so that $\hat\loglik(\theta)= \log \hat\lik(\theta) = \log \prod_{n=1}^N L_n^{A, \theta, \alpha}$. When $\alpha=0$,
+    \begin{equation} \nonumber %\label{eq:thm1:alpha=0}
         \nabla_\theta \hat\ell^0(\theta) 
-        = \frac{1}{J} \sum_{n=1}^N \sum_{j=1}^J \nabla_\theta \log f_{Y_n|X_{n}}(y_n^*|x_{n,j}^{F, \theta}; \theta),
+        = \frac{1}{J} \sum_{n=1}^N \sum_{j=1}^J \nabla_\theta \log f_{Y_n|X_{n}}\left(y_n^*|X_{n,j}^{F, \theta}; \theta\right),
     \end{equation}
-    yielding \cite{naesseth18}'s estimator with the bootstrap filter. When $\alpha=1$,
-    \begin{equation} \nonumber
+    \newEdit{\editTheoremOne}
+    When $\alpha=1$,
+    \begin{equation} \nonumber %\label{eq:thm1:alpha=1}
         \nabla_\theta \hat{\ell}^1(\theta) 
-        = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\left(y_{1:N}^* | x_{1:n,j}^{A, F,\theta}\right),
+        = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\left(y_{1:N}^* | X_{1:N,j}^{A,F,\theta}; \theta \right).
     \end{equation}
-    yielding the estimator of \cite{poyiadjis11} for the bootstrap filter.
+    \newEdit{\editAncestorDefinition}
 \end{thm}
 
 We defer the proof to the supplement (Section~\suppSecProofFunctionalForms). 
