@@ -612,6 +612,8 @@ $\alpha^{n-k}$.  Section~S7 applies the historical particle estimates of
 \citet{chanDelMoral18} to analytical lag truncations and then recovers the
 finite discounted sum by an exact geometric-mixture identity.}
 
+\kevin{Say we have one lag. Then I only differentiate through the current measurement. But the particle is differentiated through with reparam, and that means I differentiate through the particle's path. The particle is mixing, so in principle this should be fine, but do I need to take into account the forgetting of the particle? And if I do, do I need to take into account the forgetting of the particle or its derivative? Astra claims the latter. I am not necessarily convinced. }
+
 In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
 %\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
