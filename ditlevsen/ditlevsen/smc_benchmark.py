@@ -25,11 +25,14 @@ from .block_smc import block_bootstrap_filter, fit_block_pseudo_score
 from .data import load_dacca_data
 from .model import physical_parameter_dict
 from .smc import fit_pseudo_score
+from .warm_starts import load_starts_file
 
 
 FIT_SIGNATURE_KEYS = (
     "seed",
     "starts",
+    "starts_file",
+    "elapsed_time_offset_seconds",
     "nsteps",
     "transition",
     "proposal",
@@ -107,7 +110,7 @@ def _prepare_output(args: argparse.Namespace) -> None:
         changed = [
             key
             for key in FIT_SIGNATURE_KEYS
-            if previous.get(key) != configuration.get(key)
+            if previous.get(key, configuration.get(key)) != configuration.get(key)
         ]
         if changed:
             raise ValueError(
@@ -236,9 +239,8 @@ def _fit_one(
             bridge_particles=0,
             **common,
         )
-    selected_iteration = _output_iteration(
-        result.elapsed_trace, args.output_selection_seconds
-    )
+    elapsed_trace = result.elapsed_trace + args.elapsed_time_offset_seconds
+    selected_iteration = _output_iteration(elapsed_trace, args.output_selection_seconds)
     selected_parameters = result.parameter_trace[selected_iteration]
     _atomic_npz(
         checkpoint,
@@ -246,9 +248,7 @@ def _fit_one(
         unconstrained=selected_parameters,
         terminal_unconstrained=result.unconstrained,
         output_selected_iteration=np.asarray(selected_iteration),
-        output_selected_elapsed_seconds=np.asarray(
-            result.elapsed_trace[selected_iteration]
-        ),
+        output_selected_elapsed_seconds=np.asarray(elapsed_trace[selected_iteration]),
         parameter_trace=result.parameter_trace,
         pseudo_loglik_trace=result.marginal_loglik_trace,
         complete_pseudologlik_trace=result.complete_loglik_trace,
@@ -260,8 +260,13 @@ def _fit_one(
         backward_fallback_trace=result.backward_fallback_trace,
         accepted_step_size_trace=result.accepted_step_size_trace,
         backtrack_count_trace=result.backtrack_count_trace,
-        elapsed_trace=result.elapsed_trace,
-        elapsed_seconds=np.asarray(result.elapsed_seconds),
+        elapsed_trace=elapsed_trace,
+        optimizer_elapsed_trace=result.elapsed_trace,
+        elapsed_seconds=np.asarray(
+            result.elapsed_seconds + args.elapsed_time_offset_seconds
+        ),
+        optimizer_elapsed_seconds=np.asarray(result.elapsed_seconds),
+        elapsed_time_offset_seconds=np.asarray(args.elapsed_time_offset_seconds),
         completed_updates=np.asarray(result.completed_updates),
         termination_reason=np.asarray(result.termination_reason),
         fit_seed=np.asarray(_fit_seed(args.seed, nstep, start_index)),
@@ -272,8 +277,9 @@ def _fit_one(
         f"status={result.termination_reason}, "
         f"pseudo={result.marginal_loglik_trace[0]:.2f} -> "
         f"{result.marginal_loglik_trace[-1]:.2f}, "
-        f"time={result.elapsed_seconds:.2f}s, "
-        f"selected={result.elapsed_trace[selected_iteration]:.2f}s",
+        f"optimizer_time={result.elapsed_seconds:.2f}s, "
+        f"total_time={result.elapsed_seconds + args.elapsed_time_offset_seconds:.2f}s, "
+        f"selected={elapsed_trace[selected_iteration]:.2f}s",
         flush=True,
     )
 
@@ -362,12 +368,25 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                     ),
                     "inference_nstep": nstep,
                     "start": start_index,
-                    "start_type": "global-box",
+                    "start_type": (
+                        "if2-warm-start"
+                        if args.starts_file is not None
+                        else "global-box"
+                    ),
+                    "starts_file": (
+                        str(args.starts_file) if args.starts_file is not None else ""
+                    ),
                     "particles": args.particles,
                     "iterations_requested": args.iterations,
                     "updates_completed": int(fit["completed_updates"]),
                     "termination_reason": termination,
                     "elapsed_seconds": float(fit["elapsed_seconds"]),
+                    "optimizer_elapsed_seconds": float(
+                        fit.get("optimizer_elapsed_seconds", fit["elapsed_seconds"])
+                    ),
+                    "elapsed_time_offset_seconds": float(
+                        fit.get("elapsed_time_offset_seconds", 0.0)
+                    ),
                     "output_selected_iteration": int(
                         fit.get(
                             "output_selected_iteration",
@@ -835,6 +854,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, default=Path("results/smc_benchmark"))
     parser.add_argument("--seed", type=int, default=631409)
     parser.add_argument("--starts", type=int, default=100)
+    parser.add_argument("--starts-file", type=Path)
+    parser.add_argument("--elapsed-time-offset-seconds", type=float, default=0.0)
     parser.add_argument("--nsteps", nargs="+", type=int, default=(5, 10, 20))
     parser.add_argument("--transition", choices=("block", "local"), default="block")
     parser.add_argument("--proposal", choices=("bootstrap", "guided"), default="guided")
@@ -877,6 +898,8 @@ def main() -> None:
     args = build_parser().parse_args()
     if args.starts < 1:
         raise ValueError("starts must be positive")
+    if args.elapsed_time_offset_seconds < 0.0:
+        raise ValueError("elapsed-time-offset-seconds must be nonnegative")
     if any(nstep < 1 for nstep in args.nsteps):
         raise ValueError("nsteps must be positive")
     if args.trace_every_seconds <= 0.0:
@@ -895,7 +918,11 @@ def main() -> None:
     if not 0 <= args.worker_index < args.workers:
         raise ValueError("worker-index must be in [0, workers)")
     _prepare_output(args)
-    starts = make_starts(args.starts, args.seed)
+    starts = (
+        load_starts_file(args.starts_file, args.starts)
+        if args.starts_file is not None
+        else make_starts(args.starts, args.seed)
+    )
     if "fit" in args.stages:
         run_fits(args, starts)
     else:

@@ -60,7 +60,7 @@ def fit_dpf(
     learning_rate: float = 0.01,
     learning_rate_decay: float = 0.0,
     gradient_clip: float = 100.0,
-    maximum_acceptable_invalid_fraction: float = 0.5,
+    maximum_acceptable_invalid_fraction: float = 1.0,
     maximum_pseudo_loglik_drop: float = 30.0,
     rollback_patience: int = 10,
     maximum_restarts: int = 6,
@@ -142,6 +142,7 @@ def fit_dpf(
         acceptable = (
             np.isfinite(value)
             and np.isfinite(gradient_norm)
+            and invalid_trace[-1] < 1.0
             and invalid_trace[-1] <= maximum_acceptable_invalid_fraction
         )
         if acceptable and value > best_value:

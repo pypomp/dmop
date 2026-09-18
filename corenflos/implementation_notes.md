@@ -42,3 +42,9 @@ updates, the optimizer returns to its best valid DPF checkpoint, clears Adam's
 moments, and halves the learning rate. The reported estimate is the valid
 checkpoint with the largest DPF likelihood before 700 seconds; Euler-20 values
 are never used to select a checkpoint.
+
+An evaluation is considered usable when its likelihood and gradient are finite
+and at least one particle remains valid at every observation. This avoids
+discarding difficult bounding-box starts merely because more than half their
+particles cross the state boundary. An evaluation for which all particles fail
+at any observation is still rejected and triggers the same rollback.
