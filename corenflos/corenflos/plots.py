@@ -348,6 +348,7 @@ def plot_trace(
     frame["source"] = pd.Categorical(frame["source"], categories=METHODS, ordered=True)
     non_if2 = frame.loc[frame["source"].ne("IF2")]
     if2 = frame.loc[frame["source"].eq("IF2")]
+    corenflos_trace = frame.loc[frame["source"].eq("Corenflos")]
     plot = (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
         + geom_ribbon(
@@ -363,6 +364,14 @@ def plot_trace(
         )
         + geom_line(aes(y="q10"), data=if2, alpha=0.35, size=0.6, show_legend=False)
         + geom_line(aes(y="maximum"), data=if2, alpha=0.35, size=0.6, show_legend=False)
+        # Keep the Corenflos median visible above the overlapping ribbons and
+        # reference trajectories. The first part remains clipped at -4300.
+        + geom_line(
+            data=corenflos_trace,
+            color=COLORS["Corenflos"],
+            size=1.8,
+            show_legend=False,
+        )
         + geom_vline(
             aes(xintercept="elapsed_seconds", color="source"),
             data=transitions,
@@ -396,6 +405,13 @@ def plot_trace(
     )
     (plot + coord_cartesian(xlim=(0, budget), ylim=(TRACE_LOWER_LIMIT, None))).save(
         output / "optimization_elapsed_r20.png",
+        width=7,
+        height=3.8,
+        dpi=220,
+        verbose=False,
+    )
+    (plot + coord_cartesian(xlim=(0, budget), ylim=(-8000.0, None))).save(
+        output / "optimization_elapsed_full_r20.png",
         width=7,
         height=3.8,
         dpi=220,

@@ -15,6 +15,7 @@ import pandas as pd
 from ditlevsen.benchmark import _parameter_columns, make_starts
 from ditlevsen.data import load_dacca_data
 from ditlevsen.model import physical_parameter_dict
+from ditlevsen.warm_starts import load_starts_file
 
 from .dpf import DPFConfig, DaccaArrays
 from .fit import fit_dpf, make_value_and_gradient
@@ -24,6 +25,8 @@ from .transport import TransportConfig
 FIT_KEYS = (
     "seed",
     "starts",
+    "starts_file",
+    "elapsed_time_offset_seconds",
     "nstep",
     "particles",
     "ess_threshold",
@@ -182,9 +185,11 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
             maximum_elapsed_seconds=args.maximum_elapsed_seconds,
             change_seed=args.change_seed,
         )
+        elapsed_trace = result.elapsed_trace + args.elapsed_time_offset_seconds
         acceptable = (
             np.isfinite(result.pseudo_loglik_trace)
             & np.isfinite(result.gradient_norm_trace)
+            & (result.maximum_invalid_fraction_trace < 1.0)
             & (
                 result.maximum_invalid_fraction_trace
                 <= args.maximum_acceptable_invalid_fraction
@@ -193,7 +198,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
         before_cutoff = (
             np.ones_like(acceptable, dtype=bool)
             if args.output_selection_seconds is None
-            else result.elapsed_trace <= args.output_selection_seconds
+            else elapsed_trace <= args.output_selection_seconds
         )
         available = np.flatnonzero(acceptable & before_cutoff)
         if available.size == 0:
@@ -203,9 +208,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
         elif args.output_selection == "maximum-pseudo":
             selected = int(available[np.argmax(result.pseudo_loglik_trace[available])])
         else:
-            requested = _output_iteration(
-                result.elapsed_trace, args.output_selection_seconds
-            )
+            requested = _output_iteration(elapsed_trace, args.output_selection_seconds)
             at_or_before = available[available <= requested]
             selected = int(at_or_before[-1] if at_or_before.size else available[0])
         _atomic_npz(
@@ -214,7 +217,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
             unconstrained=result.parameter_trace[selected],
             terminal_unconstrained=result.unconstrained,
             output_selected_iteration=np.asarray(selected),
-            output_selected_elapsed_seconds=np.asarray(result.elapsed_trace[selected]),
+            output_selected_elapsed_seconds=np.asarray(elapsed_trace[selected]),
             parameter_trace=result.parameter_trace,
             pseudo_loglik_trace=result.pseudo_loglik_trace,
             gradient_norm_trace=result.gradient_norm_trace,
@@ -225,8 +228,13 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
             learning_rate_trace=result.learning_rate_trace,
             incumbent_pseudo_loglik_trace=result.incumbent_pseudo_loglik_trace,
             restart_count_trace=result.restart_count_trace,
-            elapsed_trace=result.elapsed_trace,
-            elapsed_seconds=np.asarray(result.elapsed_seconds),
+            elapsed_trace=elapsed_trace,
+            optimizer_elapsed_trace=result.elapsed_trace,
+            elapsed_seconds=np.asarray(
+                result.elapsed_seconds + args.elapsed_time_offset_seconds
+            ),
+            optimizer_elapsed_seconds=np.asarray(result.elapsed_seconds),
+            elapsed_time_offset_seconds=np.asarray(args.elapsed_time_offset_seconds),
             completed_updates=np.asarray(result.completed_updates),
             termination_reason=np.asarray(result.termination_reason),
             fit_seed=np.asarray(_fit_seed(args.seed, start_index)),
@@ -236,8 +244,9 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
             f"status={result.termination_reason}, "
             f"pseudo={result.pseudo_loglik_trace[0]:.2f} -> "
             f"{result.pseudo_loglik_trace[-1]:.2f}, "
-            f"time={result.elapsed_seconds:.1f}s, "
-            f"selected={result.elapsed_trace[selected]:.1f}s",
+            f"optimizer_time={result.elapsed_seconds:.1f}s, "
+            f"total_time={result.elapsed_seconds + args.elapsed_time_offset_seconds:.1f}s, "
+            f"selected={elapsed_trace[selected]:.1f}s",
             flush=True,
         )
         write_fit_tables(args)
@@ -258,11 +267,22 @@ def write_fit_tables(args: argparse.Namespace) -> None:
                 "method": "Corenflos DPF",
                 "inference_nstep": args.nstep,
                 "start": start_index,
-                "start_type": "global-box",
+                "start_type": (
+                    "if2-warm-start" if args.starts_file is not None else "global-box"
+                ),
+                "starts_file": (
+                    str(args.starts_file) if args.starts_file is not None else ""
+                ),
                 "particles": args.particles,
                 "updates_completed": int(fit["completed_updates"]),
                 "termination_reason": str(fit["termination_reason"]),
                 "elapsed_seconds": float(fit["elapsed_seconds"]),
+                "optimizer_elapsed_seconds": float(
+                    fit.get("optimizer_elapsed_seconds", fit["elapsed_seconds"])
+                ),
+                "elapsed_time_offset_seconds": float(
+                    fit.get("elapsed_time_offset_seconds", 0.0)
+                ),
                 "output_selected_iteration": selected,
                 "output_selected_elapsed_seconds": float(
                     fit["output_selected_elapsed_seconds"]
@@ -443,6 +463,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, default=Path("results/benchmark"))
     parser.add_argument("--seed", type=int, default=631409)
     parser.add_argument("--starts", type=int, default=100)
+    parser.add_argument("--starts-file", type=Path)
+    parser.add_argument("--elapsed-time-offset-seconds", type=float, default=0.0)
     parser.add_argument("--nstep", type=int, default=20)
     parser.add_argument("--particles", type=int, default=100)
     parser.add_argument("--ess-threshold", type=float, default=0.5)
@@ -455,7 +477,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--learning-rate-decay", type=float, default=0.0)
     parser.add_argument("--gradient-clip", type=float, default=100.0)
     parser.add_argument(
-        "--maximum-acceptable-invalid-fraction", type=float, default=0.5
+        "--maximum-acceptable-invalid-fraction", type=float, default=1.0
     )
     parser.add_argument("--maximum-pseudo-loglik-drop", type=float, default=30.0)
     parser.add_argument("--rollback-patience", type=int, default=10)
@@ -487,8 +509,14 @@ def main() -> None:
         raise ValueError("worker-index must be in [0, workers)")
     if not 0.0 <= args.ess_threshold <= 1.0:
         raise ValueError("ess-threshold must be in [0, 1]")
+    if args.elapsed_time_offset_seconds < 0.0:
+        raise ValueError("elapsed-time-offset-seconds must be nonnegative")
     _prepare_output(args)
-    starts = make_starts(args.starts, args.seed)
+    starts = (
+        load_starts_file(args.starts_file, args.starts)
+        if args.starts_file is not None
+        else make_starts(args.starts, args.seed)
+    )
     if "fit" in args.stages:
         run_fits(args, starts)
     else:

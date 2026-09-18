@@ -16,6 +16,7 @@ FIGURES = {
     "likelihood_comparison_r20.png",
     "parameter_comparison_r20.png",
     "optimization_elapsed_r20.png",
+    "optimization_elapsed_full_r20.png",
 }
 
 
@@ -30,7 +31,11 @@ def _read(path: Path) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
-def audit(directory: Path, expected_starts: int) -> dict[str, float | int]:
+def audit(
+    directory: Path,
+    expected_starts: int,
+    expected_maximum_invalid_fraction: float = 1.0,
+) -> dict[str, float | int]:
     configuration_path = directory / "configuration.json"
     if not configuration_path.exists():
         raise AssertionError(f"missing {configuration_path}")
@@ -39,6 +44,11 @@ def audit(directory: Path, expected_starts: int) -> dict[str, float | int]:
     _assert_equal(int(configuration["nstep"]), 20, "inference Euler substeps")
     _assert_equal(int(configuration["particles"]), 100, "fitting particles")
     _assert_equal(float(configuration["epsilon"]), 0.25, "transport epsilon")
+    _assert_equal(
+        float(configuration["maximum_acceptable_invalid_fraction"]),
+        expected_maximum_invalid_fraction,
+        "maximum acceptable invalid fraction",
+    )
     _assert_equal(float(configuration["maximum_elapsed_seconds"]), 800.0, "fit budget")
     _assert_equal(
         float(configuration["output_selection_seconds"]), 700.0, "selection cutoff"
@@ -124,8 +134,20 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--starts", type=int, default=100)
+    parser.add_argument(
+        "--maximum-acceptable-invalid-fraction", type=float, default=1.0
+    )
     args = parser.parse_args()
-    print(json.dumps(audit(args.data, args.starts), indent=2))
+    print(
+        json.dumps(
+            audit(
+                args.data,
+                args.starts,
+                args.maximum_acceptable_invalid_fraction,
+            ),
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":
