@@ -81,9 +81,8 @@ eta = {
 
 dacca_obj.mif(
     theta=initial_params_list,
-    rw_sd=RW_SD,
+    rw_sd=RW_SD.geometric_cooling(0.5),
     M=M_mif,
-    a=0.5,
     J=NP_FITR,
     key=key,
     n_monitors=N_MONITORS,
