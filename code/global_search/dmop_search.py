@@ -17,9 +17,24 @@ NP_FITR = (2, 500, 1000, 5000)[RUN_LEVEL - 1]
 NFITR_0 = (2, 5, 100, 60)[RUN_LEVEL - 1]
 NFITR_97 = (2, 5, 100, 175)[RUN_LEVEL - 1]
 NFITR_1 = (2, 5, 100, 60)[RUN_LEVEL - 1]
-NTRAIN_0 = (2, 20, 40, 225)[RUN_LEVEL - 1]
-NTRAIN_97 = (2, 20, 40, 175)[RUN_LEVEL - 1]
-NTRAIN_1 = (2, 20, 40, 225)[RUN_LEVEL - 1]
+# The gradient step gained less from the Euler step optimization than the
+# filtering step did: about 1.6x against 2.5x to 3x. IFAD nevertheless ended up
+# at roughly half the wall clock of the IF2-only runs, because those had their
+# iteration count tripled to hold their budget fixed while these were left
+# alone, so IFAD simply banked its speedup as a shorter run. The gradient
+# counts below spend it instead, sized from the measured per-iteration cost of
+# the train step (about 2.1 s to 2.2 s at J=5000) to approach the 946 s of the
+# IF2-only run. Measured totals are 948.8 s for IFAD-0, 942.8 s for IFAD-0.97
+# and 936.6 s for IFAD-1, so IFAD-0 overshoots by 2.8 s, or 0.3%. That is well
+# inside the "similar amount of time" the comparison claims, and IFAD-0 is the
+# weakest variant, so no result depends on trimming it further.
+#
+# Only the gradient counts grow. The IF2 warm-start counts are deliberately
+# left alone, because lengthening the warm start pushes the swarm off the ridge
+# that the gradient stage needs to start from.
+NTRAIN_0 = (2, 20, 40, 410)[RUN_LEVEL - 1]
+NTRAIN_97 = (2, 20, 40, 400)[RUN_LEVEL - 1]
+NTRAIN_1 = (2, 20, 40, 425)[RUN_LEVEL - 1]
 NP_EVAL = (2, 1000, 1000, 5000)[RUN_LEVEL - 1]
 NREPS_EVAL = (2, 5, 24, 36)[RUN_LEVEL - 1]
 warmup = (1, 5, 10, 10)[RUN_LEVEL - 1]

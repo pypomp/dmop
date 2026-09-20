@@ -3,10 +3,17 @@
 The table was previously assembled by hand from the rendered report, which is
 easy to get subtly wrong. The conventions it follows, preserved here:
 
-* "Best log-likelihood" is the post-pruning evaluation (index=-1), a fresh
-  unbiased evaluation of the single selected best replicate.
-* "Median log-likelihood" is the median over all 100 replicates before
-  pruning (index=-2).
+* "Maximum" is the highest of the 100 search results (index=-2).  It is the
+  largest of 100 noisy evaluations and so is biased upward by the winner's
+  curse.
+* "Re-evaluated" is a fresh particle filter evaluation of that same best
+  replicate after pruning (index=-1), which removes the selection bias at the
+  cost of being a single noisy evaluation.  Reporting both makes the gap
+  between them visible: where the replicates cluster tightly, as they do for
+  IFAD-0.97 under extended effort, the re-evaluation regresses toward the
+  median and can even fall below it.
+* "Median" is the median over all 100 replicates before pruning (index=-2),
+  so it shares the maximum's evaluation set.
 * Both come from the N_MONITORS=1 runs; the times come from the N_MONITORS=0
   runs, which omit the per-iteration particle filter calls so that the
   comparison between methods is not distorted by monitoring overhead.
@@ -34,17 +41,18 @@ def _load(path):
 
 
 lines = [
-    r"\begin{tabular}{lrrrr}",
+    r"\begin{tabular}{lrrrrr}",
     r"\toprule",
-    r" & Best log-likelihood & Median log-likelihood & IF2 time (s) & DMOP time (s) \\",
+    r" & Maximum & Re-evaluated & Median & IF2 time (s) & DMOP time (s) \\",
 ]
 
 for sfx, heading in BLOCKS:
-    lines += [r"\midrule", rf"\multicolumn{{5}}{{l}}{{\textit{{{heading}}}}} \\", r"\midrule"]
+    lines += [r"\midrule", rf"\multicolumn{{6}}{{l}}{{\textit{{{heading}}}}} \\", r"\midrule"]
     rows = []
     for model, pat in RUNS:
         obj1 = _load(pat.format(nm=1, sfx=sfx))
-        best = obj1.results(index=-1)["logLik"].max()
+        reeval = obj1.results(index=-1)["logLik"].max()
+        best = obj1.results(index=-2)["logLik"].max()
         median = obj1.results(index=-2)["logLik"].median()
 
         times = _load(pat.format(nm=0, sfx=sfx)).time()
@@ -54,6 +62,7 @@ for sfx, heading in BLOCKS:
             {
                 "model": model,
                 "best": best,
+                "reeval": reeval,
                 "median": median,
                 "if2": f"{round(if2.iloc[0]):d}" if len(if2) else "-",
                 "dmop": f"{round(dmop.iloc[0]):d}" if len(dmop) else "-",
@@ -61,7 +70,7 @@ for sfx, heading in BLOCKS:
         )
     for r in sorted(rows, key=lambda r: -r["best"]):
         lines.append(
-            f"{r['model']} & {r['best']:.2f} & {r['median']:.2f} "
+            f"{r['model']} & {r['best']:.2f} & {r['reeval']:.2f} & {r['median']:.2f} "
             f"& {r['if2']} & {r['dmop']} \\\\"
         )
 
