@@ -464,7 +464,7 @@ A summary of the optimization settings is provided in the supplement (Section~\s
 \begin{table}[htbp!]
 \centering
 \input{imgs/precise_table}
-\caption{Maximum log-likelihood found by IF2 and IFAD under both comparable and extended computational effort. IFAD-0.97 performs the best among all methods.}
+\caption{Maximum log-likelihood found by IF2 and IFAD under both comparable and extended computational effort. The maximum is the largest of the 100 searches, and is biased upward by the winner's curse; the re-evaluated column gives a fresh particle filter evaluation of that same search, which removes the selection bias at the cost of being a single noisy evaluation. Where the searches cluster tightly, as they do for IFAD-0.97 under extended effort, the re-evaluation regresses toward the median. IFAD-0.97 performs the best among all methods.}
 \arxiv{}{\vspace*{-7mm}}
 \label{table:mle}
 \end{table}
@@ -473,7 +473,7 @@ Our findings are summarized in Table \ref{table:mle} and Figures \ref{fig:boxplo
 Because estimating the log-likelihoods at every iteration of IF2 with particle filtering for Figure \ref{fig:optim} lengthens the computation time and thus compromises the fair comparison between methods, we obtained the times in Table \ref{table:mle} and Figure \ref{fig:optim} by running the methods again without the extra calls to the particle filter. 
 Every other value displayed for the Dhaka results comes from the runs with the extra particle filter calls. 
 
-Examining Table \ref{table:mle}, IFAD-0.97 attained a log-likelihood of -3744.36, which surpassed IF2 even when IF2 ran for 4 times as long.
+Examining Table \ref{table:mle}, IFAD-0.97 attained a log-likelihood of -3743.68, which surpassed IF2 even when IF2 ran for 4 times as long.
 IFAD-1 sometimes came close to IFAD-0.97, but its additional noise gave it worse median performance.
 IFAD-1 needed to be run for an extended time for the median log-likelihood to start catching up with IFAD-0.97.
 
@@ -516,13 +516,13 @@ IFAD-1 needed to be run for an extended time for the median log-likelihood to st
 \end{figure}
 
  
-IFAD-0 fell about 4 log-units short of IFAD-0.97 even with extended time, presumably due to its high bias. 
+IFAD-0 fell nearly 5 log-units short of IFAD-0.97 even with extended time, presumably due to its high bias. 
 Based on Figure \ref{fig:optim}, IFAD-0 and IF2-only plateau heavily after being run for long enough and could not catch up to IFAD-0.97 within a reasonable timeframe.
 
 Previously, a maximized log-likelihood of $-3748.6$ for this model and data was reported by \cite{king16}.
 This MLE was obtained with much computational effort, using many global and local IF2 searches and with the assistance of likelihood profiling, 8 years after the model was first proposed by \cite{king08}.
 Meanwhile, \cite{ionides15} only achieve a maximum log-likelihood of $-3768.6$, and \cite{king08} only $-3793.4$.
-Using the improved computational efficiency of Pypomp (elaborated upon in Section \ref{sec:efficiency}), IF2 alone surpasses all of these previous results within a wall clock time of about an hour, while IFAD-0.97 does so in under eight minutes and holds the record at $-3743.93$.
+Using the improved computational efficiency of Pypomp (elaborated upon in Section \ref{sec:efficiency}), IF2 alone surpasses all of these previous results within a wall clock time of about an hour, while IFAD-0.97 does so in under 16 minutes and holds the record at $-3743.53$.
 
 
 Notably, the log-likelihood and parameter estimates for IFAD-0.97 frequently exhibit much less Monte~Carlo variance than that of the other methods, as can be seen in Figures~\ref{fig:boxplot} and~\ref{fig:density}. 
