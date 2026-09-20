@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name="quarto precise report"
+#SBATCH --partition=standard
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=90GB
+#SBATCH --output=slurm-report-%j.out
+#SBATCH --time=0-01:00:00
+
+# The LONG=true render melts the full IF2 traces, which at 7,800 iterations by
+# 100 replicates is large enough to kill the kernel on the login node. Pass
+# LONG via --export=ALL.
+
+. ../../.venv/bin/activate
+
+export QUARTO_PYTHON="$(pwd)/../../.venv/bin/python"
+export JAX_PLATFORMS=cpu
+
+if [ "${LONG}" = "true" ]; then
+  OUT=precise_report_long.html
+else
+  OUT=precise_report.html
+fi
+
+quarto render precise_report.qmd --output "$OUT"
