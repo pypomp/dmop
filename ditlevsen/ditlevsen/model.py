@@ -161,6 +161,13 @@ def project_parameters(unconstrained: jax.Array) -> jax.Array:
 
     lower, upper = parameter_bounds()
     projected = jnp.clip(unconstrained, lower, upper)
+    return normalize_parameters(projected)
+
+
+def normalize_parameters(unconstrained: jax.Array) -> jax.Array:
+    """Remove only the IVP softmax null shift, without imposing search bounds."""
+
+    projected = jnp.asarray(unconstrained, dtype=jnp.float64)
     ivp = projected[18:23]
     ivp = ivp - jnp.max(ivp)
     return projected.at[18:23].set(ivp)

@@ -18,7 +18,12 @@ import jax.numpy as jnp
 import numpy as np
 
 from .data import DaccaData
-from .model import decode_parameters, initial_state, project_parameters
+from .model import (
+    decode_parameters,
+    initial_state,
+    normalize_parameters,
+    project_parameters,
+)
 from .transition import gaussian_transition
 
 jax.config.update("jax_enable_x64", True)
@@ -527,6 +532,7 @@ def fit_pseudo_score(
     backtrack_factor: float = 0.5,
     maximum_acceptable_invalid_fraction: float = 0.5,
     maximum_elapsed_seconds: float | None = None,
+    project_to_bounds: bool = True,
 ) -> SMCScoreFitResult:
     """Stochastic pseudo-score ascent driven by an SMC path.
 
@@ -562,7 +568,8 @@ def fit_pseudo_score(
         )
     if maximum_elapsed_seconds is not None and maximum_elapsed_seconds <= 0.0:
         raise ValueError("maximum_elapsed_seconds must be positive")
-    parameters = project_parameters(jnp.asarray(start, dtype=jnp.float64))
+    constrain = project_parameters if project_to_bounds else normalize_parameters
+    parameters = constrain(jnp.asarray(start, dtype=jnp.float64))
     first_moment = jnp.zeros_like(parameters)
     second_moment = jnp.zeros_like(parameters)
     averaged_score = jnp.zeros_like(parameters)
@@ -698,7 +705,7 @@ def fit_pseudo_score(
         # accepted draw is cached, so a successful trial adds no extra SMC run.
         for backtrack in range(maximum_backtracks + 1):
             trial_step = working_learning_rate * backtrack_factor**backtrack
-            candidate = project_parameters(parameters + trial_step * direction)
+            candidate = constrain(parameters + trial_step * direction)
             candidate_path = sample_smoothing_path(
                 np.asarray(candidate),
                 data,

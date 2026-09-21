@@ -10,7 +10,12 @@ import jax.numpy as jnp
 import numpy as np
 
 from .data import DaccaData
-from .model import decode_parameters, initial_state, project_parameters
+from .model import (
+    decode_parameters,
+    initial_state,
+    normalize_parameters,
+    project_parameters,
+)
 from .smc import SMCFilterResult, SMCPathResult, SMCScoreFitResult, _normal_logpdf
 from .transition import ditlevsen_block_transition
 
@@ -686,6 +691,7 @@ def fit_block_pseudo_score(
     likelihood_guard_interval: int = 10,
     maximum_guard_loglik_drop: float = 5.0,
     maximum_elapsed_seconds: float | None = None,
+    project_to_bounds: bool = True,
 ) -> SMCScoreFitResult:
     """Fit the monthly block pseudo-model by SMC Fisher-score ascent."""
 
@@ -723,7 +729,8 @@ def fit_block_pseudo_score(
     if maximum_elapsed_seconds is not None and maximum_elapsed_seconds <= 0.0:
         raise ValueError("maximum_elapsed_seconds must be positive")
 
-    parameters = project_parameters(jnp.asarray(start, dtype=jnp.float64))
+    constrain = project_parameters if project_to_bounds else normalize_parameters
+    parameters = constrain(jnp.asarray(start, dtype=jnp.float64))
     first_moment = jnp.zeros_like(parameters)
     second_moment = jnp.zeros_like(parameters)
     averaged_score = jnp.zeros_like(parameters)
@@ -852,7 +859,7 @@ def fit_block_pseudo_score(
             guard_reference = None
         for backtrack in range(maximum_backtracks + 1):
             trial_step = scheduled_step * backtrack_factor**backtrack
-            candidate = project_parameters(parameters + trial_step * direction)
+            candidate = constrain(parameters + trial_step * direction)
             if guard_iteration:
                 guard_candidate = block_bootstrap_filter(
                     np.asarray(candidate),

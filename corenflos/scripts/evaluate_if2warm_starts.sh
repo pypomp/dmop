@@ -7,4 +7,4 @@ exec /home/kevin/anaconda3/envs/pypomp/bin/python -m ditlevsen.warm_start_evalua
   --starts 100 \
   --particles 5000 \
   --replicates 36 \
-  --if2-elapsed-seconds 244.44243359565735
+  --if2-elapsed-seconds 92.16042757034302

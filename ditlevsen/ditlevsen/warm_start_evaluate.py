@@ -95,7 +95,7 @@ def main() -> None:
     parser.add_argument("--particles", type=int, default=5000)
     parser.add_argument("--replicates", type=int, default=36)
     parser.add_argument("--seed", type=int, default=631409)
-    parser.add_argument("--if2-elapsed-seconds", type=float, default=244.44243359565735)
+    parser.add_argument("--if2-elapsed-seconds", type=float, default=92.16042757034302)
     args = parser.parse_args()
     if args.particles < 2 or args.replicates < 1:
         raise ValueError("particles must be at least two and replicates positive")

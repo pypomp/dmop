@@ -43,8 +43,8 @@ from ditlevsen.warm_starts import load_starts_file
 from .plots import BEST_KNOWN, PARAMETER_LABELS, PARAMETERS, _trace_summary
 
 
-OFFSET = 244.44243359565735
-TOTAL = 859.128396987915
+OFFSET = 92.16042757034302
+TOTAL = 942.8173823356628
 METHODS = [
     "Corenflos",
     "Corenflos + IF2",
@@ -256,7 +256,25 @@ def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
         _read(args.ditlevsen_warm / "optimization_euler_traces.csv"),
         "Ditlevsen + IF2",
     )
-    return pd.concat((ifad[columns], corenflos[columns], ditlevsen[columns]))
+    checkpoint = _read(
+        args.warm_start / "warm_start_evaluations.csv"
+    )["euler20_loglik"]
+    origins = pd.DataFrame(
+        [
+            {
+                "elapsed_seconds": OFFSET,
+                "median": float(checkpoint.median()),
+                "q10": float(checkpoint.quantile(0.10)),
+                "maximum": float(checkpoint.max()),
+                "source": source,
+            }
+            for source in ("Corenflos + IF2", "Ditlevsen + IF2")
+        ]
+    )
+    return pd.concat(
+        (ifad[columns], origins[columns], corenflos[columns], ditlevsen[columns]),
+        ignore_index=True,
+    )
 
 
 def plot_optimization(frame: pd.DataFrame, output: Path) -> None:

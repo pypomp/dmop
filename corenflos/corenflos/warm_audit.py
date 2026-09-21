@@ -12,9 +12,9 @@ import pandas as pd
 from ditlevsen.warm_starts import extract_ifad_mif_starts
 
 
-OFFSET = 244.44243359565735
-REMAINING = 614.6859633922577
-TOTAL = 859.128396987915
+OFFSET = 92.16042757034302
+REMAINING = 850.6569547653198
+TOTAL = 942.8173823356628
 FIGURES = {
     "likelihood_if2warm_comparison_r20.png",
     "parameter_if2warm_comparison_r20.png",
@@ -70,7 +70,7 @@ def _check_method(
     if float(config["output_selection_seconds"]) != TOTAL:
         raise AssertionError("wrong total selection time")
     update_key = "maximum_updates" if corenflos else "iterations"
-    if int(config[update_key]) != 175:
+    if int(config[update_key]) != 400:
         raise AssertionError("wrong gradient-update cap")
     nstep = int(config["nstep"] if corenflos else config["nsteps"][0])
     if nstep != 20:
@@ -85,6 +85,9 @@ def _check_method(
     for start, path in enumerate(checkpoints):
         with np.load(path, allow_pickle=False) as fit:
             np.testing.assert_array_equal(fit["start"], starts[start])
+            np.testing.assert_allclose(
+                fit["parameter_trace"][0], starts[start], rtol=0.0, atol=1e-10
+            )
             np.testing.assert_allclose(
                 fit["elapsed_trace"] - fit["optimizer_elapsed_trace"],
                 OFFSET,

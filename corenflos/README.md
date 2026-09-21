@@ -56,11 +56,11 @@ The follow-up comparison uses the exact 100 post-MIF checkpoints from the
 comparable-effort IFAD-0.97 run. They are exported from the manuscript pickle
 to `../ditlevsen/results/reference/ifad097_comparable_post_if2.npz`; the JSON
 beside it records the source files and timings. IFAD-0.97 used 175 MIF updates
-with 5,000 particles in 244.442 seconds, followed by at most 175 gradient
-updates over another 614.686 seconds. The warm-started Corenflos and Ditlevsen
+with 5,000 particles in 92.160 seconds, followed by at most 400 gradient
+updates over another 850.657 seconds. The warm-started Corenflos and Ditlevsen
 runs use the same update cap and remaining elapsed-time budget, and their trace
-times include the 244.442-second IF2 offset. Thus all three branches end at the
-same nominal 859.128-second point.
+times include the 92.160-second IF2 offset. Thus all three branches end at the
+same nominal 942.817-second point.
 
 The Corenflos fit is written to
 `results/if2warm_ifad097_budget_j100_final_100`; the combined comparison will
