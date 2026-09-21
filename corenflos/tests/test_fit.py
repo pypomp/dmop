@@ -5,7 +5,7 @@ import numpy as np
 
 from corenflos.dpf import DPFResult
 from corenflos.fit import fit_dpf
-from ditlevsen.model import default_unconstrained_parameters
+from ditlevsen.model import default_unconstrained_parameters, normalize_parameters
 
 
 def test_fit_records_initial_and_every_completed_update() -> None:
@@ -90,3 +90,30 @@ def test_fit_rejects_an_all_invalid_initial_filter() -> None:
     )
     assert result.completed_updates == 0
     assert result.termination_reason == "no-valid-filter-evaluation"
+
+
+def test_supplied_checkpoint_is_not_clipped_to_search_box() -> None:
+    def evaluator(parameters, key):
+        del key
+        result = DPFResult(
+            loglik=jnp.sum(parameters),
+            increments=jnp.asarray([jnp.sum(parameters)]),
+            ess=jnp.asarray([10.0]),
+            resampled=jnp.asarray([False]),
+            invalid_fraction=jnp.asarray([0.0]),
+        )
+        return result, jnp.ones_like(parameters)
+
+    initial = default_unconstrained_parameters()
+    initial[8] = -6.25
+    result = fit_dpf(
+        initial,
+        evaluator,
+        seed=1,
+        maximum_updates=0,
+        maximum_elapsed_seconds=60.0,
+        project_to_bounds=False,
+    )
+    np.testing.assert_allclose(
+        result.parameter_trace[0], np.asarray(normalize_parameters(initial))
+    )

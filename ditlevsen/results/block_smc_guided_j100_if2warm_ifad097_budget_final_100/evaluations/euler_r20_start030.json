@@ -3,12 +3,12 @@
   "inference_nstep": 20,
   "evaluation_nstep": 20,
   "start": 30,
-  "updates_completed": 170,
-  "termination_reason": "completed",
-  "euler20_loglik": -3909.8933401542818,
-  "euler20_se": 0.4798776657283236,
+  "updates_completed": 254,
+  "termination_reason": "time-budget",
+  "euler20_loglik": -3776.738429773204,
+  "euler20_se": 0.12660831250010401,
   "eval_particles": 5000,
   "eval_replicates": 36,
-  "evaluation_seed": 32661556,
+  "evaluation_seed": 32661781,
   "evaluation_status": "ok"
 }

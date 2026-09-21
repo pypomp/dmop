@@ -6,15 +6,15 @@
   "seed": 631409,
   "starts": 100,
   "starts_file": "results/reference/ifad097_comparable_post_if2.npz",
-  "elapsed_time_offset_seconds": 244.44243359565735,
+  "elapsed_time_offset_seconds": 92.16042757034302,
   "nsteps": [
     20
   ],
   "transition": "block",
   "proposal": "guided",
   "particles": 100,
-  "iterations": 175,
-  "learning_rate": 0.1,
+  "iterations": 400,
+  "learning_rate": 0.002,
   "learning_rate_decay_start": 90,
   "learning_rate_decay_exponent": 0.3,
   "burnin": 30,
@@ -30,8 +30,8 @@
   "likelihood_guard_particles": 100,
   "likelihood_guard_interval": 10,
   "maximum_guard_loglik_drop": 5.0,
-  "maximum_elapsed_seconds": 614.6859633922577,
-  "output_selection_seconds": 859.128396987915,
+  "maximum_elapsed_seconds": 850.6569547653198,
+  "output_selection_seconds": 942.8173823356628,
   "eval_particles": 5000,
   "eval_replicates": 36,
   "trace_every_seconds": 100.0,
@@ -40,6 +40,6 @@
   "block_eval_replicates": 4,
   "trace_eval_particles": 5000,
   "trace_eval_replicates": 1,
-  "workers": 1,
+  "workers": 10,
   "worker_index": 0
 }

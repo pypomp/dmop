@@ -16,7 +16,11 @@ def test_extracts_exact_comparable_ifad_097_boundary() -> None:
     assert metadata["source_effort"] == "comparable"
     assert metadata["if2_particles"] == 5000
     assert metadata["if2_iterations"] == 175
-    assert metadata["gradient_iterations"] == 175
+    assert metadata["checkpoint_verified_against_mif_iteration"] == 175
+    assert metadata["checkpoint_source"] == (
+        "input parameters of monitored IFAD training stage"
+    )
+    assert metadata["gradient_iterations"] == 400
     np.testing.assert_allclose(
         metadata["total_elapsed_seconds"],
         metadata["if2_elapsed_seconds"] + metadata["remaining_elapsed_seconds"],

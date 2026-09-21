@@ -3,6 +3,8 @@
   "source_effort": "comparable",
   "source_monitored_pickle": "code/global_search/dmop_results/dacca_results_rl4_alpha0.97_nm1.pkl",
   "source_timing_pickle": "code/global_search/dmop_results/dacca_results_rl4_alpha0.97_nm0.pkl",
+  "checkpoint_source": "input parameters of monitored IFAD training stage",
+  "checkpoint_verified_against_mif_iteration": 175,
   "timing_basis": "unmonitored component runtime",
   "starts": 100,
   "parameters": [
@@ -32,9 +34,9 @@
   ],
   "if2_particles": 5000,
   "if2_iterations": 175,
-  "if2_elapsed_seconds": 244.44243359565735,
+  "if2_elapsed_seconds": 92.16042757034302,
   "gradient_particles": 5000,
-  "gradient_iterations": 175,
-  "remaining_elapsed_seconds": 614.6859633922577,
-  "total_elapsed_seconds": 859.128396987915
+  "gradient_iterations": 400,
+  "remaining_elapsed_seconds": 850.6569547653198,
+  "total_elapsed_seconds": 942.8173823356628
 }

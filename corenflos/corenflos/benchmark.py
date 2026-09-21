@@ -184,6 +184,7 @@ def run_fits(args: argparse.Namespace, starts: list[np.ndarray]) -> None:
             maximum_updates=args.maximum_updates,
             maximum_elapsed_seconds=args.maximum_elapsed_seconds,
             change_seed=args.change_seed,
+            project_to_bounds=args.starts_file is None,
         )
         elapsed_trace = result.elapsed_trace + args.elapsed_time_offset_seconds
         acceptable = (

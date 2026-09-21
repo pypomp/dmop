@@ -46,9 +46,16 @@ def extract_ifad_mif_starts(
     monitored = _read_pickle(monitored_path, historical=historical)
     timing = _read_pickle(timing_path, historical=historical)
     monitored_mif = [entry for entry in _entries(monitored) if entry.method == "mif"]
+    monitored_train = [
+        entry for entry in _entries(monitored) if entry.method == "train"
+    ]
     if len(monitored_mif) != 1:
         raise ValueError(
             f"expected one monitored MIF entry, found {len(monitored_mif)}"
+        )
+    if len(monitored_train) != 1:
+        raise ValueError(
+            f"expected one monitored training entry, found {len(monitored_train)}"
         )
     timing_entries = [
         entry for entry in _entries(timing) if entry.method in ("mif", "train")
@@ -58,10 +65,33 @@ def extract_ifad_mif_starts(
     if len(timing_mif) != 1 or len(timing_train) != 1:
         raise ValueError("expected one unmonitored MIF and one training entry")
 
-    entry = monitored_mif[0]
-    starts = np.stack([encode_parameters(theta) for theta in entry.theta])
+    mif_entry = monitored_mif[0]
+    train_entry = monitored_train[0]
+
+    # ``Result.theta`` stores the parameters supplied *to* that operation.
+    # The MIF entry therefore contains the global-search inputs, while the
+    # following training entry contains the post-MIF checkpoints that IFAD
+    # actually uses.  Cross-check those inputs against the last MIF trace so
+    # this distinction cannot silently regress again.
+    starts = np.stack([encode_parameters(theta) for theta in train_entry.theta])
     # Remove the softmax null shift without changing the effective IVP.
     starts[:, 18:23] -= np.max(starts[:, 18:23], axis=1, keepdims=True)
+
+    final_iteration = int(np.max(mif_entry.traces_da.coords["iteration"].values))
+    final_trace = mif_entry.traces_da.sel(iteration=final_iteration)
+    trace_variables = [str(value) for value in final_trace.coords["variable"].values]
+    trace_rows = np.asarray(final_trace.values, dtype=float)
+    trace_starts = np.stack(
+        [
+            encode_parameters(dict(zip(trace_variables, row, strict=True)))
+            for row in trace_rows
+        ]
+    )
+    trace_starts[:, 18:23] -= np.max(
+        trace_starts[:, 18:23], axis=1, keepdims=True
+    )
+    np.testing.assert_allclose(starts, trace_starts, rtol=2e-6, atol=2e-6)
+
     if starts.ndim != 2 or starts.shape[1] != len(ESTIMATED_PARAMETER_NAMES):
         raise ValueError(f"unexpected checkpoint shape {starts.shape}")
     if not np.isfinite(starts).all():
@@ -74,11 +104,13 @@ def extract_ifad_mif_starts(
         "source_effort": effort,
         "source_monitored_pickle": monitored_path,
         "source_timing_pickle": timing_path,
+        "checkpoint_source": "input parameters of monitored IFAD training stage",
+        "checkpoint_verified_against_mif_iteration": final_iteration,
         "timing_basis": "unmonitored component runtime",
         "starts": int(starts.shape[0]),
         "parameters": list(ESTIMATED_PARAMETER_NAMES),
-        "if2_particles": int(entry.J),
-        "if2_iterations": int(entry.M),
+        "if2_particles": int(mif_entry.J),
+        "if2_iterations": int(mif_entry.M),
         "if2_elapsed_seconds": mif_seconds,
         "gradient_particles": int(timing_train[0].J),
         "gradient_iterations": int(timing_train[0].M),

@@ -219,6 +219,7 @@ def _fit_one(
         likelihood_guard_interval=args.likelihood_guard_interval,
         maximum_guard_loglik_drop=args.maximum_guard_loglik_drop,
         maximum_elapsed_seconds=args.maximum_elapsed_seconds,
+        project_to_bounds=args.starts_file is None,
     )
     if args.transition == "block":
         result = fit_block_pseudo_score(

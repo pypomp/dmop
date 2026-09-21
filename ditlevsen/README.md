@@ -249,9 +249,9 @@ The follow-up comparison starts from the exact 100 checkpoints after the MIF
 stage of the manuscript's comparable-effort IFAD-0.97 run. The checkpoint
 matrix and provenance are in
 `results/reference/ifad097_comparable_post_if2.{npz,json}`. That MIF stage used
-175 updates and 5,000 particles and accounts for 244.442 seconds on the
-manuscript timing basis. The Ditlevsen continuation is capped at the same 175
-subsequent updates and 614.686 remaining seconds as IFAD-0.97, with elapsed
+175 updates and 5,000 particles and accounts for 92.160 seconds on the
+manuscript timing basis. The Ditlevsen continuation is capped at the same 400
+subsequent updates and 850.657 remaining seconds as IFAD-0.97, with elapsed
 times reported from the beginning of the shared MIF stage. Its output is
 `results/block_smc_guided_j100_if2warm_ifad097_budget_final_100`.
 
