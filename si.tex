@@ -5,8 +5,11 @@
 % \usepackage{enumitem}
 \usepackage{tabto}
 \usepackage{natbib}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
 \bibliographystyle{apalike}
 \usepackage{float}
+\usepackage{etoolbox}
 
 
 \newcommand\thmMopFunctionalForms{1}
@@ -73,6 +76,13 @@
 \renewcommand\thecor{S\arabic{cor}}
 \renewcommand\theclaim{S\arabic{claim}}
 
+\makeatletter
+\patchcmd{\l@section}{1.5em}{2.2em}{}{}
+\renewcommand*\l@subsection{\@dottedtocline{2}{2.2em}{3.2em}}
+\renewcommand*\@pnumwidth{2.5em}
+\renewcommand*\@tocrmarg{3.5em}
+\makeatother
+
 %\renewcommand\thealgocf{S\arabic{algocf}}
 
 
@@ -83,7 +93,8 @@
 
 \title{Supporting Materials for ``\articleTitle''}
 
-\author{Kevin Tan$^1$, Aaron J. Abkemeier$^2$, Giles Hooker$^1$ and Edward L. Ionides$^2$\\\small $^1$University of Pennsylvania and $^2$University of Michigan}
+\author{Kevin Tan$^1$, Aaron J. Abkemeier$^2$, Kunyang He$^2$,\\
+Giles Hooker$^1$ and Edward L. Ionides$^2$\\\small $^1$University of Pennsylvania and $^2$University of Michigan}
 \date{}
 
 \maketitle
@@ -12788,12 +12799,177 @@ Eval. Particles / Reps & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 & 5,000 / 36 \\
 \label{table:algparams}
 \end{table}
 
-Following some experimentation, IFAD was implemnenteed by plugging the DMOP gradient estimate into the Adam optimizer \citep{kingma14arxiv}.
+Following some experimentation, IFAD was implemnenteed by plugging the DMOP gradient estimate into the Adam optimizer \citep{kingma15}.
 The momentum parameter in Adam was turned off for IFAD-0, since this low-variance estimate did not reqquire it.
 Decreasing the learning rate (LR) was found to be helpful, and we selected the commonly used cosine decay.
 Warm-up steps were taken with Adam to stabilize its initial performance and avoid noisy 
 
 
+\clearpage
+
+\section{Application to a Daphnia Population Model}
+\label{sec:daphnia}
+
+\subsection{Model and data}
+
+The SIRJPF2 model developed by \citet{yang25daphnia} describes interactions between two species of \textit{Daphnia}, their algal food, and a fungal parasite.
+We use the version with unit-specific infected-adult mortality to compare likelihood maximization by IFAD and the marginalized panel iterated filter (MPIF) of \citet{wheeler25}.
+
+The data come from the mesocosm experiment of \citet{searle16}.
+We use the treatment containing the native species \textit{D.~dentifera}, the invasive species \textit{D.~lumholtzi}, and the parasite \textit{Metschnikowia bicuspidata}, with eight mesocosms, each treated as one unit in the panel.
+Each mesocosm was observed at ten times, $t_n=5n+2$ days for $n=1,\ldots,10$.
+At each observation time, a one-liter sample was taken and susceptible and infected adult females of both species were counted.
+Juvenile counts are excluded from the likelihood.
+
+We write $S_u^a(t)$, $I_u^a(t)$, and $J_u^a(t)$ for the densities of susceptible adult females, infected adult females, and juveniles, where $u=1,\ldots,8$ indexes the mesocosm and $a\in\{\mathrm n,\mathrm i\}$ denotes the native or invasive species.
+The densities of food and parasite spores are $F_u(t)$ and $P_u(t)$.
+These variables form an eight-dimensional latent state in each mesocosm.
+Removal by death, consumption, or sampling is denoted by $R$ in the model name and does not require an additional state variable.
+The two host species interact through their shared food and parasite populations.
+The processes in different mesocosms are independent conditional on the parameters.
+
+As in \citet{yang25daphnia}, the transition dynamics follow an It\^o stochastic differential equation (SDE):
+\begin{align*}
+dS_u^a
+ &= \{\lambda_J J_u^a-(\theta_S^a+p^a f_S^aP_u+\delta)S_u^a\}\,dt
+    +\sigma_S^a S_u^a\,dB_{S,u}^a,\\
+dI_u^a
+ &= \{p^a f_S^a S_u^aP_u-(\theta_{I,u}^a+\delta)I_u^a\}\,dt
+    +\sigma_I^a I_u^a\,dB_{I,u}^a,\\
+dJ_u^a
+ &= \{r^a f_S^aF_uS_u^a-(\theta_J^a+\delta+\lambda_J)J_u^a\}\,dt
+    +\sigma_J^a J_u^a\,dB_{J,u}^a,\\
+dP_u
+ &= \left\{\sum_a\left[\beta\theta_{I,u}^a I_u^a
+          -f_S^a(S_u^a+\xi I_u^a)P_u\right]
+          -(\theta_P+\delta)P_u\right\}\,dt
+    +\sigma_P P_u\,dB_{P,u},\\
+dF_u
+ &= \left\{\mu-\delta F_u
+          -\sum_a f_S^aF_u(S_u^a+\xi I_u^a+J_u^a)\right\}\,dt
+    +\sigma_F F_u\,dB_{F,u},
+\end{align*}
+with independent standard Brownian motions $B$.
+The time argument is suppressed in the equations.
+Except for infected-adult mortality, estimated parameters are shared across mesocosms.
+The parameters $r^a$ and $f_S^a$ are the reproductive rate and host filtration rate, $p^a$ controls infection following spore ingestion, and $\xi$ is the filtration rate of infected adults relative to susceptible adults.
+The mortality or loss rates of susceptible adults, infected adults, juveniles, and spores are $\theta_S^a$, $\theta_{I,u}^a$, $\theta_J^a$, and $\theta_P$, respectively; the $\sigma$ parameters are process-noise coefficients.
+The relative filtration rate of juveniles is fixed at one.
+
+We use the units of the public Python implementation:\footnote{\href{https://github.com/pypomp/Daphnia-tutorial/blob/f3183301273a409e5b079bb0ae3a22246f69ba7a/Python-code/daphnia_tut_pypomp_advanced.qmd}{\texttt{pypomp/Daphnia-tutorial}, advanced tutorial, revision \texttt{f318330}.}}
+\textit{Daphnia} densities are individuals per liter, $F$ is in $10^6$ algal cells per liter, and $P$ is in $10^3$ spores per liter, with parameters expressed in the corresponding units.
+The sampling loss rate is fixed at $\delta=0.013$ per day, the food replenishment rate at $\mu=0.37$, the juvenile maturation rate at $\lambda_J=0.1$ per day, and the spore yield per infected-host death at $\beta=30$, corresponding to $3\times10^4$ spores.
+The initial states are $S_u^{\mathrm n}=2.333$, $S_u^{\mathrm i}=0.667$, and $F_u=16.667$, with the remaining states set to zero.
+Simulation begins at $t_0=1$ day, and parasites are introduced on day~4 at a density of $25\times10^3$ spores per liter.
+We numerically solve the SDE using the Euler-Maruyama method with a time step of 0.25 days, following the initial conditions, inoculation, and numerical boundary rules of the public implementation.
+
+The measurement model for the adult counts is
+\[
+Y_{S,u,n}^a\sim\operatorname{NBinomial}(S_u^a(t_n),\tau_S^a),
+\qquad
+Y_{I,u,n}^a\sim\operatorname{NBinomial}(I_u^a(t_n),\tau_I^a),
+\]
+where $\operatorname{NBinomial}(m,\tau)$ has mean $m$ and variance $m+m^2/\tau$ \citep{yang25daphnia}.
+The four counts at each observation time are independent conditional on the latent state.
+Since the sampled volume is one liter, the state densities and observed counts are on the same scale.
+The numerical implementation sets a lower bound of $10^{-10}$ on the negative binomial mean and size parameters.
+As in the public Python code, a state variable that crosses a numerical boundary is reset to zero, and that particle's log weight for the mesocosm at the next observation is set to $-150$.
+The boundary thresholds and the treatment of the inoculation time are specified in the code.
+
+We fix $\sigma_S^{\mathrm n}=\sigma_S^{\mathrm i}=0$ and estimate $\theta_{I,u}^{\mathrm n}$ and $\theta_{I,u}^{\mathrm i}$ separately for each mesocosm.
+The remaining 22 estimated parameters are shared across mesocosms, giving $22+2\times8=38$ estimated parameters.
+This is the model with unit-specific infected-adult mortality in Table~S3 of the archived revision \citep{yang26daphniacode}.
+
+\subsection{Experimental settings}
+
+We tested IFAD with discount factors $\alpha=0$, $\alpha=0.97$, and $\alpha=1$ against MPIF using Pypomp 1.0.5 \citep{abkemeier25}.
+For each method, we performed 50 searches from the same starting parameter vectors, generated by independent lognormal perturbations of the initial parameter vector in the public tutorial, with a standard deviation of 0.45 on the log scale.
+All positive estimated parameters were optimized on the log scale.
+Each IFAD search used an MPIF warm start of 200 iterations followed by 200 iterations of the Adam optimizer \citep{kingma15}, using DMOP-$\alpha$ gradient estimates.
+We ran MPIF alone for 680 iterations, chosen to approximate the computing time of IFAD; measured times are reported in Table~\ref{tab:daphnia-results}.
+
+We used 1,000 particles per mesocosm during optimization.
+The initial random walk standard deviation (RWSD) for MPIF was 0.05 on the log scale, with geometric cooling by a factor of 0.7 over 50 iterations.
+Adam used $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$, with all eight mesocosms contributing to each update.
+The learning-rate schedule used ten steps of linear warmup multiplied by cosine decay with a final factor of 0.1.
+A summary of the algorithmic parameters is provided in Table~\ref{tab:daphnia-settings}.
+
+The learning-rate scale was selected using four additional starting points, separate from the 50 used for the comparison.
+We compared the six combinations of learning-rate scales $0.001$, $0.005$, and $0.01$ with $\alpha\in\{0.9,0.97\}$.
+The combination with the highest median final log-likelihood, evaluated by independent particle filtering, was $0.01$ with $\alpha=0.97$.
+We used the same learning-rate schedule for $\alpha=0$ and $\alpha=1$.
+
+\begin{table}[htbp!]
+\centering
+\begin{tabular}{p{4.5cm}cccc}
+\toprule
+\textbf{Hyperparameter} & \textbf{MPIF} & \textbf{IFAD-0} & \textbf{IFAD-0.97} & \textbf{IFAD-1} \\
+\midrule
+Particles per mesocosm ($J$) & 1,000 & 1,000 & 1,000 & 1,000 \\
+MPIF Iterations & 680 & 200 & 200 & 200 \\
+Adam Iterations & --- & 200 & 200 & 200 \\
+MPIF Cooling Factor & 0.7 & 0.7 & 0.7 & 0.7 \\
+Initial RWSD (log scale) & 0.05 & 0.05 & 0.05 & 0.05 \\
+Momentum ($\beta_1$) & --- & 0.9 & 0.9 & 0.9 \\
+Learning-rate Scale & --- & 0.01 & 0.01 & 0.01 \\
+Warm-up Steps & --- & 10 & 10 & 10 \\
+Eval. Particles / Reps & 2,000 / 10 & 2,000 / 10 & 2,000 / 10 & 2,000 / 10 \\
+\bottomrule
+\end{tabular}
+\caption{Algorithmic parameters for the Daphnia experiment. Particle numbers are per mesocosm; the cooling factor is the multiplier over 50 iterations.}
+\label{tab:daphnia-settings}
+\end{table}
+
+All reported log-likelihoods were evaluated independently of optimization using ordinary particle filters, with 2,000 particles per mesocosm and ten replicates.
+Likelihood estimates were averaged within each mesocosm before taking logarithms, and the eight mesocosm log-likelihoods were then summed.
+Each method's best parameter vector was then held fixed and re-evaluated with ten fresh replicates at the same particle count, using the same model and Pypomp version on a CPU.
+The same evaluation method was used for the final results and for intermediate saved parameter vectors.
+The progress plot uses 25, 27, 26, and 22 saved parameter vectors per search for IFAD-0, IFAD-0.97, IFAD-1, and MPIF, respectively, including the final evaluations.
+Time is assigned in proportion to iteration number within each stage, using the measured total optimization time for that stage.
+Each set of 50 searches ran on one Tesla V100 16 GB GPU, with two searches per batch.
+Optimization times are summed over the 25 batches and include initial compilation but exclude the additional particle filter evaluations.
+
+\subsection{Results}
+
+Our findings are summarized in Table~\ref{tab:daphnia-results} and Figures~\ref{fig:daphnia-progress} and~\ref{fig:daphnia-raincloud}.
+IFAD-0.97 and IFAD-1 attained maximum log-likelihoods of $-858.48$ and $-858.27$, respectively, each with a Monte Carlo standard error (MCSE) of approximately 0.17.
+The maximum for MPIF was $-860.06$, with MCSE 0.16.
+IFAD-0 attained $-860.36$ and had a median log-likelihood close to that of MPIF.
+
+\begin{table}[htbp!]
+\centering
+\input{imgs/daphnia/daphnia_table.tex}
+\caption{Log-likelihoods from 50 searches per method, with MCSEs in parentheses. Re-evaluated uses fresh particle filters at each method's original maximizing parameter vector.}
+\label{tab:daphnia-results}
+\end{table}
+
+Comparing searches from the same starting points, IFAD-0.97 and IFAD-1 each attained a higher final log-likelihood than MPIF in 49 of the 50 searches.
+The median paired differences were 2.86 and 2.79 log-likelihood units, respectively.
+The distributions of the final log-likelihoods for IFAD-0.97 and IFAD-1 were similar, which may be due to the short time series in each mesocosm.
+
+\citet{yang26daphniacode} report a maximum log-likelihood of $-863.03$ in the revised Table~S3.
+Our MPIF searches attained a higher value, and IFAD-0.97 and IFAD-1 improved on this further.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=14cm]{imgs/daphnia/daphnia_figure5.pdf}
+\caption{Optimization progress of IFAD and MPIF for the Daphnia model.
+The solid lines show the median log-likelihood across 50 searches, and the shaded regions cover the area between the 10th and 100th percentiles.
+The vertical dotted lines indicate where the IFAD searches switch from MPIF to Adam optimization.
+The plot shows log-likelihoods above $-890$; all searches contribute to the percentiles.}
+\label{fig:daphnia-progress}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=14cm]{imgs/daphnia/daphnia_violin.pdf}
+\caption{Raincloud plot of the searches for the Daphnia model.
+The half-violin plots show the distributions of all 50 final log-likelihood estimates for each method, the boxplots show the medians and quartiles, and each point represents one search.
+IFAD-0.97 and IFAD-1 have similar distributions, with generally higher log-likelihoods than MPIF and IFAD-0.}
+\label{fig:daphnia-raincloud}
+\end{figure}
+
+\clearpage
 \bibliography{bib-ifad}
 
 
