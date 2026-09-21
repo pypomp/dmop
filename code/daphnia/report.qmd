@@ -1,0 +1,229 @@
+---
+title: "Daphnia Report (Global Search)"
+format:
+  html:
+    toc: true
+    embed-resources: true
+jupyter: python3
+execute:
+  daemon: false
+---
+
+```{python}
+#| label: setup
+#| echo: false
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from IPython.display import display
+from plotnine import *
+
+DATA = Path("exports")
+FIGURES = Path("../../imgs/daphnia")
+MODELS = ["IFAD-0.97", "IFAD-1", "IFAD-0", "MPIF"]
+ORDER = ["IFAD-0", "IFAD-0.97", "IFAD-1", "MPIF"]
+
+final = pd.read_csv(DATA / "final_estimates.csv")
+traces = pd.read_csv(DATA / "loglik_traces.csv.gz")
+timings = pd.read_csv(DATA / "timings.csv")
+
+assert final.groupby("model")["rep"].nunique().eq(50).all()
+assert traces.groupby(["model", "checkpoint"])["rep"].nunique().eq(50).all()
+FIGURES.mkdir(parents=True, exist_ok=True)
+```
+
+# Settings
+
+The 38-parameter Daphnia model is fitted from 50 matched starting points.
+IFAD uses 200 MPIF iterations followed by 200 Adam updates; MPIF alone uses
+680 iterations. All searches use 1,000 particles per mesocosm and one Tesla
+V100 GPU, with two starts per batch.
+
+The MPIF perturbation SD is 0.05 on the log scale, with a geometric cooling
+factor of 0.7 per 50 iterations. Adam uses a peak learning rate of 0.01,
+10 warmup updates, and a cosine schedule with final multiplier 0.1.
+Likelihood evaluations use 2,000 particles per mesocosm and 10 independent
+particle filters. The best final parameter vector from each method is
+independently re-evaluated with the same particle count and number of replicates.
+
+# Final log-likelihoods
+
+The summary and plots include all 50 starts per method. MCSE is shown in
+parentheses.
+
+```{python}
+#| label: final-summary
+#| echo: false
+summary = []
+for model in MODELS:
+    frame = final.loc[final["model"] == model]
+    best = frame.loc[frame["logLik"].idxmax()]
+    assert best[["reevaluated_logLik", "reevaluated_MCSE"]].notna().all()
+    summary.append({
+        "Method": model,
+        "Best log-likelihood (MCSE)": f"{best['logLik']:.2f} ({best['MCSE']:.2f})",
+        "Median": f"{frame['logLik'].median():.2f}",
+        "Re-evaluated (MCSE)": (
+            f"{best['reevaluated_logLik']:.2f} ({best['reevaluated_MCSE']:.2f})"
+        ),
+    })
+display(pd.DataFrame(summary).set_index("Method"))
+```
+
+```{python}
+#| label: final-loglik
+#| fig-width: 7
+#| fig-height: 3.8
+#| echo: false
+df_raincloud = pd.concat([
+    final.loc[final["model"] == model, ["rep", "logLik", "MCSE"]].assign(Model=model)
+    for model in ORDER
+], ignore_index=True)
+df_raincloud["Model"] = pd.Categorical(
+    df_raincloud["Model"], categories=ORDER, ordered=True
+)
+model_map = {label: float(index) for index, label in enumerate(ORDER)}
+df_raincloud["Model_num"] = df_raincloud["Model"].map(model_map).astype(float)
+df_raincloud["Model_violin_x"] = df_raincloud["Model_num"] + 0.05
+df_raincloud["Model_boxplot_x"] = df_raincloud["Model_num"] - 0.1
+np.random.seed(42)
+df_raincloud["Model_jitter_x"] = (
+    df_raincloud["Model_num"] - 0.30
+    + np.random.uniform(-0.04, 0.04, size=len(df_raincloud))
+)
+tick_step = 2 if np.ptp(df_raincloud["logLik"].to_numpy()) <= 20 else 5
+min_loglik_tick = int(np.floor(df_raincloud["logLik"].min() / tick_step) * tick_step)
+max_loglik_tick = int(np.ceil(df_raincloud["logLik"].max() / tick_step) * tick_step)
+tick_breaks = list(range(min_loglik_tick, max_loglik_tick + tick_step, tick_step))
+
+p_violin = (
+    ggplot(df_raincloud, aes(y="logLik", fill="Model", color="Model"))
+    + geom_violin(
+        aes(x="Model_violin_x", group="Model"), style="right",
+        width=1.0, alpha=0.6, show_legend=False,
+    )
+    + geom_boxplot(
+        aes(x="Model_boxplot_x", group="Model"), width=0.10,
+        alpha=0.6, color="black", outlier_alpha=0, size=0.8, show_legend=False,
+    )
+    + geom_point(aes(x="Model_jitter_x"), alpha=0.6, size=1.5, show_legend=False)
+    + coord_flip()
+    + scale_x_continuous(breaks=[0, 1, 2, 3], labels=ORDER)
+    + scale_y_continuous(breaks=tick_breaks)
+    + labs(title="", subtitle="", x="", y="Log-Likelihood")
+    + theme_minimal()
+    + theme(
+        axis_text_x=element_text(size=14, color="black"),
+        axis_text_y=element_text(size=14, color="black"),
+        axis_title_x=element_text(size=15, color="black"),
+        axis_title_y=element_text(size=15, color="black"),
+        panel_grid_major_y=element_blank(), panel_grid_minor_y=element_blank(),
+        panel_grid_major_x=element_line(color="#e5e5e5", size=0.8),
+        panel_grid_minor_x=element_blank(),
+        figure_size=(7, 3.8), dpi=300,
+    )
+)
+p_violin.save(FIGURES / "daphnia_violin.pdf", width=7, height=3.8, verbose=False)
+display(p_violin)
+```
+
+# Times
+
+Times are summed over the 25 batches and include compilation. Optimization
+time excludes particle-filter evaluation. Checkpoint PF time covers the
+additional initial and intermediate evaluations.
+
+```{python}
+#| label: times
+#| echo: false
+runtime, transition = [], []
+for model in MODELS:
+    frame = timings.loc[timings["model"] == model]
+    stages = frame.groupby("method")["seconds"].sum()
+    optimization = stages.reindex(["mif", "train"], fill_value=0).sum()
+    runtime.append({
+        "Method": model,
+        "MPIF (s)": f"{stages['mif']:.1f}",
+        "DMOP (s)": f"{stages.get('train', 0.0):.1f}",
+        "Optimization (s)": f"{optimization:.1f}",
+        "Checkpoint PF (s)": f"{stages['pfilter']:.1f}",
+    })
+    if model != "MPIF":
+        transition.append({"source": model, "time_scaled": stages["mif"]})
+display(pd.DataFrame(runtime).set_index("Method"))
+df_transition = pd.DataFrame(transition)
+df_transition["source"] = pd.Categorical(
+    df_transition["source"], categories=ORDER, ordered=True
+)
+```
+
+# Search progress
+
+Lines show medians across 50 starts; ribbons span the 10th percentile to the
+maximum. Dotted vertical lines mark the switch from MPIF to Adam. Checkpoint
+times are mapped linearly within each phase using the summed batch runtimes.
+The plot shows log-likelihoods above −890.
+
+```{python}
+#| label: search-progress
+#| fig-width: 7
+#| fig-height: 3.8
+#| echo: false
+df_stats = (
+    traces.groupby(["model", "checkpoint", "stage", "iteration", "time_scaled"])["logLik"]
+    .agg(median="median", q10=lambda x: np.percentile(x, 10), qmax="max")
+    .reset_index().rename(columns={"model": "source"})
+)
+df_stats["source"] = pd.Categorical(df_stats["source"], categories=ORDER, ordered=True)
+df_stats = df_stats.sort_values(["source", "time_scaled"])
+
+p2 = (
+    ggplot(df_stats, aes(x="time_scaled", y="median", color="source"))
+    + geom_line(size=1.2)
+    + geom_line(
+        aes(y="q10", color="source"), data=df_stats[df_stats["source"] != "MPIF"],
+        alpha=0.2, size=0.6, show_legend=False,
+    )
+    + geom_line(
+        aes(y="qmax", color="source"), data=df_stats[df_stats["source"] != "MPIF"],
+        alpha=0.2, size=0.6, show_legend=False,
+    )
+    + geom_line(
+        aes(y="q10", color="source"), data=df_stats[df_stats["source"] == "MPIF"],
+        alpha=0.35, size=0.6, show_legend=False,
+    )
+    + geom_line(
+        aes(y="qmax", color="source"), data=df_stats[df_stats["source"] == "MPIF"],
+        alpha=0.35, size=0.6, show_legend=False,
+    )
+    + geom_ribbon(
+        aes(ymin="q10", ymax="qmax", fill="source"),
+        data=df_stats[df_stats["source"] != "MPIF"], alpha=0.1, color=None,
+    )
+    + geom_ribbon(
+        aes(ymin="q10", ymax="qmax", fill="source"),
+        data=df_stats[df_stats["source"] == "MPIF"], alpha=0.1, color=None,
+    )
+    + labs(title="", subtitle="", x="Optimization Time (Seconds)", y="Log-Likelihood")
+    + theme_minimal()
+    + theme(
+        axis_text_x=element_text(size=14, color="black"),
+        axis_text_y=element_text(size=14, color="black"),
+        axis_title_x=element_text(size=15, color="black"),
+        axis_title_y=element_text(size=15, color="black"),
+        legend_text=element_text(size=12, color="black"),
+        legend_title=element_blank(), legend_position="right",
+        panel_grid_major=element_line(color="#e5e5e5", size=0.8),
+        panel_grid_minor=element_blank(),
+        figure_size=(7, 3.8), dpi=300,
+    )
+    + geom_vline(
+        aes(xintercept="time_scaled", color="source"), data=df_transition,
+        linetype="dotted", size=1.0, show_legend=False,
+    )
+    + coord_cartesian(ylim=(-890, None))
+)
+p2.save(FIGURES / "daphnia_figure5.pdf", width=7, height=3.8, verbose=False)
+display(p2)
+```

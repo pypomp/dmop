@@ -1,0 +1,11 @@
+pypomp @ git+https://github.com/pypomp/pypomp.git@4f02494185dd5b959e26a868d0814f1f190081ad
+jax[cuda12]==0.11.1; sys_platform == "linux"
+jax==0.7.1; sys_platform == "darwin"
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+xlrd==2.0.2
+plotnine==0.15.8
+matplotlib==3.11.2
+ipykernel==7.3.0
+jupyter-core==5.9.1
