@@ -72,6 +72,9 @@ def _check_method(
     update_key = "maximum_updates" if corenflos else "iterations"
     if int(config[update_key]) != 400:
         raise AssertionError("wrong gradient-update cap")
+    expected_rate = 0.0002 if corenflos else 0.0005
+    if float(config["learning_rate"]) != expected_rate:
+        raise AssertionError("wrong warm-start learning rate")
     nstep = int(config["nstep"] if corenflos else config["nsteps"][0])
     if nstep != 20:
         raise AssertionError("inference is not Euler-20")
