@@ -17,7 +17,7 @@ exec /home/kevin/anaconda3/envs/pypomp/bin/python -m ditlevsen.smc_benchmark \
   --proposal guided \
   --particles 100 \
   --iterations 400 \
-  --learning-rate 0.002 \
+  --learning-rate 0.0005 \
   --learning-rate-decay-start 90 \
   --learning-rate-decay-exponent 0.3 \
   --burnin 30 \

@@ -15,7 +15,7 @@ exec /home/kevin/anaconda3/envs/pypomp/bin/python -m corenflos.benchmark \
   --particles 100 \
   --epsilon 0.25 \
   --optimizer adam \
-  --learning-rate 0.0005 \
+  --learning-rate 0.0002 \
   --learning-rate-decay 0.002 \
   --maximum-acceptable-invalid-fraction 1.0 \
   --maximum-updates 400 \
