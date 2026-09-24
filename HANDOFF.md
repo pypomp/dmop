@@ -1,5 +1,43 @@
 # Handoff
 
+## September 24, 2026: remaining review corrections and explicit logs
+
+- Applied the user's approved fixes for points 5, 6, 8 (both propagation-law
+  errors), 9, 11, and 12. Point 4 was already fixed in the preceding commit.
+  Point 7 was overstated: an independent audit found no active proof equating
+  the two empirical random measures or invoking off-parameter unbiasedness
+  incorrectly. Their notation is unchanged.
+- Corrected selected measurement ratios and whole-factor product scope in
+  Lemma S2 and its repeated DMOP-0 derivation; corrected the potential's
+  prediction index and the parentwise conditional propagation law.
+- Defined the existing corrected weights and normalized resampling
+  probabilities, showed the exact conditional-expectation identity, and
+  corrected the telescoping initial denominator to the filtered weights.
+- Replaced the density-based mixing argument with a past/future sigma-field
+  argument for the cloud. Accounted for endpoint resampling in the window
+  gaps and corresponding covariance calculation and main proof outline.
+- Clarified current-state versus simulator-history spaces, the base-simulator
+  and particle-filter expectation laws, and the separate derivative bounds.
+- Retained logarithmic J factors in active variance/L2 bounds, particle MSEs,
+  theorem copies, summaries, and tuning regimes. Weak-bias squared terms and
+  the independent alpha=1 bound remain unchanged. All inactive iffalse blocks
+  were preserved. The old main Theorem 5 and its proposed replacement still
+  coexist; this pass does not reconcile their pre-existing differences.
+- Independent reviewers approved the changed formulas and log propagation.
+  Numerical checks covered all 27 J=3 resampling outcomes, DMOP-0 score
+  finite differences, all events of a finite Markov mixing example, and
+  98 tuning-bound cases. Both PDFs rebuild with Tectonic. SI has no overfull
+  boxes or undefined references; MS retains its pre-existing 12.65704pt
+  overfull box in an unchanged proof. Equation (3) was split to prevent the
+  new logs from colliding with its number. git diff --check passed.
+- The user requested an image diff of every fix. The rendered before/after
+  gallery is at ../output/pdf/dmop-review-diffs/index.html; its PNGs and
+  manifest are in the same directory. Baseline: 5c4576d0. The gallery includes
+  all substantive rendered changes, with line shading; equation renumbering
+  and pagination-only differences are omitted.
+- Keep edits close to the original presentation and avoid unnecessary new
+  notation. Experiment state below is retained and was not rechecked.
+
 ## September 24, 2026: Lemma S1 ancestry proof
 
 - Replaced the incorrect prediction-weight derivation in `si.tex` with the
@@ -22,12 +60,7 @@
   J=1,3,8); maximum finite-difference discrepancy was 3.8e-10. Full SI rebuilt
   with Tectonic, no undefined references or overfull boxes; revised pages
   S-2 through S-4 visually checked. `git diff --check` passed.
-- Other review items are not generally applied. Substantive remaining
-  concerns include pre/post-resampling measure distinctions (7), the actual
-  conditional propagation law (8), mixing definitions and sigma-fields (11),
-  and retaining logarithmic J factors and reconciling Theorem 5. Points 5,
-  6, and 9 contain local algebra/index/normalization errors. Point 12 needs
-  consistent history spaces and probability laws.
+- The remaining review work is recorded in the newer entry above.
 - The experiment state below is retained from the prior handoff and was not
   rechecked during this manuscript-only change.
 
