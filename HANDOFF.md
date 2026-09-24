@@ -2,25 +2,34 @@
 
 ## September 24, 2026: Lemma S1 ancestry proof
 
-- Replaced the prediction-weight derivation in `si.tex` with the actual
-  alpha=1 filtered-weight recursion and an explicit backward ancestor map.
-  The terminal filtered weight is a product of measurement ratios along
-  that ancestry; differentiating gives the stated terminal path score.
-- Hold the reference parameter, simulator draws, and resampling indices
-  fixed when differentiating, then evaluate at theta=phi. Corrected the
-  lemma's terminal history from 1:n to 1:N.
-- Updated the repeated off-parameter formula immediately after the proof
-  to use normalized terminal filtered weights. Removed the unsupported
-  variance-growth inference from unnormalized weight growth alone.
-- Verification: full SI compiled with Tectonic; no undefined references or
-  overfull boxes. Inspected the revised proof pages. Checked recursive
-  weights against ancestry products, likelihood telescoping, and score
-  finite differences in 18 on/off-parameter cases with N=1,2,7 and J=1,4,13;
-  maximum score discrepancy was 1.8e-9. `git diff --check` passed.
-- Scope: point 3 and its immediately repeated formula are corrected. Other
-  notation-review items have not been audited or generally applied.
-  The experiment state and next steps below are retained from the prior
-  handoff and were not rechecked during this manuscript-only change.
+- Replaced the incorrect prediction-weight derivation in `si.tex` with the
+  alpha=1 filtered-weight recursion and its measurement-ratio product along
+  the filtered ancestry. Retained the original proof's sequence: telescoping,
+  weight product, log derivative, path score, then evaluation at theta=phi.
+- User preference: keep proofs close to their original structure and scale,
+  show essential intermediate steps, and avoid unnecessary auxiliary
+  notation. Use existing A,F ancestry notation; do not reintroduce separate
+  weight-sum, ancestor-map, or measurement-log symbols for this proof.
+- Fixed the terminal history from 1:n to 1:N and qualified Lemma S1's
+  comparison with Poyiadjis/Scibior as the same score target, not particlewise
+  equality. Differentiate with the reference run fixed before theta=phi.
+- The adjacent off-parameter formula now uses normalized terminal filtered
+  weights; unnormalized weight growth alone does not establish its variance
+  rate. This also addresses point 4 locally.
+- Verification: an independent subagent approved the final compact proof,
+  including the implicit terminal-time convention and parent-product step.
+  Independent numerical checks covered 18 on/off-parameter cases (N=1,2,5;
+  J=1,3,8); maximum finite-difference discrepancy was 3.8e-10. Full SI rebuilt
+  with Tectonic, no undefined references or overfull boxes; revised pages
+  S-2 through S-4 visually checked. `git diff --check` passed.
+- Other review items are not generally applied. Substantive remaining
+  concerns include pre/post-resampling measure distinctions (7), the actual
+  conditional propagation law (8), mixing definitions and sigma-fields (11),
+  and retaining logarithmic J factors and reconciling Theorem 5. Points 5,
+  6, and 9 contain local algebra/index/normalization errors. Point 12 needs
+  consistent history spaces and probability laws.
+- The experiment state below is retained from the prior handoff and was not
+  rechecked during this manuscript-only change.
 
 ## Current state
 
