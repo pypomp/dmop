@@ -1405,17 +1405,18 @@ When $\alpha=0$,
 \begin{proof}[Proof.]
 First, write
 \begin{equation}
-s_{n,j} = \frac{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \theta};\theta\big)}{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \phi};\theta\big)}
+s_{n,j} = \frac{g_{n,k_{n,j}}^\theta}{g_{n,k_{n,j}}^\phi}
 \end{equation}
-as shorthand for the measurement density ratios. 
-Observe that, when $\alpha=0,$, the likelihood estimate becomes
+as shorthand for the selected measurement density ratios, with the
+reference parameter and resampling indices held fixed.
+Observe that, when $\alpha=0$, the likelihood estimate becomes
 \begin{eqnarray}
 % \nonumber
-    \hat{\lik}^0(\theta) := \prod_{n=1}^N L_n^{A, \theta, \alpha} &=& \prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta}}{\sum_{j=1}^J w_{n,j}^{P,\theta}} 
+    \hat{\lik}^0(\theta) := \prod_{n=1}^N L_n^{A, \theta, \alpha} &=& \prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta}}{\sum_{j=1}^J w_{n,j}^{P,\theta}}\right)
     \\
-    &=& \prod_{n=1}^N L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J s_{n,j} 
+    &=& \prod_{n=1}^N\left(L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J s_{n,j}\right)
     \\
-    &=& \prod_{n=1}^N L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J \frac{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \theta};\theta\big)}{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \phi};\theta\big)}.
+    &=& \prod_{n=1}^N\left(L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J \frac{f_{Y_n|X_n}\big(y_n^*|x_{n,k_{n,j}}^{P, \theta};\theta\big)}{f_{Y_n|X_n}\big(y_n^*|x_{n,k_{n,j}}^{P, \phi};\phi\big)}\right).
 \end{eqnarray}
 We lose the nice telescoping property observed in the MOP-$1$ case, but this expression still yields something useful. 
 This is because its gradient when $\theta=\phi$ is therefore 
@@ -1888,8 +1889,12 @@ $\alpha$ close to one does not by itself provide such a bound.
 
 In this section, we introduce the Feynman-Kac convention of \cite{delMoral04} that has since become commonplace \citep{karjalainen23} for the analysis of the particle filter.
 The mathematical formalization and notation introduced here will be adopted in the remainder of the analysis, in order to prove Theorems~{\thmMopTargeting}, \thmMopGradConsistency, and \thmMopBiasvar.
-Let $(\eta_n)_{n=1}^N, (\pi_n)_{n=1}^N, (\rho_n)_{n=1}^N$ be sequences of probability measures on the state space $\gX$.
-This is the sequence of prediction distributions $f_{X_{n}|Y_{1:n-1}}$, filtering distributions $f_{X_{n}|Y_{1:n}}$, and posterior distributions $f_{X_{1:n}|Y_{1:n}}$ that we seek to approximate with the particle filter.
+Let $(\eta_n)_{n=1}^N$ and $(\pi_n)_{n=1}^N$ be the prediction and filtering
+probability measures on the current state space $\gX$. The posterior measure
+$\rho_n$ is on simulator histories through time $n$, including the base
+variables, as defined in Equation~(\ref{eq:canonical-extended-posterior-path-law}).
+Its state-path marginal is $f_{X_{0:n}|Y_{1:n}}$. These are the measures
+we seek to approximate with the particle filter.
 For any measurable bounded functional $h$, we adopt the following functional-analytic notation, borrowed from \cite{delMoral04, chopin20, karjalainen23}.
 We choose our specific choice of notation and definitions to be in line with that of \cite{karjalainen23}. 
 
@@ -1918,8 +1923,9 @@ We choose our specific choice of notation and definitions to be in line with tha
 \end{equation}
 
 \paragraph{\bf Potential functions and the measurement model:} A potential function $G : \gX \to [0,\infty)$ is a non-negative function of an element of the state space $x \in \gX$. 
-In our case, this corresponds to the measurement model, and in our previous notation is written as $g_{n,j} = f_{Y_n|X_n}\big(y_n^*|x_{n,j}^F;\theta\big) = G_n(x_{n,j}^F)$, where we suppress the dependence on $\theta$ for notational simplicity. 
-Note that $G_n(\cdot) = f_{Y_n|X_n}(y_n^*|\;\cdot\;)$ is the conditional density of the observed measurement at time $n$, where we condition on the filtering particle $x_{n,j}^F$ as an element of the state space. 
+In our case, this corresponds to the measurement model, and in our previous notation is written as $g_{n,j} = f_{Y_n|X_n}\big(y_n^*|x_{n,j}^P;\theta\big) = G_n(x_{n,j}^P)$, where we suppress the dependence on $\theta$ for notational simplicity.
+Note that $G_n(\cdot) = f_{Y_n|X_n}(y_n^*|\;\cdot\;)$ is the conditional density of the observed measurement at time $n$, evaluated at a state in $\gX$. At the filtered particle,
+$G_n(x_{n,j}^F)=g_{n,k_{n,j}}$.
 
 \paragraph{\bf Feynman-Kac models:} A Feynman-Kac model on $\gX$ is a tuple $(\pi_0, (M_n)_{n=1}^N, (G_n)_{n=1}^N)$ of an initial probability measure on the state space $\pi_0$, a sequence of transition kernels $(M_n)_{n=1}^N$, and a sequence of potential functions $(G_n)_{n=1}^N$. In the notation used in the main text, this corresponds to the starting distribution $f_{X_0}$, the sequence of transition densities $f_{X_{n}|X_{n-1}}$, and the measurement densities $f_{Y_n|X_n}$. This induces a set of mappings from the set of probability measures on $\gX$ to itself, $\mathcal{P}(\gX) \to \mathcal{P}(\gX)$, as follows:
 \begin{itemize}
@@ -1945,7 +1951,8 @@ and the filtering measure at timestep $n$ is given by
 \pi_n^J = \frac{\sum_{j=1}^J g_{n,j} \delta_{x_{n,j}^P}}{\sum_{j=1}^J g_{n,j}} \approx \frac{1}{J} \sum_{j=1}^J \delta_{x_{n,j}^F}.
 \end{equation}
 In a slight abuse of notation, we will identify $x_{n, 1:J}^P \equiv \eta_n^J$, and $x_{n, 1:J}^F \equiv \pi_n^J$. 
-As in \cite{karjalainen23}, one can view this as an inhomogenous Markov process evolving on $\gX^{J}$. The corresponding Markov transition kernel is then 
+As in \cite{karjalainen23}, one can view this as an inhomogenous Markov process evolving on $\gX^{J}$. For $\theta=\phi$ and multinomial resampling, the corresponding
+Markov transition kernel is
 \begin{equation}
 \textbf{M}_n(x_{n-1, 1:J}^P, \cdot) = \left(\Phi_{n}\left(\eta_{n-1}^J\right)\right)^{\otimes J} = \left(\Phi_{n}\left(\frac{1}{J}\sum_{j=1}^J \delta_{x_{n-1,j}^P}\right)\right)^{\otimes J},
 \end{equation}
@@ -1953,7 +1960,12 @@ and the composition of Markov kernels on particles from timestep $n$ to timestep
 \begin{equation}
 \textbf{M}_{n, n+k} = \textbf{M}_{n+1}\cdots \textbf{M}_{n+k}.
 \end{equation}
-One may wonder why \cite{karjalainen23} require this process to evolve on $\gX^{J}$. This is because at every timestep $n$, we in fact draw $X_{n, j}^P | \{X_{n-1, 1:J}^P = x_{n-1, 1:J}^P\} \sim \textbf{M}_n(x_{n-1, 1:J}^P, \cdot) = \eta_0^{\otimes J} \textbf{M}_{0,n}$ for $j=1,...,J$. 
+The kernel acts on the full prediction cloud. Conditional on the preceding
+prediction cloud, its law is
+\begin{equation}
+\operatorname{Law}\big(x_{n,1:J}^P\mid x_{n-1,1:J}^P\big)
+=\textbf{M}_n(x_{n-1,1:J}^P,\cdot).
+\end{equation}
 
 \paragraph{\bf Forgetting of the particle filter:} 
 The above formalization yields a result from \cite{karjalainen23} on the forgetting of the particle filter that we require for our analysis of the bias, variance, and error of MOP-$\alpha$.  
@@ -1982,9 +1994,12 @@ We now introduce the precise definition of an off-parameter resampled particle f
 
 \begin{defn}[Off-Parameter Resampled Particle Filters]
     \label{defn:off-parameter-filter}
-    An off-parameter resampled particle filter is a Monte Carlo approximation to a Feynman-Kac model $\left(\pi_0,\left(M_n\right)_{n=1}^N,\left(G_n\right)_{n=1}^N\right)$, where we inductively define given some $x_{n-1,j}^F$, $w_{n-1,j}^F$ comprising the filtering measure approximation $\pi_n^J$:
+    An off-parameter resampled particle filter is a Monte Carlo approximation to a Feynman-Kac model $\left(\pi_0,\left(M_n\right)_{n=1}^N,\left(G_n\right)_{n=1}^N\right)$, where we inductively define given some $x_{n-1,j}^F$, $w_{n-1,j}^F$ comprising the filtering measure approximation at time $n-1$:
     \begin{enumerate}
-        \item The prediction particles at timestep $n$, $x_{n,j}^P$, are drawn from $X_{n,j}^P \sim \pi_n^J M_n$, and the prediction weights are given by $w_{n,j}^P = w_{n-1,j}^F$. 
+        \item Conditional on the filtered particles and weights at time $n-1$,
+        draw independently $x_{n,j}^P\sim M_n(x_{n-1,j}^F,\cdot)$ using fresh
+        simulator draws. Retain the corresponding parent weight:
+        $w_{n,j}^P=w_{n-1,j}^F$.
         \item The prediction measure at timestep $n$ is given by 
         \begin{equation}
         \eta_n^J = \frac{\sum_{j=1}^J w_{n,j}^P \, \delta_{x_{n,j}^P}}{\sum_{j=1}^J w_{n,j}^P}.
@@ -2268,23 +2283,38 @@ where $L^\phi_n$ is as defined in the various algorithms.
 
 Here, (\ref{L1}) is a direct consequence of our earlier result that $\{ \big(X^{P,\theta}_{n,j},w^{P,\theta}_{n,j}\big) \}$ targets\\
 $f_{X_{n}|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)$.
-To see  (\ref{L2}),
-we write the numerator of (\ref{lem:change-measure-proper-weights}) as
+To see (\ref{L2}), define the corrected weights before resampling and the
+reference resampling probabilities by
 \begin{equation}
-L^\phi_n \sum_{j=1}^J \left[ \frac{g^\theta_{n,j}}{g^\phi_{n,j}} \, w^{P,\theta}_{n,j}\right] \frac{g^\phi_{n,j}}{L_n^\phi}
-= L^\phi_n \sum_{j=1}^J w_{n,j}^{FC,\theta} \, \frac{g^\phi_{n,j}}{L_n^\phi}.
+w_{n,j}^{FC,\theta}
+=w_{n,j}^{P,\theta}\frac{g_{n,j}^\theta}{g_{n,j}^\phi},
+\qquad
+p_{n,j}=\frac{g_{n,j}^\phi}{JL_n^\phi},
+\qquad \sum_{j=1}^Jp_{n,j}=1.
 \end{equation}
-Using Lemma \ref{lem:change-measure-proper-weights}, we resample according to probabilities $\frac{g^\phi_{n,j}}{L_n^\phi}$ to see this is properly estimated by
+The numerator of (\ref{L1}) can then be written as
 \begin{equation}
-L^\phi_n \sum_{j=1}^J w^{F,\theta}_{n,j},
+\sum_{j=1}^Jw_{n,j}^{P,\theta}g_{n,j}^\theta
+=JL_n^\phi\sum_{j=1}^Jp_{n,j}w_{n,j}^{FC,\theta}.
 \end{equation}
-from which we obtain (\ref{L2}).
+Resampling selects $w_{n,j}^{F,\theta}=w_{n,k_j}^{FC,\theta}$.
+With the pre-resampling particles, weights, and reference densities fixed,
+the expectation over multinomial resampling satisfies
+\begin{align}
+\E_{\mathrm{res}}\left[L_n^\phi\sum_{j=1}^Jw_{n,j}^{F,\theta}\right]
+&=JL_n^\phi\sum_{m=1}^Jp_{n,m}w_{n,m}^{FC,\theta} \notag\\*
+&=\sum_{m=1}^Jw_{n,m}^{P,\theta}g_{n,m}^\theta.
+\end{align}
+The same conditional triangular-array argument as in
+Lemma~\ref{lem:change-measure-proper-weights} gives consistency of this
+resampling approximation under its boundedness conditions. Dividing by
+the unchanged prediction-weight sum gives (\ref{L2}).
 Using Lemma \ref{lem:lik-proper-weight}, we obtain a likelihood estimate,
 \begin{equation}
 L^{A,\theta} = \prod_{n=1}^N \left( L^\phi_n \, \frac{\sum_{j=1}^J w^{F,\theta}_{n,j}}{\sum_{j=1}^J w^{P,\theta}_{n,j}}\right).
 \end{equation}
 Since $w^{F,\theta}_{n,j}=w^{P,\theta}_{n+1,j}$, this is a telescoping product. The remaining terms are
-$\sum_{j=1}^J w^{P,\theta}_{0,j} = J$ on the denominator and $\sum_{j=1}^J w^{F,\theta}_{N,j}$ on the numerator.
+$\sum_{j=1}^J w^{F,\theta}_{0,j} = J$ on the denominator and $\sum_{j=1}^J w^{F,\theta}_{N,j}$ on the numerator.
 This derives the MOP-1 likelihood estimates.
 
 
@@ -2359,43 +2389,62 @@ extension to $\alpha>0$ for comparison.  Section~
 the finite-lag variance calculation and then recovering geometric
 discounting through an exact mixture identity.
 
-First, we note the following relation between the Dobrushin contraction coefficient and the alpha-mixing coefficients in our context below.
+First, we relate cloud contraction to the strong-mixing coefficient used
+in the covariance bounds below.
 \begin{lem}
-    \label{lem:dobrushin-implies-alpha-mixing}
-    Setting $X$ to be the particle collection at time $m$, and $Y$ at time $n$, we have that the alpha mixing coefficients,
-    \begin{equation}
-    \int \big| f_{XY}(x,y) - f_X (x)\, f_Y(y) \big|\, dx\, dy < \alpha,
-    \end{equation}
-    are bounded by the Dobrushin coefficient, i.e we have
-    \begin{equation}
-    \int \big| f_{Y|X}(y|x_1) - f_{Y|X}(y|x_2) \big| \, dy < \alpha
-    \end{equation} 
-    for all $x_1$, $x_2$.
+\label{lem:dobrushin-implies-alpha-mixing}
+Let $\mathcal F_m=\sigma(x_{0,1:J}^P,\ldots,x_{m,1:J}^P)$ and
+$\mathcal G_n=\sigma(x_{n,1:J}^P,\ldots,x_{N,1:J}^P)$ be the past and
+future sigma-fields of the Markov particle cloud. For $1\leq\ell\leq N$, define
+\begin{equation}
+a(\ell)=\sup_{0\leq m\leq N-\ell}
+\sup_{A\in\mathcal F_m,\,B\in\mathcal G_{m+\ell}}
+\big|\Pr(A\cap B)-\Pr(A)\Pr(B)\big|.
+\end{equation}
+Then
+\begin{equation}
+a(\ell)\leq\sup_{0\leq m\leq N-\ell}
+\beta_{\mathrm{TV}}(\textbf M_{m,m+\ell}).
+\end{equation}
+The same statement applies to the joint state--derivative cloud under
+(A6-J), using its transition kernel.
 \end{lem}
-
 \begin{proof}[Proof.]
-    We rewrite the alpha-mixing assertion as 
-    \begin{equation}
-    \int { \int \big|f_{Y|X}(y|x) - f_Y(y)\big| \, dy } \, f_X(x) \, dx.
-    \end{equation}
-    We claim that the Dobrushin coefficient implies 
-    \begin{equation}
-    \int \big| f_{Y|X}(y|x_1) - f_Y(y) \big| \, dy < \alpha
-    \end{equation} 
-    for all $x_1$. This is shown as follows:
-    \begin{align}
-        \int \big| f_{Y|X}(y|x) - f_Y(y) \big| \, dy 
-        &= \int \left|  \int \big[f_{Y|X}(y|x_1) - f_{Y|X}(y|x)\big] f_X(x) \, dx \right|dy \\
-        &< \int   \int  \big| f_{Y|X}(y|x_1) - f_{Y|X}(y|x)\big| \, dy \, f_X(x)\, dx \\
-        &< \int \alpha f_X(x) \, dx \\
-        &=\alpha
-    \end{align}
-    We then have the desired result.
+Fix $A\in\mathcal F_m$ and $B\in\mathcal G_n$, where $n=m+\ell$.
+By the Markov property, with
+$h(x)=\Pr(B\mid x_{n,1:J}^P=x)\in[0,1]$,
+\begin{equation}
+\Pr(B\mid\mathcal F_m)
+=(\textbf M_{m,n}h)(x_{m,1:J}^P).
+\end{equation}
+The expectation of this conditional probability is $\Pr(B)$, so
+\begin{align}
+\big|\Pr(A\cap B)-\Pr(A)\Pr(B)\big|
+&=\left|\E\left[\mathbf1_A
+\left\{(\textbf M_{m,n}h)(x_{m,1:J}^P)-\Pr(B)\right\}\right]\right|
+\notag\\*
+&\leq\operatorname{osc}(\textbf M_{m,n}h)
+\leq\beta_{\mathrm{TV}}(\textbf M_{m,n})\operatorname{osc}(h)
+\notag\\*
+&\leq\beta_{\mathrm{TV}}(\textbf M_{m,n}).
+\end{align}
+Taking the suprema proves the claim. The coefficient is defined through
+sigma-fields, so the argument does not require joint Lebesgue densities.
 \end{proof}
+The same argument bounds dependence between past and future windows of
+simulation and resampling updates. A past window ending after resampling
+at time $b$ is absorbed into the next prediction cloud at $b+1$; condition
+there and at the prediction cloud starting the future window, and use
+the intervening cloud kernel. Fresh update variables are conditionally independent of earlier
+updates given the incoming cloud. Under (A6), apply this to the physical
+cloud and the derivative-age windows in
+Equation~(\ref{eq:lag-truncation-covariance-mixing-s13}); under (A6-J),
+use the joint cloud. The number of intervening transitions determines
+the lag in $a(\ell)$.
 
 As a warm-up, we consider a variance bound for DMOP-$0$.
 Note that we made Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} to leverage the results from \cite{karjalainen23} on the forgetting of the particle filter. 
-The $O(N/J)$ variance bound for DMOP-$0$ additionally uses either (A6)
+The $O\{N(1+\log J)^2/J\}$ variance bound for DMOP-$0$ additionally uses either (A6)
 or (A6-J), stated in Section~\ref{appendix:sharper-biasvar}. Under
 (A6-J) the derivative contribution is a bounded current function of the
 joint state--gradient pair; under (A6) we first expand its simulator
@@ -2403,7 +2452,7 @@ history. The former truncation extension to $\alpha>0$ is retained for
 comparison.
 We start by decomposing the MOP-$\alpha$ estimator as follows, for the case $\theta=\phi$,
 \begin{equation}
-\hat{\mathcal{L}}(\theta):=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J w_{n, j}^{P, \theta}}=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J (w_{n-1, j}^{F, \theta})^\alpha}.
+\hat{\mathcal{L}}(\theta):=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J w_{n, j}^{P, \theta}}\right)=\prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J (w_{n-1, j}^{F, \theta})^\alpha}\right).
 \end{equation}
 Now, to illustrate the proof strategy for the general case in an easier context, we first analyze the special case when $\alpha=0$.
 We now prove the variance bound for this case, presented below. To our knowledge, this result for the variance of the gradient estimate of \cite{naesseth18} is novel. 
@@ -2414,7 +2463,7 @@ Suppose the observations are fixed, $J\geq2$, $\theta=\phi$, Assumptions
 used. Suppose also that either (A6) or (A6-J) holds. Then the variance of DMOP-$0$, i.e.
 the algorithm of \cite{naesseth18}, is
  \begin{equation}
-     \Var\big(\nabla_\theta \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2}{J}.
+     \Var\big(\nabla_\theta \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2(1+\log J)^2}{J}.
  \end{equation}
 \end{thm}
 \begin{proof}[Proof.]
@@ -2423,13 +2472,13 @@ pair $(X_n,\partial_\theta X_n)$, and the particle-cloud transition is
 the one induced by its joint kernel.
 When $\alpha=0$, we have
 \begin{align}
-    \hat{\lik}^0(\theta) := \prod_{n=1}^N L_n^{A, \theta, 0} &= \prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta,0}}{\sum_{j=1}^J w_{n,j}^{P,\theta,0}} 
+    \hat{\lik}^0(\theta) := \prod_{n=1}^N L_n^{A, \theta, 0} &= \prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta,0}}{\sum_{j=1}^J w_{n,j}^{P,\theta,0}}\right)
     \\&
-    = \prod_{n=1}^N L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J s_{n,j} = \prod_{n=1}^N L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J \frac{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \theta};\theta\big)}{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \phi};\phi\big)}.
+    = \prod_{n=1}^N\left(L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J s_{n,j}\right) = \prod_{n=1}^N\left(L_n^\phi \cdot \frac{1}{J}\sum_{j=1}^J \frac{g_{n,k_{n,j}}^\theta}{g_{n,k_{n,j}}^\phi}\right).
 \end{align}
 Similarly to the proof of Lemma \ref{lem:mop-0-formula}, we define 
 \begin{equation}
-s_{n,j}=\frac{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \theta};\theta\big)}{f_{Y_n|X_n}\big(y_n^*|x_{n,j}^{P, \phi};\phi\big)},
+s_{n,j}=\frac{g_{n,k_{n,j}}^\theta}{g_{n,k_{n,j}}^\phi},
 \end{equation}
 and from the exact same arguments conclude that its gradient when $\theta=\phi$ is therefore 
 \begin{align}
@@ -2465,8 +2514,9 @@ The physical particle cloud satisfies a bound of the same form under
 
 Under (A6-J), apply Lemma~2.3 of \citet{karjalainen23} to the joint
 prediction cloud. Conditional resampling and the Bayes-ratio calculation
-give the centered $L^4$ bound below. Theorem~3.1 gives the mixing
-coefficient. At $\alpha=0$ these results give
+give the centered $L^4$ bound below. Theorem~3.1 and Lemma~\ref{lem:dobrushin-implies-alpha-mixing} bound the
+strong-mixing coefficient $a(k)$ of the score sequence. The shift by one
+accounts for the endpoint resampling. At $\alpha=0$ these results give
 \begin{align}
 \left\|
 \frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)
@@ -2487,16 +2537,16 @@ covariance is unchanged by centering, Equation~
 \begin{equation}
 \Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta), \frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) \leq (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|-1}{c\{1+\log(J)\}}}}\frac{G'(\theta)^2}{J}.
 \end{equation}
-Putting it all together, we see that
+The geometric sum is bounded by $C(1+\log J)$. Putting it all together, we see that
 \begin{align}
     \Var\left(\frac{\partial}{\partial_{\theta_i}} \hat\ell^0(\theta)\right) &= \sum_{n=1}^N \Var\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right) + 2\sum_{m<n} \Cov\left(\frac{\partial}{\partial_{\theta_i}}\hat\ell_m^0(\theta),\frac{\partial}{\partial_{\theta_i}}\hat\ell_n^0(\theta)\right)\\
     &\leq \frac{NG'(\theta)^2}{J} + 2\sum_{n=1}^{N-1} (N-n)(1-\epsilon)^{\frac{1}{2}\floor{\frac{n-1}{c\{1+\log(J)\}}}}\frac{G'(\theta)^2}{J} \\
     &\leq \frac{G'(\theta)^2}{J} \left(N + 2\sum_{n=1}^{N-1} (N-n) (1-\epsilon)^{\frac{1}{2}\floor{\frac{n-1}{c\{1+\log(J)\}}}}\right) \\
-    &\lesssim \frac{G'(\theta)^2N}{J}.
+    &\lesssim \frac{G'(\theta)^2N(1+\log J)}{J}.
 \end{align}
 It then follows that as $\theta \in \Theta \subseteq \R^p$, 
 \begin{equation}
-    \Var\big(\nabla_{\theta} \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2}{J}.
+    \Var\big(\nabla_{\theta} \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2(1+\log J)}{J}.
 \end{equation}
 Under (A6), apply the age decomposition and covariance calculation in
 Steps~1a--1d of Lemma~\ref{lem:dmop-alpha-variance} with $k=0$.
@@ -2504,15 +2554,18 @@ In particular, Equation~(\ref{eq:fixed-lag-variance-s13}) gives
 \[
 \Var\{\nabla_\theta\hat\ell^0(\theta)\}
 =\Var\{\nabla_\theta\hat s_0^1(\theta)\}
-\lesssim NpG'(\theta)^2/J.
+\lesssim NpG'(\theta)^2(1+\log J)^2/J.
 \]
 That argument uses the physical-cloud mixing bound above and bounded
 finite-history inputs, not mixing of the full gradient cloud under (A6).
 \end{proof}
-Note that the factor of $N$ that pops up here is due to the use of the unnormalized gradient. If one divides the gradient estimate by $\sqrt{N}$ before usage, the variance does not depend on the horizon. If one divides by $N$, the error is $O(1/\sqrt{NJ})$.
+The factor of $N$ comes from using the unnormalized gradient.
+Dividing by $\sqrt N$ gives a variance bound independent of the horizon.
+Dividing by $N$ gives a centered $L^2$ error bound of order
+$(1+\log J)/\sqrt{NJ}$.
 
 The preceding calculation gives the order
-$NpG'(\theta)^2/J$ for the DMOP-$0$ baseline.  It is not asserted
+$NpG'(\theta)^2(1+\log J)^2/J$ for the DMOP-$0$ baseline.  It is not asserted
 to be a lower bound for every model or every value of $\alpha$.
 
 \iffalse
@@ -2921,7 +2974,7 @@ Section~\ref{appendix:sharper-biasvar}, holds. Then
 \right\}
 &\lesssim
 pG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:verified-theorem-five-variance}
 \end{align}
@@ -2934,7 +2987,7 @@ For $0\leq\alpha<1$,
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
 &+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
 {(1+\sqrt{2(1-\varrho)})^2}
@@ -2946,7 +2999,7 @@ N-1+\sum_{q=1}^{N-2}(N-1-q)
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\frac{N}{J(1-\alpha)^2}
+\frac{N(1+\log J)^2}{J(1-\alpha)^2}
 +\frac{N^2}{J^2(1-\alpha)^2}\\
 &+N^2\left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
@@ -2973,9 +3026,9 @@ fixed-observation bias satisfies
 Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$ is the same
 constant as in Equation~(\ref{eq:population-forgetting-varrho}).
 The sum beginning at $q=1$ is empty for $N\leq2$; at
-$\varrho=\tfrac12$ the displayed population terms are zero.  Apart from the particle-system mixing and
-logarithmic-threshold factor hidden by $\lesssim$, the suppressed constants depend only on the
-fixed model bounds and not on $N,J$, or $\alpha$.
+$\varrho=\tfrac12$ the displayed population terms are zero.
+The constants suppressed by $\lesssim$ depend only on the fixed model
+bounds and not on $N,J$, or $\alpha$.
 The constants may additionally depend on (A6) or (A6-J).
 The endpoints satisfy Equations~(\ref{eq:verified-dmop-zero-mse-bound})
 and (\ref{eq:verified-dmop-one-mse-bound}); in particular,
@@ -3183,18 +3236,20 @@ $X_{0:t}$-marginal is the posterior path law, and
 \rho_t(h)
 =
 \frac{
-\E\left[
+\E_U\left[
 h
 \prod_{s=1}^t G_s(X_s)
 \right]
 }
 {
-\E\left[\prod_{s=1}^t G_s(X_s)\right]
+\E_U\left[\prod_{s=1}^t G_s(X_s)\right]
 }.
 \label{eq:canonical-extended-posterior-path-law}
 \end{equation}
-Here $G_s(X_s)$ is the measurement potential. Future simulator draws
-are independent of the past.
+Here $\E_U$ integrates over the base simulator variables before
+measurement weighting. Expectations in particle-error calculations are
+instead over the particle-filter law, including resampling.
+Future simulator draws are independent of the past.
 
 Iterating the weight recursion at \(\theta=\phi\) gives
 \begin{equation}
@@ -3224,7 +3279,9 @@ m(\xi_t)(h_k)
 \quad 1\leq k\leq t,
 \label{eq:explicit-path-empirical-measure}
 \end{equation}
-where \(\xi_{t,j}\) is the ancestral path of particle \(j\) at time \(t\).
+where \(\xi_{t,j}\) is the simulator history along particle \(j\)'s ancestry
+through time \(t\), including the base variables needed to evaluate
+\(h_k\) and its pathwise derivative contributions.
 Thus \(m(\xi_t)(h_k)\) averages the time-$k$ gradients over these paths.
 
 At \(\theta=\phi\), all weights equal one. Differentiating the two sample
@@ -7168,7 +7225,7 @@ used. Suppose also that either (A6) or (A6-J) holds. Then
 \begin{align}
 \Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
 &\lesssim
-\frac{NpG'(\theta)^2}{J}
+\frac{NpG'(\theta)^2(1+\log J)^2}{J}
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2,
 \label{eq:refined-dmop-alpha-variance}
 \\
@@ -7187,7 +7244,7 @@ used. Suppose also that either (A6) or (A6-J) holds. Then
 \right\|_2^2
 &\lesssim
 pG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:refined-dmop-alpha-direct-particle-error}
 \end{align}
@@ -7201,10 +7258,9 @@ N,&\alpha=1.
 \end{cases}
 \label{eq:dmop-alpha-finite-memory}
 \end{equation}
-As in the earlier variance results, $\lesssim$ hides the particle-system
-mixing and logarithmic-threshold factor.  Apart from that factor, the
-suppressed constants depend only on the fixed model bounds and are
-independent of $N,J$, and $\alpha$.  As elsewhere,
+The constants suppressed by $\lesssim$ depend only on the fixed model
+and stability bounds and are independent of $N,J$, and $\alpha$.
+As elsewhere,
 $\Var(Z)=\E\|Z-\E Z\|_2^2$ for a random vector $Z$.
 \end{lem}
 
@@ -7584,16 +7640,17 @@ m(\xi_{t+k})(h_{t,i}^{[r]})\}|
 \leq \frac{CG'(\theta)^2\kappa^{2r}(k+r+2)}J.
 \label{eq:lag-truncation-covariance-cauchy-s13}
 \end{align}
-For $t-s>k+r+1$, the windows are separated by at least
-$t-s-k-r-1$ updates. The centered variables have $L^4$ norms at most
+For $t-s>k+r+2$, the prediction clouds separating the windows are
+at least $t-s-k-r-2$ transitions apart, allowing one transition to
+absorb the past endpoint resampling. The centered variables have $L^4$ norms at most
 $2CG'(\theta)\kappa^r$ by their pathwise bounds, so Davydov's inequality gives
 \begin{align}
 &|\Cov\{m(\xi_{s+k})(h_{s,i}^{[r]}),
 m(\xi_{t+k})(h_{t,i}^{[r]})\}|
-\leq CG'(\theta)^2\kappa^{2r}a(t-s-k-r-1)^{1/2}.
+\leq CG'(\theta)^2\kappa^{2r}a(t-s-k-r-2)^{1/2}.
 \label{eq:lag-truncation-covariance-mixing-s13}
 \end{align}
-Under (A6-J), the larger gap $t-s-k$ is available; the weaker displayed
+Under (A6-J), the larger gap $t-s-k-1$ is available; the weaker displayed
 bound with $r=0$ suffices. Combining these inequalities gives
 \begin{align}
 &\sum_{t=s+1}^{N-k-1}
@@ -7601,7 +7658,7 @@ bound with $r=0$ suffices. Combining these inequalities gives
 m(\xi_{t+k})(h_{t,i}^{[r]})\}|
 \notag\\
 &\quad\leq CG'(\theta)^2\kappa^{2r}
-\left\{\frac{(k+r+1)(k+r+2)}J+
+\left\{\frac{(k+r+2)^2}J+
 \sum_{u=1}^\infty\min\left(\frac{k+r+2}J,a(u)^{1/2}\right)\right\}.
 \label{eq:fixed-lag-covariance-s13}
 \end{align}
@@ -7614,11 +7671,11 @@ The geometric tail has sum at most $C(1+\log J)/J$, and hence
 \leq\frac{C(k+r+2)(1+\log J)^2}J.
 \label{eq:lag-truncation-mixing-sum-s13}
 \end{equation}
-As before, $\lesssim$ suppresses this mixing and logarithmic factor.
-Expanding the variance as the diagonal sum plus twice the covariance sum gives
+Retaining this logarithmic factor, expanding the variance as the diagonal
+sum plus twice the covariance sum gives
 \begin{equation}
 \Var\left\{\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_{s,i}^{[r]})\right\}
-\lesssim \frac{NG'(\theta)^2\kappa^{2r}(k+r+2)^2}J.
+\lesssim \frac{NG'(\theta)^2\kappa^{2r}(k+r+2)^2(1+\log J)^2}J.
 \end{equation}
 Center each age sum and apply Minkowski:
 \begin{align}
@@ -7631,8 +7688,8 @@ Center each age sum and apply Minkowski:
 \right\|_{L^2}
 \notag\\
 &\quad\lesssim
-G'(\theta)\sqrt{N/J}\sum_{r=0}^{N}\kappa^r(k+r+2)
-\leq C_\kappa G'(\theta)\sqrt{N/J}(k+1).
+G'(\theta)(1+\log J)\sqrt{N/J}\sum_{r=0}^{N}\kappa^r(k+r+2)
+\leq C_\kappa G'(\theta)(1+\log J)\sqrt{N/J}(k+1).
 \label{eq:fixed-lag-interior-variance-s13}
 \end{align}
 Again the joint alternative uses only $r=0$.
@@ -7648,7 +7705,7 @@ Use $\Var(A+B)\leq2\Var(A)+2\Var(B)$ in
 Equation~(\ref{eq:fixed-lag-score-telescope-s13}) and sum coordinates:
 \begin{equation}
 \Var\{\nabla_\theta\hat s_k^1(\theta)\}
-\lesssim NpG'(\theta)^2(k+1)^2/J.
+\lesssim NpG'(\theta)^2(k+1)^2(1+\log J)^2/J.
 \label{eq:fixed-lag-variance-s13}
 \end{equation}
 Finally, the one-input and terminal bias bounds yield
@@ -7737,10 +7794,10 @@ Equation~(\ref{eq:fixed-lag-variance-s13}), and Equation~
 -\E\nabla_\theta\hat s_k^1(\theta)
 \right\|_{L^2}                                             \notag\\
 &\lesssim
-C\sqrt{\frac{NpG'(\theta)^2}{J}}
+C(1+\log J)\sqrt{\frac{NpG'(\theta)^2}{J}}
 \sum_{k=0}^{N-1}\beta_k(k+1)                              \notag\\
 &\lesssim
-C\sqrt{\frac{NpG'(\theta)^2}{J}}
+C(1+\log J)\sqrt{\frac{NpG'(\theta)^2}{J}}
 \sum_{r=0}^{N-1}\alpha^r.
 \label{eq:geometric-mixture-variance-root-s13}
 \end{align}
@@ -10937,7 +10994,7 @@ For $\alpha\in[0,1]$,
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
 &+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
 {(1+\sqrt{2(1-\varrho)})^2}
@@ -10957,7 +11014,7 @@ For $0\leq\alpha<1$, this implies
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\frac{N}{J(1-\alpha)^2}
+\frac{N(1+\log J)^2}{J(1-\alpha)^2}
 +\frac{N^2}{J^2(1-\alpha)^2}\\
 &+N^2\left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
@@ -10976,7 +11033,7 @@ In particular, the two endpoints satisfy
 \right\|_2^2                                                \notag\\*
 &\quad\lesssim pG'(\theta)^2
 \left[
-\frac NJ+\frac{N^2}{J^2}
+\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}
 +(N-1)^2\left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
 \right\}^2
@@ -10990,7 +11047,7 @@ In particular, the two endpoints satisfy
 \min\left\{N^2,\frac{N^3}{J}\right\}.
 \label{eq:verified-dmop-one-mse-bound}
 \end{align}
-At $\alpha=0$, the variance is at most order $NpG'(\theta)^2/J$;
+At $\alpha=0$, the variance is at most order $NpG'(\theta)^2(1+\log J)^2/J$;
 at $\alpha=1$, the population discounting bias is exactly zero.
 Remark~\ref{rem:population-bias-cancellation} gives a complementary
 bound retaining signed cancellation.
@@ -11018,7 +11075,7 @@ $\|a+b\|_2^2\leq2\|a\|_2^2+2\|b\|_2^2$.  This gives
 Lemma~\ref{lem:dmop-alpha-variance} bounds the first term by
 \begin{equation}
 CpG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \end{equation}
 The sharper bound in Equation~
@@ -11431,16 +11488,16 @@ with the DMOP-$1$ estimator in the model under study.
 The finite particle term in Lemma~\ref{lem:dmop-alpha-variance} is
 \begin{equation}
 pG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \label{eq:generic-alpha-particle-bound-summary}
 \end{equation}
 At $\alpha=0$, the particle-MSE upper bound is
-$pG'(\theta)^2(N/J+N^2/J^2)$.  Its variance bound is
-$NpG'(\theta)^2/J$, whereas its MSE relative to the full score also
+$pG'(\theta)^2\{N(1+\log J)^2/J+N^2/J^2\}$. Its variance bound is
+$NpG'(\theta)^2(1+\log J)^2/J$, whereas its MSE relative to the full score also
 contains the population term displayed in Equation~
 (\ref{eq:verified-dmop-zero-mse-bound}).  Every fixed $\alpha<1$
-has an $N/J$ particle-variance upper bound and, when $J\geq N$, the
+has an $N(1+\log J)^2/J$ particle-variance upper bound and, when $J\geq N$, the
 same leading particle-MSE order, with constants depending on $\alpha$.
 The particle bound increases with the effective memory
 $\sum_{r=0}^{N-1}\alpha^r$.
@@ -11450,7 +11507,7 @@ decreases to zero as $\alpha\uparrow1$.
 At $\alpha=1$, the terminal $L^2$ estimate gives
 Equation~(\ref{eq:verified-dmop-one-mse-bound}) directly.
 Substitution into Equation~(\ref{eq:generic-alpha-particle-bound-summary})
-would instead add $N^4/J^2$. The neutral-model example shows that
+would instead give $N^3(1+\log J)^2/J+N^4/J^2$. The neutral-model example shows that
 the $(1-\alpha)^{-2}$ dependence and the $N^3/J$ endpoint bound can be loose.
 
 A particle MSE bound for $\operatorname{osc}(f)\leq1$ is multiplied by
@@ -11480,7 +11537,7 @@ and Theorem~\ref{thm:refined-dmop-alpha-mse} give
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \min\{N^2,(1-\alpha)^{-2}\}\\
 &+N^2\left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
@@ -11493,7 +11550,7 @@ and Theorem~\ref{thm:refined-dmop-alpha-mse} give
 For fixed $\tfrac12<\varrho<1$, before the effective memory reaches
 the horizon, balancing these two terms is equivalent to
 \begin{equation}
-\frac1{NJ}+\frac1{J^2}
+\frac{(1+\log J)^2}{NJ}+\frac1{J^2}
 \asymp
 \left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
@@ -11507,19 +11564,21 @@ rate-attaining choices for $N\geq2$:
 \begin{array}{c|c|c}
 \text{regime}&1-\alpha&\text{MSE upper bound}/\{pG'(\theta)^2\}\\
 \hline
-J\lesssim N&\asymp J^{-1/2}&N^2/J\\[2pt]
-N\lesssim J\lesssim N^3&\asymp(NJ)^{-1/4}&N^{3/2}/J^{1/2}\\[2pt]
-J\gtrsim N^3&\asymp N^2/J\ \text{or }0&N^3/J.
+J(1+\log J)^2\lesssim N&\asymp J^{-1/2}&N^2/J\\[2pt]
+N\lesssim J(1+\log J)^2\lesssim N^3
+&\asymp\{(1+\log J)^2/(NJ)\}^{1/4}
+&N^{3/2}(1+\log J)/J^{1/2}\\[2pt]
+J(1+\log J)^2\gtrsim N^3&0&N^3/J.
 \end{array}
 \label{eq:alpha-tuning-soft-lag-regimes}
 \end{equation}
-For the last row, $1-\alpha\asymp N^2/J$ implies
-$1-\alpha\lesssim N^{-1}$, and
-\begin{equation}
-\left(\frac NJ+\frac{N^2}{J^2}\right)N^2
-+N^2\left(\frac{N^2}{J}\right)^2
-\lesssim\frac{N^3}{J},\qquad J\gtrsim N^3.
-\end{equation}
+The first boundary is where the two particle coefficients have the
+same order. In the middle regime, compare the balanced bound with the
+independent terminal bound:
+\[
+\min\left\{\frac{N^{3/2}(1+\log J)}{\sqrt J},\frac{N^3}{J}\right\}.
+\]
+They agree when $J(1+\log J)^2$ has order $N^3$.
 The choice $\alpha=1$ attains the last rate by
 Equation~(\ref{eq:verified-dmop-one-mse-bound}). To check minimization
 of the finite bound in Equation~(\ref{eq:verified-dmop-alpha-mse-finite-sum}),
@@ -11527,17 +11586,16 @@ for $N\geq2$,
 \begin{equation}
 \left.\frac{\partial}{\partial\alpha}
 \left\{
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2
 \right\}\right|_{\alpha=1}
-=\left(\frac NJ+\frac{N^2}{J^2}\right)N^2(N-1)>0,
+=\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)N^2(N-1)>0,
 \end{equation}
 The squared population term has derivative zero there, so decreasing
 $\alpha$ slightly from one reduces this finite upper bound.
 This need not change the rate or reduce the actual MSE.
-The table suppresses the same logarithmic factor as Lemma~
-\ref{lem:dmop-alpha-variance}; its $J^{-1/2}$ choice in the first row
-is a rate for $1-\alpha$, not for the MSE, whose upper bound is $N^2/J$.
+The first-row choice $J^{-1/2}$ is a rate for $1-\alpha$;
+the corresponding MSE upper bound is $N^2/J$.
 
 For fixed $\varrho\in(\tfrac12,1)$, its factors affect the tuning constants.
 At $\varrho=\tfrac12$, the population term is zero and $\alpha=0$
@@ -11548,16 +11606,16 @@ Remark~\ref{rem:population-bias-cancellation} gives, before horizon
 saturation and with fixed model constants,
 \begin{align}
 1-\alpha&\asymp
-\left(\frac1{NJ}+\frac1{J^2}\right)^{1/6},                 \notag\\
+\left(\frac{(1+\log J)^2}{NJ}+\frac1{J^2}\right)^{1/6},                 \notag\\
 \E\left\|
 \nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)
 \right\|_2^2
 &\lesssim pG'(\theta)^2N^2
-\left(\frac1{NJ}+\frac1{J^2}\right)^{2/3}.
+\left(\frac{(1+\log J)^2}{NJ}+\frac1{J^2}\right)^{2/3}.
 \label{eq:alpha-tuning-signed-cancellation}
 \end{align}
 Indeed, the particle contribution is of order
-$(N/J+N^2/J^2)(1-\alpha)^{-2}$ and the squared population contribution
+$\{N(1+\log J)^2/J+N^2/J^2\}(1-\alpha)^{-2}$ and the squared population contribution
 is then at most order $N^2(1-\alpha)^4$.
 This cancellation is an additional condition for the last rate.
 \end{remark}
@@ -12337,7 +12395,7 @@ The finite-window particle calculation in Equations~
 \begin{align}
 \Var\{\nabla_\theta\hat s_k^1(\theta)\}
 &\lesssim
-\frac{NpG'(\theta)^2(k+1)^2}{J},                           \notag\\
+\frac{NpG'(\theta)^2(k+1)^2(1+\log J)^2}{J},                           \notag\\
 \left\|
 \E\nabla_\theta\hat s_k^1(\theta)
 -\nabla_\theta s_k^1(\theta)
@@ -12351,7 +12409,7 @@ as their geometric average. Its effective memory is
 \sum_{k=0}^{N-1}\beta_k(k+1)
 =\sum_{r=0}^{N-1}\alpha^r
 \end{equation}
-Thus every fixed $\alpha<1$ has an $N/J$ particle-variance upper bound,
+Thus every fixed $\alpha<1$ has an $N(1+\log J)^2/J$ particle-variance upper bound,
 including the DMOP-$0$ case.
 \end{remark}
 

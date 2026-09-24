@@ -587,7 +587,9 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
     $0<\underbar G\leq f_{Y_n\mid X_n}(y_n^*\mid x_n;\theta)\leq\bar G<\infty$,
     $|\partial_{\theta_a}\log g_{n,j}^{A,F,\theta}|\leq G'(\theta)<\infty$, and
     $|\partial_{\theta_a\theta_b}^2\log g_{n,j}^{A,F,\theta}|\leq G''(\theta)<\infty$
-    for $1\leq a,b\leq p$. The derivatives include the dependence of the simulated state on $\theta$.\label{assump:bounded-measurement}
+    for $1\leq a,b\leq p$. The derivatives include the dependence of the simulated state on $\theta$.
+    The symbols $G'$ and $G''$ denote separate derivative bounds,
+    not derivatives of the function $G$ in (A4).\label{assump:bounded-measurement}
     \item \textbf{Bounded Gradient Estimates.} There are functions $G(\theta), H(\theta): \Theta \to [0,\infty)$ uniformly bounded by $G^*, H^*<\infty$, such that the MOP-$\alpha$ derivatives at $\theta=\phi$ satisfy $\|\nabla_\theta\hat\ell_J^\alpha(\theta)\|_2\leq G(\theta)$ and $\|\nabla_\theta^2\hat\ell_J^\alpha(\theta)\|_{\mathrm{op}}\leq H(\theta)$ almost surely, uniformly in $J$ and $\alpha$. For $\alpha=1$, these bounds hold on one probability-one event simultaneously for all $J$ and all $\theta$ in a fixed closed ball $K$ of positive radius centered at $\phi$ and contained in the interior of $\Theta$. All estimates are coupled on one probability space, with the simulator draws and reference-filter resampling indices generated at $\phi$ held fixed as $\theta$ varies.\label{assump:local-bounded-derivative}
     \item \textbf{Differentiable Density Ratios and Simulator.} For fixed $\omega$, and any fixed collection of times, the simulated path and its log measurement densities have more than two continuous derivatives in $\theta$.\label{assump:diff-meas-and-sim}
 \item{\textbf{Measurement-sensitivity decay.}}
@@ -705,16 +707,16 @@ The below result applies for any $\alpha \in [0,1)$, but not $\alpha=1$, as the 
     When $\alpha\in (0,1)$ and $\theta=\phi$, define $\psi_k(\alpha)=(\alpha^k  + \alpha^{k+1} - \alpha)/(1-\alpha)$. 
     There exists an $\epsilon>0$ depending on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ as in \cite{karjalainen23} such that the MSE and variance of DMOP-$\alpha$ are:
     \vspace*{-1ex}
-    \arxiv{\begin{eqnarray}
-        \E\big\|\nabla_\theta\ell(\theta) - \nabla_\theta \hat\ell^\alpha(\theta)\big\|_2^2 
-        &\lesssim& \min_{k \leq N} Np \, G'(\theta)^2\left(k^2J^{-1}+(1-\epsilon)^{\floor{k/(c\log(J))}}+k+\psi_k(\alpha)\right), \label{eq:mop-mse}
+    \arxiv{\begin{align}
+        &\E\big\|\nabla_\theta\ell(\theta) - \nabla_\theta \hat\ell^\alpha(\theta)\big\|_2^2 \nonumber\\
+        &\lesssim \min_{k \leq N} Np \, G'(\theta)^2\left(k^2(1+\log J)^2J^{-1}+(1-\epsilon)^{\floor{k/(c\log(J))}}+k+\psi_k(\alpha)\right), \label{eq:mop-mse}
         \\
-        \Var\big(\nabla_\theta \hat\ell^{\alpha}(\theta)\big) &\lesssim& \min_{k\leq N} Np \, G'(\theta)^2\left(\frac{k^2}{(1-\alpha)^2J} + \frac{\alpha^{k}}{1-\alpha}N\right). \label{eq:mop-variance}
-        \end{eqnarray}}{\begin{align}
+        &\Var\big(\nabla_\theta \hat\ell^{\alpha}(\theta)\big) \lesssim \min_{k\leq N} Np \, G'(\theta)^2\left(\frac{k^2(1+\log J)^2}{(1-\alpha)^2J} + \frac{\alpha^{k}}{1-\alpha}N\right). \label{eq:mop-variance}
+        \end{align}}{\begin{align}
         &\E\big\|\nabla_\theta\ell(\theta) - \nabla_\theta \hat\ell^\alpha(\theta)\big\|_2^2 \label{eq:mop-mse}\\
-        &\lesssim \min_{k \leq N} Np \, G'(\theta)^2\left(k^2J^{-1}+(1-\epsilon)^{\floor{k/(c\log(J))}}+k+\psi_k(\alpha)\right), \nonumber 
+        &\lesssim \min_{k \leq N} Np \, G'(\theta)^2\left(k^2(1+\log J)^2J^{-1}+(1-\epsilon)^{\floor{k/(c\log(J))}}+k+\psi_k(\alpha)\right), \nonumber
         \\
-        &\Var\big(\nabla_\theta \hat\ell^{\alpha}(\theta)\big) \lesssim \min_{k\leq N} Np  G'(\theta)^2\left(\frac{k^2}{(1-\alpha)^2J} + \frac{\alpha^{k}}{1-\alpha}\right). \label{eq:mop-variance}
+        &\Var\big(\nabla_\theta \hat\ell^{\alpha}(\theta)\big) \lesssim \min_{k\leq N} Np  G'(\theta)^2\left(\frac{k^2(1+\log J)^2}{(1-\alpha)^2J} + \frac{\alpha^{k}}{1-\alpha}\right). \label{eq:mop-variance}
         \end{align}}
 \end{thm}
 \arxiv{}{\vspace*{-1ex}}
@@ -732,7 +734,7 @@ deterministic population DMOP-$\alpha$ score.  Then
 \right\}
 \lesssim
 pG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \]
 For $0\leq\alpha<1$, the full-score MSE satisfies
@@ -743,7 +745,7 @@ For $0\leq\alpha<1$, the full-score MSE satisfies
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
 &+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
 {(1+\sqrt{2(1-\varrho)})^2}
@@ -755,7 +757,7 @@ N-1+\sum_{q=1}^{N-2}(N-1-q)
 &\quad\lesssim pG'(\theta)^2
 \begin{aligned}[t]
 \Bigg[&
-\frac{N}{J(1-\alpha)^2}
+\frac{N(1+\log J)^2}{J(1-\alpha)^2}
 +\frac{N^2}{J^2(1-\alpha)^2}\\
 &+N^2\left\{
 \frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
@@ -767,10 +769,8 @@ N-1+\sum_{q=1}^{N-2}(N-1-q)
 \]
 Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$.
 The sum over $q$ is empty for $N\leq2$, and the population terms vanish
-at $\varrho=\tfrac12$. As in the preceding variance argument,
-$\lesssim$ hides the particle mixing and logarithmic factors; the other
-constants depend on the model and stability bounds, independently of
-$N,J,\alpha$. The finite geometric sum is
+at $\varrho=\tfrac12$. The constants suppressed by $\lesssim$
+depend on the model and stability bounds, independently of $N,J,\alpha$. The finite geometric sum is
 $(1-\alpha^N)/(1-\alpha)$ for $\alpha<1$ and is $N$ at $\alpha=1$.
 The population part of the fixed-observation bias is bounded by
 \[
@@ -783,7 +783,7 @@ The population part of the fixed-observation bias is bounded by
 {3-2\varrho-\alpha(2\varrho-1)}.
 \]
 For each fixed $\alpha<1$ and $J\geq N$, the leading particle term is
-$NpG'(\theta)^2/J$, multiplied by a constant depending on $\alpha$.}
+$NpG'(\theta)^2(1+\log J)^2/J$, multiplied by a constant depending on $\alpha$.}
 
 \kevin{For the lag-truncated scores defined in S7, set
 \[
@@ -860,11 +860,11 @@ Either condition gives
 Minkowski's inequality bounds the terminal second moment and bias by
 $C(k+1)^3G'(\theta)^2/J$ and $C(k+1)^2G'(\theta)/J$,
 respectively. Use Cauchy--Schwarz for overlapping windows and Davydov's
-inequality for separated windows, with gap $t-s-k-r-1$ under (A6) or
-$t-s-k$ under (A6-J). Summing covariances and then ages gives
+inequality for separated windows, with gap $t-s-k-r-2$ under (A6) or
+$t-s-k-1$ under (A6-J). Summing covariances and then ages gives
 \[
 \Var\{\nabla_\theta\hat s_k^1(\theta)\}
-\lesssim\frac{NpG'(\theta)^2(k+1)^2}{J},
+\lesssim\frac{NpG'(\theta)^2(k+1)^2(1+\log J)^2}{J},
 \qquad
 \|\E\nabla_\theta\hat s_k^1(\theta)
 -\nabla_\theta s_k^1(\theta)\|_2
@@ -901,11 +901,11 @@ Unlike DMOP-$\alpha$, DMOP-$0$ has no opportunity to tune $\alpha$ (or $k$) to r
 The particle upper bound is
 \[
 CpG'(\theta)^2
-\left(\frac NJ+\frac{N^2}{J^2}\right)
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
 \left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
 \]
 Every fixed $\alpha<1$, including DMOP-$0$, has variance of order at most
-$N/J$ and, for $J\geq N$, the same particle-MSE order. The constant
+$N(1+\log J)^2/J$ and, for $J\geq N$, the same particle-MSE order. The constant
 increases with the discount memory. At $\alpha=1$, the terminal
 second-moment calculation gives the possibly loose upper bound
 $\min\{N^2,N^3/J\}$, and the population discount bias is zero.
