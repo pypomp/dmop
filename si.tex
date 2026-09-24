@@ -120,7 +120,7 @@ Consider the case where we use the after-resampling conditional likelihood estim
 When $\alpha=1$,
     \begin{equation}
         \nabla_\theta \hat{\ell}^1(\theta) 
-        = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,j}^{A, F,\theta};\theta\big),
+        = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:N,j}^{A, F,\theta};\theta\big),
     \end{equation}
     yielding the bootstrap filter estimator of \cite{poyiadjis11} and \cite{scibior21}.
 \end{lem}
@@ -1259,71 +1259,89 @@ Equation~(\ref{eq:refined-dmop-alpha-variance-j-geq-n}).
 
 \fi
 \begin{proof}[Proof.]
-    Consider the case of MOP-$\alpha$ when $\alpha=1$ and $\theta=\phi$. We then have a nice telescoping product property for the after-resampling likelihood estimate:
-\begin{eqnarray}
-    \hat{\lik}^1(\theta) &:=& \prod_{n=1}^N L_n^{A, \theta, \alpha} = \prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta}}{\sum_{j=1}^J w_{n,j}^{P,\theta}}= \prod_{n=1}^N L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n,j}^{F,\theta}}{\sum_{j=1}^J w_{n-1,j}^{F,\theta}} \nonumber
-\\
-&=& \left(\frac{1}{J}\sum_{j=1}^J w_{N,j}^{F,\theta}\right) \prod_{n=1}^N L_n^\phi,
-\end{eqnarray}
-where the third equality follows from the choice of $\alpha=1$, and the fourth equality is the resulting telescoping property. 
-The log-derivative identity lets us decompose the score estimate as
-\begin{equation}\label{eq:log-derivative-identity}
-\nabla_\theta \hat\ell^1(\theta) = \frac{\nabla_\theta \hat\lik^1(\theta)}{\hat\lik^1(\theta)} = \frac{\nabla_\theta\left(\frac{1}{J}\sum_{j=1}^J w_{N,j}^{F,\theta}\right) \prod_{n=1}^N L_n^\phi}{\prod_{n=1}^N L_n^\phi} =  \frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,j}^{F,\theta}.
-\end{equation}
-From (\ref{eq:log-derivative-identity}), we see that the derivative of the log-likelihood estimate is
-\begin{equation}\label{eq:eq:log-derivative2}
-    \nabla_\theta \hat{\ell}^1(\theta) := \frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,j}^{F,\theta}.
-\end{equation}
-We proceed to decompose (\ref{eq:eq:log-derivative2}).
-First, observe that as $\alpha=1$,
-\begin{equation}\label{eq:lemma-s1-ratio}
-w_{n,j}^{P,\theta} = w_{n-1,j}^{F,\theta}\frac{g_{n,j}^\theta}{g_{n,j}^\phi} = \prod_{i=1}^n \frac{g_{i,j}^{A,P,\theta}}{g_{i,j}^{A,P,\phi}},
-\end{equation}
-Note that the right hand side of (\ref{eq:lemma-s1-ratio}) is the cumulative product of measurement density ratios over the ancestral trajectory of the $j$-th prediction particle at timestep $n$.
-We then use the log-derivative identity again, yielding the following expression for the gradient of the log-weights as the sum of the log measurement densities over the ancestral trajectory,
-\begin{eqnarray}
- \frac{\nabla_\theta w_{n,j}^{P,\theta}}{w_{n,j}^{P,\theta}} = \nabla_\theta \log w_{n,j}^{P,\theta} &=& \nabla_\theta \log \left(\prod_{i=1}^n \frac{g_{i,j}^{A,P,\theta}}{g_{i,j}^{A,P,\phi}}\right) 
- \\
- &=& \nabla_\theta \sum_{i=1}^n \left(\log g_{i,j}^{A,P,\theta} - \log g_{i,j}^{A,P,\phi}\right)
- \\
- &=& \sum_{i=1}^n \nabla_\theta \log g_{i,j}^{A,P,\theta}.
-\end{eqnarray}
-This is equal to the gradient of the logarithm of the conditional density of the observed measurements given the ancestral trajectory of the $j$-th prediction particle up to timestep $n$,
-\begin{eqnarray}  
-\nabla_\theta \sum_{n=1}^N \log g_{n,j}^{A,P,\theta} &=& \nabla_\theta \log\left(\prod_{n=1}^N g_{n,j}^{A,P,\theta}\right) 
-\\
-&=&  \nabla_\theta \log\left(\prod_{n=1}^N f_{Y_n|X_n}\big(y_n^* | x_{n,j}^{A, P,\theta};\theta\big)\right)
-\\
-&=& \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,j}^{A, P,\theta};\theta\big).
-\end{eqnarray}
-Multiplying both sides of the expression by $w_{N,j}^{P,\theta} $ yields an expression for the gradient of the weights at timestep $N$,
+Set $\alpha=1$ and hold the reference parameter $\phi$, simulator draws,
+and reference-filter resampling indices fixed while differentiating with
+respect to $\theta$. Write $k_{n,j}$ for the resampling index of filtered
+particle $j$ at time $n$. Algorithm~1 gives
 \begin{equation}
-\nabla_\theta w_{N,j}^{P,\theta} = w_{N,j}^{P,\theta} \sum_{n=1}^N \nabla_\theta \log g_{n,j}^{A,P,\theta} = w_{N,j}^{P,\theta} \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,j}^{A, P,\theta};\theta\big).    
+w_{n,j}^{P,\theta}=w_{n-1,j}^{F,\theta},
+\qquad
+w_{n,j}^{F,\theta}
+=w_{n-1,k_{n,j}}^{F,\theta}
+\frac{g_{n,k_{n,j}}^\theta}{g_{n,k_{n,j}}^\phi}.
+\label{eq:lemma-s1-filtered-recursion}
 \end{equation}
-Substituting the above identity into the log-likelihood decomposition obtained earlier in Equation \ref{eq:log-derivative-identity} yields
-\begin{eqnarray}
-    \nabla_\theta \hat{\ell}^1(\theta) &=& \frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,j}^{F,\theta} =\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,k_j}^{P,\theta}
-    \nonumber \\
-    &=& \frac{1}{J}\sum_{j=1}^J w_{N,k_j}^{P,\theta} \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,k_j}^{A, P,\theta};\theta \big).
-\end{eqnarray}
-Finally, observing that $\theta=\phi$ implies $w_{N,j}^{F,\theta}=1$, we obtain 
+Consequently, the after-resampling likelihood estimate telescopes:
+\begin{align}
+\hat\lik^1(\theta)
+&=\prod_{n=1}^N
+\left(L_n^\phi
+\frac{\sum_{j=1}^J w_{n,j}^{F,\theta}}
+     {\sum_{j=1}^J w_{n-1,j}^{F,\theta}}\right) \notag\\
+&=\left(\frac{1}{J}\sum_{j=1}^J w_{N,j}^{F,\theta}\right)
+\prod_{n=1}^N L_n^\phi,
+\label{eq:lemma-s1-telescoping}
+\end{align}
+since $w_{0,j}^{F,\theta}=1$. As each $L_n^\phi$ is fixed,
 \begin{equation}
-    \nabla_\theta \hat{\ell}^1(\theta) = \frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,j}^{A, F,\theta};\theta\big).
+\nabla_\theta\hat\ell^1(\theta)
+=\frac{\sum_{j=1}^J\nabla_\theta w_{N,j}^{F,\theta}}
+       {\sum_{j=1}^J w_{N,j}^{F,\theta}}.
+\label{eq:log-derivative-identity}
 \end{equation}
+
+For a terminal filtered particle $j$, define its ancestor labels backwards
+by $a_{N,j}=j$ and $a_{n-1,j}=k_{n,a_{n,j}}$ for
+$n=N,\ldots,1$. Thus
+$x_{n,j}^{A,F,\theta}=x_{n,a_{n,j}}^{F,\theta}
+=x_{n,a_{n-1,j}}^{P,\theta}$.
+Iterating the filtered-weight recursion along this ancestry gives
+\begin{equation}
+w_{N,j}^{F,\theta}
+=\prod_{n=1}^N
+\frac{g_{n,a_{n-1,j}}^\theta}{g_{n,a_{n-1,j}}^\phi}.
+\label{eq:lemma-s1-ratio}
+\end{equation}
+All ancestor labels and denominator factors are fixed under
+$\nabla_\theta$. Taking the log derivative therefore yields
+\begin{align}
+\nabla_\theta w_{N,j}^{F,\theta}
+&=w_{N,j}^{F,\theta}
+\sum_{n=1}^N\nabla_\theta\log g_{n,a_{n-1,j}}^\theta \notag\\*
+&=w_{N,j}^{F,\theta}\nabla_\theta
+\log f_{Y_{1:N}|X_{1:N}}
+\big(y_{1:N}^*\mid x_{1:N,j}^{A,F,\theta};\theta\big).
+\label{eq:lemma-s1-filtered-score}
+\end{align}
+Here the derivative includes the dependence of the particle locations on
+$\theta$ through the simulator. Finally, evaluate at $\theta=\phi$,
+where $w_{N,j}^{F,\theta}=1$. Substituting into
+Equation~(\ref{eq:log-derivative-identity}) gives
+\begin{equation}
+\left.\nabla_\theta\hat\ell^1(\theta)\right|_{\theta=\phi}
+=\frac{1}{J}\sum_{j=1}^J
+\left.\nabla_\theta\log f_{Y_{1:N}|X_{1:N}}
+\big(y_{1:N}^*\mid x_{1:N,j}^{A,F,\theta};\theta\big)
+\right|_{\theta=\phi},
+\end{equation}
+as claimed.
 This has the same undiscounted path-space score target as the estimators of
-\cite{poyiadjis11, scibior21} for the bootstrap filter.  The
+\cite{poyiadjis11, scibior21} for the bootstrap filter. The
 reparameterization score contribution need not equal their complete-data
 likelihood-ratio score contribution particle by particle.
 \end{proof}
 
-Note that the variance of the DMOP-$\alpha$ log-likelihood derivative estimate scales poorly with $N$ when $\theta\neq\phi$. 
-This can be seen by observing that
-\begin{eqnarray}
-    \nabla_\theta \hat{\ell}^1(\theta) &=& \frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,j}^{F,\theta} =\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{N,k_j}^{P,\theta}
-\nonumber \\
-&=& \frac{1}{J}\sum_{j=1}^J w_{N,k_j}^{P,\theta} \nabla_\theta \log f_{Y_{1:N}|X_{1:N}}\big(y_{1:N}^* | x_{1:n,k_j}^{A, P,\theta}; \theta \big).
-\end{eqnarray}
-When $\theta\neq\phi$, we see that $w_{N,k_j}^{P,\theta} = O(c^N)$. 
+For $\theta\neq\phi$, the same calculation instead gives the normalized
+weighted path score
+\begin{equation}
+\nabla_\theta\hat\ell^1(\theta)
+=\frac{\displaystyle\sum_{j=1}^J w_{N,j}^{F,\theta}
+\nabla_\theta\log f_{Y_{1:N}|X_{1:N}}
+\big(y_{1:N}^*\mid x_{1:N,j}^{A,F,\theta};\theta\big)}
+{\displaystyle\sum_{j=1}^J w_{N,j}^{F,\theta}}.
+\end{equation}
+Growth of the unnormalized weight products alone does not establish a
+variance rate for this normalized expression.
 When $\theta=\phi$, a generic normalized path-functional inequality gives
 the coarse upper bound $O(N^4/J)$ after rescaling to the full
 unnormalized score.  Section~\ref{appendix:sharper-biasvar} gives an exact
