@@ -1,5 +1,27 @@
 # Handoff
 
+## September 24, 2026: Lemma S1 ancestry proof
+
+- Replaced the prediction-weight derivation in `si.tex` with the actual
+  alpha=1 filtered-weight recursion and an explicit backward ancestor map.
+  The terminal filtered weight is a product of measurement ratios along
+  that ancestry; differentiating gives the stated terminal path score.
+- Hold the reference parameter, simulator draws, and resampling indices
+  fixed when differentiating, then evaluate at theta=phi. Corrected the
+  lemma's terminal history from 1:n to 1:N.
+- Updated the repeated off-parameter formula immediately after the proof
+  to use normalized terminal filtered weights. Removed the unsupported
+  variance-growth inference from unnormalized weight growth alone.
+- Verification: full SI compiled with Tectonic; no undefined references or
+  overfull boxes. Inspected the revised proof pages. Checked recursive
+  weights against ancestry products, likelihood telescoping, and score
+  finite differences in 18 on/off-parameter cases with N=1,2,7 and J=1,4,13;
+  maximum score discrepancy was 1.8e-9. `git diff --check` passed.
+- Scope: point 3 and its immediately repeated formula are corrected. Other
+  notation-review items have not been audited or generally applied.
+  The experiment state and next steps below are retained from the prior
+  handoff and were not rechecked during this manuscript-only change.
+
 ## Current state
 
 The corrected IF2-warm-start 100-run experiment is active as the user service
