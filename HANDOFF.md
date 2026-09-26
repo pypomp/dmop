@@ -1,5 +1,23 @@
 # Handoff
 
+## September 26, 2026: corrected warm-start experiment complete
+
+- The corrected 100-start IF2-warm-start experiment, final Euler-20
+  evaluations, every-update evaluations, figures, and audit are complete.
+- The original `dmop-if2warm-corrected-final100-v2.service` was OOM-killed
+  after persisting 12,162 Corenflos trace evaluations. The resumable v3 service
+  skipped completed work, finished successfully, and exited with status 0.
+- Both methods have 100 checkpoints and 100 successful final evaluations.
+  The consolidated traces contain 21,238 Corenflos rows and 24,848 Ditlevsen
+  rows. All four comparison PNGs render cleanly and were visually inspected.
+- `python -m corenflos.warm_audit` passed. At the common 942.817-second
+  endpoint, final median Euler-20 log likelihoods are -3765.914 for Corenflos
+  and -3768.725 for Ditlevsen, versus -3766.639 at the IF2 checkpoint.
+- Paired with each start's IF2 checkpoint, Corenflos has median change -0.103
+  and mean change -0.019, with 45/100 starts improving. Ditlevsen has median
+  change -1.777 and mean change -1.977, with 18/100 starts improving. This
+  strengthens the pilot evidence of Ditlevsen surrogate-target mismatch.
+
 ## September 24, 2026: remaining review corrections and explicit logs
 
 - Applied the user's approved fixes for points 5, 6, 8 (both propagation-law
@@ -66,20 +84,8 @@
 
 ## Current state
 
-The corrected IF2-warm-start 100-run experiment is active as the user service
-`dmop-if2warm-corrected-final100-v2.service`. Do not start another GPU job
-while it is running. At the September 23 status check, Corenflos had 96/100
-checkpoints and Ditlevsen had its 10 reusable pilot checkpoints. The service
-will finish Corenflos, run the other 90 Ditlevsen fits, then run final and
-every-update Euler-20 evaluations, render PNG figures, and execute the audit.
-
-Useful status command:
-
-```sh
-systemctl --user show dmop-if2warm-corrected-final100-v2.service \
-  --property=ActiveState,SubState,Result,ExecMainPID
-journalctl --user -u dmop-if2warm-corrected-final100-v2.service -n 50 --no-pager
-```
+The corrected IF2-warm-start 100-run experiment and its audit are complete.
+No experiment service remains active.
 
 ## Corrected design
 
@@ -113,6 +119,10 @@ would increasingly turn the continuation into a no-op.
 - Corrected start 0 independently evaluated at -3769.86. Both methods'
   iteration-0 Euler-20 evaluations were about -3771 after removing clipping.
 - The 100 corrected baseline evaluations are complete.
+- The completed output has 100 checkpoints and 101-line final-evaluation CSVs
+  for each method, plus 21,239-line Corenflos and 24,849-line Ditlevsen trace
+  CSVs including headers.
+- The automatic service audit and an independent rerun both passed.
 
 ## Outputs and next steps
 
@@ -123,7 +133,4 @@ would increasingly turn the continuation into a no-op.
 - Invalid/earlier pilots were moved under `/tmp/dmop-if2warm-*`; the committed
   history also preserves earlier results.
 
-When the service finishes, verify 100 checkpoints and 101-line final CSVs,
-inspect all four PNGs, run `python -m corenflos.warm_audit` with the repository
-PYTHONPATH, summarize paired changes from the IF2 checkpoint, then commit and
-push the completed results. Do not report success before the audit passes.
+The completed results and figures are ready for manuscript use.
