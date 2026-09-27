@@ -599,7 +599,7 @@ Conditioning on $X^\theta_\nPrevious = x_\nPrevious$, with $\omega$ fixed,
 \[
 \left\|D_{x_\nPrevious}\log f_{Y_n\mid X_n}
 \bigl(y_n^*\mid X_n^\theta;\theta\bigr)\right\|_2
-\leq C\kappa^{\textcolor{red}{n-\nPrevious}},\qquad C<\infty,\quad 0<\kappa<1.
+\leq C\kappa^{n-\nPrevious},\qquad C<\infty,\quad 0<\kappa<1.
 \]
 The bound is uniform in $\nPrevious\leq n$, $x_\nPrevious$, $X^\theta_n$, $\omega$, and $\theta$ near $\phi$.
 The parameter derivatives of the initial state, simulator, and log measurement
@@ -670,11 +670,11 @@ On the compact neighborhood $K$ in Assumption \ref{assump:local-bounded-derivati
 
 We now provide a result showing that DMOP-$\alpha$ has a desirable bias-variance tradeoff when $0<\alpha<1$.
 This is achieved because it combines favorable properties from the low-variance but asymptotically biased estimate of \cite{naesseth18} and the high-variance but consistent estimate of \cite{poyiadjis11}. 
-\begingroup\color{red}
+\begingroup
 The result below bounds the particle error for $\alpha\in[0,1]$ and the full-score MSE and population discount bias for $0\leq\alpha<1$.
 \par\endgroup
 
-\begingroup\color{red}
+\begingroup
 \begin{thm}[MSE and Variance of DMOP-$\alpha$]
 \label{thm:mop-biasvar}
 Under (A2), (A3), (A5), either (A6) or (A6-J), fixed observations,
@@ -751,7 +751,7 @@ $NpG'(\theta)^2(1+\log J)^2/J$, multiplied by a constant depending on $\alpha$.
 \end{thm}
 \par\endgroup
 
-\begingroup\color{red}
+\begingroup
 We use the notation of Section~S7, where the full proof is given.
 Here, $h_s$ is the time-$s$ measurement
 gradient along an ancestral path, $h_{s,i}$ is its $i$th component,
@@ -817,14 +817,14 @@ bounds by Minkowski's inequality.
 
 
 Theorem \ref{thm:mop-biasvar} provides theoretical understanding of the empirically favorable bias-variance tradeoff enjoyed by DMOP-$\alpha$ in Figure \ref{fig:biasvar}.
-\begingroup\color{red}
+\begingroup
 The MSE bound in Equation~\ref{eq:mop-mse} separates particle approximation error from the squared population discount bias. The particle upper bound grows with the finite geometric sum, while the bound on the population bias tends to zero as $\alpha$ tends to $1$.
 \par\endgroup
 
 
 %\subsection{Bias-Variance Tradeoff}
 
-\begingroup\color{red}
+\begingroup
 The particle upper bound is
 \[
 CpG'(\theta)^2
