@@ -2036,45 +2036,46 @@ We state Lemma~\ref{lem:change-measure-proper-weights} assuming multinomial resa
 
 \begin{lem}[Change of Weight Measure]
     \label{lem:change-measure-proper-weights}
-    Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$. Now, let $\{(Y_j^J,V_j^J),j=1,\dots,J\}$ be a multinomial sample with indices $k_j$ drawn from $\{(\tilde X_j^J,U_j^J)\}$ where $(\tilde X_j^J,U_j^J)$ is represented, on average, proportional to $\pi^J_j J$ times. Write
+    Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$. Now, let $\{(Y_j^J,V_j^J),j=1,\dots,J\}$ be a multinomial sample with indices $k_j$ drawn from $\{(\tilde X_j^J,U_j^J)\}$ where $(\tilde X_j^J,U_j^J)$ is represented, on average, proportional to $\pi^J_j J$ times\textcolor{red}{, with $\pi_j^J>0$}. Write
     \begin{equation}
     (Y_j^J,V_j^J) = \big(\tilde X^J_{k_j},U^J_{k_j}\big/\pi^J_{k_j}\big).
     \end{equation} 
-    If the importance sampling weights $U_j/\pi_j$ are bounded, then $\{(Y^J_j,V^J_j),j=1,\dots,J\}$ targets $f_X$.
+    If the importance sampling weights $U_j/\pi_j$ are bounded \textcolor{red}{uniformly in $j,J$ after normalizing $\sum_m U_m^J=1$}, then $\{(Y^J_j,V^J_j),j=1,\dots,J\}$ targets $f_X$.
 \end{lem}
 
 \begin{proof}[Proof.]
+    \textcolor{red}{Normalize $\sum_j U_j^J=1$, which leaves both weighted empirical measures unchanged.}
     Note that as the $Y_j^J$ are a subsample from $X_j^J$, $h$ can be a function of $Y$ as well as it is one for $X$. We then expand
     \begin{equation}\frac{\sum_j h(Y_j^J) \, V_j^J}{\sum_j V_j^J} = \frac{\sum_j h(\tilde X_{k_j}^J)\, \frac{U_{k_j}^J}{\pi_{k_j}^J}}{\sum_j \frac{U_{k_j}^J}{\pi_{k_j}^J}}.\end{equation}
     By hypothesis,
     \begin{equation}
-    \frac{\sum_j h(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_X}\big[f(X)\big].
+    \frac{\sum_j h(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_X}\big[\textcolor{red}{h}(X)\big].
     \end{equation}
     We want to show
     \begin{equation}\label{eq:lemma1:h}
-    \frac{\sum_j h(X_{k_j}^J)\, \frac{U_{k_j}^J}{\pi_{k_j}^J}}{\sum_j \frac{U_{k_j}^J}{\pi_{k_j}^J}} - \frac{\sum_j h(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} 0.
+    \frac{\sum_j h(\textcolor{red}{\tilde X}_{k_j}^J)\, \frac{U_{k_j}^J}{\pi_{k_j}^J}}{\sum_j \frac{U_{k_j}^J}{\pi_{k_j}^J}} - \frac{\sum_j h(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} 0.
     \end{equation}
     For this, it is sufficient to show that
    \begin{equation} 
-   \sum_j h(\tilde X_{k_j}^J)\frac{U_{k_j}^J}{\pi_{k_j}^J}
+   \textcolor{red}{\frac1J}\sum_j h(\tilde X_{k_j}^J)\frac{U_{k_j}^J}{\pi_{k_j}^J}
     -  \sum_j h(\tilde X_j^J)\frac{U_j^J}{\pi_j^J}\pi_j^J \stackrel{a.s.}{\to} 0 
     \end{equation}
-    since an application of this result with $h(x)=1$ provides almost sure convergence of the denominator in (\ref{eq:lemma1:h}).
-    Write $g(\tilde X_j^J) = h(\tilde X_j^J)\frac{U_{k_j}^J}{\pi_{k_j}^J}$. We therefore need to show that 
+    since an application of this result with $h(x)=1$ provides almost sure convergence \textcolor{red}{to $1$ of $J^{-1}$ times the denominator} in (\ref{eq:lemma1:h}).
+    Write $\textcolor{red}{g_j^J} = h(\tilde X_j^J)\frac{U_{\textcolor{red}{j}}^J}{\pi_{\textcolor{red}{j}}^J}$. We therefore need to show that
     \begin{equation}
-    \sum_j Z_j^J := \sum_j \left(g(\tilde X_{k_j}^J) -  g(\tilde X_j^J) \, \pi_j^J \right) \stackrel{a.s.}{\to} 0.
+    \textcolor{red}{\frac1J}\sum_j Z_j^J := \textcolor{red}{\frac1J}\sum_j \left(\textcolor{red}{g_{k_j}^J} - \textcolor{red}{\sum_{m=1}^J g_m^J\pi_m^J} \right) \stackrel{a.s.}{\to} 0.
 \end{equation}
-    Because the functional $h$ and importance sampling weights $u_{k_j}^J/\pi_{k_j}^J$ are bounded, we have that $\E\big[(Z_j^J)^4\big] < \infty$. We can then follow the argument of \cite{chopin20} from this point on, where noting that the $Z_j^J$ are conditionally independent given the $\tilde{X}_j^J$ and $U_j^J$,
+    Because the functional $h$ and importance sampling weights $\textcolor{red}{U}_{k_j}^J/\pi_{k_j}^J$ are bounded, we have that $\textcolor{red}{\sup_{J,j}}\E\big[(Z_j^J)^4\big] < \infty$. We can then follow the argument of \cite{chopin20} from this point on, where noting that the $Z_j^J$ are conditionally independent\textcolor{red}{, identically distributed, and centered} given the $\tilde{X}_j^J$, $U_j^J$\textcolor{red}{, and $\pi_j^J$},
     \begin{eqnarray} 
-    \E\left[\left(\sum_j Z_j^J\right)^4 \Bigg| (\tilde X_j^J,U_j^J)_{j=1}^J \right] 
-    &=& J\, \E\left[(Z_1^J)^4|(\tilde X_j^J,U_j^J)_{j=1}^J\right] 
+    \E\left[\left(\sum_j Z_j^J\right)^4 \Bigg| (\tilde X_j^J,U_j^J\textcolor{red}{,\pi_j^J})_{j=1}^J \right]
+    &=& J\, \E\left[(Z_1^J)^4|(\tilde X_j^J,U_j^J\textcolor{red}{,\pi_j^J})_{j=1}^J\right]
     \nonumber
     \\
-    && \hspace{1mm}+ \hspace{2mm} 3J(J-1)\left(\E\big[(Z_j^J)^2\big|(\tilde X_j^J,U_j^J)_{j=1}^J\big]\right) 
+    && \hspace{1mm}+ \hspace{2mm} 3J(J-1)\left(\E\big[(Z_{\textcolor{red}{1}}^J)^2\big|(\tilde X_j^J,U_j^J\textcolor{red}{,\pi_j^J})_{j=1}^J\big]\right)\textcolor{red}{^{2}}
     \\ 
     &\leq& CJ^2,
     \end{eqnarray}
-    for some $C>0$. 
+    for some $C>0$ \textcolor{red}{independent of $J$}.
     Taking expectations on both sides yields
     \begin{equation}\E\left[\left(\sum_j Z_j^J\right)^4 \right]  \leq CJ^2\end{equation}
     by the tower property. Now by Markov's inequality, 
@@ -2083,15 +2084,15 @@ We state Lemma~\ref{lem:change-measure-proper-weights} assuming multinomial resa
     \mathbb{E}\left[\left(\sum_{j=1}^J Z_j^J\right)^4\right] \leq \frac{C}{\epsilon^4J^2},\end{equation}
     and as these terms are summable we can apply Borel-Cantelli to conclude that these deviations happen only finitely often for every $\epsilon>0,$ giving us the almost-sure convergence for   
     \begin{equation} 
-    \sum_j h(X_{k_j}^J)\, \frac{u_{k_j}^J}{\pi_{k_j}^J}
-    -  \sum_j h(X_j^J)\, \frac{u_j^J}{\pi_j^J}\, \pi_j^J \stackrel{a.s.}{\to} 0.
+    \textcolor{red}{\frac1J}\sum_j h(\textcolor{red}{\tilde X}_{k_j}^J)\, \frac{\textcolor{red}{U}_{k_j}^J}{\pi_{k_j}^J}
+    -  \sum_j h(\textcolor{red}{\tilde X}_j^J)\, \frac{\textcolor{red}{U}_j^J}{\pi_j^J}\, \pi_j^J \stackrel{a.s.}{\to} 0.
     \end{equation} 
     Similarly, we also have that
     \begin{equation} 
-    \sum_j \frac{u_j^J}{\pi_j^J}\pi_j^J
-    - \sum_j \frac{u_{k_j}^J}{\pi_{k_j}^J} \stackrel{a.s.}{\to} 0,
+    \sum_j \frac{\textcolor{red}{U}_j^J}{\pi_j^J}\pi_j^J
+    - \textcolor{red}{\frac1J}\sum_j \frac{\textcolor{red}{U}_{k_j}^J}{\pi_{k_j}^J} \stackrel{a.s.}{\to} 0,
     \end{equation}
-    and the result is proved. 
+    and the result \textcolor{red}{follows by taking the ratio, since $\sum_j U_j^J=1$}.
 
     
     
