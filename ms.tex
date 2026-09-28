@@ -137,7 +137,7 @@ Promising numerical results indicate that IFAD beats IF2 (and by the numerical r
 %The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
 We also demonstrate empirical advances using DMOP-$\alpha$ for Bayesian inference.
-In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{homan14} in conjunction with an empirical Bayes-type prior estimated with IF2 to reduce the burn-in period of particle MCMC \citep{andrieu10} on the Dhaka cholera model of \cite{king08} from the $700,000$ iterations in \cite{fasiolo16} to just $500$.
+In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14} in conjunction with an empirical Bayes-type prior estimated with IF2 to reduce the burn-in period of particle MCMC \citep{andrieu10} on the Dhaka cholera model of \cite{king08} from the $700,000$ iterations in \cite{fasiolo16} to just $500$.
 To the best of our knowledge, attaining rapid mixing on this challenging problem has not previously been achieved. 
 
 \section{Problem Setup}
@@ -550,7 +550,7 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
 Particle MCMC \citep{andrieu10} is arguably the most popular method for full-information plug-and-play Bayesian inference for POMP models.
 However, particle Metropolis-Hastings often mixes slowly, requiring long burn-in periods.
 For instance, \cite{fasiolo16} reported needing $700000$ burn-in iterations for effective sampling in the \cite{king08} model, even after coarsening each Euler timestep to reduce the computational burden. 
-To alleviate this, we demonstrate a No U-Turn Sampler (NUTS) \citep{homan14} powered by DMOP-$\alpha$, with a nonparametric empirical prior constructed from density estimation of the parameter swarm from the IF2 warm-start. 
+To alleviate this, we demonstrate a No U-Turn Sampler (NUTS) \citep{hoffman14} powered by DMOP-$\alpha$, with a nonparametric empirical prior constructed from density estimation of the parameter swarm from the IF2 warm-start. 
 %This prior has a standard deviation of $6.3\%$ of the MLE. 
 %\sqrt{(0.02\cdot0.95^{40})^2 \cdot 600}\approx 6.3\%
 Using NUTS with MOP-$\alpha$ and this prior significantly lowers the mixing time of the Markov chain to as little as $500$ iterations (Figure \ref{fig:nuts-eb}).
