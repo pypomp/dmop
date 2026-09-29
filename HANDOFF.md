@@ -1,5 +1,13 @@
 # Handoff
 
+## September 28, 2026: Daphnia references in the main text
+
+- Added the approved Daphnia sentences to the Introduction and Discussion,
+  including the existing `yang25daphnia` citation and supplement Section S10.
+- Rebuilt `ms.pdf` with latexmk; checked both changed pages and confirmed the
+  Yang et al. (2025) bibliography entry. No undefined citations or references.
+  The existing overfull box in the unchanged targeting proof remains.
+
 ## September 26, 2026: corrected warm-start experiment complete
 
 - The corrected 100-start IF2-warm-start experiment, final Euler-20
