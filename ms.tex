@@ -132,6 +132,7 @@ We implement our algorithm using JAX \citep{jax}, which also enables us to take 
 Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
 Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
+IFAD also outperforms marginalized panel iterated filtering on a challenging ecological panel problem, the 38-parameter \textit{Daphnia} model of \citet{yang25daphnia}.
 \newEdit{\editClaim}
 \newEdit{\editPlugAndPlay}
 %The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
@@ -892,6 +893,7 @@ However, assessing the scientific potential of these variations requires likelih
 Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
 Improving the process of model fitting has practical consequences for the ability of scientists to evaluate hypotheses.
 We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which provides a high-quality log-likelihood maximization in the complex benchmark model of \cite{king08}.
+The \textit{Daphnia} application in the supplement (Section S10) demonstrates that these gains also extend to complex panel data.
 We anticipate that this will promote scientific advances in all domains where complex POMP models arise.
 
 
