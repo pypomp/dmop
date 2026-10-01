@@ -1,0 +1,15 @@
+{
+  "method": "DS order-1.5 block Gaussian",
+  "inference_nstep": 20,
+  "evaluation_nstep": 20,
+  "start": 4,
+  "iteration": 62,
+  "elapsed_seconds": 520.7271395209827,
+  "pseudo_loglik": -5258.769498759872,
+  "euler20_loglik": -5273.223657381848,
+  "euler20_se": NaN,
+  "eval_particles": 5000,
+  "eval_replicates": 1,
+  "evaluation_seed": 32635520,
+  "evaluation_status": "ok"
+}

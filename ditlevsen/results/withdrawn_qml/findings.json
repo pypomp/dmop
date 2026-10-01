@@ -1,0 +1,111 @@
+{
+  "evaluation_model": "Dacca Euler model with 20 substeps per month",
+  "ifad_097_paper_best": -3744.17,
+  "published_parameter_point": -3747.950208875291,
+  "ditlevsen_fits": [
+    {
+      "substeps": 1,
+      "attempts": 5,
+      "successful_fits": 0,
+      "best_euler20_loglik": null,
+      "median_euler20_loglik": null
+    },
+    {
+      "substeps": 2,
+      "attempts": 5,
+      "successful_fits": 0,
+      "best_euler20_loglik": null,
+      "median_euler20_loglik": null
+    },
+    {
+      "substeps": 5,
+      "attempts": 5,
+      "successful_fits": 5,
+      "best_euler20_loglik": -3754.327940621854,
+      "median_euler20_loglik": -5937.0653031249285
+    },
+    {
+      "substeps": 10,
+      "attempts": 5,
+      "successful_fits": 5,
+      "best_euler20_loglik": -3753.855897105865,
+      "median_euler20_loglik": -5913.897252416681
+    },
+    {
+      "substeps": 20,
+      "attempts": 5,
+      "successful_fits": 5,
+      "best_euler20_loglik": -3754.058124062447,
+      "median_euler20_loglik": -5913.4485560581
+    }
+  ],
+  "ordinary_backward_ess_at_20": 1.0747649024861456,
+  "bridge_backward_ess_at_20": 124.66724652127448,
+  "substep_trend_interpretation": "The DS-QML Euler-20 scores at r=5,10,20 are effectively flat, not monotonically improving or worsening. This deterministic wrapper has no sampled genealogy, so it does not test the expected DS-SAEM path-degeneracy trend. Ordinary backward-weight ESS does degrade.",
+  "manuscript_comparable_effort": [
+    {
+      "method": "IFAD-0",
+      "searches": 100,
+      "best_euler20_loglik": -3748.6105425372016,
+      "median_euler20_loglik": -3753.8777518167694
+    },
+    {
+      "method": "IFAD-0.97",
+      "searches": 100,
+      "best_euler20_loglik": -3744.0448437779,
+      "median_euler20_loglik": -3745.765831156009
+    },
+    {
+      "method": "IFAD-1",
+      "searches": 100,
+      "best_euler20_loglik": -3745.080717062543,
+      "median_euler20_loglik": -3749.1218936510495
+    },
+    {
+      "method": "IF2",
+      "searches": 100,
+      "best_euler20_loglik": -3747.8157647799,
+      "median_euler20_loglik": -3755.4056880505864
+    }
+  ],
+  "timed_published_start_trace": [
+    {
+      "substeps": 5,
+      "elapsed_seconds": 31.041968408040702,
+      "initial_euler20_loglik": -3748.531562995436,
+      "final_euler20_loglik": -3754.505196964401,
+      "change_euler20_loglik": -5.973633968964805
+    },
+    {
+      "substeps": 10,
+      "elapsed_seconds": 54.23885925399372,
+      "initial_euler20_loglik": -3747.535134813876,
+      "final_euler20_loglik": -3754.461998943658,
+      "change_euler20_loglik": -6.926864129781734
+    },
+    {
+      "substeps": 20,
+      "elapsed_seconds": 101.3175324620097,
+      "initial_euler20_loglik": -3748.956765954205,
+      "final_euler20_loglik": -3754.252244555184,
+      "change_euler20_loglik": -5.295478600979095
+    }
+  ],
+  "krylov_published_start": [
+    {
+      "substeps": 5,
+      "euler20_loglik": -3754.0045991471648,
+      "euler20_se": 0.1503881947703858
+    },
+    {
+      "substeps": 10,
+      "euler20_loglik": -3754.1236232185,
+      "euler20_se": 0.2234220325240023
+    },
+    {
+      "substeps": 20,
+      "euler20_loglik": -3754.062057292264,
+      "euler20_se": 0.1425691048050267
+    }
+  ]
+}

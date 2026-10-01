@@ -1,0 +1,47 @@
+{
+  "nsteps": [
+    1,
+    2,
+    5,
+    10,
+    20
+  ],
+  "diagnostic_nsteps": [
+    1,
+    2,
+    5,
+    10,
+    20,
+    40
+  ],
+  "stability_nsteps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    20
+  ],
+  "starts": 5,
+  "iterations": 25,
+  "learning_rate": 0.003,
+  "relative_floor": 1e-10,
+  "max_observations": null,
+  "completed": false,
+  "krylov_only": false,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "evaluation_nstep": 20,
+  "mixing_particles": 128,
+  "mixing_replicates": 500,
+  "mixing_sensitivity_replicates": 100,
+  "mixing_sensitivity_spreads": [
+    0.001,
+    0.01,
+    0.1
+  ],
+  "parent_spread": 0.01,
+  "seed": 631409,
+  "output": "results/data"
+}

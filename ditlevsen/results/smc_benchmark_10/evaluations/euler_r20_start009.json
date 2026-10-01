@@ -1,0 +1,14 @@
+{
+  "method": "DS regularized pseudo-score",
+  "inference_nstep": 20,
+  "evaluation_nstep": 20,
+  "start": 9,
+  "updates_completed": 803,
+  "termination_reason": "time-budget",
+  "euler20_loglik": -3814.285083518039,
+  "euler20_se": 0.10167606735345602,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "evaluation_seed": 32645444,
+  "evaluation_status": "ok"
+}
