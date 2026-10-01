@@ -31,6 +31,7 @@ from plotnine import (
     labs,
     scale_color_manual,
     scale_fill_manual,
+    scale_linetype_manual,
     scale_x_continuous,
     scale_y_continuous,
     theme,
@@ -45,6 +46,8 @@ from .plots import BEST_KNOWN, PARAMETER_LABELS, PARAMETERS, _trace_summary
 
 OFFSET = 92.16042757034302
 TOTAL = 942.8173823356628
+# The continuation medians and envelopes span approximately -3814 to -3741.
+TRACE_LIMITS = (-3820.0, -3735.0)
 METHODS = [
     "Corenflos",
     "Corenflos + IF2",
@@ -280,7 +283,8 @@ def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
 def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
     order = ["IF2 warm start", "IFAD-0.97", "Ditlevsen + IF2", "Corenflos + IF2"]
     frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
-    corenflos = frame.loc[frame["source"].eq("Corenflos + IF2")]
+    linetypes = {source: "solid" for source in order}
+    linetypes["Corenflos + IF2"] = "dashed"
     plot = (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
         + geom_ribbon(
@@ -289,15 +293,9 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
             color=None,
             show_legend=False,
         )
-        + geom_line(size=1.2)
+        + geom_line(aes(linetype="source"), size=1.0)
         + geom_line(aes(y="q10"), alpha=0.2, size=0.6, show_legend=False)
         + geom_line(aes(y="maximum"), alpha=0.2, size=0.6, show_legend=False)
-        + geom_line(
-            data=corenflos,
-            color=COLORS["Corenflos + IF2"],
-            size=1.8,
-            show_legend=False,
-        )
         + geom_vline(xintercept=OFFSET, color="black", linetype="dotted", size=1.0)
         + geom_hline(
             yintercept=BEST_KNOWN,
@@ -307,6 +305,7 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
         )
         + scale_color_manual(values=COLORS, breaks=order)
         + scale_fill_manual(values=COLORS, breaks=order)
+        + scale_linetype_manual(values=linetypes, breaks=order)
         + labs(x="Elapsed Time (Seconds)", y="Log-Likelihood")
         + theme_minimal()
         + theme(
@@ -321,7 +320,11 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
             panel_grid_minor=element_blank(),
         )
     )
-    (plot + coord_cartesian(xlim=(0, TOTAL), ylim=(-4300.0, None))).save(
+    (
+        plot
+        + scale_y_continuous(breaks=list(range(-3820, -3734, 10)))
+        + coord_cartesian(xlim=(0, TOTAL), ylim=TRACE_LIMITS)
+    ).save(
         output / "optimization_if2warm_elapsed_r20.png",
         width=7.5,
         height=4.0,
