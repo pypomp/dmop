@@ -19,6 +19,7 @@ from plotnine import (
     element_text,
     facet_wrap,
     geom_boxplot,
+    geom_col,
     geom_density,
     geom_hline,
     geom_line,
@@ -31,6 +32,7 @@ from plotnine import (
     scale_color_manual,
     scale_fill_manual,
     scale_linetype_manual,
+    scale_shape_manual,
     scale_x_continuous,
     scale_y_continuous,
     theme,
@@ -384,6 +386,129 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
     )
 
 
+def _objective_mismatch_frame(args: argparse.Namespace) -> pd.DataFrame:
+    baseline = _read(args.warm_start / "warm_start_evaluations.csv")
+    baseline = baseline[["start", "euler20_loglik"]].rename(
+        columns={"euler20_loglik": "initial_euler_loglik"}
+    )
+    rows = []
+    for directory, source in (
+        (args.corenflos_warm, "Corenflos + IF2"),
+        (args.ditlevsen_warm, "Ditlevsen + IF2"),
+    ):
+        fits = _read(directory / "fit_summary.csv")
+        training = _read(directory / "optimization_training_traces.csv")
+        final = _read(directory / "final_evaluations.csv")
+        if set(fits["start"]) != set(baseline["start"]) or set(final["start"]) != set(
+            baseline["start"]
+        ):
+            raise ValueError(f"{source}: mismatched warm-start identities")
+        selected = fits[["start", "output_selected_iteration"]].rename(
+            columns={"output_selected_iteration": "iteration"}
+        ).merge(
+            training[["start", "iteration", "pseudo_loglik"]],
+            on=["start", "iteration"],
+            how="left",
+            validate="one_to_one",
+        ).rename(columns={"pseudo_loglik": "selected_training_loglik"})
+        initial = training.loc[training["iteration"].eq(0), ["start", "pseudo_loglik"]]
+        initial = initial.rename(columns={"pseudo_loglik": "initial_training_loglik"})
+        final = final[["start", "euler20_loglik"]].rename(
+            columns={"euler20_loglik": "selected_euler_loglik"}
+        )
+        matched = (
+            selected.merge(initial, on="start", how="left", validate="one_to_one")
+            .merge(baseline, on="start", how="left", validate="one_to_one")
+            .merge(final, on="start", how="left", validate="one_to_one")
+            .rename(columns={"iteration": "output_selected_iteration"})
+            .sort_values("start")
+        )
+        value_columns = [
+            "initial_training_loglik", "selected_training_loglik",
+            "initial_euler_loglik", "selected_euler_loglik",
+        ]
+        if not np.isfinite(matched[value_columns].to_numpy()).all():
+            raise ValueError(f"{source}: missing/non-finite paired objective values")
+        matched["training_delta"] = (
+            matched["selected_training_loglik"] - matched["initial_training_loglik"]
+        )
+        matched["euler_delta"] = (
+            matched["selected_euler_loglik"] - matched["initial_euler_loglik"]
+        )
+        matched["source"] = DISPLAY_LABELS[source]
+        rows.append(matched)
+    return pd.concat(rows, ignore_index=True)
+
+
+def plot_objective_mismatch(frame: pd.DataFrame, output: Path) -> None:
+    order = [DISPLAY_LABELS[source] for source in ("Corenflos + IF2", "Ditlevsen + IF2")]
+    frame = frame.copy()
+    frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
+    medians = frame.groupby("source", observed=True)[["training_delta", "euler_delta"]].median()
+    summary = medians.reset_index().melt(
+        id_vars="source", var_name="objective", value_name="median_change"
+    )
+    objective_labels = {
+        "training_delta": "Logged training", "euler_delta": "Euler-20",
+    }
+    summary["objective"] = pd.Categorical(
+        summary["objective"].map(objective_labels),
+        categories=list(objective_labels.values()),
+        ordered=True,
+    )
+    styling = theme(
+        axis_text_x=element_text(size=12, color="black"),
+        axis_text_y=element_text(size=12, color="black"),
+        axis_title_x=element_text(size=14, color="black"),
+        axis_title_y=element_text(size=14, color="black"),
+        strip_text=element_text(size=12, color="black"),
+        legend_text=element_text(size=11, color="black"),
+        legend_title=element_blank(),
+        legend_position="bottom",
+        panel_grid_major=element_line(color="#e5e5e5", size=0.8),
+        panel_grid_minor=element_blank(),
+    )
+    (
+        ggplot(summary, aes(x="objective", y="median_change", fill="objective"))
+        + geom_col(width=0.6, show_legend=False)
+        + geom_hline(yintercept=0.0, color="black", size=0.6)
+        + facet_wrap("source", nrow=1)
+        + scale_fill_manual(values={"Logged training": "#969696", "Euler-20": "#31688e"})
+        + labs(x="", y="Median paired log-likelihood change")
+        + theme_minimal()
+        + styling
+    ).save(
+        output / "objective_mismatch_if2warm_medians_r20.png",
+        width=9.4, height=4.3, dpi=220, verbose=False,
+    )
+    frame["marker"] = "Warm starts"
+    medians = medians.reset_index()
+    medians["marker"] = "Marginal medians"
+    (
+        ggplot(frame, aes(x="training_delta", y="euler_delta", color="source"))
+        + geom_vline(xintercept=0.0, color="#666666", linetype="dashed", size=0.6)
+        + geom_hline(yintercept=0.0, color="#666666", linetype="dashed", size=0.6)
+        + geom_point(aes(shape="marker"), size=2.0, alpha=0.65)
+        + geom_point(
+            aes(shape="marker"), data=medians,
+            size=4.0, color="black", fill="white", stroke=1.1,
+        )
+        + facet_wrap("source", nrow=1)
+        + scale_color_manual(
+            values={DISPLAY_LABELS[source]: COLORS[source] for source in ("Corenflos + IF2", "Ditlevsen + IF2")},
+            guide=None,
+        )
+        + scale_shape_manual(values={"Warm starts": "o", "Marginal medians": "D"})
+        + labs(x="Logged training log-likelihood change", y="Euler-20 log-likelihood change")
+        + theme_minimal()
+        + styling
+        + theme(panel_spacing_x=0.055)
+    ).save(
+        output / "objective_mismatch_if2warm_paired_r20.png",
+        width=9.4, height=4.5, dpi=220, verbose=False,
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -435,6 +560,9 @@ def main() -> None:
     plot_likelihood(_likelihood_frame(args), args.output)
     plot_parameters(_parameter_frame(args), args.output)
     plot_optimization(_optimization_frame(args), args.output)
+    mismatch = _objective_mismatch_frame(args)
+    mismatch.to_csv(args.output.parent / "objective_mismatch_if2warm_r20.csv", index=False)
+    plot_objective_mismatch(mismatch, args.output)
 
 
 if __name__ == "__main__":

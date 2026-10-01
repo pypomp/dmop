@@ -20,6 +20,8 @@ FIGURES = {
     "parameter_if2warm_comparison_r20.png",
     "optimization_if2warm_elapsed_r20.png",
     "optimization_if2warm_elapsed_full_r20.png",
+    "objective_mismatch_if2warm_medians_r20.png",
+    "objective_mismatch_if2warm_paired_r20.png",
 }
 
 
