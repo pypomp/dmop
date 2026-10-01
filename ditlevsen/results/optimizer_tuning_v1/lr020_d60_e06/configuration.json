@@ -1,0 +1,35 @@
+{
+  "stages": [
+    "selected-eval"
+  ],
+  "output": "results/optimizer_tuning_v1/lr020_d60_e06",
+  "seed": 631409,
+  "starts": 10,
+  "nsteps": [
+    20
+  ],
+  "transition": "block",
+  "particles": 100,
+  "iterations": 5000,
+  "learning_rate": 0.02,
+  "learning_rate_decay_start": 60,
+  "learning_rate_decay_exponent": 0.6,
+  "burnin": 30,
+  "gain_exponent": 0.9,
+  "order": 2,
+  "relative_floor": 1e-12,
+  "gradient_clip": 100.0,
+  "maximum_backtracks": 6,
+  "maximum_consecutive_rejections": 10,
+  "maximum_path_retries": 3,
+  "backtrack_factor": 0.5,
+  "maximum_acceptable_invalid_fraction": 0.5,
+  "maximum_elapsed_seconds": 300.0,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "trace_every_seconds": 100.0,
+  "trace_eval_particles": 1000,
+  "trace_eval_replicates": 4,
+  "workers": 10,
+  "worker_index": 0
+}
