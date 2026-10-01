@@ -1,5 +1,56 @@
 # Handoff
 
+## October 1, 2026: higher-particle experiment running
+
+- User requested higher-particle standalone and IF2-warm-started Corenflos
+  and Ditlevsen. Launched all four variants with 1,000 fitting particles,
+  100 starts each, under `corenflos/results/particle_increase_j1000_final_100`.
+  This is an equal-wall-clock follow-up, not a matched-update experiment.
+  Rates, guards, seeds, update caps, time offsets, budgets, and selection rules
+  are cloned from each corresponding completed 100-particle configuration.
+  Ditlevsen's auxiliary safety guard remains at 100 particles.
+- Active user service: `dmop-particle-increase-j1000-20261001.service`.
+  Main process 3607812; first Corenflos warm-start kernel compiled and the
+  first fit is active on the RTX 3090. At the startup check the service was
+  active/running, GPU utilization was 100%, and there had been no restarts.
+  The other variants are queued, not concurrently running.
+- Pipeline: `python -m corenflos.particle_experiment --particles 1000
+  --starts 100 --partitions 10`. Ten serial partitions interleave ten starts
+  per variant, so all four expose results before the whole experiment ends.
+  One fitting/evaluation subprocess owns the GPU at a time. Each partition's
+  fits are followed by independent final Euler-20 evaluation (5,000 particles,
+  36 replicates); every-update evaluations (5,000 x 1) follow all fits.
+  It then audits configuration, identical starts, trace coverage, and common
+  evaluation effort; writes paired particle-count comparison CSVs; and
+  regenerates comparison/mismatch figures with no prose annotations.
+- `manifest.json` freezes all four planned configurations; `status.json`
+  records the current variant, partition, and stage. Native checkpoints make
+  the job resumable. An output lock prevents duplicate launches. The service
+  uses GPU-only JAX, no GPU preallocation, a /tmp compilation cache, and a
+  48-GiB host-memory limit. It retries failures after 120 seconds, at most
+  three starts within an hour. Inspect failures before manually restarting.
+- All four two-update GPU preflights passed, with finite logged likelihoods
+  and gradients/scores and exact initial-parameter agreement with the old
+  runs. Outputs are in `corenflos/results/particle_increase_j1000_preflight`.
+  Timed runs: Corenflos warm 120.8 s, Ditlevsen warm 16.9 s, Corenflos
+  standalone 32.0 s, Ditlevsen standalone 15.0 s. Warm Corenflos is about
+  40 seconds per likelihood/gradient evaluation at J=1,000, so expect fewer
+  updates within the original 850.657-second continuation budget.
+- All 81 Corenflos/Ditlevsen tests pass, including new configuration,
+  CLI-round-trip, serial-assignment, resume/completion, and audit tests.
+  `git diff --check` is clean. Existing completed experiment outputs and
+  figures are untouched. Do not edit fitting kernels while this job runs.
+- Fitting should take roughly four days, plus evaluation/compilation time.
+  The old standalone Ditlevsen baseline used four concurrent GPU workers;
+  its old/new difference is also affected by scheduling. Report this caveat
+  and update counts; do not claim that comparison isolates particle count.
+- Next: inspect progress with `systemctl --user status
+  dmop-particle-increase-j1000-20261001.service`, its journal, and per-variant
+  checkpoint/evaluation counts. On completion, visually inspect all new
+  figures (especially axis bounds and standalone medians), review paired
+  results and objective mismatch, and commit/push the completed outputs.
+  The long experiment has started; results are not yet complete.
+
 ## October 1, 2026: visualize logged-objective / Euler disagreement
 
 - Added two diagnostic figures for the corrected 100-start IF2-warm-start
@@ -185,8 +236,8 @@
 
 ## Current state
 
-The corrected IF2-warm-start 100-run experiment and its audit are complete.
-No experiment service remains active.
+The corrected 100-particle IF2-warm-start experiment and its audit are complete.
+The four-variant 1,000-particle follow-up is running in the service recorded above.
 
 ## Corrected design
 
