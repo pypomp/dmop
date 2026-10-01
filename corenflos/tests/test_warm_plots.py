@@ -82,7 +82,7 @@ def test_optimization_views_keep_six_sources_and_requested_limits(
     focused = saved["optimization_if2warm_elapsed_r20.png"]
     overview = saved["optimization_if2warm_elapsed_full_r20.png"]
     assert focused.coordinates.limits.y == warm_plots.TRACE_LIMITS
-    assert overview.coordinates.limits.y == (-4300.0, -3735.0)
+    assert overview.coordinates.limits.y == (-4800.0, -3735.0)
     assert set(focused.data["source"]) == {
         "IF2 warm start", "IFAD-0.97", "Corenflos + IF2", "Ditlevsen + IF2",
     }
@@ -90,6 +90,41 @@ def test_optimization_views_keep_six_sources_and_requested_limits(
     assert overview.data["source"].notna().all()
     corenflos = overview.data.loc[overview.data["source"].eq("Corenflos")]
     assert corenflos["median"].max() == -4560.0  # Never clamp to the visible axis.
-    assert overview.layers[-1].geom.aes_params["label"] == (
-        "Corenflos median below axis (ends at -4560)"
+    assert corenflos["median"].between(*overview.coordinates.limits.y).all()
+    for plot in (focused, overview):
+        assert plot.labels.caption is None
+        for aesthetic in ("color", "fill", "linetype"):
+            scale = plot.scales.get_scales(aesthetic)
+            assert scale.labels == [
+                warm_plots.DISPLAY_LABELS.get(source, source) for source in scale.breaks
+            ]
+        assert all(
+            type(layer.geom).__name__ not in ("geom_text", "geom_label")
+            for layer in plot.layers
+        )
+
+
+def test_comparison_figures_label_if2_warm_starts(monkeypatch, tmp_path):
+    saved = {}
+    monkeypatch.setattr(
+        ggplot, "save", lambda self, filename, **kwargs: saved.update({filename.name: self})
     )
+    warm_plots.plot_likelihood(
+        pd.DataFrame(
+            {"Model": warm_plots.METHODS, "logLik": [-4000.0] * len(warm_plots.METHODS)}
+        ),
+        tmp_path,
+    )
+    parameters = pd.DataFrame(
+        {parameter: [1.0] * len(warm_plots.METHODS) for parameter in warm_plots.PARAMETERS}
+    )
+    parameters["source"] = warm_plots.METHODS
+    warm_plots.plot_parameters(parameters, tmp_path)
+    labels = [
+        warm_plots.DISPLAY_LABELS.get(source, source) for source in warm_plots.METHODS
+    ]
+    likelihood = saved["likelihood_if2warm_comparison_r20.png"]
+    assert likelihood.scales.get_scales("x").labels == labels
+    parameters = saved["parameter_if2warm_comparison_r20.png"]
+    for aesthetic in ("color", "fill"):
+        assert parameters.scales.get_scales(aesthetic).labels == labels

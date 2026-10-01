@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 from plotnine import (
     aes,
-    annotate,
     coord_cartesian,
     coord_flip,
     element_blank,
@@ -48,7 +47,7 @@ OFFSET = 92.16042757034302
 TOTAL = 942.8173823356628
 # The continuation medians and envelopes span approximately -3814 to -3741.
 TRACE_LIMITS = (-3820.0, -3735.0)
-OVERVIEW_LIMITS = (-4300.0, -3735.0)
+OVERVIEW_LIMITS = (-4800.0, -3735.0)
 METHODS = [
     "Corenflos",
     "Corenflos + IF2",
@@ -65,6 +64,10 @@ COLORS = {
     "IF2 checkpoint": "#e6c700",
     "IF2 warm start": "#e6c700",
     "IFAD-0.97": "#31688e",
+}
+DISPLAY_LABELS = {
+    "Corenflos + IF2": "Corenflos + IF2 warm start",
+    "Ditlevsen + IF2": "Ditlevsen + IF2 warm start",
 }
 
 
@@ -142,7 +145,7 @@ def plot_likelihood(frame: pd.DataFrame, output: Path) -> None:
         + coord_flip()
         + scale_x_continuous(
             breaks=list(positions.values()),
-            labels=METHODS,
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
             limits=(-0.5, len(METHODS) - 0.5),
         )
         + scale_y_continuous(breaks=list(range(-4300, -3699, 100)))
@@ -220,8 +223,16 @@ def plot_parameters(frame: pd.DataFrame, output: Path) -> None:
         + facet_wrap("quantity_label", scales="free", ncol=3)
         + scale_x_continuous(labels=lambda values: [f"{value:g}" for value in values])
         + scale_y_continuous(labels=lambda values: [f"{value:g}" for value in values])
-        + scale_color_manual(values=COLORS, breaks=METHODS)
-        + scale_fill_manual(values=COLORS, breaks=METHODS)
+        + scale_color_manual(
+            values=COLORS,
+            breaks=METHODS,
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
+        )
+        + scale_fill_manual(
+            values=COLORS,
+            breaks=METHODS,
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
+        )
         + theme_minimal()
         + theme(
             axis_text_x=element_text(size=10, color="black"),
@@ -301,6 +312,7 @@ def _optimization_plot(frame: pd.DataFrame, order: list[str]) -> ggplot:
     frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
     linetypes = {source: "solid" for source in order}
     linetypes["Corenflos + IF2"] = "dashed"
+    labels = [DISPLAY_LABELS.get(source, source) for source in order]
     return (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
         + geom_ribbon(
@@ -319,9 +331,9 @@ def _optimization_plot(frame: pd.DataFrame, order: list[str]) -> ggplot:
             linetype="dotted",
             size=1.2,
         )
-        + scale_color_manual(values=COLORS, breaks=order)
-        + scale_fill_manual(values=COLORS, breaks=order)
-        + scale_linetype_manual(values=linetypes, breaks=order)
+        + scale_color_manual(values=COLORS, breaks=order, labels=labels)
+        + scale_fill_manual(values=COLORS, breaks=order, labels=labels)
+        + scale_linetype_manual(values=linetypes, breaks=order, labels=labels)
         + labs(x="Elapsed Time (Seconds)", y="Log-Likelihood")
         + theme_minimal()
         + theme(
@@ -360,22 +372,9 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
             size=0.6,
             show_legend=False,
         )
-        + scale_y_continuous(breaks=list(range(-4300, -3799, 100)))
+        + scale_y_continuous(breaks=list(range(-4800, -3799, 200)))
         + coord_cartesian(xlim=(0, TOTAL), ylim=OVERVIEW_LIMITS)
-        + labs(caption="Thick lines: medians; bands: 10th percentile–maximum.")
     )
-    # Do not clamp an off-scale median to the axis and imply a false plateau.
-    cold = frame.loc[frame["source"].eq("Corenflos")].sort_values("elapsed_seconds")
-    if not cold.empty and cold["median"].max() < OVERVIEW_LIMITS[0]:
-        overview += annotate(
-            "text",
-            x=TOTAL * 0.98,
-            y=OVERVIEW_LIMITS[0] + 20,
-            label=f"Corenflos median below axis (ends at {cold.iloc[-1]['median']:.0f})",
-            ha="right",
-            size=8,
-            color="#9e5e27",
-        )
     overview.save(
         output / "optimization_if2warm_elapsed_full_r20.png",
         width=7.5,
