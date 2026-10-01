@@ -1,0 +1,3 @@
+configuration,fit_particles,learning_rate,burnin,decay_start,method,inference_nstep,evaluation_nstep,start,updates_completed,termination_reason,euler20_loglik,euler20_se,eval_particles,eval_replicates,evaluation_seed,evaluation_status,elapsed_seconds,initial_pseudo_loglik,final_pseudo_loglik
+j0100_lr0p050,100,0.05,30,90,DS order-1.5 block Gaussian,20,20,0,97,time-budget,-3905.918565155508,0.2078423715292533,5000,36,32636471,ok,404.9051153679611,-6230.911766319752,-3941.703868298513
+j0100_lr0p100,100,0.1,30,90,DS order-1.5 block Gaussian,20,20,0,94,time-budget,-3877.318605766644,0.1353104286825496,5000,36,32636471,ok,402.9171396099264,-6230.911766319752,-4004.044457867448
