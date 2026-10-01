@@ -1,5 +1,31 @@
 # Handoff
 
+## October 1, 2026: visualize logged-objective / Euler disagreement
+
+- Added two diagnostic figures for the corrected 100-start IF2-warm-start
+  experiment: `objective_mismatch_if2warm_medians_r20.png` compares median
+  logged-training and independently evaluated Euler-20 changes;
+  `objective_mismatch_if2warm_paired_r20.png` plots each start's two changes,
+  with a separate panel per method, zero reference lines, and marginal-median
+  diamond markers. All 100 starts per method, including outliers, remain in
+  the scatter. No titles, captions, or prose annotations were added.
+- Changes are paired by start identity. Logged-training change uses the
+  pseudo log likelihood at `output_selected_iteration` minus iteration 0,
+  not an unselected terminal update. Euler change uses the 5,000-particle,
+  36-replicate final evaluation minus the matching IF2 checkpoint evaluation.
+  Exported all 200 paired rows to
+  `corenflos/results/if2warm_ifad097_comparison/objective_mismatch_if2warm_r20.csv`.
+- Verified medians match the previous diagnosis exactly: Corenflos +5.564
+  logged-training / -0.103 Euler; Ditlevsen +17.244 / -1.777. Opposite signs
+  (logged training improves, Euler worsens) occur for 33/100 Corenflos starts
+  and 80/100 Ditlevsen starts. These are observed disagreements; the noisy,
+  single-filter training values do not prove objective bias by themselves.
+- Added tests for shuffled-row identity pairing, selected-update selection,
+  missing inputs, paired medians, full scatter inclusion, and no plot prose.
+  All 59 Corenflos/Ditlevsen tests and the expanded six-figure completion
+  audit pass. Both new PNGs were visually checked; the four prior PNGs and
+  all experimental results are unchanged. `git diff --check` is clean.
+
 ## October 1, 2026: remove plot prose and show the Corenflos median
 
 - User preference: no explanatory captions or prose annotations on these

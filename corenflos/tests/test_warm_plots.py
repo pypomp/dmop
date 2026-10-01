@@ -128,3 +128,101 @@ def test_comparison_figures_label_if2_warm_starts(monkeypatch, tmp_path):
     parameters = saved["parameter_if2warm_comparison_r20.png"]
     for aesthetic in ("color", "fill"):
         assert parameters.scales.get_scales(aesthetic).labels == labels
+
+
+@pytest.fixture
+def mismatch_inputs(monkeypatch):
+    args = SimpleNamespace(
+        warm_start=Path("checkpoint"),
+        corenflos_warm=Path("corenflos_warm"),
+        ditlevsen_warm=Path("ditlevsen_warm"),
+    )
+    files = {
+        args.warm_start / "warm_start_evaluations.csv": pd.DataFrame(
+            {"start": [1, 0], "euler20_loglik": [-20.0, -10.0]}
+        ),
+    }
+    for directory, selected, final in (
+        (args.corenflos_warm, [-194.0, -95.0], [-21.0, -9.0]),
+        (args.ditlevsen_warm, [-182.0, -83.0], [-22.0, -11.0]),
+    ):
+        files[directory / "fit_summary.csv"] = pd.DataFrame(
+            {"start": [0, 1], "output_selected_iteration": [1, 2]}
+        )
+        # Shuffled rows and later, unselected updates must not affect pairing.
+        files[directory / "optimization_training_traces.csv"] = pd.DataFrame(
+            {
+                "start": [1, 0, 1, 0, 1, 0],
+                "iteration": [2, 0, 0, 1, 3, 2],
+                "pseudo_loglik": [selected[0], -100.0, -200.0, selected[1], 999.0, 999.0],
+            }
+        )
+        files[directory / "final_evaluations.csv"] = pd.DataFrame(
+            {"start": [1, 0], "euler20_loglik": final}
+        )
+    monkeypatch.setattr(warm_plots, "_read", lambda path: files[path].copy())
+    return args, files
+
+
+def test_objective_mismatch_pairs_starts_and_selected_updates(mismatch_inputs):
+    args, _ = mismatch_inputs
+    frame = warm_plots._objective_mismatch_frame(args)
+    assert len(frame) == 4
+    for source, training, euler in (
+        ("Corenflos + IF2", [5.0, 6.0], [1.0, -1.0]),
+        ("Ditlevsen + IF2", [17.0, 18.0], [-1.0, -2.0]),
+    ):
+        matched = frame.loc[frame["source"].eq(warm_plots.DISPLAY_LABELS[source])]
+        assert matched["start"].tolist() == [0, 1]
+        assert matched["output_selected_iteration"].tolist() == [1, 2]
+        assert matched["training_delta"].tolist() == training
+        assert matched["euler_delta"].tolist() == euler
+
+
+def test_objective_mismatch_rejects_missing_selected_update(mismatch_inputs):
+    args, files = mismatch_inputs
+    path = args.corenflos_warm / "optimization_training_traces.csv"
+    files[path] = files[path].loc[
+        ~(files[path]["start"].eq(0) & files[path]["iteration"].eq(1))
+    ]
+    with pytest.raises(ValueError, match="missing/non-finite paired objective values"):
+        warm_plots._objective_mismatch_frame(args)
+
+
+def test_objective_mismatch_rejects_missing_final_start(mismatch_inputs):
+    args, files = mismatch_inputs
+    path = args.ditlevsen_warm / "final_evaluations.csv"
+    files[path] = files[path].iloc[:1]
+    with pytest.raises(ValueError, match="mismatched warm-start identities"):
+        warm_plots._objective_mismatch_frame(args)
+
+
+def test_objective_mismatch_plots_paired_medians_without_plot_prose(
+    mismatch_inputs, monkeypatch, tmp_path
+):
+    args, _ = mismatch_inputs
+    frame = warm_plots._objective_mismatch_frame(args)
+    original = frame.copy(deep=True)
+    saved = {}
+    monkeypatch.setattr(
+        ggplot, "save", lambda self, filename, **kwargs: saved.update({filename.name: self})
+    )
+    warm_plots.plot_objective_mismatch(frame, tmp_path)
+    pd.testing.assert_frame_equal(frame, original)
+    summary = saved["objective_mismatch_if2warm_medians_r20.png"].data
+    expected = {
+        ("Corenflos + IF2 warm start", "Logged training"): 5.5,
+        ("Corenflos + IF2 warm start", "Euler-20"): 0.0,
+        ("Ditlevsen + IF2 warm start", "Logged training"): 17.5,
+        ("Ditlevsen + IF2 warm start", "Euler-20"): -1.5,
+    }
+    assert summary.set_index(["source", "objective"])["median_change"].to_dict() == expected
+    scatter = saved["objective_mismatch_if2warm_paired_r20.png"]
+    assert len(scatter.data) == len(frame)
+    for plot in saved.values():
+        assert plot.labels.caption is None
+        assert plot.labels.title is None
+        assert all(
+            type(layer.geom).__name__ not in ("geom_text", "geom_label")
+            for layer in plot.layers
+        )
