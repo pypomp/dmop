@@ -113,3 +113,31 @@ python -m corenflos.plots --data results/corenflos_j100_eps025_final_100
 
 References: [Corenflos et al. (2021)](https://proceedings.mlr.press/v139/corenflos21a.html)
 and the [FilterFlow source](https://github.com/JTT94/filterflow).
+
+## Higher-particle follow-up
+
+`python -m corenflos.particle_experiment --particles 1000` runs standalone and
+IF2-warm-started Corenflos and Ditlevsen on the same 100 starts as their
+100-particle counterparts. It clones each completed run's settings, changing
+the fitting particle count and output directory while keeping its learning
+rate, guards, update cap, elapsed-time budget, and output-selection rule.
+All four two-update GPU preflights passed with identical initial parameters.
+
+The pipeline interleaves ten batches of ten starts per variant. These are
+serial partitions, not concurrent GPU workers. Each batch receives independent
+Euler-20 final evaluations with 5,000 particles and 36 replicates. After all
+fits, every stored update is evaluated with 5,000 particles and one replicate
+in bounded subprocesses. Completed checkpoints and evaluations are reused on
+restart; changed manifests and failed evaluations require inspection.
+
+Outputs are under `results/particle_increase_j1000_final_100`, with one
+subdirectory per variant and `manifest.json` / `status.json` at the top.
+The completion audit checks starts, configuration, every-update coverage, and
+evaluation effort, then exports paired 100-versus-1,000-particle comparisons
+and regenerates the comparison and mismatch PNGs. Do not add explanatory
+captions or prose annotations to these figures.
+
+This is an equal-wall-clock comparison: more particles can mean substantially
+fewer updates, especially for Corenflos. Report update counts with likelihoods.
+The older standalone Ditlevsen baseline also had four concurrent GPU workers;
+its old/new difference cannot isolate particle count from scheduling.
