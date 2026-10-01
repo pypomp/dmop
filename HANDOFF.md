@@ -1,5 +1,40 @@
 # Handoff
 
+## October 1, 2026: include standalone runs in the overview
+
+- The full optimization figure now includes standalone Corenflos and
+  Ditlevsen alongside their IF2-warm-start versions, IF2, and IFAD-0.97.
+  Its displayed limits are -4300 through -3735. The preceding plotting
+  implementation omitted both standalone trace sources; this was an oversight.
+- Retained the separate -3820 through -3735 continuation zoom. Made the
+  standalone maximum-envelope boundaries more visible and labeled the bands.
+  Corenflos's standalone median is below -4300 throughout, ending near -4560;
+  the overview explicitly labels that fact rather than clamping the median.
+  Ditlevsen's standalone median ends near -4099. These are one-replicate
+  trajectory summaries, not the 36-replicate selected-final estimates.
+- Visually checked both optimization PNGs. Only the overview PNG changes;
+  the focused optimization, likelihood, and parameter PNGs are unchanged.
+  Added regression tests for all six trace sources, warm origins, separate
+  limits, and preservation of the off-scale median. All 54 Corenflos/Ditlevsen
+  tests and the completion audit pass; `git diff --check` is clean.
+- Investigated the apparent warm-start plateau using existing fit logs and
+  optimizer code; no training runs or algorithm settings were changed.
+  Median completed updates are 213 for Corenflos and 252 for Ditlevsen, and
+  parameters move in both. Logged training-objective median changes at the
+  selected updates are +5.564 and +17.244, respectively, while paired final
+  Euler-20 median changes are -0.103 and -1.777. Training values are noisy,
+  single-filter estimates, so these differences alone are not a controlled
+  demonstration of objective bias.
+- Ditlevsen uses an approximate Gaussian block-transition objective and a
+  sampled-path score; Corenflos uses finite-particle entropic transport with
+  clipped transport adjoints. Both fit with 100 particles and conservative
+  learning rates. Every recorded Corenflos gradient norm exceeds its global
+  clipping threshold of 100; 35/100 fits restart and reduce their rate.
+  Ditlevsen clips an averaged score, not the recorded raw score norm.
+  Objective mismatch/noisy directions and conservative steps are the leading
+  explanations, not a frozen optimizer. Distinguishing these quantitatively
+  would require a controlled particle-count/gradient-alignment experiment.
+
 ## October 1, 2026: make continuation traces readable
 
 - Corrected the main warm-start optimization figure's log-likelihood limits
