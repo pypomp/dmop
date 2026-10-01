@@ -10,7 +10,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from ditlevsen.model import project_parameters
+from ditlevsen.model import normalize_parameters, project_parameters
 
 from .dpf import DPFConfig, DPFResult, DaccaArrays, dpf_value_and_grad
 
@@ -60,7 +60,7 @@ def fit_dpf(
     learning_rate: float = 0.01,
     learning_rate_decay: float = 0.0,
     gradient_clip: float = 100.0,
-    maximum_acceptable_invalid_fraction: float = 0.5,
+    maximum_acceptable_invalid_fraction: float = 1.0,
     maximum_pseudo_loglik_drop: float = 30.0,
     rollback_patience: int = 10,
     maximum_restarts: int = 6,
@@ -68,12 +68,14 @@ def fit_dpf(
     maximum_updates: int = 5000,
     maximum_elapsed_seconds: float = 800.0,
     change_seed: bool = True,
+    project_to_bounds: bool = True,
 ) -> FitResult:
-    """Maximize the biased DPF log-likelihood under the manuscript box.
+    """Maximize the biased DPF log-likelihood.
 
     JIT compilation is expected to be warmed by the caller.  Elapsed time
-    includes every value/gradient filter call, including the evaluation of the
-    initial bounding-box draw, and excludes later Euler-20 evaluation.
+    includes every value/gradient filter call and excludes later Euler-20
+    evaluation. Global-search runs remain inside the manuscript box; supplied
+    optimizer checkpoints retain their exact values.
     """
 
     if optimizer not in {"adam", "sgd"}:
@@ -95,7 +97,8 @@ def fit_dpf(
     if not 0.0 < restart_factor < 1.0:
         raise ValueError("restart_factor must be in (0, 1)")
 
-    parameters = project_parameters(jnp.asarray(initial, dtype=jnp.float64))
+    constrain = project_parameters if project_to_bounds else normalize_parameters
+    parameters = constrain(jnp.asarray(initial, dtype=jnp.float64))
     first_key = jax.random.key(seed)
     moment = jnp.zeros_like(parameters)
     second_moment = jnp.zeros_like(parameters)
@@ -142,6 +145,7 @@ def fit_dpf(
         acceptable = (
             np.isfinite(value)
             and np.isfinite(gradient_norm)
+            and invalid_trace[-1] < 1.0
             and invalid_trace[-1] <= maximum_acceptable_invalid_fraction
         )
         if acceptable and value > best_value:
@@ -205,7 +209,7 @@ def fit_dpf(
             )
         else:
             increment = rate * clipped
-        parameters = project_parameters(parameters + increment)
+        parameters = constrain(parameters + increment)
         rate_trace.append(rate)
 
     return FitResult(

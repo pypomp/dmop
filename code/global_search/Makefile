@@ -20,10 +20,13 @@ endif
 else
 GPU_PARTITION = gpu-rtx6000
 GPU_SPEC = rtx_pro_6000_blackwell:1
+# Headroom over the projected worst case, the long IF2-only run with
+# N_MONITORS=1 at ~94 min, since the tripled IF2 iteration counts only stay
+# within the old wall clock if the measured Euler step speedup holds up.
 ifeq ($(LONG),true)
-GPU_TIME = 0-2:00:00
+GPU_TIME = 0-4:00:00
 else
-GPU_TIME = 0-0:30:00
+GPU_TIME = 0-1:00:00
 endif
 endif
 
