@@ -1,5 +1,23 @@
 # Handoff
 
+## October 1, 2026: remove plot prose and show the Corenflos median
+
+- User preference: no explanatory captions or prose annotations on these
+  figures. Keep axis labels and method legends; do not replace a missing
+  curve with text about it.
+- Removed the overview caption and in-panel off-scale annotation. Extended
+  the overview's lower limit to -4800 so the standalone Corenflos median
+  near -4560 is visible alongside the other five methods. The separate
+  continuation zoom's limits are unchanged. Initial cold-start values below -4800
+  remain outside this overview's displayed range.
+- Updated regression tests to check the visible Corenflos median, six methods,
+  no caption, and no text/label annotation layers.
+- Display labels now read "Ditlevsen + IF2 warm start" and "Corenflos + IF2
+  warm start" throughout the optimization, likelihood, and parameter figures.
+  Internal result keys and experiment data are unchanged.
+- Regenerated and visually checked all four PNGs. All 55 Corenflos/Ditlevsen
+  tests and the completion audit pass; `git diff --check` is clean.
+
 ## October 1, 2026: include standalone runs in the overview
 
 - The full optimization figure now includes standalone Corenflos and
