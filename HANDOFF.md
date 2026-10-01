@@ -1,5 +1,19 @@
 # Handoff
 
+## October 1, 2026: make continuation traces readable
+
+- Corrected the main warm-start optimization figure's log-likelihood limits
+  from a -4300 lower bound to -3820 through -3735, with ticks every 10 units.
+  The old scale compressed the continuation traces into a thin strip; the
+  initial September 26 visual inspection missed this readability problem.
+- Used a dashed Corenflos median and removed its extra thick overlaid line,
+  so the nearby Ditlevsen median remains visible. Regenerated both optimization
+  PNGs; the full-range figure retains its overview scale.
+- Checked the regenerated main PNG visually and confirmed that all median,
+  10th-percentile, and maximum values after the IF2 checkpoint fit inside the
+  focused limits. The completion audit still passes; experimental results,
+  likelihood comparison, and parameter figures are unchanged.
+
 ## September 28, 2026: Daphnia references in the main text
 
 - Added the approved Daphnia sentences to the Introduction and Discussion,
