@@ -54,9 +54,8 @@ RW_SD = pp.RWSigma(
     },
     init_names=["S_0", "I_0", "Y_0", "R1_0", "R2_0", "R3_0"],
 )
-COOLING_RATE = 0.8
 
-dacca_obj = pp.models.dacca(dt=None, nstep=20)
+dacca_obj = pp.models.dhaka(dt=None, nstep=20)
 
 ALPHA = float(os.environ.get("ALPHA", "0.97"))
 N_MONITORS = int(os.environ.get("N_MONITORS", "1"))
