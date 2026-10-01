@@ -48,6 +48,7 @@ OFFSET = 92.16042757034302
 TOTAL = 942.8173823356628
 # The continuation medians and envelopes span approximately -3814 to -3741.
 TRACE_LIMITS = (-3820.0, -3735.0)
+OVERVIEW_LIMITS = (-4300.0, -3735.0)
 METHODS = [
     "Corenflos",
     "Corenflos + IF2",
@@ -259,6 +260,14 @@ def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
         _read(args.ditlevsen_warm / "optimization_euler_traces.csv"),
         "Ditlevsen + IF2",
     )
+    corenflos_cold = _trace_summary(
+        _read(args.corenflos_cold / "optimization_euler_traces.csv"),
+        "Corenflos",
+    )
+    ditlevsen_cold = _trace_summary(
+        _read(args.ditlevsen_cold / "optimization_euler_traces.csv"),
+        "Ditlevsen",
+    )
     checkpoint = _read(
         args.warm_start / "warm_start_evaluations.csv"
     )["euler20_loglik"]
@@ -275,17 +284,24 @@ def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
         ]
     )
     return pd.concat(
-        (ifad[columns], origins[columns], corenflos[columns], ditlevsen[columns]),
+        (
+            ifad[columns],
+            origins[columns],
+            corenflos[columns],
+            ditlevsen[columns],
+            corenflos_cold[columns],
+            ditlevsen_cold[columns],
+        ),
         ignore_index=True,
     )
 
 
-def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
-    order = ["IF2 warm start", "IFAD-0.97", "Ditlevsen + IF2", "Corenflos + IF2"]
+def _optimization_plot(frame: pd.DataFrame, order: list[str]) -> ggplot:
+    frame = frame.loc[frame["source"].isin(order)].copy()
     frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
     linetypes = {source: "solid" for source in order}
     linetypes["Corenflos + IF2"] = "dashed"
-    plot = (
+    return (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
         + geom_ribbon(
             aes(ymin="q10", ymax="maximum", fill="source"),
@@ -320,8 +336,12 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
             panel_grid_minor=element_blank(),
         )
     )
+
+
+def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
+    order = ["IF2 warm start", "IFAD-0.97", "Ditlevsen + IF2", "Corenflos + IF2"]
     (
-        plot
+        _optimization_plot(frame, order)
         + scale_y_continuous(breaks=list(range(-3820, -3734, 10)))
         + coord_cartesian(xlim=(0, TOTAL), ylim=TRACE_LIMITS)
     ).save(
@@ -331,7 +351,32 @@ def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
         dpi=220,
         verbose=False,
     )
-    (plot + coord_cartesian(xlim=(0, TOTAL), ylim=(-8000.0, None))).save(
+    overview = (
+        _optimization_plot(frame, order + ["Ditlevsen", "Corenflos"])
+        + geom_line(
+            aes(y="maximum"),
+            data=frame.loc[frame["source"].isin(["Ditlevsen", "Corenflos"])],
+            alpha=0.65,
+            size=0.6,
+            show_legend=False,
+        )
+        + scale_y_continuous(breaks=list(range(-4300, -3799, 100)))
+        + coord_cartesian(xlim=(0, TOTAL), ylim=OVERVIEW_LIMITS)
+        + labs(caption="Thick lines: medians; bands: 10th percentile–maximum.")
+    )
+    # Do not clamp an off-scale median to the axis and imply a false plateau.
+    cold = frame.loc[frame["source"].eq("Corenflos")].sort_values("elapsed_seconds")
+    if not cold.empty and cold["median"].max() < OVERVIEW_LIMITS[0]:
+        overview += annotate(
+            "text",
+            x=TOTAL * 0.98,
+            y=OVERVIEW_LIMITS[0] + 20,
+            label=f"Corenflos median below axis (ends at {cold.iloc[-1]['median']:.0f})",
+            ha="right",
+            size=8,
+            color="#9e5e27",
+        )
+    overview.save(
         output / "optimization_if2warm_elapsed_full_r20.png",
         width=7.5,
         height=4.0,
