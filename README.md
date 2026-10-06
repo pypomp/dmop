@@ -6,3 +6,6 @@
 
 * The source for the original arXiv submission is on Zenodo <https://zenodo.org/doi/10.5281/zenodo.13356896>.
 
+Experiment archives and restoration instructions are in
+[artifacts/README.md](artifacts/README.md). Compact configurations, summaries,
+and figures remain tracked; bulk results stay at their existing local paths.

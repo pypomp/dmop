@@ -1,0 +1,64 @@
+{
+  "created_at_utc": "2026-10-06T18:55:52.451862+00:00",
+  "repository": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop",
+  "base_commit": "612ce3d35bc51c5f6509f014b52a849f68b8979b",
+  "backup_directory": "/home/kevin/storage-audit/dmop-cleanup-20261006T1855Z",
+  "archive": {
+    "filename": "results-and-generated-documents.tar.gz",
+    "bytes": 263380163,
+    "sha256": "c0a4743efa4bf9c820d7c4e394e6573c8e9ae2c8344599935e2044b192fcf564"
+  },
+  "git_bundle": {
+    "filename": "repository-before.bundle",
+    "bytes": 516341414,
+    "sha256": "82183e2b324f27b90e3f6511af40d7429f3d9d3f83364d0c3e813485bfe00d49"
+  },
+  "inventory": {
+    "filename": "file-inventory.json",
+    "sha256": "f293f1644dea57a25099382e4182733a3e81ef61a6358d436f1ab2f17e501b3e",
+    "files": 131071,
+    "logical_bytes": 508280867
+  },
+  "roots": [
+    "corenflos/results",
+    "ditlevsen/results",
+    "code/global_search/dmop_results"
+  ],
+  "generated_documents": [
+    "ms.pdf",
+    "si.pdf",
+    "ditlevsen/method.pdf",
+    "ditlevsen/invertibility_note.pdf",
+    "code/daphnia/report.html",
+    "code/global_search/precise_report.html",
+    "code/global_search/precise_report_long.html"
+  ],
+  "restoration_verified": true,
+  "source_files_unchanged": true,
+  "restoration_directory": "/home/kevin/storage-audit/dmop-cleanup-20261006T1855Z/restore-check",
+  "retained_results": {
+    "manifest": "artifacts/retained-results.txt",
+    "files": 399,
+    "logical_bytes": 19275153
+  },
+  "reproduction": {
+    "code_url": "https://github.com/pypomp/dmop/tree/612ce3d35bc51c5f6509f014b52a849f68b8979b",
+    "j1000_manifest": "corenflos/results/particle_increase_j1000_final_100/manifest.json",
+    "j1000_command": "cd corenflos && python -m corenflos.particle_experiment --particles 1000 --starts 100 --partitions 10",
+    "other_runs": "Retained configuration.json files and method READMEs/scripts record run settings. Restore archived checkpoints and traces before running audits or regenerating plots that require them."
+  },
+  "storage_note": "Existing local storage on kevtan-linux, outside the repository. No off-host or public download copy was created.",
+  "cleanup_verification": {
+    "tracked_files": 580,
+    "retained_result_files": 399,
+    "all_archived_source_files_unchanged": true,
+    "verified_at_utc": "2026-10-06T19:04:37.509624+00:00",
+    "clean_export": "/home/kevin/storage-audit/dmop-cleanup-20261006T1855Z/clean-export",
+    "build_log": "/home/kevin/storage-audit/dmop-cleanup-20261006T1855Z/clean-build.log",
+    "build_command": "latexmk -pdf -interaction=nonstopmode -halt-on-error ms.tex si.tex",
+    "manuscript_pages": 23,
+    "supplement_pages": 68,
+    "undefined_citations_or_references": false,
+    "warnings": "Unchanged TeX sources produce duplicate PDF destination warnings and one manuscript overfull box."
+  }
+}

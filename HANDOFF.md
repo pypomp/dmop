@@ -1,5 +1,32 @@
 # Handoff
 
+## October 6, 2026: backed-up result cleanup
+
+- The J=1000 pipeline completed at 2026-10-06 03:27:20 UTC. All four
+  arms have 100 fits/checkpoints and 100 successful final evaluations.
+  There are 35,043 successful per-update evaluations; the completion audit
+  and six-figure generation finished. Visual review of the new figures remains.
+- Bulk outputs were archived outside the repository at
+  `/home/kevin/storage-audit/dmop-cleanup-20261006T1855Z`.
+  All 131,071 archived files were extracted and SHA-256 verified; original
+  local result files/paths were preserved. The Git bundle preserves all refs.
+- Removed bulk checkpoints, per-update evaluations/traces, global-search
+  pickles, and seven compiled PDF/HTML documents from tracking only.
+  Retained 399 compact result/configuration/figure files, including J=1000
+  summaries. No blanket PDF/CSV ignore rules; manuscript figure PDFs remain.
+- See `artifacts/README.md` and `artifacts/results-archive-20261006.json`
+  for exact hashes, provenance, and restoration. Bulk-data audits/plots in a
+  fresh clone need restoration; existing local scripts retain their paths.
+- The cleaned tracked tree has 580 files. A clean index export builds both
+  manuscript (23 pages) and SI (68 pages) with TinyTeX/latexmk, without
+  undefined references/citations or inputs from the working result tree.
+  Existing duplicate PDF destinations and one manuscript overfull box remain.
+  All archived source files were rehashed after cleanup and were unchanged.
+- This cleanup uses existing local storage and normal Git history. No new
+  repository, external upload, history rewrite, or Overleaf relinking.
+- The October 1 running-state entries below are historical. Remaining work:
+  visually review J=1000 figures and interpret the standalone optimizer stops.
+
 ## October 1, 2026: higher-particle experiment running
 
 - User requested higher-particle standalone and IF2-warm-started Corenflos
@@ -237,7 +264,8 @@
 ## Current state
 
 The corrected 100-particle IF2-warm-start experiment and its audit are complete.
-The four-variant 1,000-particle follow-up is running in the service recorded above.
+The four-variant 1,000-particle follow-up completed on October 6; see the
+latest entry for the archived results and tracking cleanup.
 
 ## Corrected design
 
