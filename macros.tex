@@ -1,27 +1,6 @@
 
 \newcommand\articleTitle{Automatic Differentiation to Improve Parameter Estimation for Partially Observed Markov Processes}
 
-\newcommand\editClaim{Empirically, the benchmark tests suggest that IFAD is a significant methodological advance over the IF2 algorithm of \cite{ionides15} for plug-and-play statistical inference on POMP models.}
-
-\newcommand\editTheoremOne{where the derivative with respect to $\theta$ on the right hand side propagates the derivative of the particle locations, via the chain rule, for fixed $\omega$.}
-
-\newcommand\editAncestorDefinition{  
-  Here,  $X_{1:N,j}^{A,F,\theta}$ is the ancestral trajectory of $X_{N,j}^{F,\theta}$ at times $t_1,\dots,t_N$.
-}
-
-  \newcommand\editPoyiadjisCorrespondence{Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$1$ has a similar form to the consistent but high-variance score estimate in the first algorithm of \cite{poyiadjis11}.
-Unlike  \cite{poyiadjis11}, our algorithm has the plug-and-play property; in the case $\alpha=1$, our algorithm replaces differentiation of the latent transition density in \cite{poyiadjis11} by pathwise differentation of the simulator.}
-
-
-\newcommand\nPrevious{m}
-  
-%% edits for the revision
-\newcommand\editPlugAndPlay{Plug-and-play methods are necessary when transition densities are not available, but can have advantages even when they are.
-The plug-and-play property avoids difficulties arising when the full latent transition densities at different parameter values are mutually singular \citep{roberts01,karppinen24}.
-The plug-and-play property also facilitates the development of statistical software applicable to a broad class of POMP models.}
-\newcommand\newEdit[1]{{\textcolor{blue}{#1}}}
-
-
 %%%%% NEW MATH DEFINITIONS %%%%%
 \usepackage{amsmath,bbm,bm}
 \usepackage{amssymb}
@@ -53,7 +32,7 @@ The plug-and-play property also facilitates the development of statistical softw
 \newcount\comments  % 0 suppresses notes to selves in text
 \comments=1  % TODO: change to 0 for final version
 \newcommand{\genComment}[2]{\ifnum\comments=1{\textcolor{#1}{\textsf{\footnotesize #2}}}\fi}
-\newcommand{\edward}[1]{\genComment{orange}{[EI:#1]}}
+\newcommand{\ed}[1]{\genComment{red}{[EI:#1]}}
 \newcommand{\giles}[1]{\genComment{green}{[GH:#1]}}
 \newcommand{\kevin}[1]{\genComment{blue}{[KT:#1]}}
 
