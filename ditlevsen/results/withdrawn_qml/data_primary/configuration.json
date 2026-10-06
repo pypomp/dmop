@@ -1,0 +1,31 @@
+{
+  "nsteps": [
+    1,
+    2,
+    5,
+    10,
+    20
+  ],
+  "diagnostic_nsteps": [
+    1,
+    2,
+    5,
+    10,
+    20,
+    40
+  ],
+  "starts": 1,
+  "iterations": 40,
+  "learning_rate": 0.003,
+  "relative_floor": 1e-10,
+  "max_observations": null,
+  "completed": false,
+  "eval_particles": 5000,
+  "eval_replicates": 36,
+  "evaluation_nstep": 20,
+  "mixing_particles": 128,
+  "mixing_replicates": 500,
+  "parent_spread": 0.01,
+  "seed": 631409,
+  "output": "results/data_primary"
+}

@@ -1,0 +1,8 @@
+method,inference_nstep,evaluation_nstep,start,fit_converged,evaluation_status,euler_loglik,euler_se,eval_particles,eval_replicates
+Published parameter point,0.0,20,0,True,ok,-3747.950208875291,0.17259510632804878,5000,36
+DS-local+nugget QML,1.0,20,0,False,fit-failed,,,5000,36
+DS-local+nugget QML,2.0,20,0,False,fit-failed,,,5000,36
+DS-local+nugget QML,5.0,20,0,True,ok,-3761.5334685763537,0.31867108790958804,5000,36
+DS-local+nugget QML,10.0,20,0,True,ok,-3760.4086665064683,0.1502085576583788,5000,36
+DS-local+nugget QML,20.0,20,0,True,ok,-3759.2760037727867,0.1588410612722275,5000,36
+IFAD-0.97 (paper),,20,-1,True,paper-value,-3744.17,,5000,36

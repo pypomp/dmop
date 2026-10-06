@@ -1,0 +1,4 @@
+start,inference_nstep,particles,updates_requested,updates_completed,learning_rate,burnin,termination_reason,elapsed_seconds,total_backtracks,start_euler20_loglik,final_euler20_loglik,euler20_change,final_euler20_se,maximum_invalid_fraction,minimum_ess
+0,5,128,20,19,0.05,5,backtracking-failed,32.08,2,-6208.51,-4687.45,1521.05,8.78,0.461,1.36
+1,5,128,20,20,0.05,5,completed,27.83,0,-5861.19,-4120.86,1740.33,0.40,0.312,1.00
+2,5,128,20,20,0.05,5,completed,27.81,0,-9346.97,-4741.42,4605.55,1.09,0.375,1.00
