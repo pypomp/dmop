@@ -1,5 +1,44 @@
 # Handoff
 
+## October 7, 2026: organize Fig. 1A and comparison documentation
+
+- Reworked root and `code/README.md` as reader-facing navigation, retaining
+  the old code README at the bottom as requested. Daphnia/global-search code
+  is linked, not reorganized. No algorithm, script, result, or plot file moved.
+- Replaced the long Ditlevsen/Corenflos landing pages with current SI maps;
+  preserved the earlier versions in clearly marked `DEVELOPMENT.md` files.
+  Added package, result, launch-script, IF2-reference, Fig. 1A data, and SI
+  figure directory READMEs. Current/final runs are distinguished from pilots,
+  tuning, abandoned QML, and earlier plot sets.
+- Added `code/competitor_reproduction.md`: checked environment versions and
+  sibling Pypomp revision/layout, portable interpreter commands, stage/input
+  requirements, worker scheduling, mixed settings, and fresh-clone versus
+  archived-data workflows. Original launchers still retain local interpreter
+  paths; guides explain how to reuse their arguments. Bulk trace access is
+  currently local, so publication of the revision archive remains open.
+- Fig. 1A guide now maps data -> generator -> saved curves -> plot and gives
+  preview/recomputation destinations. `imgs/095/README.md` identifies its
+  manuscript asset; Fig. 1B is explicitly separate from this generator.
+- Configuration audit found the separately tuned Ditlevsen J=5,000 run uses
+  a 5,000-particle likelihood guard. Corrected the SI's claim that every
+  particle count uses a 100-particle guard. Also corrected Corenflos notes
+  to distinguish global versus IF2-warm-start output selection.
+- Verification: all 204 local documentation links resolve to tracked/new
+  paths, shell snippets pass `bash -n`, and four documented CLI entry points
+  import and show help on CPU. In an isolated tracked-file export, Fig. 1A
+  and both SI tables/CSV summaries reproduce byte-for-byte. The comparison
+  plot command, using local bulk traces and a temporary output, reproduced
+  all eight PNGs and five numerical/provenance exports byte-for-byte.
+  No fitting experiments were rerun. `git diff --check` passes. Repository
+  SI build succeeds (75 pages), with no undefined refs/citations or overfull
+  boxes. Native compiler still cannot load external `macros.tex`; same editor
+  retained. New package installation and GPU reruns were not attempted.
+- Next: publish the existing bulk-output archive with the revision release
+  so external readers can run full trace plotting/audits without contacting
+  the maintainer. Ed plans to arrange Zenodo; no DOI, deposit, email, or other
+  external publication was created. Other manuscript code remains with its
+  existing owners for the broader documentation review.
+
 ## October 7, 2026: rewrite all of S11 after prose feedback
 
 - User found the proposal/filtering description awkward and requested a

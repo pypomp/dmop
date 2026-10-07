@@ -11,13 +11,13 @@ The script reads tracked CSVs only; no GPU, archived checkpoints,
 or sibling repository is required. It writes the two LaTeX table fragments
 and CSV summaries in this directory.
 
-The SI uses the Ditlevsen status agent's existing likelihood, full optimization,
-focused continuation, and parameter-density PDFs directly from
-`corenflos100_ditlevsen1000/`. Both Corenflos variants use 100 fitting particles;
+The SI includes the final-likelihood, full-optimization, continuation, and
+parameter-density PDFs in
+[corenflos100_ditlevsen1000/](corenflos100_ditlevsen1000/README.md).
+Both Corenflos variants use 100 fitting particles;
 both Ditlevsen variants use 1,000. These figures were produced by
 `corenflos/corenflos/settings_plots.py` using the established `warm_plots.py`
-workflow and have not been redrawn or modified for the SI. All 100 starts
-contribute to summaries; the displayed limits are coordinate zooms only.
+workflow. All 100 starts contribute to summaries; the displayed limits are coordinate zooms only.
 The tables retain all tested configurations.
 
 `summary.csv` records each result's source directory. `paired_summary.csv`
@@ -34,17 +34,19 @@ which agrees with `imgs/precise_table.tex`: median -3744.40 and maximum
 The IF2 checkpoint is the intermediate 175-iteration warm start, not the
 full-budget IF2 comparison in the main manuscript.
 
-Fitting and evaluation reproduction is documented in `../../corenflos/README.md`
-and `../../ditlevsen/README.md`. Bulk-result restoration is described in
-`../../artifacts/README.md`. The frozen per-run `configuration.json` files
+Fitting and evaluation are described in the
+[shared reproduction guide](../../code/competitor_reproduction.md), with
+source maps in the [Corenflos](../../corenflos/README.md) and
+[Ditlevsen](../../ditlevsen/README.md) guides. Bulk-result restoration is
+described in [artifacts/README.md](../../artifacts/README.md).
+The frozen per-run `configuration.json` files
 and the 1,000-particle `manifest.json` are authoritative for settings.
 
 ## Mixed particle settings (October 7, 2026)
 
 The [corenflos100_ditlevsen1000](corenflos100_ditlevsen1000/) set used in the SI has
-the user's chosen particle counts, shared within each method across standalone
-and IF2-warm-started fits. No runs were refitted. Warm starts are a separate
-initialization design, not a tuning choice.
+fixed particle counts for each method across global and IF2-initialized
+searches. These are separate initialization experiments.
 
 | Method | Fitting particles | Initial learning rate |
 |---|---:|---:|
@@ -79,19 +81,20 @@ The overview limits are coordinate zooms only: no starts are discarded before
 computing densities, boxplots, or summaries. The uncropped plots show the tails
 and initial trace segments outside those windows. Trace lines are medians;
 bands extend from the 10th percentile to the maximum. Mismatch diamonds show
-the marginal medians. No explanatory prose is placed inside the figures.
-The new set omits the old plots' historical -3744.17 horizontal reference line.
+the marginal medians. This set omits the historical -3744.17 reference line
+used by earlier plots.
 
 `settings.csv` identifies each source, particle count, learning rate, budget,
 median likelihood, and update count; `settings.json` preserves complete fitting
 configurations. `final_all_runs.csv`, `optimization_summary.csv`, and
 `objective_mismatch.csv` preserve the numerical inputs to the comparison.
 
-Regenerate from `dmop/corenflos` with the dedicated environment:
+After following the [environment setup](../../code/competitor_reproduction.md),
+regenerate from `dmop/corenflos` with your active Python interpreter:
 
 ```sh
 PYTHONPATH=.:../ditlevsen:../../pypomp JAX_PLATFORMS=cpu JAX_SKIP_CUDA_CONSTRAINTS_CHECK=1 \
-  /home/kevin/anaconda3/envs/pypomp/bin/python -m corenflos.settings_plots
+  python -m corenflos.settings_plots
 ```
 
 This uses the established `warm_plots.py` workflow and existing local trace

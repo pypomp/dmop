@@ -39,9 +39,11 @@ Optimization is projected Adam on the manuscript's bounding box. This is not
 part of the Corenflos filter itself. If the stochastic filter becomes invalid,
 or remains more than 30 log-likelihood units below its best value for ten
 updates, the optimizer returns to its best valid DPF checkpoint, clears Adam's
-moments, and halves the learning rate. The reported estimate is the valid
-checkpoint with the largest DPF likelihood before 700 seconds; Euler-20 values
-are never used to select a checkpoint.
+moments, and halves the learning rate. For global searches, the reported
+estimate is the valid checkpoint with the largest DPF likelihood before 700 seconds. IF2-initialized searches use the
+last valid checkpoint before their fixed time limit. Euler-20 values are
+never used to select a checkpoint. See [the result index](results/README.md)
+for the configurations used in the SI.
 
 An evaluation is considered usable when its likelihood and gradient are finite
 and at least one particle remains valid at every observation. This avoids

@@ -8,10 +8,27 @@ python code/fig1a/plot.py
 
 This takes only NumPy and Matplotlib and uses the checked-in `curves.csv`.
 The default destination is `imgs/095/mop.png`; `--output /tmp/mop.png` writes
-a preview. Paths are relative to the script, so the command also works from
-another directory. The alpha=1 legend now reads
+a preview. Default paths are relative to the script, so the command works from
+another directory. Explicit relative `--data` and `--output` arguments are
+resolved from your working directory. The alpha=1 legend reads
 **Alpha=1 (similar to Poyiadjis, 2011)**; the alpha=0 legend reads
 **Alpha=0 (similar to Naesseth, 2018)**.
+
+## Files and related code
+
+| Task | File |
+|---|---|
+| Change labels, colors, or layout | [plot.py](plot.py), [figure.mplstyle](figure.mplstyle) |
+| Inspect the plotted numbers | [curves.csv](curves.csv), [curves.json](curves.json) |
+| Recompute those numbers | [generate.py](generate.py) |
+| Inspect the preserved model/filter | [legacy_model.py](legacy_model.py), [legacy_filters.py](legacy_filters.py) |
+| Inspect observation and covariate inputs | [data/](data/README.md) |
+| Find the output included by the manuscript | [imgs/095/mop.png](../../imgs/095/mop.png) |
+
+The workflow is `data/` → `generate.py` → `curves.csv` → `plot.py` → `mop.png`.
+The generator also writes a JSON file alongside the CSV with run metadata.
+This directory generates panel A only. The Ditlevsen/Corenflos fitting code
+is separate; see the [code guide](../README.md) for the other experiments.
 
 ## Where the figure came from
 
@@ -21,21 +38,12 @@ Its zero-based cells 2, 3, and 4 define the model/filter inputs, evaluate
 the curves, and draw the figure. The PNG embedded in cell 4 has SHA-256
 `f00e9fa2bd73c66a1666818dfd41c813398648287bc56f52cc69e7472cac37ab`,
 identical to the manuscript's `mop.png` before the October 7, 2026 edit.
-The local copy was found in `haitiRes/diffPomp`; its working notebook contains
-merge-conflict markers, so the extraction used the intact Git revision.
 
-This directory contains everything needed to recompute the figure:
-
-- `legacy_model.py`: the used functions from that revision's Gaussian
-  `pomps.py`, with unrelated imports and inactive alternatives removed.
-- `legacy_filters.py`: the two-pass particle-filter/MOP functions from cell 2
-  and `normalize_weights` from `resampling.py`.
-- `data/{dacca,covars,covart}.csv`: the original data and covariates from the
-  same revision, including the original time-index interpolation inputs.
-- `generate.py`: the parameter settings and grid calculation from cells 2–3.
-- `figure.mplstyle` and `plot.py`: the original style settings and plotting
-  logic, with the requested legend qualification.
-- `curves.csv` and `curves.json`: recomputed likelihood values and run metadata.
+`legacy_model.py` preserves the used functions from that revision's Gaussian
+`pomps.py`. `legacy_filters.py` preserves the two-pass filter/MOP functions
+from cell 2 and `normalize_weights` from `resampling.py`. The input CSVs and
+style also come from that revision. `generate.py` implements cells 2–3;
+`plot.py` implements the drawing logic with the revised legend labels.
 
 The legacy model is intentionally separate from the newer fitting code.
 In particular, the old checkout's current `pomps.py` has been changed to
@@ -43,11 +51,20 @@ Gamma noise; that is **not** the Gaussian model used for this figure.
 
 ## Recompute the curves
 
-With JAX, NumPy, and pandas installed, run:
+With JAX, NumPy, and pandas installed, run from dmop:
 
 ```sh
 XLA_PYTHON_CLIENT_PREALLOCATE=false python code/fig1a/generate.py
 python code/fig1a/plot.py
+```
+
+These commands replace the saved curves, metadata, and manuscript image.
+For a separate recomputation, pass `--output /tmp/fig1a-curves.csv` to
+`generate.py`, then pass `--data /tmp/fig1a-curves.csv --output /tmp/mop.png`
+to `plot.py`. The preview redraw alone can be checked without running JAX:
+
+```sh
+python code/fig1a/plot.py --output /tmp/mop.png
 ```
 
 The saved October 7 run used JAX 0.9.0.1 on an RTX 3090, NumPy 2.4.2,
