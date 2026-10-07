@@ -1,5 +1,37 @@
 # Handoff
 
+## October 7, 2026: mixed-setting comparison figures
+
+- User requested a new set with J=100 for both Corenflos variants and J=1,000
+  for both Ditlevsen variants. Standalone and IF2 warm start remain separate
+  designs; these particle settings are fixed within each family, not chosen
+  separately by initialization. No fits, evaluations, SI, or existing source
+  figure files were changed.
+- Added `corenflos.settings_plots`, using the established `warm_plots.py`
+  helpers with optional settings labels/PDF output. Legacy defaults remain.
+  Eight PNG/PDF pairs are in `imgs/competitors/corenflos100_ditlevsen1000`:
+  final likelihood overview/uncropped, optimization overview/continuation
+  zoom/uncropped, parameter densities, and two objective-mismatch views.
+- Every method's label specifies its fitting particle count. All 100 starts
+  contribute; final evaluation is 5,000 x 36, trajectories 5,000 x 1.
+  New raincloud overviews use coordinate zooms, not the old pre-summary
+  -4300 data filter. Uncropped views retain final tails down to about -24636
+  and initial trace envelopes near -15307. No in-plot explanatory prose.
+  The obsolete -3744.17 reference line is omitted only from the new set.
+- Exported settings/configuration provenance, all four final-output CSVs
+  combined, compact trace summaries, and the paired warm-start diagnostic.
+  Median final likelihoods: Corenflos -4554.674, Corenflos + IF2 -3765.914,
+  Ditlevsen -3998.931, Ditlevsen + IF2 -3769.038. Rates respectively .02,
+  .0002, .1, .0005. Existing selection rules and wall-time budgets preserved.
+- Verification: generator validates complete unique start identities,
+  evaluation status/effort, fitting counts, and finite final values. All
+  eight PNGs visually reviewed, including settings labels, visible standalone
+  Corenflos median, and separated warm-start traces. Both package test suites
+  pass (86 tests); `git diff --check` passes. See `imgs/competitors/README.md`
+  for filenames, reproduction, and the necessary local archived trace inputs.
+- Next: use/review this separate figure set as requested. SI still uses its
+  prior J=100/J=1,000 sets; replacing those requires a separate user request.
+
 ## October 7, 2026: restore existing SI figures and document Fig. 1A
 
 - User correction: use the previous Ditlevsen/Corenflos agent's figures;
