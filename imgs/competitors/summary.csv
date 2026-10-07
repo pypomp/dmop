@@ -1,12 +1,12 @@
 method,initialization,particles,median,best,updates,source
 Corenflos,Box,100,-4554.6742997797555,-3842.428200317373,255.0,corenflos/results/corenflos_j100_eps025_final_100
 Corenflos,Box,1000,-6312.894133914831,-4366.295206376007,28.0,corenflos/results/particle_increase_j1000_final_100/corenflos_vanilla
-Ditlevsen-style,Box,100,-4100.34418248536,-3872.966616991685,55.0,ditlevsen/results/block_smc_guided_j100_final_100
-Ditlevsen-style,Box,1000,-3998.931175821779,-3798.031539775808,147.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_vanilla
-Ditlevsen-style,Box,5000,-4100.396815067605,-3871.568082695056,47.0,ditlevsen/results/block_smc_guided_j5000_final_100
+Ditlevsen,Box,100,-4100.34418248536,-3872.966616991685,55.0,ditlevsen/results/block_smc_guided_j100_final_100
+Ditlevsen,Box,1000,-3998.931175821779,-3798.031539775808,147.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_vanilla
+Ditlevsen,Box,5000,-4100.396815067605,-3871.568082695056,47.0,ditlevsen/results/block_smc_guided_j5000_final_100
 Corenflos,IF2,100,-3765.9143772376237,-3749.103607021263,213.0,corenflos/results/if2warm_ifad097_budget_j100_final_100
 Corenflos,IF2,1000,-3766.608603492546,-3749.23330477165,20.0,corenflos/results/particle_increase_j1000_final_100/corenflos_warm
-Ditlevsen-style,IF2,100,-3768.7248332988165,-3752.1955430629378,252.0,ditlevsen/results/block_smc_guided_j100_if2warm_ifad097_budget_final_100
-Ditlevsen-style,IF2,1000,-3769.0381745512896,-3751.02741641814,171.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_warm
+Ditlevsen,IF2,100,-3768.7248332988165,-3752.1955430629378,252.0,ditlevsen/results/block_smc_guided_j100_if2warm_ifad097_budget_final_100
+Ditlevsen,IF2,1000,-3769.0381745512896,-3751.02741641814,171.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_warm
 IF2 checkpoint,Box,5000,-3766.6391772378993,-3749.296711009243,175.0,corenflos/results/ifad097_post_if2_reference/warm_start_evaluations.csv
 IFAD-0.97,IF2,5000,-3744.398524200677,-3743.6825623858185,400.0,ditlevsen/results/reference/manuscript_likelihood.csv
