@@ -14,9 +14,9 @@ OUT = ROOT / 'imgs/competitors'
 HIGH = ROOT / 'corenflos/results/particle_increase_j1000_final_100'
 LOW = {
     ('Corenflos', 'Box'): 'corenflos/results/corenflos_j100_eps025_final_100',
-    ('Ditlevsen-style', 'Box'): 'ditlevsen/results/block_smc_guided_j100_final_100',
+    ('Ditlevsen', 'Box'): 'ditlevsen/results/block_smc_guided_j100_final_100',
     ('Corenflos', 'IF2'): 'corenflos/results/if2warm_ifad097_budget_j100_final_100',
-    ('Ditlevsen-style', 'IF2'): 'ditlevsen/results/block_smc_guided_j100_if2warm_ifad097_budget_final_100',
+    ('Ditlevsen', 'IF2'): 'ditlevsen/results/block_smc_guided_j100_if2warm_ifad097_budget_final_100',
 }
 
 
@@ -41,7 +41,7 @@ def main():
     assert len(ifad) == 100 and np.isfinite(ifad).all()
     values, rows = {}, []
     for initialization in ('Box', 'IF2'):
-        for method in ('Corenflos', 'Ditlevsen-style'):
+        for method in ('Corenflos', 'Ditlevsen'):
             for particles in (100, 1000):
                 variant = ('corenflos' if method == 'Corenflos' else 'ditlevsen') + ('_vanilla' if initialization == 'Box' else '_warm')
                 directory = ROOT / LOW[method, initialization] if particles == 100 else HIGH / variant
@@ -51,7 +51,7 @@ def main():
                                  median=likelihood.median(), best=likelihood.max(), updates=updates.median(),
                                  source=str(directory.relative_to(ROOT))))
     likelihood, updates = read_runs(ROOT / 'ditlevsen/results/block_smc_guided_j5000_final_100')
-    rows.insert(4, dict(method='Ditlevsen-style', initialization='Box', particles=5000,
+    rows.insert(4, dict(method='Ditlevsen', initialization='Box', particles=5000,
                        median=likelihood.median(), best=likelihood.max(), updates=updates.median(),
                        source='ditlevsen/results/block_smc_guided_j5000_final_100'))
     rows.extend([
@@ -70,7 +70,7 @@ def main():
     for row, particles in enumerate((100, 1000)):
         source = ROOT / 'corenflos/results/if2warm_ifad097_comparison' if particles == 100 else HIGH
         mismatch = pd.read_csv(source / 'objective_mismatch_if2warm_r20.csv')
-        for col, method in enumerate(('Corenflos', 'Ditlevsen-style')):
+        for col, method in enumerate(('Corenflos', 'Ditlevsen')):
             label = ('Corenflos' if col == 0 else 'Ditlevsen') + ' + IF2 warm start'
             frame = mismatch.loc[mismatch.source.eq(label)].set_index('start').sort_index()
             assert frame.index.tolist() == list(range(100))

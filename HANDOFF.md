@@ -1,5 +1,27 @@
 # Handoff
 
+## October 7, 2026: match SI comparison prose to the manuscript
+
+- Replaced “Ditlevsen-style” with “Ditlevsen” throughout S11, its tables,
+  and the table generator/CSV exports. The methods describe the block
+  approximation and numerical score ascent; captions no longer repeat
+  qualifications about the method name.
+- Read the introduction, Dhaka application, computational efficiency, and
+  discussion in `ms.tex` as the writing sample. Revised S11 toward the same
+  direct experimental prose, shorter figure captions, and consistent
+  “log-likelihood” terminology. Reduced lab-note wording and repetitive
+  qualifications. The reproduction paragraph points to the repository
+  documentation for detailed scripts and asset paths.
+- Existing plot assets, experiment settings, and all numerical table/CSV
+  results are unchanged. Ran `code/competitor_results.py` and checked that
+  the four generated outputs differ only by the requested method label.
+- Verification: `make dmop/si.pdf` succeeds (75 pages), with no undefined
+  references/citations, overfull boxes, or oversized floats. Reviewed the
+  rendered results, table labels, and figure captions. `git diff --check`
+  passes. Native compilation still cannot load external `macros.tex`;
+  the same SI editor remains open and the repository build works.
+- Next: editorial review of S11. No new fits or figures are needed.
+
 ## October 7, 2026: use status agent's mixed-setting plots in the SI
 
 - Applied the user's request to update SI plots from the “Check Ditlevsen

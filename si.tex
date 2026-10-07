@@ -13092,30 +13092,33 @@ IFAD-0.97 and IFAD-1 have similar distributions, with generally higher log-likel
 \section{Transition-Density and Differentiable-Resampling Comparisons on Dhaka}
 \label{sec:dhaka-competitors}
 
-We investigated two alternatives to DMOP-$\alpha$ for the Dhaka model: a
-transition-density approach adapted from \citet{ditlevsen19}, and the
-entropy-regularized optimal-transport particle filter of \citet{corenflos21}.
-Both require additional choices when used for optimization in this model.
-We describe these choices below and compare the resulting implementations
-using the Euler model with 20 substeps per month used in the main text.
+We compared IFAD with the transition-density method of \citet{ditlevsen19}
+and the differentiable particle filter of \citet{corenflos21} on the Dhaka
+cholera model. We tested both methods in global searches from the wide
+bounding box used in the main text and in searches initialized by IF2.
+We evaluated the resulting parameter estimates using the same Euler
+approximation with a time step of $1/20$ months as in the main text.
+We label these methods Ditlevsen and Corenflos in the figures and tables.
 
-\subsection{Implementation of the comparison methods}
+\subsection{Methods}
 
-\paragraph{Ditlevsen-style transition-density inference.}
+\paragraph{Ditlevsen transition-density inference.}
 The method of \citet{ditlevsen19} combines an approximate transition density,
 particle smoothing, and stochastic approximation expectation maximization
-(SAEM). Their construction treats one directly observed smooth coordinate
-and a directly forced rough block. Dhaka instead has six active coordinates,
-$(S,I,R^1,R^2,R^3,M)$, one Brownian driver, and noisy observations of monthly
-deaths. Consequently, applying that construction requires an extension.
+(SAEM). Their construction assumes that one smooth coordinate is observed directly
+and that noise acts directly on the remaining state coordinates. The Dhaka
+model has six state coordinates, $(S,I,R^1,R^2,R^3,M)$, driven by one
+Brownian motion, with measurement error in the monthly death counts.
+We therefore extended their construction to this observation model and
+noise structure.
 For Dhaka, the local strong-order-1.5 Gaussian approximation has covariance
 rank at most two in six dimensions. We propagate its second-order mean and
 moment covariance through 20 substeps, using a time-varying linearization
 to integrate out the intermediate states. The resulting monthly Gaussian
 block covariance can be full rank but remains poorly conditioned; we add
 a relative covariance floor of $10^{-12}$ at the monthly endpoint.
-This defines an approximate block model rather than the Euler transition
-used to evaluate the final estimates.
+The resulting monthly transition density differs from the Euler
+approximation used to evaluate the final parameter estimates.
 
 An observation-guided Gaussian proposal conditions the block transition on
 a Gaussian approximation to the observation, with the observation variance
@@ -13123,20 +13126,17 @@ fixed at the predicted monthly death count. Importance weights include the
 block-transition/proposal density ratio and the original measurement density.
 A forward filter followed by backward simulation imputes one monthly path
 per optimization update. We differentiate its complete block-Gaussian
-log likelihood and use stochastic approximation to average the resulting
-scores. We have no closed-form SAEM maximization step for Dhaka's
-23-parameter model, so we use numerical score ascent. We call this method
-\emph{Ditlevsen-style} to distinguish the adaptation from the published
-SAEM algorithm. The numerical implementation includes score clipping,
-backtracking, and a periodic block-likelihood safety check. The safety
-check uses 100 particles at every fitting particle count.
+log-likelihood and use stochastic approximation to average the resulting
+scores. For the 23-parameter Dhaka model, we replace the closed-form SAEM
+maximization step with numerical score ascent. We clip the scores and use
+backtracking, with periodic checks of the block log-likelihood using
+100 particles, regardless of the number of particles used for fitting.
 
-The conditional-proposal filter was also checked on the harmonic oscillator
-used by \citet{ditlevsen19}, where an analytic Gaussian filter is available.
-For the recorded 1,000-observation trajectory with 100 particles, the root
-mean squared difference between the particle and analytic filtered means
-was 0.00523. This checks the filter construction in that example; the Dhaka
-block approximation and numerical maximization remain additional choices.
+We checked the conditional-proposal filter on the harmonic oscillator
+example of \citet{ditlevsen19}, for which an analytic Gaussian filter is
+available. Using 100 particles and a trajectory of 1,000 observations,
+we obtained a root mean squared difference of 0.00523 between the particle
+and analytic filtered means.
 
 \paragraph{Corenflos differentiable particle filter.}
 We implement the entropy-regularized transport resampling of
@@ -13149,77 +13149,79 @@ transport adjoint to $[-1,1]$. The terminal regularization parameter is
 0.25, the annealing scale is 0.75, the convergence tolerance is $10^{-3}$,
 and the maximum number of Sinkhorn iterations is 100. Resampling occurs
 when the effective sample size is less than half the particle count.
-We maximize the resulting differentiable-filter log likelihood using Adam,
+We maximize the resulting log-likelihood estimate using Adam,
 with fresh filter randomness at each update and a gradient-norm clipping
 threshold of 100. Invalid or persistently deteriorating fits return to their
 best valid fitting checkpoint, reset the Adam moments, and halve the
 learning rate, with at most six restarts.
-The entropic transport and the clipped derivatives affect the fitting
-procedure, so its logged objective need not agree with an ordinary
-particle-filter estimate of the Euler-model likelihood.
+Entropic resampling changes the likelihood approximation, and clipping
+changes its derivatives. The objective used for fitting can therefore
+differ from the ordinary particle filter estimate used for evaluation.
 
-\subsection{Initialization, computing budgets, and evaluation}
+\subsection{Experimental settings}
 
-For each method we used 100 starting points drawn from the same global
-parameter box as the main Dhaka comparison. The standalone searches used
-an 800-second fitting cap and a nominal 700-second output-selection time.
+For the global searches, we used 100 starting parameter vectors drawn
+uniformly from the same wide bounding box as in the main Dhaka experiment.
+We allowed each search 800 seconds of computation and selected parameter
+estimates at approximately 700 seconds.
 Corenflos selects the valid checkpoint with the largest fitting objective
-before that time, falling back to an available valid checkpoint or the
-initial vector if necessary. Ditlevsen-style selects the first stored
+before 700 seconds, using another valid checkpoint or the initial parameter
+vector if none is available in that interval. Ditlevsen selects the first stored
 update at or after the threshold, or the final update if the fit stops
 earlier. Thus the latter selection can exceed 700 seconds by one update.
 The standalone learning rates were 0.02 for Corenflos and 0.10 for
-Ditlevsen-style at both 100 and 1,000 particles. An additional
-5,000-particle Ditlevsen-style experiment used learning rate 0.20, chosen
-in a separate tuning screen, and an earlier onset of stochastic-approximation
-decay. These settings and the remaining optimizer controls are saved with
-each experiment.
+Ditlevsen at both 100 and 1,000 particles. We also ran Ditlevsen with
+5,000 particles, using a separately tuned learning rate of 0.20 and starting
+the decay of the stochastic approximation step size earlier. The complete
+settings are provided with the source code for each experiment.
 
-To assess refinement after reaching a higher-likelihood region, we also
-initialized both methods at the exact 100 IF2 checkpoints used as inputs
-to the manuscript's comparable-effort IFAD-0.97 continuation.
-That IF2 stage used 175 iterations and 5,000 particles, accounting for
-92.160 seconds on the manuscript timing basis. Each continuation was
+To assess whether either method could improve on the IF2 estimates,
+we initialized both methods at the same 100 IF2 estimates used to initialize
+IFAD-0.97 in the comparable computational effort experiment.
+This IF2 stage used 175 iterations and 5,000 particles, taking 92.160 seconds
+under the timing procedure described in the main text. Each continuation was
 allowed at most 400 updates or another 850.657 seconds, giving a nominal
 total of 942.817 seconds. The continuation learning rates were 0.0002 for
-Corenflos and 0.0005 for Ditlevsen-style. Supplied IF2 checkpoints were
-used without clipping them back into the initial search box. Outputs were
-selected by the fixed time endpoint: Corenflos uses the last available
-valid checkpoint before it, and Ditlevsen-style uses the first completed
-update crossing it, or the last update if the run ends earlier.
+Corenflos and 0.0005 for Ditlevsen. We used the IF2 estimates
+directly, including those outside the initial bounding box. At the end of
+the allotted time, we selected the last valid Corenflos checkpoint before
+the time limit and the first completed Ditlevsen update at or after it,
+or the last update if the run ended earlier.
 
-All selected parameter vectors, including outputs from searches that
-terminated early, were evaluated independently using 5,000 particles and
-36 replicates of the ordinary Euler-20 particle filter. We report the
-logarithm of the average likelihood estimate across replicates. These
-evaluations were not used to select optimization checkpoints. Every
-recorded update was also evaluated separately with 5,000 particles and
-one replicate for the archived progress plots. Evaluation time is
-excluded from the fitting budgets.
+We independently evaluated every selected parameter vector using
+36 particle filter replicates with 5,000 particles and 20 Euler steps per
+month, including the results of searches that terminated early. We report
+the logarithm of the average likelihood estimate across replicates.
+These evaluations were performed after selecting the parameter estimates.
+For the optimization progress plots, we also evaluated each recorded update
+using one particle filter replicate with 5,000 particles. As in the main
+text, we excluded these additional evaluations from the computation times.
+The progress plots show the recorded iterates, which can differ from the
+parameter estimates selected for the final comparison.
 
-The 1,000-particle follow-up kept each 100-particle method's learning rate,
-update cap, guards, selection rule, and elapsed-time budget. Its four
-variants ran sequentially on one RTX 3090 GPU, as did the warm-started
-100-particle continuations. The earlier standalone Ditlevsen-style
-100-particle experiment ran four fits concurrently on that GPU.
-Accordingly, the comparison does not isolate particle count from scheduling,
-and equal time permits different numbers of optimization updates.
+When increasing the number of particles from 100 to 1,000, we kept the
+learning rates, maximum number of updates, numerical safeguards, selection
+rules, and time limits fixed. We ran the four 1,000-particle experiments
+sequentially on one RTX 3090 GPU, as we did for the 100-particle searches
+initialized by IF2. For the 100-particle Ditlevsen global searches, we ran
+four searches concurrently on the same GPU. Thus both the particle count
+and GPU scheduling affect the number of updates completed within the
+allotted time.
 
 \subsection{Results}
 
-Table~\ref{tab:dhaka-competitors} summarizes all 100 final estimates for
-each configuration. From the global box, neither comparison method reached
-the IFAD-0.97 likelihood range reliably. At 100 fitting particles, the
-median log likelihoods were $-4554.67$ for Corenflos and $-4100.34$ for
-Ditlevsen-style, compared with $-3744.40$ for the current manuscript's
-comparable-effort IFAD-0.97 results. Raising the particle count to 1,000
+Our findings are summarized in Table~\ref{tab:dhaka-competitors} and
+Figures~\ref{fig:dhaka-competitors-final}--\ref{fig:dhaka-competitors-parameters}.
+For the global searches, both methods had lower median log-likelihoods than
+IFAD-0.97 at every particle count tested. At 100 fitting particles, the
+median log-likelihoods were $-4554.67$ for Corenflos and $-4100.34$ for
+Ditlevsen, compared with $-3744.40$ for IFAD-0.97
+under comparable computational effort. Raising the particle count to 1,000
 gave medians of $-6312.89$ and $-3998.93$, respectively.
 For Corenflos, the median number of recorded updates fell from 255 to 28.
-For Ditlevsen-style it rose from 55 to 147, with the scheduling difference
-described above. The separate 5,000-particle Ditlevsen-style experiment had
-median $-4100.40$ after a median of 47 updates. These results concern the
-recorded implementations and computing budgets; they do not establish a
-general ordering of the underlying methods.
+For Ditlevsen it rose from 55 to 147, with the scheduling difference
+described above. The separate 5,000-particle Ditlevsen experiment had
+median $-4100.40$ after a median of 47 updates.
 
 \begin{table}[htbp!]
 \centering
@@ -13228,33 +13230,29 @@ general ordering of the underlying methods.
 \caption{Dhaka comparison results, with 100 searches per configuration.
 $J$ is the number of fitting particles. Box denotes a global-box start;
 IF2 denotes continuation from the shared IF2 checkpoint.
-Median and maximum refer to independently evaluated Euler-20 log
-likelihoods. Updates is the median number of recorded fitting updates;
+Median and maximum refer to independently evaluated Euler-20
+log-likelihoods. Updates is the median number of recorded fitting updates;
 for the IF2 checkpoint it is the 175 IF2 iterations, and for IFAD-0.97
 it is the 400 subsequent gradient updates. The IF2 checkpoint is an
 intermediate initialization, not the full-budget IF2 comparator.
-The 5,000-particle Ditlevsen-style run also used different tuning.}
+The 5,000-particle Ditlevsen run also used different tuning.}
 \label{tab:dhaka-competitors}
 \end{table}
 
-Warm initialization substantially improved the final likelihoods of both
-comparison methods, but neither gave a consistent improvement over its
-own IF2 starting point (Table~\ref{tab:dhaka-competitors-paired}). At 100
+Initializing the searches with IF2 substantially improved the final
+log-likelihoods of both methods. However, neither consistently improved
+on the IF2 estimates (Table~\ref{tab:dhaka-competitors-paired}). At 100
 particles, Corenflos improved 45 of 100 starts, with median paired change
-$-0.10$, while Ditlevsen-style improved 18, with median paired change
+$-0.10$, while Ditlevsen improved 18, with median paired change
 $-1.78$. At 1,000 particles the corresponding counts were 48 and 24, with
 median paired changes $-0.03$ and $-1.15$. Corenflos completed a median
 of 20 continuation updates at 1,000 particles, compared with 213 at 100;
-Ditlevsen-style completed 171 and 252, respectively.
+Ditlevsen completed 171 and 252, respectively.
 IFAD-0.97 continued from the same IF2 checkpoint distribution to median
 $-3744.40$, compared with the checkpoint median of $-3766.64$.
 The figures use 100 fitting particles for both Corenflos variants and
-1,000 for both Ditlevsen-style variants; IFAD-0.97 uses 5,000.
-The tables retain all tested configurations.
-Figure~\ref{fig:dhaka-competitors-final} shows the final likelihood distributions.
-Optimization progress is shown in Figures~\ref{fig:dhaka-competitors-progress}
-and~\ref{fig:dhaka-competitors-continuation}, and parameter estimates in
-Figure~\ref{fig:dhaka-competitors-parameters}.
+1,000 for both Ditlevsen variants; IFAD-0.97 uses 5,000.
+The tables report all particle counts tested.
 
 \begin{table}[htbp!]
 \centering
@@ -13266,89 +13264,77 @@ positive Euler-20 differences among all 100 starts.}
 \label{tab:dhaka-competitors-paired}
 \end{table}
 
-The fitting objectives increased at the median in all four warm-started
-configurations, even though the independently evaluated Euler-20 changes
-were slightly negative (Table~\ref{tab:dhaka-competitors-paired}).
-For Ditlevsen-style, the Gaussian block model differs from the evaluation
+For all four experiments initialized by IF2, the median change in the
+fitting objective was positive, while the median change in the independently
+evaluated log-likelihood was slightly negative (Table~\ref{tab:dhaka-competitors-paired}).
+For Ditlevsen, the Gaussian block model differs from the evaluation
 model; for Corenflos, finite-particle entropic resampling changes the
-likelihood approximation. The logged fitting values are also noisy
-single-filter estimates, and both algorithms use guarded, clipped updates.
-The observed disagreement is therefore consistent with differences in
-the fitted objectives and with noisy optimization, but does not by itself
-identify or quantify their separate effects.
+likelihood approximation. Both methods also use noisy estimates from a
+single particle filter,
+clipping, and numerical safeguards during optimization. These experiments
+do not separate the effects of the likelihood approximations from those
+of Monte~Carlo error and the optimization procedure.
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/likelihood_if2warm_comparison_r20.pdf}
-\caption{Final Euler-20 log-likelihood distributions for the standalone and
-IF2-warm-started comparisons. Corenflos uses 100 fitting particles and
-Ditlevsen-style uses 1,000 for both initialization designs; IFAD-0.97 uses
-5,000. The shared IF2 checkpoint distribution is shown as a reference.
-All 100 runs per method contribute to the densities, medians, and quartiles.
-The horizontal axis is restricted to $[-4800,-3735]$ after computing these
-summaries; the repository also includes an uncropped view.
-Final evaluations use 5,000 particles and 36 replicates.}
+\caption{Raincloud plots of the log-likelihoods found in 100 searches for the
+Dhaka cholera model, with and without an IF2 warm start. Corenflos uses
+100 particles, Ditlevsen 1,000, and IFAD-0.97 5,000 during optimization.
+The IF2 checkpoint shows the estimates used to initialize the warm starts.
+All 100 searches contribute to the densities, medians, and quartiles,
+including values outside the displayed range of $[-4800,-3735]$.}
 \label{fig:dhaka-competitors-final}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/optimization_if2warm_elapsed_full_r20.pdf}
-\caption{Optimization progress for the standalone and IF2-warm-started
-comparisons. Corenflos uses 100 fitting particles, Ditlevsen-style 1,000,
-and IFAD-0.97 5,000. Heavy lines show median Euler-20 log likelihoods and
-shaded regions run from the 10th percentile to the maximum, using all
-100 starts. The vertical dotted line marks the end of the shared IF2
-stage at 92.160 seconds. The vertical axis is restricted to
-$[-4800,-3735]$ after computing the summaries.
-Per-update evaluations use 5,000 particles and one replicate, whereas
-Table~\ref{tab:dhaka-competitors} uses 36-replicate selected-final evaluations.
-The curves show optimizer trajectories, not necessarily the selected outputs.}
+\caption{Optimization progress for the Dhaka cholera model, with and without
+an IF2 warm start. Corenflos uses 100 particles, Ditlevsen 1,000, and
+IFAD-0.97 5,000 during optimization. Heavy lines show median log-likelihoods,
+and shaded regions cover the area between the 10th and 100th percentiles
+across 100 searches. The vertical dotted line indicates the end of IF2 at
+92.160 seconds. All searches contribute to the summaries, including values
+outside the displayed range of $[-4800,-3735]$. Each iteration is evaluated
+using one particle filter replicate with 5,000 particles; the selected
+parameter estimates in Table~\ref{tab:dhaka-competitors} are evaluated using
+36 replicates.}
 \label{fig:dhaka-competitors-progress}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/optimization_if2warm_elapsed_r20.pdf}
-\caption{Optimization progress after the shared IF2 warm start, with the
-vertical axis restricted to $[-3820,-3735]$. Corenflos uses 100 fitting
-particles, Ditlevsen-style 1,000, and IFAD-0.97 5,000. Lines, bands, and the
-vertical reference line have the same meanings as in
-Figure~\ref{fig:dhaka-competitors-progress}.
-The plotted continuation times include the shared 92.160-second IF2 stage.}
+\caption{Optimization progress with an IF2 warm start, showing log-likelihoods
+between $-3820$ and $-3735$. Particle counts, lines, and shading are as in
+Figure~\ref{fig:dhaka-competitors-progress}. Elapsed time includes the
+92.160-second IF2 stage.}
 \label{fig:dhaka-competitors-continuation}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/parameter_if2warm_comparison_r20.pdf}
-\caption{Parameter-estimate distributions for the standalone and
-IF2-warm-started comparisons. Corenflos uses 100 fitting particles and
-Ditlevsen-style uses 1,000. The panels show nine selected parameters,
-with separate density scales. Each method has 100 searches. IFAD-0.97
-(5,000 fitting particles) and the shared IF2 checkpoint distributions are
-shown as references. The legends' ``Ditlevsen'' label denotes the adaptation
-described in this section.}
+\caption{Density plots of the final estimates for nine selected parameters
+of the Dhaka cholera model across 100 searches, with separate density scales.
+Corenflos uses 100 particles and Ditlevsen 1,000, with and without an IF2
+warm start. IFAD-0.97 uses 5,000 particles. The IF2 checkpoint shows the
+estimates used to initialize the warm starts.}
 \label{fig:dhaka-competitors-parameters}
 \end{figure}
 
 \subsection{Reproducibility}
 
-The repository directories \texttt{ditlevsen/} and \texttt{corenflos/}
-contain the fitting and evaluation code, implementation notes, and
-per-experiment configurations and summaries.
-Run \path{code/competitor_results.py} to regenerate the tables
-in this section directly from the tracked evaluation summaries.
-The figures are the existing PDFs in
-\path{imgs/competitors/corenflos100_ditlevsen1000/}, produced by
-\path{corenflos/corenflos/settings_plots.py}.
-This script uses the established \path{corenflos/corenflos/warm_plots.py}
-workflow.
-That directory also contains uncropped views and the settings and numerical
-inputs; reproduction instructions are in \path{imgs/competitors/README.md}.
-The exported CSV records the source path for each configuration.
-Bulk checkpoints and per-update evaluations can be restored using
-\path{artifacts/README.md}; they are unnecessary for rebuilding this section.
+Source code and algorithmic settings are available at
+\href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}, in the
+\texttt{ditlevsen/} and \texttt{corenflos/} directories.
+Instructions for reproducing the tables and figures are in
+\path{imgs/competitors/README.md}, together with the sources of the numerical
+results and links to uncropped plots. The repository includes the tables
+and figures needed to compile the supplement. Archived checkpoints
+and evaluations at individual iterations are available as described in
+\path{artifacts/README.md}.
 
 \clearpage
 \bibliography{bib-ifad}
