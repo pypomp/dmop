@@ -2109,36 +2109,84 @@ We state Lemma~\ref{lem:change-measure-proper-weights} assuming multinomial resa
 \noindent \textbf{Remark:} Note that Lemma \ref{lem:change-measure-proper-weights} permits $\pi_{1:J}$ to depend on $\{(X_j,u_j)\}$ as long as the resampling is carried out independently of $\{(X_j,u_j)\}$, conditional on $\pi_{1:J}$.
 
 \begin{lem}[Particle Marginals]
-    \label{lem:marginal-proper-weights}
-    Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$. Also suppose that $\tilde Z_j^J \sim f_{Z|X}(\cdot | \tilde X_j^J)$ where $f_{Z|X}$ is a conditional probability density function corresponding to a joint density $f_{X,Z}$ with marginal densities $f_X$ and $f_Z$. Then, if the $U_j^J$ are bounded, $\{(\tilde Z_j^J,U_j^J)\}$ targets $f_Z$.
+\label{lem:marginal-proper-weights}
+Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
+Also suppose that conditional on $(\tilde X_m^J,U_m^J)_{m=1}^J$,
+the variables $\tilde Z_1^J,\ldots,\tilde Z_J^J$ are independent, with
+$\tilde Z_j^J\sim f_{Z|X}(\cdot\mid\tilde X_j^J)$,
+where $f_{Z|X}$ is a conditional probability density function corresponding
+to a joint density $f_{X,Z}$ with marginal densities $f_X$ and $f_Z$.
+Then, if the $U_j^J$ are uniformly bounded above and away from zero,
+$\{(\tilde Z_j^J,U_j^J)\}$ targets $f_Z$.
 \end{lem}
+
 \begin{proof}[Proof.]
-    We want to show that, for any measurable bounded $h$, 
-     \begin{equation}
-     \frac{\sum_j h(\tilde Z_j^J) \, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_Z}[h(Z)] = \E_{f_X}\big[\E_{f_{Z|X}}[h(Z) | X]\big].
-     \end{equation}
-    By assumption, for any measurable and bounded functional $g$ with domain $\gX$,
-    \begin{equation}\label{eq:lemma2:g}
-    \frac{\sum_j g(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_X}[g(X)].
-    \end{equation}
-    Let $\bar{U}_j^J = \frac{J \, U_j^J}{\sum_j U_j^J}$. Examine the numerator and denominator of the quantity \begin{equation}\frac{J^{-1}\sum_j h(\tilde Z_j^J) \, U_j^J}{J^{-1}\sum_j U_j^J} = \frac{J^{-1}\sum_j h(\tilde Z_j^J) \, \bar{U}_j^J}{J^{-1}\sum_j \bar{U}_j^J}.\end{equation}
-    The denominator converges to $1$ almost surely. The numerator, on the other hand, is
-    \begin{equation}
-    \frac{1}{J}\sum_j h(\tilde Z_j^J)\, \bar{U}_j^J,
-    \end{equation}
-    and by the same fourth moment argument to the above lemma, it converges almost surely to the limit of its expectation,
-    \begin{eqnarray}        
-    \lim_{J\to\infty} \E\left[\frac{1}{J}\sum_j h(\tilde Z_j^J)\, \bar{U}_j^J\right] 
-    &=& \lim_{J\to\infty} \E \left[\frac{1}{J}\sum_j  
-      \E\Big[ h(\tilde Z_j^J)\, \bar{U}_j^J\Big|\tilde X_j^J, \bar U_j^J\Big]
-    \right]
-    \\
-    &=& \lim_{J\to\infty} \E \left[\frac{1}{J}\sum_j  \E\Big[h(Z) \Big| X=\tilde X_j^J \Big] \, \bar U_j^J\right].
-    \end{eqnarray}
-    Applying (\ref{eq:lemma2:g}) with $g(x) = \E\big[h(Z) | X=x\big]$, the average on the right hand side converges almost surely to $\E\big\{\E[h(Z)|X]\big\}=\E[h(Z)].$
-    It remains to swap the limit and expectations. We can do so with the bounded convergence theorem, and therefore obtain   
-    \begin{equation}\frac{1}{J}\sum_j h(\tilde Z_j^J)\,\bar{U}_j^J \stackrel{a.s.}{\to} \E_{f_Z}[h(Z)].\end{equation} 
-    \end{proof}
+We want to show that, for any measurable bounded $h$,
+\begin{equation}
+ \frac{\sum_j h(\tilde Z_j^J)\,U_j^J}{\sum_j U_j^J}
+ \stackrel{a.s.}{\to}\E_{f_Z}[h(Z)]
+ =\E_{f_X}\big[\E_{f_{Z|X}}[h(Z)\mid X]\big].
+\end{equation}
+By assumption, for any measurable and bounded functional $g$ with domain $\gX$,
+\begin{equation}\label{eq:lemma2:g}
+ \frac{\sum_j g(\tilde X_j^J)\,U_j^J}{\sum_j U_j^J}
+ \stackrel{a.s.}{\to}\E_{f_X}[g(X)].
+\end{equation}
+Let $\bar U_j^J=JU_j^J/\sum_j U_j^J$.
+For constants $0<c\le U_j^J\le C<\infty$, uniformly in $j,J$,
+we have $\bar U_j^J\le C/c$.
+Examine the numerator and denominator of the quantity
+\begin{equation}
+ \frac{J^{-1}\sum_j h(\tilde Z_j^J)\,U_j^J}{J^{-1}\sum_j U_j^J}
+ =\frac{J^{-1}\sum_j h(\tilde Z_j^J)\,\bar U_j^J}
+ {J^{-1}\sum_j\bar U_j^J}.
+\end{equation}
+The denominator converges to $1$ almost surely. The numerator, on the other hand, is
+\begin{equation}\label{eq:lemma6:numerator}
+ \frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J.
+\end{equation}
+Set
+\[
+ D_J=\frac1J\sum_j\bar U_j^J
+ \bigl\{h(\tilde Z_j^J)-\E[h(Z)\mid X=\tilde X_j^J]\bigr\}.
+\]
+Conditioning on $(\tilde X_j^J,U_j^J)_{j=1}^J$, we apply the fourth-moment
+argument of Lemma~\ref{lem:change-measure-proper-weights} to the centered, uniformly bounded summands, obtaining
+\[
+ \E[D_J^4]\le\frac{C_h}{J^2},\qquad
+ \mathbb P(|D_J|>\epsilon)\le\frac{C_h}{\epsilon^4J^2},
+\]
+for some $C_h<\infty$ independent of $J$ and every $\epsilon>0$.
+Thus $D_J\stackrel{a.s.}{\to}0$ by Borel--Cantelli.
+For the expectation of (\ref{eq:lemma6:numerator}), the tower property gives
+\begin{align}
+ \lim_{J\to\infty}\E\left[\frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J\right]
+ &=\lim_{J\to\infty}\E\left[\frac1J\sum_j
+ \E\big[h(\tilde Z_j^J)\,\bar U_j^J\mid\tilde X_j^J,\bar U_j^J\big]\right]
+ \\
+ &=\lim_{J\to\infty}\E\left[\frac1J\sum_j
+ \E\big[h(Z)\mid X=\tilde X_j^J\big]\,\bar U_j^J\right].
+\end{align}
+Applying (\ref{eq:lemma2:g}) with $g(x)=\E[h(Z)\mid X=x]$, the average on the
+right hand side converges almost surely to
+$\E\{\E[h(Z)\mid X]\}=\E[h(Z)]$.
+It remains to swap the limit and expectations. We can do so with the bounded
+convergence theorem. The almost-sure convergence of this average,
+together with $D_J\stackrel{a.s.}{\to}0$, gives
+\begin{equation}
+ \frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J
+ \stackrel{a.s.}{\to}\E_{f_Z}[h(Z)].\qedhere
+\end{equation}
+\end{proof}
+
+\noindent\textbf{Remark.} The conditional independence assumption in Lemma~\ref{lem:marginal-proper-weights} holds for
+standard particle filters, and for our MOP filter it is guaranteed by step 1
+of Definition~\ref{defn:off-parameter-filter}. For nonnegative weights with positive sum, the weight
+condition can be replaced by the weaker requirement
+\[
+ \max_{1\le j\le J}\frac{JU_j^J}{\sum_mU_m^J}\le B<\infty,
+\]
+almost surely, for a constant $B$ independent of $J$. The same proof applies.
 
 \begin{lem}[Particle Posteriors]
     \label{lem:posterior-proper-weights}

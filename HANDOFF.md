@@ -1,5 +1,25 @@
 # Handoff
 
+## October 7, 2026: incorporate the revised Particle Marginals lemma
+
+- Updated Lemma S6 and its proof on top of `828e6669d`, after comparing
+  Kevin's latest manuscript changes with the October 6 review snapshot.
+  The targeting section was unchanged; the SI additions were in S11.
+- The lemma now states the conditional sampling law given the input
+  particles and weights and requires weights uniformly bounded above and
+  away from zero. The proof controls the centered propagation error by the
+  conditional fourth-moment argument of Lemma S5.
+- Added the approved remark explaining the standard particle-filter/MOP
+  sampling condition and the weaker bound on normalized weights. All new
+  text is black. Existing lemma and equation labels are preserved; the
+  standalone note's references were converted to manuscript cross-references.
+- Source before S6 and from Lemma S7 onward is byte-for-byte unchanged.
+  Main text, S11, figures, code, and experimental results are unchanged.
+- Validation: full SI builds to 75 pages, with no undefined references or
+  citations and no overfull boxes. Existing theorem-style and PDF-string
+  warnings match the baseline. All existing label numbers match the baseline;
+  visually checked pages S15--S17. `git diff --check` passes.
+
 ## October 7, 2026: organize Fig. 1A and comparison documentation
 
 - Reworked root and `code/README.md` as reader-facing navigation, retaining
