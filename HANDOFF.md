@@ -1,5 +1,24 @@
 # Handoff
 
+## October 7, 2026: use status agent's mixed-setting plots in the SI
+
+- Applied the user's request to update SI plots from the “Check Ditlevsen
+  status” chat. S6--S9 now directly include that agent's four existing PDFs
+  from `imgs/competitors/corenflos100_ditlevsen1000/` (commit `51e4a6e95`).
+  Both Corenflos variants use J=100 and both Ditlevsen variants J=1,000;
+  IFAD uses J=5,000. No plotting assets or fitting results were changed.
+- Updated captions and reproduction notes for the settings, coordinate
+  zooms using all 100 starts, and omission of the historical reference line.
+  The results tables retain all tested configurations. Updated the figures
+  README to identify the set now included in the SI.
+- Verification: `make dmop/si.pdf` succeeds (75 pages), with no undefined
+  references/citations, overfull boxes, or oversized floats. Visually checked
+  S6--S9 on pages S70--S72. `git diff --check` passes. The native editor
+  compiler still cannot resolve external `macros.tex`; the existing editor
+  remains open and the repository build provides the compiled SI.
+- Next: editorial review. The prior entry's “SI still uses its prior sets”
+  note is superseded by this integration.
+
 ## October 7, 2026: mixed-setting comparison figures
 
 - User requested a new set with J=100 for both Corenflos variants and J=1,000
