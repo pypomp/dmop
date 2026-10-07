@@ -1,5 +1,26 @@
 # Handoff
 
+## October 7, 2026: rewrite all of S11 after prose feedback
+
+- User found the proposal/filtering description awkward and requested a
+  review of the whole section. Rewrote S11 throughout against the main
+  manuscript's methods and Dhaka application, including the introduction,
+  both methods, experimental settings, results, and captions. The title is
+  now “Comparison with Other Methods for the Dhaka Model.”
+- Separated the Gaussian approximation, observation-conditioned proposal,
+  and score updates into distinct explanations. Checked the proposal against
+  `ditlevsen/ditlevsen/block_smc.py` and `ditlevsen/method.tex`: measurement
+  variance is calculated using predicted deaths, not set equal to deaths.
+  Explained the Corenflos differentiation and restart steps as actions rather
+  than lists of implementation terms. Results now introduce the plotted
+  settings before discussing the other particle counts.
+- Tables, numerical results, figure files, and reference labels are unchanged;
+  edits are confined to S11 prose. `git diff --check` passes. Repository SI
+  build succeeds (75 pages), with no undefined references/citations, overfull
+  boxes, or oversized floats. Reviewed rendered S67--S70. Native compilation
+  still fails because it cannot load external `macros.tex`; editor retained.
+- Next: author review of the revised section.
+
 ## October 7, 2026: match SI comparison prose to the manuscript
 
 - Replaced “Ditlevsen-style” with “Ditlevsen” throughout S11, its tables,
