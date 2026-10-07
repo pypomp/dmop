@@ -42,3 +42,63 @@ Fitting and evaluation reproduction is documented in `../../corenflos/README.md`
 and `../../ditlevsen/README.md`. Bulk-result restoration is described in
 `../../artifacts/README.md`. The frozen per-run `configuration.json` files
 and the 1,000-particle `manifest.json` are authoritative for settings.
+
+## Mixed particle settings (October 7, 2026)
+
+The separate [corenflos100_ditlevsen1000](corenflos100_ditlevsen1000/) set uses
+the user's chosen particle counts, shared within each method across standalone
+and IF2-warm-started fits. It does not change the existing SI figures or refit
+any runs. Warm starts are a separate initialization design, not a tuning choice.
+
+| Method | Fitting particles | Initial learning rate |
+|---|---:|---:|
+| Corenflos | 100 | 0.02 |
+| Corenflos + IF2 warm start | 100 | 0.0002 |
+| Ditlevsen | 1,000 | 0.1 |
+| Ditlevsen + IF2 warm start | 1,000 | 0.0005 |
+
+Each arm includes all 100 starts. Final likelihoods use independent Euler-20
+evaluation with 5,000 particles and 36 replicates; trajectory points use
+5,000 particles and one replicate. IF2 checkpoint and current IFAD-0.97
+references are unchanged. Particle counts in labels refer to fitting, not
+evaluation. Standalone fits have an 800-second budget and select outputs
+around 700 seconds under their original rules. Warm fits have 850.657 seconds
+after the 92.160-second IF2 stage, with a nominal 942.817-second total endpoint.
+The curves show optimizer trajectories, not necessarily their selected outputs.
+
+Each figure is saved as PNG and PDF:
+
+| Filename stem | View |
+|---|---|
+| `likelihood_if2warm_comparison_r20` | Final-output overview, -4800 to -3735 |
+| `likelihood_all_outputs_r20` | All final outputs, no likelihood cutoff |
+| `optimization_if2warm_elapsed_full_r20` | All six method traces, -4800 to -3735 |
+| `optimization_if2warm_elapsed_r20` | IF2 and continuation zoom, -3820 to -3735 |
+| `optimization_all_values_r20` | Complete trace summaries, no likelihood cutoff |
+| `parameter_if2warm_comparison_r20` | Parameter densities |
+| `objective_mismatch_if2warm_medians_r20` | Median paired training and Euler changes |
+| `objective_mismatch_if2warm_paired_r20` | All 100 paired changes per warm-start method |
+
+The overview limits are coordinate zooms only: no starts are discarded before
+computing densities, boxplots, or summaries. The uncropped plots show the tails
+and initial trace segments outside those windows. Trace lines are medians;
+bands extend from the 10th percentile to the maximum. Mismatch diamonds show
+the marginal medians. No explanatory prose is placed inside the figures.
+The new set omits the old plots' historical -3744.17 horizontal reference line.
+
+`settings.csv` identifies each source, particle count, learning rate, budget,
+median likelihood, and update count; `settings.json` preserves complete fitting
+configurations. `final_all_runs.csv`, `optimization_summary.csv`, and
+`objective_mismatch.csv` preserve the numerical inputs to the comparison.
+
+Regenerate from `dmop/corenflos` with the dedicated environment:
+
+```sh
+PYTHONPATH=.:../ditlevsen:../../pypomp JAX_PLATFORMS=cpu JAX_SKIP_CUDA_CONSTRAINTS_CHECK=1 \
+  /home/kevin/anaconda3/envs/pypomp/bin/python -m corenflos.settings_plots
+```
+
+This uses the established `warm_plots.py` workflow and existing local trace
+CSVs. A fresh clone requires bulk-trace restoration as described in the
+artifact archive instructions above; the compact exported summaries and
+figures remain tracked.
