@@ -13248,8 +13248,10 @@ of 20 continuation updates at 1,000 particles, compared with 213 at 100;
 Ditlevsen-style completed 171 and 252, respectively.
 IFAD-0.97 continued from the same IF2 checkpoint distribution to median
 $-3744.40$, compared with the checkpoint median of $-3766.64$.
-Figure~\ref{fig:dhaka-competitors-final} displays all final evaluations,
-including low-likelihood runs.
+Figure~\ref{fig:dhaka-competitors-final} shows the final likelihood distributions.
+Optimization progress is shown in Figures~\ref{fig:dhaka-competitors-progress}
+and~\ref{fig:dhaka-competitors-continuation}, and parameter estimates in
+Figure~\ref{fig:dhaka-competitors-parameters}.
 
 \begin{table}[htbp!]
 \centering
@@ -13263,7 +13265,7 @@ positive Euler-20 differences among all 100 starts.}
 
 The fitting objectives increased at the median in all four warm-started
 configurations, even though the independently evaluated Euler-20 changes
-were slightly negative (Figure~\ref{fig:dhaka-competitors-objectives}).
+were slightly negative (Table~\ref{tab:dhaka-competitors-paired}).
 For Ditlevsen-style, the Gaussian block model differs from the evaluation
 model; for Corenflos, finite-particle entropic resampling changes the
 likelihood approximation. The logged fitting values are also noisy
@@ -13272,30 +13274,68 @@ The observed disagreement is therefore consistent with differences in
 the fitted objectives and with noisy optimization, but does not by itself
 identify or quantify their separate effects.
 
-\begin{figure}[htbp!]
+\begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth]{imgs/competitors/final_likelihoods.pdf}
-\caption{Final Euler-20 log likelihoods for 100 searches per method.
-The upper and lower rows use 100 and 1,000 fitting particles for the
-comparison methods, respectively. The left column starts from the global
-box and the right column from the shared IF2 checkpoints. IFAD-0.97 uses
-5,000 particles and is repeated as a reference in each panel; the same
-IF2 checkpoint evaluations are repeated in the right column. Each point
-is one search. Boxes show the median and quartiles, with whiskers extending
-to the most extreme points within 1.5 interquartile ranges. All points
-are displayed; vertical scales differ between panels.}
+\includegraphics[width=\textwidth]{corenflos/results/if2warm_ifad097_comparison/figures/likelihood_if2warm_comparison_r20.png}
+\par\medskip
+\includegraphics[width=\textwidth]{corenflos/results/particle_increase_j1000_final_100/figures/likelihood_if2warm_comparison_r20.png}
+\caption{Final Euler-20 log-likelihood distributions for the standalone and
+IF2-warm-started comparisons. The upper panel uses 100 fitting particles
+and the lower panel uses 1,000 for Corenflos and Ditlevsen-style.
+IFAD-0.97 uses 5,000 particles; its reference distribution and the shared
+IF2 checkpoint distribution are repeated in both panels. Log likelihoods
+below $-4300$ are omitted before constructing the distributions. Thus the displayed medians and
+quartiles are conditional on that cutoff; Table~\ref{tab:dhaka-competitors}
+summarizes all 100 runs. No standalone Corenflos run at 1,000 particles
+exceeded the plotting cutoff. The dotted red line marks the best-known
+maximized log likelihood used in the comparison plots.}
 \label{fig:dhaka-competitors-final}
 \end{figure}
 
-\begin{figure}[htbp!]
+\begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth]{imgs/competitors/objective_changes.pdf}
-\caption{Paired changes in the logged fitting objective and the independent
-Euler-20 evaluation for warm-started Corenflos (left) and Ditlevsen-style
-(right). The upper row uses 100 fitting particles and the lower row uses
-1,000. Each panel includes all 100 starts. Changes compare the selected
-output with iteration zero; horizontal and vertical lines mark zero change.}
-\label{fig:dhaka-competitors-objectives}
+\includegraphics[width=0.97\textwidth]{corenflos/results/if2warm_ifad097_comparison/figures/optimization_if2warm_elapsed_full_r20.png}
+\par\medskip
+\includegraphics[width=0.97\textwidth]{corenflos/results/particle_increase_j1000_final_100/figures/optimization_if2warm_elapsed_full_r20.png}
+\caption{Optimization progress for the standalone and IF2-warm-started comparisons,
+with 100 fitting particles (upper panel) and 1,000 (lower panel).
+Heavy lines show median Euler-20 log likelihoods and shaded regions run
+from the 10th percentile to the maximum. The vertical dotted line marks
+the end of the shared IF2 stage at 92.160 seconds; the red horizontal line
+marks the best-known maximized log likelihood used in these plots.
+The vertical scale displays log likelihoods above $-4800$; the
+1,000-particle standalone Corenflos median is below this range.
+Per-update evaluations use 5,000 particles and one replicate, whereas
+Table~\ref{tab:dhaka-competitors} uses 36-replicate selected-final evaluations.}
+\label{fig:dhaka-competitors-progress}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{corenflos/results/if2warm_ifad097_comparison/figures/optimization_if2warm_elapsed_r20.png}
+\par\medskip
+\includegraphics[width=\textwidth]{corenflos/results/particle_increase_j1000_final_100/figures/optimization_if2warm_elapsed_r20.png}
+\caption{Optimization progress after the shared IF2 warm start, on the focused
+vertical scale. Corenflos and
+Ditlevsen-style use 100 fitting particles in the upper panel and 1,000 in
+the lower panel; IFAD-0.97 uses 5,000. Lines, bands, and reference lines
+have the same meanings as in Figure~\ref{fig:dhaka-competitors-progress}.
+The plotted continuation times include the shared 92.160-second IF2 stage.}
+\label{fig:dhaka-competitors-continuation}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth]{corenflos/results/if2warm_ifad097_comparison/figures/parameter_if2warm_comparison_r20.png}
+\par\medskip
+\includegraphics[width=0.88\textwidth]{corenflos/results/particle_increase_j1000_final_100/figures/parameter_if2warm_comparison_r20.png}
+\caption{Parameter-estimate distributions using 100 fitting particles (upper panel) and 1,000 (lower panel) for
+Corenflos and Ditlevsen-style. The panels show nine selected parameters,
+with separate density scales. Each method has 100 searches. IFAD-0.97
+and the shared IF2 checkpoint distributions are repeated as references.
+The legends' ``Ditlevsen'' label denotes the adaptation described in
+this section.}
+\label{fig:dhaka-competitors-parameters}
 \end{figure}
 
 \subsection{Reproducibility}
@@ -13303,8 +13343,10 @@ output with iteration zero; horizontal and vertical lines mark zero change.}
 The repository directories \texttt{ditlevsen/} and \texttt{corenflos/}
 contain the fitting and evaluation code, implementation notes, and
 per-experiment configurations and summaries.
-Run \path{code/competitor_results.py} to regenerate the tables and figures
+Run \path{code/competitor_results.py} to regenerate the tables
 in this section directly from the tracked evaluation summaries.
+The figures are the existing PNGs in the two comparison result directories,
+produced by \path{corenflos/corenflos/warm_plots.py}.
 The exported CSV records the source path for each configuration.
 Bulk checkpoints and per-update evaluations can be restored using
 \path{artifacts/README.md}; they are unnecessary for rebuilding this section.

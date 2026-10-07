@@ -1,16 +1,11 @@
-"""Build SI tables and figures from tracked Corenflos/Ditlevsen summaries.
+"""Build SI tables from tracked Corenflos/Ditlevsen summaries.
 
 Run from any directory: python code/competitor_results.py
 No checkpoints, fitting, GPU, or sibling repositories are needed.
 """
 
-import os
 from pathlib import Path
 
-os.environ.setdefault('MPLCONFIGDIR', '/tmp/dmop-matplotlib')
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -72,7 +67,6 @@ def main():
     (OUT / 'results_table.tex').write_text('\n'.join(table) + '\n')
 
     paired = []
-    fig, axes = plt.subplots(2, 2, figsize=(9, 6.5), sharex='col', layout='constrained')
     for row, particles in enumerate((100, 1000)):
         source = ROOT / 'corenflos/results/if2warm_ifad097_comparison' if particles == 100 else HIGH
         mismatch = pd.read_csv(source / 'objective_mismatch_if2warm_r20.csv')
@@ -84,17 +78,6 @@ def main():
             np.testing.assert_allclose(delta, frame.euler_delta, atol=1e-9)
             paired.append(dict(method=method, particles=particles, training_delta=frame.training_delta.median(),
                                euler_delta=delta.median(), improving=int(delta.gt(0).sum())))
-            ax = axes[row, col]
-            ax.axhline(0, color='0.6', linewidth=0.8)
-            ax.axvline(0, color='0.6', linewidth=0.8)
-            ax.scatter(frame.training_delta, delta, s=15, alpha=0.65, color='#d95f02' if col == 0 else '#444444')
-            ax.text(0.03, 0.94, 'ABCD'[row * 2 + col], transform=ax.transAxes, fontweight='bold')
-            ax.set_ylabel('Change in Euler-20 log likelihood')
-            if row == 1:
-                ax.set_xlabel('Change in logged fitting objective')
-    for extension in ('pdf', 'png'):
-        fig.savefig(OUT / f'objective_changes.{extension}', dpi=180)
-    plt.close(fig)
     pd.DataFrame(paired).to_csv(OUT / 'paired_summary.csv', index=False)
     table = [r'\begin{tabular}{lrrrr}', r'\toprule',
              r'Method & $J$ & Fitting change & Euler-20 change & Improved \\', r'\midrule']
@@ -103,30 +86,6 @@ def main():
     table += [r'\bottomrule', r'\end{tabular}']
     (OUT / 'paired_table.tex').write_text('\n'.join(table) + '\n')
 
-    fig, axes = plt.subplots(2, 2, figsize=(9, 7), layout='constrained')
-    for row, particles in enumerate((100, 1000)):
-        for col, initialization in enumerate(('Box', 'IF2')):
-            ax = axes[row, col]
-            samples = [values[method, initialization, particles] for method in ('Corenflos', 'Ditlevsen-style')]
-            labels = ['Corenflos', 'Ditlevsen-style']
-            if initialization == 'IF2':
-                samples.append(baseline)
-                labels.append('IF2 checkpoint')
-            samples.append(ifad)
-            labels.append('IFAD-0.97')
-            ax.boxplot(samples, tick_labels=labels, showfliers=False, widths=0.5)
-            rng = np.random.default_rng(42)
-            colors = {'Corenflos': '#d95f02', 'Ditlevsen-style': '#444444',
-                      'IF2 checkpoint': '#b8a000', 'IFAD-0.97': '#31688e'}
-            for pos, (sample, label) in enumerate(zip(samples, labels, strict=True), 1):
-                ax.scatter(pos + rng.uniform(-0.18, 0.18, len(sample)), sample, s=8, alpha=0.45, color=colors[label])
-            ax.tick_params(axis='x', labelrotation=20)
-            ax.set_ylabel('Euler-20 log likelihood')
-            ax.text(0.03, 0.94, 'ABCD'[row * 2 + col], transform=ax.transAxes, fontweight='bold')
-            ax.grid(axis='y', alpha=0.2)
-    for extension in ('pdf', 'png'):
-        fig.savefig(OUT / f'final_likelihoods.{extension}', dpi=180)
-    plt.close(fig)
 
 
 if __name__ == '__main__':
