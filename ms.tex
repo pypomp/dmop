@@ -455,18 +455,18 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 
 We tested IFAD with $\alpha = 0$, $\alpha=0.97$ and $\alpha=1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in Pypomp 1.0.5 \citep{abkemeier25}.
 For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used by \cite{ionides15}. 
-To ensure a fair comparison under comparable computational effort, we ran each method for a similar amount of time.
+To ensure a fair comparison under comparable computational effort, we ran each method for a similar amount of time (approximately 15 minutes).
 For each method, we chose algorithmic parameters that maximized the log-likelihood well for that method while finishing within the allotted time. 
 We ran IF2 for 1950 iterations, while IFAD-0.97 is run using a short IF2 warm-start of 175 iterations followed by the Adam optimizer for 400 iterations.
 IFAD-0 and IFAD-1 were run for 60 IF2 iterations followed by 410 and 425 Adam iterations, respectively.
 The cooling rate used for IF2 was slower than that used for the warm start in IFAD. 
-To assess whether other methods can catch up to IFAD-0.97 given more time, we separately ran the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
+To assess whether other methods can catch up to IFAD-0.97 given more time, we separately ran an extended search where the IF2-only approach had 4 times as many iterations and the IFAD variants had 4 times as many Adam iterations, with the cooling rates slowed to help take advantage of this extra computational effort.
 A summary of the optimization settings is provided in the supplement (Section~\suppSecAlgorithmicParameters), and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 
 \begin{table}[htbp!]
 \centering
 \input{imgs/precise_table}
-\caption{Maximum log-likelihood found by IF2 and IFAD under both comparable and extended computational effort. The maximum is the largest of the 100 searches, and is biased upward by the winner's curse; the re-evaluated column gives a fresh particle filter evaluation of that same search, which removes the selection bias at the cost of being a single noisy evaluation. Where the searches cluster tightly, as they do for IFAD-0.97 under extended effort, the re-evaluation regresses toward the median. IFAD-0.97 performs the best among all methods.}
+\caption{Maximum log-likelihood found by IF2 and IFAD for the comparable and extended computational effort experiments. The maximum is the largest of the 100 searches, and is biased upward by the winner's curse; the re-evaluated column gives a fresh particle filter evaluation of that same search, which removes the selection bias at the cost of being a single noisy evaluation. Where the searches cluster tightly, as they do for IFAD-0.97 under extended effort, the re-evaluation regresses toward the median. IFAD-0.97 performs the best among all methods.}
 \arxiv{}{\vspace*{-7mm}}
 \label{table:mle}
 \end{table}
@@ -485,12 +485,12 @@ IFAD-1 needed to be run for an extended time for the median log-likelihood to st
     \includegraphics[width=\arxiv{0.48\textwidth}{\textwidth/\real{2.2}}]{imgs/precise_raincloud.pdf}\hfill
     \includegraphics[width=\arxiv{0.48\textwidth}{\textwidth/\real{2.2}}]{imgs/precise_raincloud_long.pdf}
     %\arxiv{}{\vspace*{-1mm}}
-    \caption{Raincloud plot of the searches. 
-    \captiona\ Comparable computational effort. 
-    \captionb\ Extended computational effort. 
-    Log-likelihoods lower than -3800 are omitted. 
+    \caption{Raincloud plots of the log-likelihood values found in the searches for the cholera model comparison  experiment. 
+    {\bf A:} Comparable computational effort ( $\approx$ 15 minutes). 
+    {\bf B:} Extended computational effort ( $\approx$ 60 minutes). 
+    Log-likelihoods lower than -3800 are omitted, and the dotted red line shows the best-known maximized log-likelihood.
     IFAD-0.97 outperforms all other methods.
-    The dotted red line shows the best-known maximized log-likelihood.}
+    }
     \label{fig:boxplot}
     \arxiv{}{\vspace*{-5mm}}
 \end{figure}
@@ -499,7 +499,7 @@ IFAD-1 needed to be run for an extended time for the median log-likelihood to st
 \begin{figure}[htbp!]
     \centering
     \includegraphics[width=\arxiv{14cm}{\textwidth}]{imgs/precise_density_long.pdf}
-    \caption{Density plots of the final parameter estimates across the 100 replicates for nine key parameters of the cholera model under extended computational effort.}
+    \caption{Density plots of the final parameter estimates across the 100 replicates for nine selected parameters of the cholera model in the extended computational effort experiment.}
     \label{fig:density}
 \end{figure}
 
@@ -563,7 +563,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
     \centering
     \vspace{1mm}
     \includegraphics[width=\arxiv{\textwidth/\real{1.25}}{\textwidth}/\real{1.25}]{imgs/pmcmc/nuts_eb.png}
-    \caption{Convergence diagnostics for NUTS with $4$ chains, where we plot $1000$ samples from the posterior of $\beta_{\text{trend}}$ within the Dhaka cholera model of \cite{king08}. \textbf{A:} Histogram of posterior samples. \textbf{B:} density estimate of the posterior. \textbf{C:} Autocorrelation plot for MCMC samples. \textbf{D:} Trace plot for MCMC samples, pre and post burn-in. NUTS mixes quickly when regularized by an empirical prior with a standard deviation of $6.3\%$ of the MLE, and the posterior estimates from each chain share roughly the same posterior mode.}
+    \caption{Convergence diagnostics for NUTS with $4$ chains, where we plot $1000$ samples from the posterior of $\beta_{\text{trend}}$ within the Dhaka cholera model of \cite{king08}. \textbf{A:} Histogram of posterior samples. \textbf{B:} Density estimate of the posterior. \textbf{C:} Autocorrelation plot for MCMC samples. \textbf{D:} Trace plot for MCMC samples, pre and post burn-in. NUTS mixes quickly when regularized by an empirical prior with a standard deviation of $6.3\%$ of the MLE, and the posterior estimates from each chain share roughly the same posterior mode.}
     \label{fig:nuts-eb}
     \arxiv{}{\vspace*{-4mm}}
 \end{figure}
