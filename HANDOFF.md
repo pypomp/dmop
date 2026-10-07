@@ -1,5 +1,42 @@
 # Handoff
 
+## October 7, 2026: restore existing SI figures and document Fig. 1A
+
+- User correction: use the previous Ditlevsen/Corenflos agent's figures;
+  do not invent replacement plots for the SI. Removed the new four-panel
+  plots and their plotting code. S6--S9 now include the existing likelihood,
+  full optimization, focused continuation, and parameter-density PNGs for
+  J=100 and J=1,000 directly from the two comparison result directories.
+  All eight source PNGs are unchanged. S7 is now optimization progress.
+  Captions disclose the original plot cutoffs, including the absent J=1,000
+  standalone Corenflos median. Tables still summarize all 100 runs.
+- `code/competitor_results.py` now generates only tables and CSV summaries.
+  The new S11 methods/results text and tables are retained. The earlier
+  entry's claim of new SI figures is superseded by this correction.
+- Fig. 1A now says both "similar to Poyiadjis, 2011" and "similar to
+  Naesseth, 2018", per the user's follow-up. `code/fig1a/` contains the
+  recovered model/filter logic, original input CSVs, style, provenance,
+  full-generation script, and cached numeric curves. `python code/fig1a/plot.py`
+  redraws `imgs/095/mop.png` without JAX or the old checkout. README links it.
+- A complete 10,000-particle GPU generation produced the committed curves.
+  A second uncontrolled GPU run differed despite fixed seeds; the generator
+  now fixes float32, non-partitionable Threefry, and deterministic XLA settings.
+  A replay matched the first three grid points exactly before being stopped
+  as redundant; a complete replay with those flags has not been checked.
+  Cached-CSV redraw is byte-identical in a clean export. No bitwise numerical
+  agreement with the old notebook across JAX/device versions is claimed.
+- Merged and preserved remote caption/title edits through `67c3e578a`.
+  Initial S11 work and the merge were pushed as `344fc3732` and `1c30c461f`.
+- Validation: table generator checks pass, Python sources compile, and
+  `git diff --check` is clean. MS builds to 23 pages and SI to 76 with the
+  repository TinyTeX toolchain. Final reused-figure pages S70--S73 were visually
+  inspected. SI has no undefined references/citations, overfull boxes, or
+  oversized floats. MS retains its pre-existing proof overfull box.
+  The native editor stays on `si.tex`; its single-file compiler cannot access
+  `macros.tex`, so its preview remains unsupported for this multipart project.
+- Next: editorial review of S11; no fitting experiments are running for this
+  task. Future SI figure changes should use the established plotting workflow.
+
 ## October 7, 2026: add the Dhaka competitors to the SI
 
 - Added Section S11 to `si.tex`, with a pointer in `ms.tex`: methods and

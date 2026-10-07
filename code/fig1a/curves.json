@@ -1,0 +1,22 @@
+{
+  "source_repository": "https://github.com/hetankevin/diffPomp",
+  "source_revision": "ab31c911ae223aa91eb4e216d7d33710103050c3",
+  "source_notebook": "cholera_mop.ipynb",
+  "source_cells_zero_based": [
+    2,
+    3,
+    4
+  ],
+  "particles": 10000,
+  "baseline_gamma": 18.0,
+  "seed_each_month": 0,
+  "jax": "0.9.0.1",
+  "jax_enable_x64": false,
+  "jax_default_prng_impl": "threefry2x32",
+  "devices": [
+    "cuda:0"
+  ],
+  "numpy": "2.4.2",
+  "pandas": "3.0.0",
+  "jax_threefry_partitionable": false
+}
