@@ -13137,9 +13137,10 @@ particles. We differentiate the complete-data log-likelihood of this
 trajectory and average the resulting scores using stochastic approximation.
 For the 23-parameter Dhaka model, we use numerical score ascent in place
 of the closed-form SAEM maximization step. We clip the scores and use
-backtracking, with periodic checks of the approximate log-likelihood using
-100 particles. These checks use the monthly Gaussian transition density
-at every particle count used for fitting.
+backtracking, with periodic checks of the log-likelihood under the monthly
+Gaussian transition approximation. The 100- and 1,000-particle fits use
+100 particles for these checks; the separately tuned 5,000-particle
+experiment uses 5,000.
 We also checked the particle filter on the harmonic oscillator example of
 \citet{ditlevsen19}, for which an analytic Gaussian filter is available.
 With 100 particles and 1,000 observations, the root mean squared difference
