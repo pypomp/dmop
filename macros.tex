@@ -1,4 +1,15 @@
 
+\newcommand\suppSecProofFunctionalForms{S1}
+\newcommand\suppSecProofOptimizationConvergence{S2}
+\newcommand\suppSecFeynmanKac{S3}
+\newcommand\suppSecProofTriangularArrays{S4}
+\newcommand\suppSecProofConsistency{S5}
+\newcommand\suppSecProofBiasVar{S6}
+\newcommand\suppSecProofSharperBiasVar{S7}
+\newcommand\suppSecBayesFigs{S8}
+\newcommand\suppSecAlgorithmicParameters{S9}
+\newcommand\suppSecDaphnia{S10}
+\newcommand\suppSecComparison{S11}
 
 \newcommand\articleTitle{Automatic Differentiation for Inference on Partially Observed Markov Process Models}
 
@@ -11,6 +22,10 @@
 \newcommand\editAncestorDefinition{  
   Here,  $X_{1:N,j}^{A,F,\theta}$ is the ancestral trajectory of $X_{N,j}^{F,\theta}$ at times $t_1,\dots,t_N$.
 }
+
+\newcommand\editBPF{AD methods for particle filters require that the particle filter itself is successful on the target model. 
+Many variations of the particle filter have been introduced to improve its performance in specific situations.
+For high-dimensional data, a block particle filter can be effective \citep{rebeschini15,ning23}, and DMOP-$\alpha$ may be extendable to that situation.}
 
   \newcommand\editPoyiadjisCorrespondence{Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$1$ has a similar form to the consistent but high-variance score estimate in the first algorithm of \cite{poyiadjis11}.
 Unlike  \cite{poyiadjis11}, our algorithm has the plug-and-play property; in the case $\alpha=1$, our algorithm replaces differentiation of the latent transition density in \cite{poyiadjis11} by pathwise differentation of the simulator.}
