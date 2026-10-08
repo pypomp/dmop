@@ -119,7 +119,8 @@ boundary or on which other methods run. Run each method serially within a
 batch. On the i9-13900K used here, affinity groups 0–3, 4–7, 8–11, and 12–15
 each contain two performance cores with their hardware threads. Concurrent
 batches use disjoint groups. These are shared-machine timings, not isolated
-whole-machine benchmarks. Daphnia runs serially on the RTX 3090. The older
+whole-machine benchmarks. The initial Daphnia GPU pilot was interrupted when another GPU workload
+started; CPU tuning is in progress on cores 16–19. The older
 Dhaka timing convention is retained and must not be compared directly with
 these new per-fit measurements.
 

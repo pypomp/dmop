@@ -2,7 +2,7 @@
   "cpu": "Intel Core i9-13900K",
   "gpu": "NVIDIA RTX 3090",
   "small_models": "serial methods within each batch; concurrently running batches pinned to disjoint pairs of performance cores (four hardware threads)",
-  "daphnia": "serial fits on GPU; other CPU-only benchmarks concurrent",
-  "other_work": "model validation and plotting on separate efficiency cores",
+  "daphnia": "GPU pilot interrupted when another GPU workload began; final hardware pending CPU pilot on efficiency cores 16\u201319",
+  "other_work": "A separate GPU workload began during Daphnia tuning. Numerical checks and plotting use other efficiency cores.",
   "timing_scope": "within experiment; no cross-hardware runtime ranking"
 }

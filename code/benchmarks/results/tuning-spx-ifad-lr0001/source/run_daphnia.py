@@ -12,7 +12,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import time
 
@@ -51,7 +50,6 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--starts", type=int, default=20)
-    parser.add_argument("--start-index", type=int, default=0)
     parser.add_argument("--seed", type=int, default=2026091802)
     parser.add_argument("--particles", type=int, default=1000)
     parser.add_argument("--warm-iterations", type=int, default=200)
@@ -60,7 +58,6 @@ def main():
     parser.add_argument("--ds-particles", type=int, default=100)
     parser.add_argument("--ct-particles", type=int, default=100)
     parser.add_argument("--learning-rate", type=float, default=.01)
-    parser.add_argument("--competitor-learning-rate", type=float, default=.01)
     parser.add_argument("--eval-particles", type=int, default=2000)
     parser.add_argument("--eval-reps", type=int, default=10)
     parser.add_argument("--stride", type=int, default=50)
@@ -69,10 +66,10 @@ def main():
     args = parser.parse_args()
     if min(args.starts, args.particles, args.warm_iterations, args.mif_iterations,
            args.adam_iterations, args.ds_particles, args.ct_particles,
-           args.eval_particles, args.stride, args.max_updates) < 1 or args.eval_reps < 2 or args.start_index < 0:
+           args.eval_particles, args.stride, args.max_updates) < 1 or args.eval_reps < 2:
         parser.error("Invalid counts")
     args.output.mkdir(parents=True, exist_ok=False)
-    starts = d.reference.sample_starts(args.starts+args.start_index, args.seed)[args.start_index:]
+    starts = d.reference.sample_starts(args.starts, args.seed)
     initial = np.array([d.pack(x) for x in starts])
     pd.DataFrame(initial, columns=d.NAMES).to_csv(args.output/"starts.csv", index=False)
     root = Path(__file__).resolve().parents[2]
@@ -90,9 +87,6 @@ def main():
               "timing": "serial fits; compilation reported separately; evaluation excluded",
               "progress_time": "uniform within the two Pypomp stages; measured per-update for DS19/CTDD21"}
     write_json(args.output/"configuration.json", config)
-    (args.output/"source").mkdir()
-    for path in Path(__file__).parent.glob("*.py"):
-        shutil.copy2(path, args.output/"source"/path.name)
 
     ct, pf = d.make_euler_objectives(args.ct_particles, args.eval_particles)
     ct_score = jax.jit(jax.value_and_grad(ct))
@@ -137,32 +131,18 @@ def main():
     print("compilation complete", compilation, flush=True)
 
     rows, timing, replicates, objectives = [], [], [], []
-    for start_id, payload in enumerate(starts, args.start_index):
+    for start_id, payload in enumerate(starts):
         fits = {}
-
-        def save_fit(name, trace, seconds, status="complete"):
-            if any(not np.isfinite(z).all() for _, _, z in trace):
-                trace = [row for row in trace if np.isfinite(row[2]).all()]
-                status = "nonfinite_update"
-            fits[name] = (trace, seconds, status)
-            pd.DataFrame([{"iteration": i, "seconds": t, **dict(zip(d.NAMES, z))}
-                          for i,t,z in trace]).to_csv(args.output/f"parameters_{name}_{start_id:03d}.csv", index=False)
-            write_json(args.output/f"fit_{name}_{start_id:03d}.json",
-                       {"start": start_id, "method": name, "seconds": seconds, "status": status})
-
         warm, warm_time = run_mif(payload, args.warm_iterations, args.seed+10000+start_id)
-        print(f"start {start_id}: MPIF warm {warm_time:.2f}s", flush=True)
         warm_theta = deepcopy(warm.theta)
         warm_z = jnp.array(d.pack(warm_theta.params(as_list=True)[0]))
         warm_trace = panel_trace(warm, warm_time, args.stride)
         p, seconds = run_mif(payload, args.mif_iterations, args.seed+20000+start_id)
-        save_fit("MPIF", panel_trace(p, seconds, args.stride), seconds)
-        print(f"start {start_id}: MPIF full {seconds:.2f}s", flush=True)
+        fits["MPIF"] = (panel_trace(p, seconds, args.stride), seconds, "complete")
         p, continuation_time = run_adam(warm_theta, args.seed+30000+start_id)
         trace = warm_trace + panel_trace(p, continuation_time, args.stride,
                                         args.warm_iterations, warm_time)[1:]
-        save_fit("IFAD", trace, warm_time+continuation_time)
-        print(f"start {start_id}: IFAD continuation {continuation_time:.2f}s", flush=True)
+        fits["IFAD"] = (trace, warm_time+continuation_time, "complete")
 
         for method_id, (name, fn) in enumerate(scores.items()):
             z = warm_z
@@ -187,7 +167,7 @@ def main():
                     g = average
                 g *= jnp.minimum(1., 100./jnp.maximum(jnp.linalg.norm(g), 1e-12))
                 m, v = .9*m+.1*g, .999*v+.001*g*g
-                rate = args.competitor_learning_rate*(.1+.9*.5*(1+np.cos(np.pi*min(elapsed/continuation_time, 1.))))
+                rate = args.learning_rate*(.1+.9*.5*(1+np.cos(np.pi*min(elapsed/continuation_time, 1.))))
                 candidate = z+rate*(m/(1-.9**(i+1)))/(jnp.sqrt(v/(1-.999**(i+1)))+1e-8)
                 jax.block_until_ready(candidate)
                 elapsed += time.perf_counter()-begin
@@ -203,10 +183,18 @@ def main():
                     trace.append((args.warm_iterations+updates, warm_time+elapsed, np.asarray(z)))
             if trace[-1][0] != args.warm_iterations+updates:
                 trace.append((args.warm_iterations+updates, warm_time+elapsed, np.asarray(z)))
-            save_fit(name, trace, warm_time+elapsed, status)
-            pd.DataFrame(objectives).to_csv(args.output/"fitting_objectives.csv", index=False)
+            fits[name] = (trace, warm_time+elapsed, status)
             print(f"{start_id} {name}: {updates} updates, {elapsed:.2f}s, {status}", flush=True)
 
+        # Persist every fit before independent evaluations begin.
+        for name, (trace, seconds, status) in fits.items():
+            if any(not np.isfinite(z).all() for _, _, z in trace):
+                trace = [row for row in trace if np.isfinite(row[2]).all()]
+                status = "nonfinite_update"
+                fits[name] = (trace, seconds, status)
+            pd.DataFrame([{"iteration": i, "seconds": t, **dict(zip(d.NAMES, z))}
+                          for i,t,z in trace]).to_csv(args.output/f"parameters_{name}_{start_id:03d}.csv", index=False)
+        pd.DataFrame(objectives).to_csv(args.output/"fitting_objectives.csv", index=False)
         for method_id, (name, (trace, seconds, status)) in enumerate(fits.items()):
             timing.append({"start": start_id, "method": name, "seconds": seconds, "status": status,
                            "warm_seconds": warm_time if name != "MPIF" else 0.,
@@ -223,11 +211,11 @@ def main():
                 replicates.extend({"start": start_id, "method": name, "iteration": i,
                     "replicate": r, "unit": unit, "loglik": raw[r,u]}
                     for r in range(args.eval_reps) for u,unit in enumerate(d.reference.UNITS))
-            print(f"start {start_id+1} {name}: {ll:.3f} ({se:.3f}), {seconds:.2f}s", flush=True)
+            print(f"{start_id+1}/{args.starts} {name}: {ll:.3f} ({se:.3f}), {seconds:.2f}s", flush=True)
             pd.DataFrame(rows).to_csv(args.output/"checkpoints.csv", index=False)
             pd.DataFrame(timing).to_csv(args.output/"timings.csv", index=False)
             pd.DataFrame(replicates).to_csv(args.output/"evaluation_replicates.csv", index=False)
-        write_json(args.output/"status.json", {"complete": start_id+1 == args.start_index+args.starts,
+        write_json(args.output/"status.json", {"complete": start_id+1 == args.starts,
                                                "fits": len(timing), "purpose": args.purpose})
 
 

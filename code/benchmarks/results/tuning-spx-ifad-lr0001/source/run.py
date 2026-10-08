@@ -92,8 +92,6 @@ def main():
     parser.add_argument("--ds-particles", type=int, default=100)
     parser.add_argument("--ct-particles", type=int, default=25)
     parser.add_argument("--learning-rate", type=float, default=.01)
-    parser.add_argument("--ifad-learning-rate", type=float,
-                        help="Optional IFAD rate chosen on separate tuning starts")
     parser.add_argument("--alpha", type=float, default=.97)
     parser.add_argument("--rw-sd", type=float, default=.02)
     parser.add_argument("--seed", type=int, default=631450)
@@ -111,9 +109,6 @@ def main():
             min(args.eval_reps, args.trace_eval_reps) < 2 or min(args.warm, args.start_index) < 0 or \
             (args.if2_iterations is not None and args.if2_iterations < 1):
         parser.error("Invalid counts")
-    if not 0 <= args.alpha <= 1 or args.learning_rate <= 0 or \
-            (args.ifad_learning_rate is not None and args.ifad_learning_rate <= 0):
-        parser.error("Invalid discount or learning rate")
     args.output.mkdir(parents=True, exist_ok=False)
     model, y, bounds, center, exact = setup(args.model)
     rng = np.random.default_rng(args.seed)
@@ -215,8 +210,7 @@ def main():
                         g = average
                     g = g * jnp.minimum(1., 100. / jnp.maximum(jnp.linalg.norm(g), 1e-12))
                     m, v = .9*m + .1*g, .999*v + .001*g*g
-                    base_rate = args.ifad_learning_rate if method == "IFAD" and args.ifad_learning_rate is not None else args.learning_rate
-                    rate = base_rate * (.1 + .9 * .5 * (1 + np.cos(np.pi*k/args.iterations)))
+                    rate = args.learning_rate * (.1 + .9 * .5 * (1 + np.cos(np.pi*k/args.iterations)))
                     candidate = z + rate * (m / (1 - .9**(k+1))) / (jnp.sqrt(v / (1 - .999**(k+1))) + 1e-8)
                     candidate = jnp.clip(candidate, bounds[:, 0], bounds[:, 1])
                 jax.block_until_ready(candidate)
@@ -264,7 +258,7 @@ def main():
             pd.DataFrame(fit_objectives).to_csv(args.output / "fitting_objectives.csv", index=False)
             if raw_evaluations:
                 pd.DataFrame(raw_evaluations).to_csv(args.output / "evaluation_replicates.csv", index=False)
-            print(f"{args.model} start {start_id+1} {method}: {ll:.3f}, {elapsed:.2f}s, {status}", flush=True)
+            print(f"{args.model} {start_id+1}/{args.starts} {method}: {ll:.3f}, {elapsed:.2f}s, {status}", flush=True)
             write_json(args.output / "status.json", {"complete": False, "fits": len(timings),
                 "expected_fits": args.starts*len(args.methods), "purpose": args.purpose})
     write_json(args.output / "status.json", {"complete": True, "fits": len(timings),

@@ -12,7 +12,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import time
 
@@ -83,8 +82,6 @@ def main():
     parser.add_argument("--model", choices=["linear", "oscillator", "spx"], required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--starts", type=int, default=20)
-    parser.add_argument("--start-index", type=int, default=0,
-                        help="First shared start; allows disjoint serial batches on separate cores")
     parser.add_argument("--iterations", type=int, default=200)
     parser.add_argument("--if2-iterations", type=int)
     parser.add_argument("--warm", type=int, default=100)
@@ -92,9 +89,6 @@ def main():
     parser.add_argument("--ds-particles", type=int, default=100)
     parser.add_argument("--ct-particles", type=int, default=25)
     parser.add_argument("--learning-rate", type=float, default=.01)
-    parser.add_argument("--ifad-learning-rate", type=float,
-                        help="Optional IFAD rate chosen on separate tuning starts")
-    parser.add_argument("--alpha", type=float, default=.97)
     parser.add_argument("--rw-sd", type=float, default=.02)
     parser.add_argument("--seed", type=int, default=631450)
     parser.add_argument("--checkpoint-every", type=int, default=20)
@@ -107,21 +101,14 @@ def main():
     parser.add_argument("--purpose", choices=["pilot", "final"], default="pilot")
     args = parser.parse_args()
     if min(args.starts, args.iterations, args.particles, args.ds_particles, args.ct_particles,
-           args.checkpoint_every, args.eval_particles, args.trace_eval_particles) < 1 or \
-            min(args.eval_reps, args.trace_eval_reps) < 2 or min(args.warm, args.start_index) < 0 or \
-            (args.if2_iterations is not None and args.if2_iterations < 1):
+           args.checkpoint_every, args.eval_particles) < 1 or args.eval_reps < 2 or args.warm < 0:
         parser.error("Invalid counts")
-    if not 0 <= args.alpha <= 1 or args.learning_rate <= 0 or \
-            (args.ifad_learning_rate is not None and args.ifad_learning_rate <= 0):
-        parser.error("Invalid discount or learning rate")
     args.output.mkdir(parents=True, exist_ok=False)
     model, y, bounds, center, exact = setup(args.model)
     rng = np.random.default_rng(args.seed)
-    starts = np.clip(center + rng.normal(0, .35, (args.start_index+args.starts, len(center))),
-                     bounds[:, 0], bounds[:, 1])[args.start_index:]
-    pd.DataFrame(starts, columns=model.canonical_param_names,
-                 index=range(args.start_index, args.start_index+args.starts)).to_csv(
-                     args.output / "starts.csv", index_label="start")
+    starts = np.clip(center + rng.normal(0, .35, (args.starts, len(center))),
+                     bounds[:, 0], bounds[:, 1])
+    pd.DataFrame(starts, columns=model.canonical_param_names).to_csv(args.output / "starts.csv", index=False)
     source_dir = Path(__file__).parent
     config = {**{k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
               "utc": datetime.now(timezone.utc).isoformat(), "jax": jax.__version__,
@@ -130,7 +117,7 @@ def main():
               "pypomp_source": str(Path(pp.__file__).resolve()),
               "parameter_names": model.canonical_param_names,
               "bounds_estimation_scale": bounds.tolist(),
-              "start_jitter_sd": .35,
+              "start_jitter_sd": .35, "alpha": .97,
               "selection": "last finite parameter vector; failures retained",
               "runtime": "synchronized serial fitting; excludes compilation and evaluation",
               "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
@@ -144,9 +131,6 @@ def main():
     else:
         pd.DataFrame(y).to_csv(args.output / "observations.csv", index=False)
     write_json(args.output / "configuration.json", config)
-    (args.output / "source").mkdir()
-    for path in source_dir.glob("*.py"):
-        shutil.copy2(path, args.output / "source" / path.name)
 
     if exact is not None:
         exact = jax.jit(exact)
@@ -160,7 +144,7 @@ def main():
             "message": str(optimum.message)})
 
     if2 = make_if2(model, args.particles, args.rw_sd)
-    mop_context = MopContext.from_struct(model.to_struct(), J=args.particles, alpha=args.alpha)
+    mop_context = MopContext.from_struct(model.to_struct(), J=args.particles, alpha=.97)
     mop_score = jax.jit(jax.value_and_grad(lambda z, key: -_mop_internal(z, key, mop_context)))
     ct = make_filter(model, args.ct_particles,
                      active_names=["U"] if args.model == "oscillator" else
@@ -188,9 +172,8 @@ def main():
     write_json(args.output / "compilation.json", compilation)
 
     rows, timings, raw_evaluations, fit_objectives = [], [], [], []
-    for start_id, start in enumerate(starts, args.start_index):
-        for method in args.methods:
-            method_id = ["IF2", "IFAD", "DS19", "CTDD21"].index(method)
+    for start_id, start in enumerate(starts):
+        for method_id, method in enumerate(args.methods):
             z = jnp.array(start)
             swarm = jnp.tile(z, (args.particles, 1))
             m, v, average = jnp.zeros_like(z), jnp.zeros_like(z), jnp.zeros_like(z)
@@ -215,8 +198,7 @@ def main():
                         g = average
                     g = g * jnp.minimum(1., 100. / jnp.maximum(jnp.linalg.norm(g), 1e-12))
                     m, v = .9*m + .1*g, .999*v + .001*g*g
-                    base_rate = args.ifad_learning_rate if method == "IFAD" and args.ifad_learning_rate is not None else args.learning_rate
-                    rate = base_rate * (.1 + .9 * .5 * (1 + np.cos(np.pi*k/args.iterations)))
+                    rate = args.learning_rate * (.1 + .9 * .5 * (1 + np.cos(np.pi*k/args.iterations)))
                     candidate = z + rate * (m / (1 - .9**(k+1))) / (jnp.sqrt(v / (1 - .999**(k+1))) + 1e-8)
                     candidate = jnp.clip(candidate, bounds[:, 0], bounds[:, 1])
                 jax.block_until_ready(candidate)
@@ -264,7 +246,7 @@ def main():
             pd.DataFrame(fit_objectives).to_csv(args.output / "fitting_objectives.csv", index=False)
             if raw_evaluations:
                 pd.DataFrame(raw_evaluations).to_csv(args.output / "evaluation_replicates.csv", index=False)
-            print(f"{args.model} start {start_id+1} {method}: {ll:.3f}, {elapsed:.2f}s, {status}", flush=True)
+            print(f"{args.model} {start_id+1}/{args.starts} {method}: {ll:.3f}, {elapsed:.2f}s, {status}", flush=True)
             write_json(args.output / "status.json", {"complete": False, "fits": len(timings),
                 "expected_fits": args.starts*len(args.methods), "purpose": args.purpose})
     write_json(args.output / "status.json", {"complete": True, "fits": len(timings),

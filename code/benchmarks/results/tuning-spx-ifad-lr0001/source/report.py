@@ -13,7 +13,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FuncFormatter
 import numpy as np
 import pandas as pd
 
@@ -81,7 +80,8 @@ def dhaka_results():
     reference_folder = ROOT / "ditlevsen/results/reference"
     sources = [folder/"final_all_runs.csv", folder/"optimization_summary.csv",
                reference_folder/"manuscript_likelihood.csv", reference_folder/"manuscript_trace_summary.csv",
-               ROOT/"code/benchmarks/results/dhaka_reference.csv"]
+               ROOT/"code/global_search/exports/final_estimates.csv",
+               ROOT/"code/global_search/exports/timings.csv"]
     finals = pd.read_csv(sources[0])
     selected = {"DS19 + IF2 warm start (J=1,000)": "DS19",
                 "CTDD21 + IF2 warm start (J=100)": "CTDD21"}
@@ -92,15 +92,16 @@ def dhaka_results():
     if not final.evaluation_status.eq("ok").all():
         raise ValueError("Unresolved archived Dhaka evaluation")
     final["status"] = "complete"
-    for method, path in (("CTDD21", ROOT/"corenflos/results/if2warm_ifad097_budget_j100_final_100/fit_summary.csv"),
-                         ("DS19", ROOT/"corenflos/results/particle_increase_j1000_final_100/ditlevsen_warm/fit_summary.csv")):
-        fits = pd.read_csv(path).set_index("start")
-        sources.append(path)
-        selected_rows = final.method.eq(method)
-        reasons = final.loc[selected_rows, "start"].map(fits.termination_reason)
-        final.loc[selected_rows, "status"] = np.where(reasons.isin(["time-budget", "maximum-iterations"]),
-                                                       "complete", reasons)
     baseline = pd.read_csv(sources[4])
+    baseline = baseline.loc[baseline.effort.eq("comparable") & baseline.n_monitors.eq(0)
+                            & baseline.model.isin(["IFAD-0.97", "IF2"])].copy()
+    timing = pd.read_csv(sources[5])
+    timing = timing.loc[timing.effort.eq("comparable") & timing.n_monitors.eq(0)
+                        & timing.method.isin(["mif", "train"])].groupby("model").seconds.sum()
+    baseline["seconds"] = baseline.model.map(timing)
+    baseline = baseline.rename(columns={"model": "method", "rep": "start", "logLik": "loglik", "se": "mcse"})
+    baseline["method"] = baseline.method.replace({"IFAD-0.97": "IFAD"})
+    baseline["status"] = "complete"
     columns = ["start", "method", "loglik", "mcse", "seconds", "status"]
     final = pd.concat([final[columns], baseline[columns]], ignore_index=True).assign(model="dhaka")
     for method in METHODS:
@@ -174,15 +175,9 @@ def generate(results, output, models, expected):
                             showfliers=False, medianprops={"color": "black", "linewidth": 1.4})
             bp["boxes"][0].set(facecolor=COLORS[method], alpha=.22)
             jitter = np.random.default_rng(719+i*4+j).uniform(-.14, .14, len(frame))
-            failed = frame.status.ne("complete").to_numpy()
-            ax.scatter(j+jitter[~failed], deficits[~failed], s=13 if len(frame) == 20 else 7,
+            ax.scatter(j+jitter, deficits, s=13 if len(frame) == 20 else 7,
                        color=COLORS[method], alpha=.7, linewidths=0, zorder=3)
-            if failed.any():
-                ax.scatter(j+jitter[failed], deficits[failed], s=28, marker="x",
-                           color=COLORS[method], linewidths=1., zorder=4)
         ax.axhline(0., color=".65", lw=.7, ls="--")
-        ax.set_yscale("symlog", linthresh=1.)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
         ax.set_xticks(range(4), ["IFAD", "MPIF" if model == "daphnia" else "IF2", "DS19", "CTDD21"])
         ax.set_ylabel("Log-likelihood deficit")
         ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
@@ -195,7 +190,6 @@ def generate(results, output, models, expected):
             frame = progress.loc[progress.model.eq(model) & progress.method.eq(method)].sort_values("seconds")
             ax.plot(frame.seconds, references[model]-frame["median"], color=COLORS[method], lw=1.6)
         ax.set_yscale("symlog", linthresh=1.)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
         ax.axhline(0., color=".65", lw=.7, ls="--")
         ax.set_xlabel("Fitting time (s)")
         ax.set_ylabel("Median log-likelihood deficit")
