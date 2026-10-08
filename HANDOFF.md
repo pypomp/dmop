@@ -24,6 +24,15 @@
   Daphnia commands add that to PYTHONPATH. Nine adapter/likelihood tests cover
   Gaussian likelihoods, smoothing scores, SPX clipping, original Daphnia drift
   and measurements, block covariance, and original-PF evaluation agreement.
+- Added the combined report generator. It refuses incomplete/duplicate final
+  starts and unresolved likelihood evaluations. Checked its Dhaka-only output
+  against the original manuscript exports; recovered baseline MC errors from
+  the exact archived result objects, and retained the two CTDD21 searches
+  that reached the restart limit. Nine numerical checks pass. A disjoint-batch
+  runner smoke check also passes. Source snapshots preserve final-run hashes.
+- SPX tuning at learning rate .01 made IFAD deteriorate; .001 improved the
+  first separate tuning start substantially. Remaining tuning starts are
+  running before settings are frozen. No saturation claim is warranted yet.
 - New cross-model panels, central table and SI discussion remain pending
   complete final runs. Do not claim saturation from pilots or omit failures.
 

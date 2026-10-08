@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import time
 
@@ -82,6 +83,8 @@ def main():
     parser.add_argument("--model", choices=["linear", "oscillator", "spx"], required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--starts", type=int, default=20)
+    parser.add_argument("--start-index", type=int, default=0,
+                        help="First shared start; allows disjoint serial batches on separate cores")
     parser.add_argument("--iterations", type=int, default=200)
     parser.add_argument("--if2-iterations", type=int)
     parser.add_argument("--warm", type=int, default=100)
@@ -89,6 +92,7 @@ def main():
     parser.add_argument("--ds-particles", type=int, default=100)
     parser.add_argument("--ct-particles", type=int, default=25)
     parser.add_argument("--learning-rate", type=float, default=.01)
+    parser.add_argument("--alpha", type=float, default=.97)
     parser.add_argument("--rw-sd", type=float, default=.02)
     parser.add_argument("--seed", type=int, default=631450)
     parser.add_argument("--checkpoint-every", type=int, default=20)
@@ -101,14 +105,18 @@ def main():
     parser.add_argument("--purpose", choices=["pilot", "final"], default="pilot")
     args = parser.parse_args()
     if min(args.starts, args.iterations, args.particles, args.ds_particles, args.ct_particles,
-           args.checkpoint_every, args.eval_particles) < 1 or args.eval_reps < 2 or args.warm < 0:
+           args.checkpoint_every, args.eval_particles, args.trace_eval_particles) < 1 or \
+            min(args.eval_reps, args.trace_eval_reps) < 2 or min(args.warm, args.start_index) < 0 or \
+            (args.if2_iterations is not None and args.if2_iterations < 1):
         parser.error("Invalid counts")
     args.output.mkdir(parents=True, exist_ok=False)
     model, y, bounds, center, exact = setup(args.model)
     rng = np.random.default_rng(args.seed)
-    starts = np.clip(center + rng.normal(0, .35, (args.starts, len(center))),
-                     bounds[:, 0], bounds[:, 1])
-    pd.DataFrame(starts, columns=model.canonical_param_names).to_csv(args.output / "starts.csv", index=False)
+    starts = np.clip(center + rng.normal(0, .35, (args.start_index+args.starts, len(center))),
+                     bounds[:, 0], bounds[:, 1])[args.start_index:]
+    pd.DataFrame(starts, columns=model.canonical_param_names,
+                 index=range(args.start_index, args.start_index+args.starts)).to_csv(
+                     args.output / "starts.csv", index_label="start")
     source_dir = Path(__file__).parent
     config = {**{k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
               "utc": datetime.now(timezone.utc).isoformat(), "jax": jax.__version__,
@@ -117,7 +125,7 @@ def main():
               "pypomp_source": str(Path(pp.__file__).resolve()),
               "parameter_names": model.canonical_param_names,
               "bounds_estimation_scale": bounds.tolist(),
-              "start_jitter_sd": .35, "alpha": .97,
+              "start_jitter_sd": .35,
               "selection": "last finite parameter vector; failures retained",
               "runtime": "synchronized serial fitting; excludes compilation and evaluation",
               "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
@@ -131,6 +139,9 @@ def main():
     else:
         pd.DataFrame(y).to_csv(args.output / "observations.csv", index=False)
     write_json(args.output / "configuration.json", config)
+    (args.output / "source").mkdir()
+    for path in source_dir.glob("*.py"):
+        shutil.copy2(path, args.output / "source" / path.name)
 
     if exact is not None:
         exact = jax.jit(exact)
@@ -144,7 +155,7 @@ def main():
             "message": str(optimum.message)})
 
     if2 = make_if2(model, args.particles, args.rw_sd)
-    mop_context = MopContext.from_struct(model.to_struct(), J=args.particles, alpha=.97)
+    mop_context = MopContext.from_struct(model.to_struct(), J=args.particles, alpha=args.alpha)
     mop_score = jax.jit(jax.value_and_grad(lambda z, key: -_mop_internal(z, key, mop_context)))
     ct = make_filter(model, args.ct_particles,
                      active_names=["U"] if args.model == "oscillator" else
@@ -172,8 +183,9 @@ def main():
     write_json(args.output / "compilation.json", compilation)
 
     rows, timings, raw_evaluations, fit_objectives = [], [], [], []
-    for start_id, start in enumerate(starts):
-        for method_id, method in enumerate(args.methods):
+    for start_id, start in enumerate(starts, args.start_index):
+        for method in args.methods:
+            method_id = ["IF2", "IFAD", "DS19", "CTDD21"].index(method)
             z = jnp.array(start)
             swarm = jnp.tile(z, (args.particles, 1))
             m, v, average = jnp.zeros_like(z), jnp.zeros_like(z), jnp.zeros_like(z)

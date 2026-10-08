@@ -1,0 +1,95 @@
+{
+  "model": "spx",
+  "output": "code/benchmarks/results/pilot-spx",
+  "starts": 1,
+  "iterations": 5,
+  "if2_iterations": null,
+  "warm": 5,
+  "particles": 500,
+  "ds_particles": 100,
+  "ct_particles": 25,
+  "learning_rate": 0.01,
+  "rw_sd": 0.02,
+  "seed": 631449,
+  "checkpoint_every": 5,
+  "eval_particles": 2000,
+  "eval_reps": 8,
+  "trace_eval_particles": 1000,
+  "trace_eval_reps": 4,
+  "methods": [
+    "IF2",
+    "IFAD",
+    "DS19",
+    "CTDD21"
+  ],
+  "purpose": "pilot",
+  "utc": "2026-10-08T20:02:25.111101+00:00",
+  "jax": "0.9.0.1",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "pypomp_source": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/__init__.py",
+  "parameter_names": [
+    "mu",
+    "kappa",
+    "theta",
+    "xi",
+    "rho",
+    "V_0"
+  ],
+  "bounds_estimation_scale": [
+    [
+      -16.11809565095832,
+      -4.605170185988091
+    ],
+    [
+      -11.512925464970229,
+      0.0
+    ],
+    [
+      -16.11809565095832,
+      -4.605170185988091
+    ],
+    [
+      -13.815510557964274,
+      -2.3025850929940455
+    ],
+    [
+      -5.293304824724491,
+      5.293304824724491
+    ],
+    [
+      -18.420680743952367,
+      -4.605170185988091
+    ]
+  ],
+  "start_jitter_sd": 0.35,
+  "alpha": 0.97,
+  "selection": "last finite parameter vector; failures retained",
+  "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+  "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
+  "source_sha256": {
+    "models.py": "b62b3c4a0b3de2e2f87bf862aa93379c7a3c4095a6c45be841dc1231fc62bdf6",
+    "ctdd.py": "c5203f939f3ca93a92814b5da6940e4ba151f176a479059cacee725d2b8b2cc4",
+    "run.py": "37bf475e97d31b2709dfd21a3f94b97235545d42d216520ee412191ae15927f1",
+    "daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "smoothing.py": "03061c964aca190310389652bceec1b74a54565a9da7e76c12b2b15c7ff778ee"
+  },
+  "dmop_commit": "db5a07415f7578ee06a71e5f2bc3e3785566258f",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "spx": {
+    "files": {
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/models/spx.py": "fa0b273d59bd58cce8c58076b6c0743cc0ff69ea8930bd5c56f36b321b2f7665",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/models/../data/SPX.csv": "b9a59c5f133a8d899a4848c6df0f50f7acecd9837fd487122da9330a6800c0f5"
+    },
+    "observations_sha256": "b881c73756946bd6aa3dbdb727e2cff8c29707e9cc982842152015dcd828490c",
+    "observations": 3523,
+    "covariates_sha256": "103b9f5a53ad100120d27d5d2a8861e136c110ed58926ff0b3ae564102360be2"
+  }
+}

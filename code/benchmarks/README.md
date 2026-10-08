@@ -6,6 +6,25 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 [../daphnia/](../daphnia/README.md) and
 [../../imgs/competitors/](../../imgs/competitors/README.md).
 
+## Where to start
+
+| File | Purpose |
+|---|---|
+| [models.py](models.py) | Gaussian examples, analytic likelihoods, and the original Pypomp SPX model |
+| [ctdd.py](ctdd.py) | CTDD21 resampling around the existing Pypomp simulator and measurement functions |
+| [smoothing.py](smoothing.py) | Small-model transition densities, particle smoothing, and DS19 score updates |
+| [daphnia.py](daphnia.py) | Original S10 Euler evaluation and the Gaussian block approximation for DS19 |
+| [run.py](run.py) | Repeated oscillator, linear Gaussian, and SPX fits |
+| [run_daphnia.py](run_daphnia.py) | MPIF, IFAD, DS19, and CTDD21 from common Daphnia starts |
+| [report.py](report.py) | Combine completed final runs and the archived Dhaka results into panels and a table |
+| [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
+| [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
+
+The transition-density and transport implementations for the existing Dhaka
+study remain in [../../ditlevsen/](../../ditlevsen/README.md) and
+[../../corenflos/](../../corenflos/README.md). The original Daphnia model and
+50-start experiment remain in [../daphnia/](../daphnia/README.md).
+
 ## Scope
 
 Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
@@ -54,7 +73,8 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   drawing that conclusion.
 - Describe DS19 extensions explicitly. SMC with a numerical score update is
   not the original paper's SAEM M-step. Daphnia and SPX require additional
-  transition-density work and validation before a DS19 result is reported.
+  transition-density work: SPX includes the atom created by its variance
+  floor; Daphnia uses the Gaussian block approximation described below.
 - Whether the small benchmarks are saturated is an empirical question. The
   prose must follow the completed experiments, including exceptions.
 
@@ -67,6 +87,75 @@ From the repository root, use the environment in
 export PYTHONPATH="code/benchmarks:corenflos:ditlevsen:../pypomp"
 JAX_PLATFORMS=cpu python -m pytest code/benchmarks/tests
 ```
+
+The new runs use Python 3.13, JAX 0.9.0.1 with 64-bit arithmetic, NumPy 2.4.2,
+SciPy 1.17, and Pypomp source revision
+`d231517c4e84d2b270b7ba2a9461083cc0973ed3`. Daphnia also requires `xlrd`
+(tested with 2.0.2) to read the original Excel data. On this machine it is
+installed in `/tmp/dmop-benchmark-deps`; that path is an environment detail,
+not a required location. Add it to PYTHONPATH if using that temporary install.
+
+## Running and reading results
+
+Each output directory contains a configuration with seeds, source hashes,
+particle counts, transformations, and CPU affinity. Existing directories
+are never overwritten. `status.json` distinguishes partial and complete runs;
+`purpose` distinguishes pilots from final experiments. Parameter traces are
+saved before independent evaluation. `checkpoints.csv` contains evaluation
+likelihoods; `fitting_objectives.csv` contains optimization objectives. They
+must not be used interchangeably. `evaluation_replicates.csv` retains the
+individual likelihood estimates used for Monte Carlo errors.
+
+For example, a short workflow check is:
+
+```sh
+JAX_PLATFORMS=cpu python code/benchmarks/run.py --model linear \
+  --starts 2 --iterations 10 --warm 5 --output /tmp/dmop-linear-check
+```
+
+`run.py --start-index` supports disjoint batches of a prespecified set of
+starts. The starting vectors and random streams do not depend on the batch
+boundary or on which other methods run. Run each method serially within a
+batch. On the i9-13900K used here, affinity groups 0–3, 4–7, 8–11, and 12–15
+each contain two performance cores with their hardware threads. Concurrent
+batches use disjoint groups. These are shared-machine timings, not isolated
+whole-machine benchmarks. Daphnia runs serially on the RTX 3090. The older
+Dhaka timing convention is retained and must not be compared directly with
+these new per-fit measurements.
+
+The reporting command is:
+
+```sh
+python code/benchmarks/report.py
+```
+
+It requires all 20 final starts for all four methods on each new model. It
+rejects incomplete directories, duplicate starts, missing final evaluations,
+and nonconverged analytic reference fits. `--models` and `--output` allow
+checking a completed subset in a separate directory during development.
+
+## Daphnia approximation
+
+CTDD21 transports the eight biological states and resets the interval error
+accumulator. Propagation, the day-4 inoculation, and negative-binomial
+measurements use the S10 code. DS19 composes local strong-order-1.5 Gaussian
+moments over 24 Euler-grid steps for the first observation interval and 20
+thereafter. A relative diagonal floor of `1e-8` is applied after scaling the
+states by `(3,1,3,1,1,1,16,25)`. Proposals condition on a Gaussian approximation
+to the four observed counts, with their negative-binomial variances evaluated
+at the predicted counts. Weights include the transition/proposal ratio and
+the original measurement density. Out-of-range Gaussian proposals receive
+zero weight. This boundary treatment differs from the original Euler model.
+
+All Daphnia final estimates are therefore evaluated using the original Euler
+particle filter. Likelihood estimates are averaged within each unit before
+taking logs and summing across units. The reported MC error combines the
+independent unit errors. DS19 and CTDD21 start at the same MPIF estimate as
+IFAD and receive its measured continuation time; the cost of the warm start
+is included for each method. A last update that exceeds the budget is timed
+but does not replace the last eligible estimate. Pypomp stage times are
+distributed uniformly across their saved iterates for the progress plots;
+DS19 and CTDD21 updates are timed individually.
 
 Source papers: [DS19](https://arxiv.org/abs/1707.04235),
 [CTDD21](https://proceedings.mlr.press/v139/corenflos21a.html).

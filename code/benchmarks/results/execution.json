@@ -1,0 +1,8 @@
+{
+  "cpu": "Intel Core i9-13900K",
+  "gpu": "NVIDIA RTX 3090",
+  "small_models": "serial methods within each batch; concurrently running batches pinned to disjoint pairs of performance cores (four hardware threads)",
+  "daphnia": "serial fits on GPU; other CPU-only benchmarks concurrent",
+  "other_work": "model validation and plotting on separate efficiency cores",
+  "timing_scope": "within experiment; no cross-hardware runtime ranking"
+}
