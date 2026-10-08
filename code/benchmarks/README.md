@@ -67,8 +67,9 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   final checkpoint by a prespecified rule, not the reported evaluation draws.
 - Report convergence and final likelihood distributions in consistent panels;
   give best and median likelihood, spread, failures, and runtime in one table.
-  Do not compare raw likelihoods between datasets. Show deficits from the
-  analytic maximum or a declared model-specific reference.
+  Plot log-likelihood on ordinary linear axes, with a separate range for each
+  model. Do not compare likelihood values between datasets. A reference line
+  marks the analytic maximum or the best displayed final estimate.
 - Measure synchronized wall time, separate compilation and evaluation, and
   record hardware and concurrency. Existing V100 times and new RTX 3090 times
   cannot establish a runtime ranking. Rerun a common timing experiment before
@@ -180,6 +181,12 @@ is included for each method. A last update that exceeds the budget is timed
 but does not replace the last eligible estimate. Pypomp stage times are
 distributed uniformly across their saved iterates for the progress plots;
 DS19 and CTDD21 updates are timed individually.
+
+Final Daphnia estimates use 10 evaluation replicates with 2,000 particles per
+unit. Progress plots use two replicates with 500 particles, every 50 updates
+and at the final checkpoint; these noisier evaluations never select estimates.
+Early tuning runs used the final-evaluation settings for intermediate iterates
+as well. Each run records its actual settings and source snapshot.
 
 Source papers: [DS19](https://arxiv.org/abs/1707.04235),
 [CTDD21](https://proceedings.mlr.press/v139/corenflos21a.html).

@@ -10,6 +10,31 @@ with observation-dependent proposals, backward sampling of state trajectories,
 and numerical score ascent. The derivation and differences from the published
 SAEM algorithm are in [method.tex](method.tex).
 
+A separate [numerical generalized-SAEM pilot](ditlevsen/block_saem.py) tests
+the optimizer modification. It retains the monthly transition model, guided
+filter and backward sampler, but replaces averaged-score Adam updates with
+numerical maximization of an averaged complete-path objective. The old paths
+are reevaluated at each candidate parameter. This requires storing paths and
+has increasing cost after burn-in; it does not establish the exponential-family
+or convergence assumptions in DS19 for Dhaka. An accepted step increases this
+averaged objective, which need not increase the independently evaluated Euler
+likelihood. The pilot is excluded from the manuscript comparison.
+
+From the repository root, using the shared environment:
+
+```sh
+PYTHONPATH=ditlevsen:../pypomp JAX_PLATFORMS=cpu python -m ditlevsen.block_saem \
+  --output ditlevsen/results/block_saem_pilot_start0 --start 0
+```
+
+This uses the first saved IF2 starting estimate, 100 particles, eight updates,
+three burn-in updates and at most 25 L-BFGS iterations per maximization step.
+It evaluates the initial and final estimates with 24 independent Euler-20
+filters of 5,000 particles. Seeds, settings, source snapshots, every parameter
+update and M-step diagnostics are saved. This short pilot tests feasibility;
+it is not a comparison at equal computation time. More particles or internal
+integration steps do not remove the monthly Gaussian approximation.
+
 ## Find the manuscript results
 
 The SI figures use Ditlevsen with **1,000 fitting particles**, with and without

@@ -1,5 +1,66 @@
 # Handoff
 
+## October 8, 2026: numerical generalized-SAEM pilot
+
+- Added `ditlevsen.block_saem`: weighted complete-path objective averaging,
+  reevaluated at every candidate parameter, with a numerical L-BFGS M-step
+  accepted only when finite and nondecreasing in that objective. The monthly
+  Gaussian transition, guided proposal and backward sampler are unchanged.
+  This is a generalized-SAEM extension, not a claim of DS19 convergence for
+  Dhaka. Archived score-based fits remain the current SI results.
+- Three tests pass: known Gaussian M-step, averaging-weight reset, and the
+  Dhaka objective/derivative compared with separately evaluated paths. The
+  latter uses a 1e-8 covariance floor to isolate averaging from ill-conditioning.
+  A diagnostic at the unchanged 1e-12 pilot floor found about 1.6e-6 relative
+  gradient differences between equivalent compiled evaluation orders on a
+  three-month example; at 1e-8 this was about 1e-10. This is a conditioning
+  diagnostic, not evidence that changing the floor improves estimation.
+- Eight-update, 100-particle pilot at IF2 start 0 is running on CPU cores 24–27,
+  output `ditlevsen/results/block_saem_pilot_start0`, log
+  `/tmp/dmop-block-saem-pilot0.log`. Maximum 25 L-BFGS steps per M-step;
+  initial/final independent Euler evaluations use 5,000 particles and 24 reps.
+  Source snapshots and incremental fits are saved. Do not infer convergence
+  or a runtime ranking from this feasibility pilot.
+- Validated cheaper Daphnia trace evaluations with a small all-method run:
+  final and trace replicate counts match their separate requested settings.
+  Final production evaluations remain 2,000 particles x 10 reps; traces use
+  500 x 2 every 50 updates. Existing tuning processes retain their older code.
+- Completed Gaussian SAEM results and the last oscillator batch are saved.
+  SPX and Daphnia computations continue; the five-model SI panels/table remain
+  pending complete results and scientific review.
+
+## October 8, 2026: linear axes and Figure S-6 repair
+
+- User rejected the hybrid linear/log scale. Current `code/benchmarks/report.py`
+  plots raw log-likelihood on ordinary linear axes for both final distributions
+  and progress. Rebuilt and visually checked the completed Gaussian/Dhaka
+  preview in `/tmp/dmop-benchmark-report-gaussian`; no new panels inserted yet.
+  Historical run source snapshots remain unchanged.
+- Fixed Figure S-6: equal-area violin scaling flattened the broad distributions,
+  and the method-axis limit cut off the top IFAD violin. Each violin now has the
+  same peak height, with room above the top method. Regenerated the cropped and
+  full-range PDF/PNG companions; caption states the density scaling. All 100
+  values per method still contribute. Twelve plotting checks pass. SI builds
+  in place with `make dmop/si.pdf`; native compiler still lacks external macros.tex.
+- User asked whether the Dhaka DS19 adaptation can be corrected. Existing
+  implementation averages scores at changing parameters and applies Adam; it
+  is not SAEM. Plan a separate pilot averaging complete-path objective functions
+  and numerically maximizing each averaged objective. This isolates optimization
+  from the monthly Gaussian approximation, which remains a separate limitation.
+  Do not present poor Dhaka performance as a general failure of DS19.
+- All Gaussian final fits, including the replacement SAEM fits, are complete.
+  Four SPX final batches and two Daphnia tuning runs continue; final Daphnia
+  batches wait on tuning. Their source snapshots and outputs are separate.
+
+## October 8, 2026: README for the Dhaka global search
+
+- Added `code/global_search/README.md`. It separates the files behind the
+  main-text Dhaka table and figures from historical ones (`report.qmd`,
+  `report.sbat`, and their Makefile targets), notes the two unused
+  comparable-effort plots, and records the environment (Pypomp `17f8798`,
+  code identical to v1.0.5; JAX 0.11.2). Linked from `code/README.md`.
+
+
 ## October 8, 2026: final batches queued; Gaussian DS19 uses SAEM
 
 - Final linear runs and oscillator batches 00/05/10 are complete; oscillator

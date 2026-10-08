@@ -13,7 +13,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FuncFormatter
 import numpy as np
 import pandas as pd
 
@@ -170,6 +169,8 @@ def generate(results, output, models, expected):
     progress.to_csv(output/"progress_summary.csv", index=False)
     (output/"provenance.json").write_text(json.dumps({"references": references,
         "reference_definition": "analytic maximum for Gaussian models; best displayed final estimate otherwise",
+        "plot_quantity": "independently evaluated log likelihood",
+        "axis_scale": "linear",
         "inputs": {str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p):
                    hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}}, indent=2)+"\n")
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9,
@@ -179,22 +180,21 @@ def generate(results, output, models, expected):
     for i, (ax, model) in enumerate(zip(axes, models)):
         for j, method in enumerate(METHODS):
             frame = final.loc[final.model.eq(model) & final.method.eq(method)]
-            deficits = references[model]-frame.loglik.to_numpy()
-            bp = ax.boxplot([deficits], positions=[j], widths=.38, patch_artist=True,
+            loglik = frame.loglik.to_numpy()
+            bp = ax.boxplot([loglik], positions=[j], widths=.38, patch_artist=True,
                             showfliers=False, medianprops={"color": "black", "linewidth": 1.4})
             bp["boxes"][0].set(facecolor=COLORS[method], alpha=.22)
             jitter = np.random.default_rng(719+i*4+j).uniform(-.14, .14, len(frame))
             failed = frame.status.ne("complete").to_numpy()
-            ax.scatter(j+jitter[~failed], deficits[~failed], s=13 if len(frame) == 20 else 7,
+            ax.scatter(j+jitter[~failed], loglik[~failed], s=13 if len(frame) == 20 else 7,
                        color=COLORS[method], alpha=.7, linewidths=0, zorder=3)
             if failed.any():
-                ax.scatter(j+jitter[failed], deficits[failed], s=28, marker="x",
+                ax.scatter(j+jitter[failed], loglik[failed], s=28, marker="x",
                            color=COLORS[method], linewidths=1., zorder=4)
-        ax.axhline(0., color=".65", lw=.7, ls="--")
-        ax.set_yscale("symlog", linthresh=1.)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
+        ax.axhline(references[model], color=".65", lw=.7, ls="--")
+        ax.ticklabel_format(axis="y", style="plain", useOffset=False)
         ax.set_xticks(range(4), ["IFAD", "MPIF" if model == "daphnia" else "IF2", "DS19", "CTDD21"])
-        ax.set_ylabel("Log-likelihood deficit")
+        ax.set_ylabel("Log-likelihood")
         ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
         ax.grid(axis="y", color=".92", zorder=0)
     save(fig, output, "final_likelihoods")
@@ -203,12 +203,11 @@ def generate(results, output, models, expected):
     for i, (ax, model) in enumerate(zip(axes, models)):
         for method in METHODS:
             frame = progress.loc[progress.model.eq(model) & progress.method.eq(method)].sort_values("seconds")
-            ax.plot(frame.seconds, references[model]-frame["median"], color=COLORS[method], lw=1.6)
-        ax.set_yscale("symlog", linthresh=1.)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
-        ax.axhline(0., color=".65", lw=.7, ls="--")
+            ax.plot(frame.seconds, frame["median"], color=COLORS[method], lw=1.6)
+        ax.ticklabel_format(axis="y", style="plain", useOffset=False)
+        ax.axhline(references[model], color=".65", lw=.7, ls="--")
         ax.set_xlabel("Fitting time (s)")
-        ax.set_ylabel("Median log-likelihood deficit")
+        ax.set_ylabel("Median log-likelihood")
         ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
         ax.grid(color=".92")
     fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
