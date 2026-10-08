@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/run.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/final-oscillator-15",
+    "--purpose",
+    "final",
+    "--starts",
+    "5",
+    "--start-index",
+    "15",
+    "--model",
+    "oscillator",
+    "--iterations",
+    "300",
+    "--if2-iterations",
+    "600",
+    "--warm",
+    "100",
+    "--learning-rate",
+    ".01",
+    "--checkpoint-every",
+    "25"
+  ],
+  "cores": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "selection_rule": "fewest failed tuning fits, then highest median independent likelihood",
+  "selections": []
+}

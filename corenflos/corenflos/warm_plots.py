@@ -137,6 +137,9 @@ def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
             aes(x="violin_number", group="Model"),
             data=distribution,
             style="right",
+            # Equal-area scaling collapses broad distributions when another
+            # method has a sharply concentrated likelihood distribution.
+            scale="width",
             width=1.0,
             alpha=0.6,
             show_legend=False,
@@ -156,7 +159,8 @@ def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
         + scale_x_continuous(
             breaks=list(positions.values()),
             labels=[labels.get(method, method) for method in methods],
-            limits=(-0.5, len(methods) - 0.5),
+            # Allow the top half-violin (center + .05, half-width .5).
+            limits=(-0.5, len(methods) - 0.35),
         )
         + (scale_y_continuous(breaks=list(range(-4300, -3699, 100)))
            if minimum == -4300 else scale_y_continuous())

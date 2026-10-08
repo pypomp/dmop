@@ -1,0 +1,77 @@
+{
+  "model": "oscillator",
+  "output": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/final-oscillator-15",
+  "starts": 5,
+  "start_index": 15,
+  "iterations": 300,
+  "if2_iterations": 600,
+  "warm": 100,
+  "particles": 500,
+  "ds_particles": 100,
+  "ct_particles": 25,
+  "learning_rate": 0.01,
+  "ifad_learning_rate": null,
+  "alpha": 0.97,
+  "rw_sd": 0.02,
+  "seed": 631450,
+  "checkpoint_every": 25,
+  "eval_particles": 5000,
+  "eval_reps": 24,
+  "trace_eval_particles": 1000,
+  "trace_eval_reps": 4,
+  "methods": [
+    "IF2",
+    "IFAD",
+    "DS19",
+    "CTDD21"
+  ],
+  "purpose": "final",
+  "utc": "2026-10-08T20:43:09.335873+00:00",
+  "jax": "0.9.0.1",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "pypomp_source": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/__init__.py",
+  "parameter_names": [
+    "D",
+    "gamma",
+    "sigma"
+  ],
+  "bounds_estimation_scale": [
+    [
+      -2.3025850929940455,
+      2.302585092994046
+    ],
+    [
+      -2.995732273553991,
+      1.6094379124341003
+    ],
+    [
+      -2.995732273553991,
+      0.6931471805599453
+    ]
+  ],
+  "start_jitter_sd": 0.35,
+  "selection": "last finite parameter vector; failures retained",
+  "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+  "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
+  "source_sha256": {
+    "queue_final.py": "f2824af8ba90acb55d38cddb77e98a063dd7627191a65bb91ddda41ecd2ac17c",
+    "run_daphnia.py": "1572032fa98453b213168a84f1eb96a11d86b3b34c63c6c5931035a480b02cd9",
+    "models.py": "b62b3c4a0b3de2e2f87bf862aa93379c7a3c4095a6c45be841dc1231fc62bdf6",
+    "export_dhaka.py": "ea732fef92e32739cec90887dda77a9612468ca3f26d44c60c3dff17e3c362a7",
+    "report.py": "41478e1d993e9d17f0b96896be6ec17659807ec3b5ddcb1b94c3b857e1b3f285",
+    "ctdd.py": "c5203f939f3ca93a92814b5da6940e4ba151f176a479059cacee725d2b8b2cc4",
+    "run.py": "3cc6dc6901efc85a8a6038163d3715586e5d9e503d25dd946966972fae2d11d8",
+    "daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "smoothing.py": "03061c964aca190310389652bceec1b74a54565a9da7e76c12b2b15c7ff778ee"
+  },
+  "dmop_commit": "05364c5c2840cc8640087695c0aedf6c341c5068",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+}
