@@ -1,5 +1,8 @@
 # Corenflos comparison for the Dhaka model
 
+The manuscript uses **CTDD21** as the algorithm name for the Corenflos comparison.
+Source directory and module names retain their original spelling.
+
 This directory implements the differentiable particle filter of Corenflos
 et al. (2021) for SI Section S11. It uses entropy-regularized optimal transport
 for resampling and Adam for parameter optimization. The code calls the Dhaka

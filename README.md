@@ -12,8 +12,8 @@ Development for the revision takes place here. The older
 | Manuscript and supplement | [ms.tex](ms.tex), [si.tex](si.tex) | Main text and SI |
 | MOP likelihood illustration | [code/fig1a/](code/fig1a/README.md) | Fig. 1A, `imgs/095/mop.png` |
 | Dhaka IF2/IFAD searches | [code/global_search/](code/global_search/) | Main Dhaka comparison |
-| Ditlevsen comparison | [ditlevsen/](ditlevsen/README.md) | SI Section S11 |
-| Corenflos comparison | [corenflos/](corenflos/README.md) | SI Section S11 |
+| DS19 comparison | [ditlevsen/](ditlevsen/README.md) | SI Section S11 |
+| CTDD21 comparison | [corenflos/](corenflos/README.md) | SI Section S11 |
 | Combined comparison tables and plots | [imgs/competitors/](imgs/competitors/README.md) | SI Tables S4–S5 and Figs. S6–S9 |
 | Daphnia experiment | [code/daphnia/](code/daphnia/README.md) | SI Section S10 |
 | Other analysis code and older notebooks | [code/](code/README.md) | Code directory guide |

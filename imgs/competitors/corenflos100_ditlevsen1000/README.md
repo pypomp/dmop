@@ -1,7 +1,7 @@
 # Figures included in SI Section S11
 
-This directory combines both initialization experiments for Corenflos at
-100 fitting particles and Ditlevsen at 1,000. Each method has 100 searches;
+This directory combines both initialization experiments for CTDD21 at
+100 fitting particles and DS19 at 1,000. Each method has 100 searches;
 IFAD-0.97 and the shared IF2 estimates provide reference distributions.
 
 | SI figure | PDF included by `si.tex` |

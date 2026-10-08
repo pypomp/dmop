@@ -11,6 +11,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'imgs/competitors'
+ALGORITHM_LABELS = {'Ditlevsen': 'DS19', 'Corenflos': 'CTDD21'}
 HIGH = ROOT / 'corenflos/results/particle_increase_j1000_final_100'
 LOW = {
     ('Corenflos', 'Box'): 'corenflos/results/corenflos_j100_eps025_final_100',
@@ -58,6 +59,8 @@ def main():
         dict(method='IF2 checkpoint', initialization='Box', particles=5000, median=baseline.median(), best=baseline.max(), updates=175, source='corenflos/results/ifad097_post_if2_reference/warm_start_evaluations.csv'),
         dict(method='IFAD-0.97', initialization='IF2', particles=5000, median=ifad.median(), best=ifad.max(), updates=400, source='ditlevsen/results/reference/manuscript_likelihood.csv'),
     ])
+    for row in rows:
+        row['method'] = ALGORITHM_LABELS.get(row['method'], row['method'])
     pd.DataFrame(rows).to_csv(OUT / 'summary.csv', index=False)
     table = [r'\begin{tabular}{llrrrr}', r'\toprule',
              r'Method & Start & $J$ & Median & Maximum & Updates \\', r'\midrule']
@@ -78,6 +81,8 @@ def main():
             np.testing.assert_allclose(delta, frame.euler_delta, atol=1e-9)
             paired.append(dict(method=method, particles=particles, training_delta=frame.training_delta.median(),
                                euler_delta=delta.median(), improving=int(delta.gt(0).sum())))
+    for row in paired:
+        row['method'] = ALGORITHM_LABELS[row['method']]
     pd.DataFrame(paired).to_csv(OUT / 'paired_summary.csv', index=False)
     table = [r'\begin{tabular}{lrrrr}', r'\toprule',
              r'Method & $J$ & Fitting change & Euler-20 change & Improved \\', r'\midrule']

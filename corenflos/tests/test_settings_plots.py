@@ -14,10 +14,10 @@ def test_particle_settings_are_shared_within_method_not_selected_by_initializati
     assert args.corenflos_warm == s.LOW["corenflos_warm"]
     assert args.ditlevsen_cold == s.HIGH / "ditlevsen_vanilla"
     assert args.ditlevsen_warm == s.HIGH / "ditlevsen_warm"
-    assert labels["Corenflos"] == "Corenflos (J=100)"
-    assert labels["Corenflos + IF2"] == "Corenflos + IF2 warm start (J=100)"
-    assert labels["Ditlevsen"] == "Ditlevsen (J=1,000)"
-    assert labels["Ditlevsen + IF2"] == "Ditlevsen + IF2 warm start (J=1,000)"
+    assert labels["Corenflos"] == "CTDD21 (J=100)"
+    assert labels["Corenflos + IF2"] == "CTDD21 + IF2 warm start (J=100)"
+    assert labels["Ditlevsen"] == "DS19 (J=1,000)"
+    assert labels["Ditlevsen + IF2"] == "DS19 + IF2 warm start (J=1,000)"
     with pytest.raises(ValueError, match="Complete standalone and warm-start"):
         s.sources_for(100, 5000)
 
