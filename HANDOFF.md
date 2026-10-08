@@ -1,5 +1,42 @@
 # Handoff
 
+## October 8, 2026: cross-model benchmarks in progress; theorem draft pending
+
+- Kevin expanded the requested oscillator plots to a comparison of IFAD,
+  IF2/MPIF, DS19 and CTDD21 across the DS19 harmonic oscillator, the Pypomp
+  SPX implementation, the CTDD21 linear Gaussian estimation example,
+  Daphnia, and existing Dhaka results. Requested consistent panels and a
+  central table. The proposed saturation of simple examples is a hypothesis,
+  not a completed finding. Daphnia must include DS19 and CTDD21.
+- New `code/benchmarks/` holds a reporting protocol, Gaussian model adapters,
+  a CTDD21 filter that reuses actual Pypomp components, backward simulation
+  and numerical complete-data scores, and a serial repeated-fit driver.
+  SPX is `pypomp.models.spx()` with its bundled data, not a replacement model.
+  The oscillator uses its exact position observations and a conditional
+  velocity proposal. Analytic evaluation targets its strong-1.5 approximation.
+- Six CPU tests pass: independent Gaussian likelihood checks, conditional
+  oscillator PF agreement, CTDD21 finite gradients, smoothing-score agreement
+  with Kalman, and the SPX clipping atom. A two-start, ten-update linear
+  pilot completed all four methods in `/tmp/dmop-linear-pilot-1008`.
+  These are validation/pilot outputs, not manuscript comparison results.
+  No new SI plots, table, conclusions, or manuscript edits have been made.
+- Remaining: review and tune the fit driver on separate starts, validate
+  full-series SPX and oscillator fitting, implement/validate Daphnia extensions,
+  perform repeated final fits and independent evaluations, then make panels
+  and table and update SI. The numerical-score DS19 extension is explicitly
+  distinguished from the original paper's SAEM M-step. Measure timings on
+  uncontended hardware; do not rank V100 and RTX3090 timings as comparable.
+- Latest request: draft a shorter Theorem 5 in chat BEFORE editing. Include
+  an informal bound table, interpretation for each alpha case before proof
+  discussion, and concise method/difficulties rather than a proof sketch.
+  Explain A6 versus A6-J briefly immediately after the assumptions and in the
+  proof-method discussion. Existing S7 proves the SAME particle rates under
+  either; constants and proof route differ. A6 uses an age decomposition with
+  geometric sensitivity decay; A6-J treats the gradient as a bounded current
+  function of the joint state/tangent process. Neither is needed for the
+  population discount-bias argument. Await review of chat wording before
+  editing `ms.tex` or `si.tex` for this request.
+
 ## October 8, 2026: use DS19 and CTDD21 algorithm names
 
 - Defined DS19 and CTDD21 alongside the author citations in `ms.tex` and
