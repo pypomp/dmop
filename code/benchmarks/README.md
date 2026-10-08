@@ -182,5 +182,11 @@ but does not replace the last eligible estimate. Pypomp stage times are
 distributed uniformly across their saved iterates for the progress plots;
 DS19 and CTDD21 updates are timed individually.
 
+Final Daphnia estimates use 10 evaluation replicates with 2,000 particles per
+unit. Progress plots use two replicates with 500 particles, every 50 updates
+and at the final checkpoint; these noisier evaluations never select estimates.
+Early tuning runs used the final-evaluation settings for intermediate iterates
+as well. Each run records its actual settings and source snapshot.
+
 Source papers: [DS19](https://arxiv.org/abs/1707.04235),
 [CTDD21](https://proceedings.mlr.press/v139/corenflos21a.html).
