@@ -692,6 +692,7 @@ def fit_block_pseudo_score(
     maximum_guard_loglik_drop: float = 5.0,
     maximum_elapsed_seconds: float | None = None,
     project_to_bounds: bool = True,
+    compile_before_timing: bool = False,
 ) -> SMCScoreFitResult:
     """Fit the monthly block pseudo-model by SMC Fisher-score ascent."""
 
@@ -750,6 +751,11 @@ def fit_block_pseudo_score(
             )
         )
     )
+    if compile_before_timing:
+        # This closure is recreated for each fit. A previous fit alone does
+        # not warm its JIT cache. A/B timing explicitly excludes this compile.
+        value_and_score.lower(parameters, jnp.zeros(
+            (data.observations.size, 6), dtype=jnp.float64)).compile()
 
     parameter_trace: list[np.ndarray] = []
     marginal_trace: list[float] = []

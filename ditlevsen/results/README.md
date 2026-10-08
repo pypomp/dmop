@@ -31,6 +31,14 @@ compact tracked CSVs; the full plotting and audit workflows also need
 
 ## Development results
 
+`saem_ab/` is the paired optimizer comparison requested after the two pilots
+below. It has 20 global and 20 IF2 starting points, two optimizer arms, and a
+frozen protocol. Read its `protocol.json` and pair-level `status.json` files
+before treating the experiment as complete. The
+[reproduction guide](../README.md#paired-optimizer-comparison) describes the
+budgets, settings and output-selection rules. This is separate from the
+existing S11 results in the table above.
+
 `block_saem_pilot_start0/` and `block_saem_pilot_start1/` test numerical
 generalized-SAEM from two saved IF2 estimates, using the same monthly Gaussian
 transition model as S11. Each uses eight updates and evaluates its initial and

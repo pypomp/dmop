@@ -107,6 +107,18 @@ renv
 !/ditlevsen/results/block_saem_pilot_start[01]/trace.csv
 !/ditlevsen/results/block_saem_pilot_start[01]/evaluation.csv
 !/ditlevsen/results/block_saem_pilot_start[01]/source/*.py
+!/ditlevsen/results/saem_ab/protocol.json
+!/ditlevsen/results/saem_ab/starts.npz
+!/ditlevsen/results/saem_ab/worker*.json
+!/ditlevsen/results/saem_ab/source/*.py
+!/ditlevsen/results/saem_ab/cold/start*/*.json
+!/ditlevsen/results/saem_ab/cold/start*/*.csv
+!/ditlevsen/results/saem_ab/cold/start*/*.npz
+!/ditlevsen/results/saem_ab/warm/start*/*.json
+!/ditlevsen/results/saem_ab/warm/start*/*.csv
+!/ditlevsen/results/saem_ab/warm/start*/*.npz
+!/ditlevsen/results/saem_ab/report/*.csv
+!/ditlevsen/results/saem_ab/report/provenance.json
 /code/global_search/dmop_results/
 
 # Rebuildable documents; PDF figures under imgs/ remain tracked.

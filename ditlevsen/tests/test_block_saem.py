@@ -1,8 +1,9 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
+import pytest
 
-from ditlevsen.block_saem import averaged_objective, maximize_objective, update_weights
+from ditlevsen.block_saem import TimeBudgetExceeded, averaged_objective, maximize_objective, update_weights
 from ditlevsen.block_smc import _complete_block_path_loglik, sample_block_smoothing_path
 from ditlevsen.data import load_dacca_data
 from ditlevsen.model import default_unconstrained_parameters
@@ -29,6 +30,15 @@ def test_gain_one_discards_the_previous_objective():
     weights = update_weights(weights, 1, .25)
     np.testing.assert_allclose(weights, [.75, .25, 0., 0.])
     np.testing.assert_allclose(update_weights(weights, 2, 1.), [0., 0., 1., 0.])
+
+
+def test_numerical_mstep_respects_bounds_and_deadline():
+    vg = lambda z: (-.5*float((z[0]-3.)**2), np.array([3.-z[0]]))
+    optimum, details = maximize_objective(vg, np.array([0.]), maxiter=30, bounds=[(-1., 1.)])
+    np.testing.assert_allclose(optimum, [1.])
+    assert details['accepted']
+    with pytest.raises(TimeBudgetExceeded):
+        maximize_objective(vg, np.array([0.]), maxiter=30, deadline=0.)
 
 
 def test_dhaka_average_matches_separate_complete_path_evaluations():

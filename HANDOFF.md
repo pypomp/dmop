@@ -1,5 +1,36 @@
 # Handoff
 
+## October 8, 2026: paired Dhaka A/B experiment
+
+- User requested score versus numerical SAEM both with and without an IF2
+  warm start. Added `ditlevsen.saem_ab` and `saem_ab_report`: 20 shared starts
+  in each regime, 1,000 particles, 850 seconds per arm, independent Euler-20
+  evaluation with 5,000 particles and 36 paired replicates. Initial values
+  are evaluated too. Fits retain the last finite estimate within the budget;
+  failures remain in the comparison. Method order alternates within workers.
+- Score settings are the archived global/warm settings, including burn-in 30
+  and learning rates .1/.0005. Numerical SAEM uses pilot settings: burn-in 3,
+  at most 80 updates and 25 L-BFGS steps per update. This compares optimizer
+  packages, including schedules, with the Gaussian transition fixed. IF2
+  inputs are precomputed; their original cost is excluded from both warm arms.
+- Numerical SAEM now differentiates each path before summing, avoiding an
+  outer reverse-mode tape over all retained paths. Tests confirm the same
+  weighted objective and derivative. Timed score fits explicitly compile the
+  newly created derivative closure before starting their timer; the optional
+  flag leaves historical fitting defaults unchanged. Deadlines discard an
+  incomplete SAEM M-step. All completed fits are saved before evaluation.
+- Thirteen fitting/selection checks pass. A complete low-particle workflow
+  check with a deliberately tiny budget passed in `/tmp/dmop-saem-ab-smoke-v2`,
+  including both initialization regimes, all evaluations, and report generation.
+  Additional paired-MC-error check verifies cancellation with shared draws.
+- Production output will be `ditlevsen/results/saem_ab`. Four workers will use
+  P-core groups 0–3, 4–7, 8–11 and 12–15 as the corresponding SPX batches finish.
+  Protocol preparation snapshots sources and inputs; workers reject changed
+  sources before fitting. Completed pairs/arms can be resumed. The last worker
+  automatically produces linear-scale panels and tables under `report/`, with
+  a file lock preventing concurrent report writes. These still need scientific
+  review before updating the SI.
+
 ## October 8, 2026: numerical generalized-SAEM pilot
 
 - Added `ditlevsen.block_saem`: weighted complete-path objective averaging,

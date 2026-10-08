@@ -42,18 +42,26 @@ def update_weights(weights, index, gain):
 
 def averaged_objective(path_loglik):
     """Return the value and derivative of a weighted complete-path objective."""
+    path_value_grad = jax.value_and_grad(path_loglik)
     def objective(theta, paths, weights):
         def add(total, item):
             path, weight = item
-            value = jax.lax.cond(weight > 0,
-                lambda: weight*path_loglik(theta, path),
-                lambda: jnp.asarray(0., dtype=theta.dtype))
-            return total+value, None
-        return jax.lax.scan(add, jnp.asarray(0., dtype=theta.dtype), (paths, weights))[0]
-    return jax.jit(jax.value_and_grad(objective))
+            value, grad = jax.lax.cond(weight > 0,
+                lambda: path_value_grad(theta, path),
+                lambda: (jnp.asarray(0., dtype=theta.dtype), jnp.zeros_like(theta)))
+            return (total[0]+weight*value, total[1]+weight*grad), None
+        # Differentiate one path at a time. Differentiating the outer scan
+        # would store the large transition-derivative tape for every path.
+        return jax.lax.scan(add, (jnp.asarray(0., dtype=theta.dtype), jnp.zeros_like(theta)),
+                            (paths, weights))[0]
+    return jax.jit(objective)
 
 
-def maximize_objective(value_and_grad, start, *, maxiter):
+class TimeBudgetExceeded(RuntimeError):
+    """An incomplete M-step must not replace the last completed estimate."""
+
+
+def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=None):
     """Numerically increase the fixed Q function, retaining the input on failure.
 
     A truncated M-step is generalized EM. Improvement here is in Q, not a
@@ -64,6 +72,8 @@ def maximize_objective(value_and_grad, start, *, maxiter):
         raise ValueError("Nonfinite starting complete-data objective or gradient")
 
     def loss(theta):
+        if deadline is not None and perf_counter() >= deadline:
+            raise TimeBudgetExceeded
         value, grad = value_and_grad(theta)
         if not np.isfinite(value) or not np.isfinite(grad).all():
             # Reject undefined line-search trials while preserving a finite
@@ -71,7 +81,7 @@ def maximize_objective(value_and_grad, start, *, maxiter):
             return 1e100, np.zeros_like(theta)
         return -float(value), -np.asarray(grad, dtype=float)
 
-    result = minimize(loss, np.asarray(start), jac=True, method="L-BFGS-B",
+    result = minimize(loss, np.asarray(start), jac=True, method="L-BFGS-B", bounds=bounds,
                       options={"maxiter": maxiter, "maxls": 30,
                                "ftol": 1e-10, "gtol": 1e-6})
     final_value, final_grad = value_and_grad(result.x)
@@ -82,12 +92,13 @@ def maximize_objective(value_and_grad, start, *, maxiter):
         "q_after": float(final_value) if accepted else float(initial_value),
         "accepted": bool(accepted), "mstep_converged": bool(result.success),
         "mstep_iterations": int(result.nit), "mstep_evaluations": int(result.nfev),
-        "mstep_message": str(result.message),
+        "mstep_message": str(result.message).strip(),
     }
 
 
 def fit(start, data, *, particles=100, iterations=8, burnin=3, seed=631480,
-        maxiter=25, floor=1e-12, checkpoint=None):
+        maxiter=25, floor=1e-12, checkpoint=None, maximum_elapsed_seconds=None,
+        bounds=None, warmup_start=None):
     if iterations < 1 or not 1 <= burnin <= iterations:
         raise ValueError("Require iterations >= burnin >= 1")
     theta = np.asarray(normalize_parameters(start))
@@ -102,26 +113,45 @@ def fit(start, data, *, particles=100, iterations=8, burnin=3, seed=631480,
     # Full-shape compilation uses a separate random seed and does not update
     # the starting parameter or contribute a trajectory to the SA average.
     warm_started = perf_counter()
-    warm = sample_block_smoothing_path(theta, data, particles=particles,
+    warm_theta = theta if warmup_start is None else np.asarray(normalize_parameters(warmup_start))
+    warm = sample_block_smoothing_path(warm_theta, data, particles=particles,
         seed=seed+10000019, endpoint_relative_floor=floor, proposal="guided")
     if not warm.valid_path or not np.isfinite(warm.loglik):
         raise ValueError("Invalid preliminary smoothing trajectory")
     paths[0] = warm.path[1:]
-    value_grad(theta, paths, update_weights(weights, 0, 1.))[0].block_until_ready()
+    value_grad(warm_theta, paths, update_weights(weights, 0, 1.))[0].block_until_ready()
     compilation_seconds = perf_counter()-warm_started
+    if checkpoint:
+        checkpoint(np.asarray([theta.copy()]), pd.DataFrame(), compilation_seconds)
 
     rows, estimates = [], [theta.copy()]
     started = perf_counter()
+    deadline = None if maximum_elapsed_seconds is None else started+maximum_elapsed_seconds
+    termination = "maximum-iterations"
     for i in range(iterations):
-        path = sample_block_smoothing_path(theta, data, particles=particles,
-            seed=seed+104729*i, endpoint_relative_floor=floor, proposal="guided")
+        if deadline is not None and perf_counter() >= deadline:
+            termination = "time-budget"
+            break
+        for retry in range(4):
+            path = sample_block_smoothing_path(theta, data, particles=particles,
+                seed=seed+104729*i+15485863*retry, endpoint_relative_floor=floor, proposal="guided")
+            if path.valid_path and np.isfinite(path.loglik):
+                break
         if not path.valid_path or not np.isfinite(path.loglik):
             raise ValueError(f"Invalid smoothing trajectory at iteration {i+1}")
         paths[i] = path.path[1:]
         gain = 1. if i < burnin else (i-burnin+1.)**(-.9)
         weights = update_weights(weights, i, gain)
-        candidate, details = maximize_objective(
-            lambda z: value_grad(z, paths, weights), theta, maxiter=maxiter)
+        try:
+            candidate, details = maximize_objective(
+                lambda z: value_grad(z, paths, weights), theta, maxiter=maxiter,
+                bounds=bounds, deadline=deadline)
+        except TimeBudgetExceeded:
+            termination = "time-budget"
+            break
+        if deadline is not None and perf_counter() >= deadline:
+            termination = "time-budget"
+            break
         # This removes only a null softmax shift, leaving the model unchanged.
         theta = np.asarray(normalize_parameters(candidate))
         row = dict(iteration=i+1, seconds=perf_counter()-started, gain=gain,
@@ -136,7 +166,9 @@ def fit(start, data, *, particles=100, iterations=8, burnin=3, seed=631480,
             checkpoint(np.asarray(estimates), pd.DataFrame(rows), compilation_seconds)
         print(f"iteration {i+1}: Q {details['q_before']:.3f} -> "
               f"{details['q_after']:.3f}, {row['seconds']:.2f}s", flush=True)
-    return np.asarray(estimates), pd.DataFrame(rows), compilation_seconds
+    trace = pd.DataFrame(rows)
+    trace.attrs.update(termination_reason=termination, seconds=perf_counter()-started)
+    return np.asarray(estimates), trace, compilation_seconds
 
 
 def main():
