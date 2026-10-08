@@ -1,0 +1,76 @@
+{
+  "model": "oscillator",
+  "output": "code/benchmarks/results/final-oscillator-00",
+  "starts": 5,
+  "start_index": 0,
+  "iterations": 300,
+  "if2_iterations": 600,
+  "warm": 100,
+  "particles": 500,
+  "ds_particles": 100,
+  "ct_particles": 25,
+  "learning_rate": 0.01,
+  "ifad_learning_rate": null,
+  "alpha": 0.97,
+  "rw_sd": 0.02,
+  "seed": 631450,
+  "checkpoint_every": 25,
+  "eval_particles": 5000,
+  "eval_reps": 24,
+  "trace_eval_particles": 1000,
+  "trace_eval_reps": 4,
+  "methods": [
+    "IF2",
+    "IFAD",
+    "DS19",
+    "CTDD21"
+  ],
+  "purpose": "final",
+  "utc": "2026-10-08T20:24:30.791903+00:00",
+  "jax": "0.9.0.1",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "pypomp_source": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/__init__.py",
+  "parameter_names": [
+    "D",
+    "gamma",
+    "sigma"
+  ],
+  "bounds_estimation_scale": [
+    [
+      -2.3025850929940455,
+      2.302585092994046
+    ],
+    [
+      -2.995732273553991,
+      1.6094379124341003
+    ],
+    [
+      -2.995732273553991,
+      0.6931471805599453
+    ]
+  ],
+  "start_jitter_sd": 0.35,
+  "selection": "last finite parameter vector; failures retained",
+  "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+  "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
+  "source_sha256": {
+    "run_daphnia.py": "78084c57cbfe3ceb08402948579401758881577b1c8ef65554a58fbf2c31c4d9",
+    "models.py": "b62b3c4a0b3de2e2f87bf862aa93379c7a3c4095a6c45be841dc1231fc62bdf6",
+    "export_dhaka.py": "ea732fef92e32739cec90887dda77a9612468ca3f26d44c60c3dff17e3c362a7",
+    "report.py": "f657b7c4f6d2fe8cb58fb8fc97280d7b179601ab07dd7dbbe6b31c84216ca21a",
+    "ctdd.py": "c5203f939f3ca93a92814b5da6940e4ba151f176a479059cacee725d2b8b2cc4",
+    "run.py": "3cc6dc6901efc85a8a6038163d3715586e5d9e503d25dd946966972fae2d11d8",
+    "daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "smoothing.py": "03061c964aca190310389652bceec1b74a54565a9da7e76c12b2b15c7ff778ee"
+  },
+  "dmop_commit": "f6205e8fd0da1cc62fad715003989248d594ea5d",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+}
