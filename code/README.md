@@ -9,7 +9,7 @@ the small script here combines their saved results into SI tables.
 | [fig1a/](fig1a/README.md) | Recompute or redraw the MOP likelihood illustration | [Fig. 1A PNG](../imgs/095/mop.png) |
 | [competitor_results.py](competitor_results.py) | Build SI Tables S4–S5 and CSV summaries from saved evaluations | [Comparison outputs](../imgs/competitors/README.md) |
 | [competitor_reproduction.md](competitor_reproduction.md) | Shared environment and reproduction guide for S11 | [DS19](../ditlevsen/README.md), [CTDD21](../corenflos/README.md) |
-| [global_search/](global_search/) | Dhaka IF2/IFAD fitting, evaluation, export, and reports | `Makefile`, `precise_report.qmd`, and `exports/` in that directory |
+| [global_search/](global_search/README.md) | Dhaka IF2/IFAD fitting, evaluation, export, and reports | `Makefile`, `precise_report.qmd`, and `exports/` in that directory |
 | [benchmarks/](benchmarks/README.md) | Four-method comparisons across the oscillator, linear Gaussian model, SPX, and Daphnia; combined reporting with Dhaka | Final experiments in progress; saved configurations distinguish pilots from final runs |
 | [daphnia/](daphnia/README.md) | Daphnia model, searches, evaluation, and report | SI Section S10 |
 | [r_benchmark/](r_benchmark/) | R-side performance comparison | Main-text computational efficiency experiment |
