@@ -30,12 +30,18 @@
   an informal bound table, interpretation for each alpha case before proof
   discussion, and concise method/difficulties rather than a proof sketch.
   Explain A6 versus A6-J briefly immediately after the assumptions and in the
-  proof-method discussion. Existing S7 proves the SAME particle rates under
-  either; constants and proof route differ. A6 uses an age decomposition with
+  proof-method discussion. S7 states common particle rates under either;
+  S6 additionally proves the sharper DMOP-0 variance bound with one factor
+  `(1+log J)` under A6-J versus its square under A6. Preserve that distinction
+  in the proposed table. Constants and proof route differ. A6 uses an age decomposition with
   geometric sensitivity decay; A6-J treats the gradient as a bounded current
   function of the joint state/tangent process. Neither is needed for the
   population discount-bias argument. Await review of chat wording before
   editing `ms.tex` or `si.tex` for this request.
+- Kevin also proposes removing the currently numbered Theorem S4
+  (`thm:dmop-alpha-truncation-mse`), whose general bounds repeat S7, and
+  reframing S6 as a DMOP-0 warmup. Draft this structure in chat first;
+  manuscript remains unchanged pending review.
 
 ## October 8, 2026: use DS19 and CTDD21 algorithm names
 
