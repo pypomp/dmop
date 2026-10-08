@@ -1,6 +1,29 @@
 # Handoff
 
-## October 8, 2026: cross-model benchmarks in progress; theorem draft pending
+## October 8, 2026: simplify Theorem 5 and reorganize S6–S7
+
+- Applied the chat draft after Kevin approved it. Main text now has a short
+  Theorem 5, a compact bound table, interpretation for each alpha case before
+  the proof-method discussion, and a brief explanation immediately after A6-J.
+  Explicit mixing constants and finite-sum refinements remain in S7.
+- The table distinguishes A6 and A6-J: the DMOP-0 particle MSE for J >= N
+  has two logarithmic factors under A6 and one under A6-J. S6's theorem now
+  states the two variance bounds already established by its proof.
+- Retitled S6 as the DMOP-0 variance warmup. Removed the duplicate old
+  Theorem S4 and the inactive superseded S6 extension. S7 is now titled as
+  the proof of main Theorem 5; its retained general theorem renumbers from
+  S5 to S4. Removed/redirected references to the deleted result. Section
+  numbers S6/S7 and downstream experimental sections are unchanged.
+- Validation: repository builds succeed (MS 23 pages, SI 74), with no
+  undefined references/citations or new overfull boxes. The main manuscript
+  retains the existing Theorem 3 proof overfull box. Inspected the rendered
+  bound-table/discussion page and S6 opening. `git diff --check` passes.
+  Native SI compilation was attempted but cannot load external macros.tex;
+  the existing editor was retained. No replacement document was created.
+- Cross-model benchmarking below is still unfinished; this edit adds no new
+  experiment results or figures.
+
+## October 8, 2026: cross-model benchmarks in progress; theory draft history
 
 - Kevin expanded the requested oscillator plots to a comparison of IFAD,
   IF2/MPIF, DS19 and CTDD21 across the DS19 harmonic oscillator, the Pypomp
@@ -26,7 +49,7 @@
   and table and update SI. The numerical-score DS19 extension is explicitly
   distinguished from the original paper's SAEM M-step. Measure timings on
   uncontended hardware; do not rank V100 and RTX3090 timings as comparable.
-- Latest request: draft a shorter Theorem 5 in chat BEFORE editing. Include
+- Earlier request (now implemented above): draft a shorter Theorem 5 in chat BEFORE editing. Include
   an informal bound table, interpretation for each alpha case before proof
   discussion, and concise method/difficulties rather than a proof sketch.
   Explain A6 versus A6-J briefly immediately after the assumptions and in the
@@ -36,12 +59,12 @@
   in the proposed table. Constants and proof route differ. A6 uses an age decomposition with
   geometric sensitivity decay; A6-J treats the gradient as a bounded current
   function of the joint state/tangent process. Neither is needed for the
-  population discount-bias argument. Await review of chat wording before
-  editing `ms.tex` or `si.tex` for this request.
+  population discount-bias argument. Kevin subsequently approved this draft;
+  see the completed edit above.
 - Kevin also proposes removing the currently numbered Theorem S4
   (`thm:dmop-alpha-truncation-mse`), whose general bounds repeat S7, and
-  reframing S6 as a DMOP-0 warmup. Draft this structure in chat first;
-  manuscript remains unchanged pending review.
+  reframing S6 as a DMOP-0 warmup. This structure was drafted in chat and
+  implemented after approval, as recorded above.
 
 ## October 8, 2026: use DS19 and CTDD21 algorithm names
 
