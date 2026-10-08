@@ -23,13 +23,20 @@
   check with a deliberately tiny budget passed in `/tmp/dmop-saem-ab-smoke-v2`,
   including both initialization regimes, all evaluations, and report generation.
   Additional paired-MC-error check verifies cancellation with shared draws.
-- Production output will be `ditlevsen/results/saem_ab`. Four workers will use
-  P-core groups 0–3, 4–7, 8–11 and 12–15 as the corresponding SPX batches finish.
+- Production output is `ditlevsen/results/saem_ab`, prepared from commit
+  `16a4fa043`. Four workers were launched at 21:50 UTC. Workers 0/2/3 are
+  fitting on P-core groups 0–3, 8–11 and 12–15; worker 1 waits for SPX batch 00
+  before using cores 4–7. Tool sessions are 45921/75821/71296/94968 for workers
+  0/1/2/3, and logs are `/tmp/dmop-saem-ab-workerN.log`. Host PIDs at launch
+  were 1156468/1156464/1156469/1156457. No production A/B pair is complete yet.
   Protocol preparation snapshots sources and inputs; workers reject changed
   sources before fitting. Completed pairs/arms can be resumed. The last worker
   automatically produces linear-scale panels and tables under `report/`, with
   a file lock preventing concurrent report writes. These still need scientific
   review before updating the SI.
+- SPX batches 05/10/15 are complete (60 fits); batch 00 continues. Daphnia
+  tuning and its four dependent final batches continue unchanged. The new
+  five-model panels and central SI table remain pending those complete runs.
 
 ## October 8, 2026: numerical generalized-SAEM pilot
 
