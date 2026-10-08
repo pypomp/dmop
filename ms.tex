@@ -277,7 +277,6 @@ This leads to numerical instability and high variance unless $N$ is small.
 For $\alpha<1$, the weights from previous timesteps are discounted as in Equation~(\ref{eq:weighting-scheme}), allowing for lower variance at the expense of bias in the gradient estimate.
 
 When $\alpha=1$, MOP-$1$ maintains complete memory of each particle's ancestral trajectory.
-%Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$1$ recovers the consistent but high-variance score estimate of \cite{poyiadjis11}. 
 \newEdit{\editPoyiadjisCorrespondence}
 
 When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$0$ recovers the low-variance but asymptotically biased score estimate of \cite{naesseth18}.
@@ -560,7 +559,6 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
 Without the IF2 prior, NUTS with the MOP-$\alpha$ estimate alone tended to diverge.
 In contrast, particle Metropolis-Hastings, with or without said prior, fails to effectively explore the parameter space.
 We display these results in the supplement (Section~\suppSecBayesFigs). 
-\newEdit{Section~S7 contains the new bias--variance analysis. Change the preamble references for the Bayesian figures, baseline justification, and algorithmic parameters from S7, S8, S9 to S8, S9, S10.}
 This speedup in the mixing time of particle MCMC by over three orders of magnitude provides hope that particle Bayesian inference might be increasingly employed for the complex scientific models commonly encountered in areas like epidemiology.
 
 
@@ -607,9 +605,7 @@ measure on its invariant state space.
 \newEdit{Either A6 or A6-J suffices for the particle bounds; see S7 for the
 sufficient condition and example.}
 
-In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations \ref{eq:mop-conditional-likelihood} and \ref{eq:weighting-scheme}, as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
-
-%\subsection{MOP-$\alpha$ Targets the Filtering Distribution}
+In particular, assumptions \ref{assump:bounded-process} and \ref{assump:bounded-measurement} imply that the POMP model satisfies a strong mixing condition, and as such are fairly strong but commonplace in the literature \citep{karjalainen23, delMoral04}. The fact that the likelihood estimate yielded by MOP-$\alpha$ has more than two continuous derivatives in $\theta$ follows from the construction of the likelihood estimate in equations ()\ref{eq:mop-conditional-likelihood}) and~(\ref{eq:weighting-scheme}), as well as Assumptions \ref{assump:bounded-measurement} and \ref{assump:diff-meas-and-sim}. 
 
 We show that MOP-$\alpha$ targets the filtering distribution under $\theta$ and is strongly consistent for the likelihood under $\theta$ when $\alpha=1$ or $\theta=\phi$.
 Employing $\alpha<1$ lead to inconsistency when $\theta$ deviates from $\phi$, but this bias disappears as $\theta$ approaches $\phi$.
@@ -638,14 +634,12 @@ This is a strong law of large numbers for triangular arrays of particles resampl
 \end{proof}
 
 
-%\subsection{DMOP-$1$ Score Estimate Is Consistent}
-
 We take advantage of the equivalence between DMOP-$\alpha$ and the derivative of MOP-$\alpha$ to investigate the former by studying the latter.
-Although we have shown the DMOP-$1$ gradient estimate yields the estimate of \cite{poyiadjis11} and \cite{scibior21} when applied to the bootstrap filter, those authors estimate the Fisher score by 
+Specifically, we show the consistency of the MOP-$1$ gradient estimate below.
+Note that \cite{poyiadjis11} and \cite{scibior21} estimate the Fisher score by 
 $\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{X_{0:N}, Y_{1:N}}(x_{0:n,j}^{A, F,\theta}, y_{1:N}^* ; \theta)$ and not
 $\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log f_{Y_{1:N}| X_{1:N}}(y_{1:N}^* | x_{1:n,j}^{A, F,\theta}; \theta).$
-It is therefore not immediately apparent that these two converge to the same thing.
-As such we directly show the consistency of the MOP-$1$ gradient estimate below. 
+The estimators are evidently somewhat similar, but it is not immediately apparent that they converge to the same thing.
 
 \begin{thm}[Consistency of MOP-$1$ Gradient Estimate]
     The gradient estimate of MOP-$\alpha$ when $\alpha=1$, $\theta=\phi$ is strongly consistent for the score: $\nabla_\theta \hat\ell_J^1(\theta) \stackrel{a.s.}{\to} \nabla_\theta \ell(\theta)$ as $J \to \infty$.
@@ -654,9 +648,6 @@ As such we directly show the consistency of the MOP-$1$ gradient estimate below.
 
 We present a proof outline here, postponing the full argument to the supplement (Section~\suppSecProofConsistency).
 On the compact neighborhood $K$ in Assumption \ref{assump:local-bounded-derivative}, Theorem \ref{thm:mop-targeting} with $\alpha=1$ gives pointwise almost-sure convergence of $\hat\ell_J^1(\theta)$ to $\ell(\theta)$, including when $\theta\ne\phi$. Intersecting these events over a countable dense subset of $K$, the gradient bound upgrades this to uniform convergence on $K$. The Hessian bound makes the gradients uniformly equicontinuous, so Arzel\`a--Ascoli gives uniformly convergent gradient subsequences. Passing to the limit in the fundamental theorem of calculus identifies each such limit as $\nabla_\theta\ell(\theta)$ in the interior of $K$. Thus the full gradient sequence converges locally uniformly there almost surely, and in particular $\nabla_\theta\hat\ell_J^1(\phi)\to\nabla_\theta\ell(\phi)$.
-
-
-%\subsection{DMOP-$\alpha$ Error, Bias and Variance}
 
 We now provide a result showing that DMOP-$\alpha$ has a desirable bias-variance tradeoff when $0<\alpha<1$.
 This is achieved because it combines favorable properties from the low-variance but asymptotically biased estimate of \cite{naesseth18} and the high-variance but consistent estimate of \cite{poyiadjis11}. 
@@ -879,24 +870,25 @@ Practical likelihood-based data analysis involves many likelihood optimizations 
 This occurs with profile likelihood confidence intervals and model selection. A careful scientist should consider many model variations, to see whether the conclusions of the study are sensitive to alternative model specifications.
 Coding model variations is relatively simple when using plug-and-play inference methodology.
 However, assessing the scientific potential of these variations requires likelihood optimization.
-Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
+Monte~Carlo adjusted profile methods can help to accommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
 Improving the process of model fitting has practical consequences for the ability of scientists to evaluate hypotheses.
 We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which provides a high-quality log-likelihood maximization in the complex benchmark model of \cite{king08}.
 The \textit{Daphnia} application in the supplement (Section S10) demonstrates that these gains also extend to complex panel data.
-We anticipate that this will promote scientific advances in all domains where complex POMP models arise.
+We anticipate that our methodology will promote scientific advances in all domains where complex POMP models arise.
 
 
 If the simulator is discontinuous in $\theta$, DMOP-$\alpha$ no longer applies.
 We are working on a variation of DMOP-$\alpha$ applicable to this case.
 Specifically, differentiable transition density ratios can be used instead of a differentiable simulator.
 The off-parameter treatment of the measurement model is extended to an off-parameter simulation for the dynamic process.
-In that case, one requires access to the transition densities, or at least their ratios. 
-This algorithm may be better suited to large discrete state spaces than either DMOP-$\alpha$ or differentiation of the Baum-Welch algorithm.
+In that case, one requires access to the transition densities, or at least their ratios.
+Transition densities can be defined conditional on a noise process with sample paths differentiable as a function of a variance parameter, to permit AD methods for over-dispersed POMP models that have various practical applications \citep{breto09,stocks17,whitehouse23}.
 
-Discounting the weights by some $\alpha \in [0,1]$ is not the only way to interpolate between the estimators of \cite{naesseth18} and \cite{poyiadjis11}. 
+\newEdit{\editBPF}
+
+Discounting the weights by some $\alpha \in [0,1]$ is not the only way to interpolate between the estimators obtained at $\alpha=0$ and $\alpha=1$.
 As the proof of Theorem \ref{thm:mop-biasvar} implies, we can also truncate the weights at a fixed lag, corresponding to the MOP-$(1,k)$ algorithm mentioned. 
 The analysis is similar, with comparable rates but with a slightly less convenient implementation. 
-
 
 \section*{Acknowledgments}
 This research was supported by National Science Foundation grants DMS-1761603, DEB-1933497 and  OAC-2607869. 
