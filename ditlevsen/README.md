@@ -37,6 +37,48 @@ integration steps do not remove the monthly Gaussian approximation.
 
 ## Find the manuscript results
 
+### Paired optimizer comparison
+
+[saem_ab.py](ditlevsen/saem_ab.py) compares the score implementation with
+numerical generalized-SAEM from 20 global starts and 20 saved IF2 starts.
+The two arms share each starting estimate, use 1,000 particles and receive
+850 seconds of optimization time. The Gaussian transition approximation,
+guided proposals and backward sampler are shared. The score arm retains its
+archived settings, including learning rates .1/.0005 for global/IF2 starts
+and burn-in 30. Numerical SAEM uses the pilot settings: burn-in 3, at most
+80 updates, and at most 25 L-BFGS iterations per M-step. Thus this compares
+the two optimizer packages, including their schedules.
+
+Both arms retain the last finite estimate recorded within the budget. A failed
+fit contributes its last eligible estimate, or the input estimate if no update
+completed. Computation used to detect a deadline overrun is recorded, but its
+candidate is discarded. Per-fit compilation is excluded. The IF2 estimates
+are precomputed inputs; their original fitting cost is excluded from both
+warm arms, so this experiment does not compare total global-versus-warm cost.
+
+All initial and final estimates receive independent Euler-20 evaluations with
+5,000 particles and 36 replicates. Within each pair, evaluation random numbers
+are shared to estimate the Monte Carlo error of the difference. These draws
+never select a fitting output. The order of the two fitting methods alternates
+across pairs within each CPU worker.
+
+```sh
+PYTHONPATH=ditlevsen:../pypomp JAX_PLATFORMS=cpu python -m ditlevsen.saem_ab \
+  --prepare --output ditlevsen/results/saem_ab
+# Run worker indices 0, 1, 2, 3 on separate CPU cores, or use --workers 1.
+PYTHONPATH=ditlevsen:../pypomp JAX_PLATFORMS=cpu python -m ditlevsen.saem_ab \
+  --output ditlevsen/results/saem_ab --worker 0 --workers 4
+```
+
+`protocol.json` freezes settings, source hashes and starting points before
+fitting. Workers verify source hashes, save each arm before evaluation, and
+can resume completed arms and pairs. Once all pairs are complete,
+[saem_ab_report.py](ditlevsen/saem_ab_report.py) creates linear-scale paired
+panels, summary tables, Monte Carlo errors and provenance under `report/`.
+These outputs require review before being incorporated into the SI.
+
+### Existing S11 results
+
 The SI figures use Ditlevsen with **1,000 fitting particles**, with and without
 an IF2 warm start. Those runs are stored under
 [corenflos/results/particle_increase_j1000_final_100/](../corenflos/results/particle_increase_j1000_final_100/README.md),

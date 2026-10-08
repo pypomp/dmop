@@ -10,6 +10,7 @@ inner directory is the importable Python package.
 | [smc_benchmark.py](smc_benchmark.py) | Current fit/final-eval/trace-eval driver; resumable outputs |
 | [block_smc.py](block_smc.py) | Monthly Gaussian filter, backward simulation, and numerical score ascent used in S11 |
 | [block_saem.py](block_saem.py) | Exploratory numerical generalized-SAEM on the same monthly model; separate from S11 results |
+| [saem_ab.py](saem_ab.py), [saem_ab_report.py](saem_ab_report.py) | Paired score/SAEM comparison from global and IF2 starts, with independent Euler evaluations |
 | [transition.py](transition.py) | Local Gaussian moments and monthly transition construction |
 | [model.py](model.py) | Dhaka dynamics, parameter bounds and transformations |
 | [data.py](data.py) | Observations and interpolated covariates from the sibling Pypomp checkout |
