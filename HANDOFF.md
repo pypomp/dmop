@@ -1,5 +1,34 @@
 # Handoff
 
+## October 8, 2026: numerical generalized-SAEM pilot
+
+- Added `ditlevsen.block_saem`: weighted complete-path objective averaging,
+  reevaluated at every candidate parameter, with a numerical L-BFGS M-step
+  accepted only when finite and nondecreasing in that objective. The monthly
+  Gaussian transition, guided proposal and backward sampler are unchanged.
+  This is a generalized-SAEM extension, not a claim of DS19 convergence for
+  Dhaka. Archived score-based fits remain the current SI results.
+- Three tests pass: known Gaussian M-step, averaging-weight reset, and the
+  Dhaka objective/derivative compared with separately evaluated paths. The
+  latter uses a 1e-8 covariance floor to isolate averaging from ill-conditioning.
+  A diagnostic at the unchanged 1e-12 pilot floor found about 1.6e-6 relative
+  gradient differences between equivalent compiled evaluation orders on a
+  three-month example; at 1e-8 this was about 1e-10. This is a conditioning
+  diagnostic, not evidence that changing the floor improves estimation.
+- Eight-update, 100-particle pilot at IF2 start 0 is running on CPU cores 24–27,
+  output `ditlevsen/results/block_saem_pilot_start0`, log
+  `/tmp/dmop-block-saem-pilot0.log`. Maximum 25 L-BFGS steps per M-step;
+  initial/final independent Euler evaluations use 5,000 particles and 24 reps.
+  Source snapshots and incremental fits are saved. Do not infer convergence
+  or a runtime ranking from this feasibility pilot.
+- Validated cheaper Daphnia trace evaluations with a small all-method run:
+  final and trace replicate counts match their separate requested settings.
+  Final production evaluations remain 2,000 particles x 10 reps; traces use
+  500 x 2 every 50 updates. Existing tuning processes retain their older code.
+- Completed Gaussian SAEM results and the last oscillator batch are saved.
+  SPX and Daphnia computations continue; the five-model SI panels/table remain
+  pending complete results and scientific review.
+
 ## October 8, 2026: linear axes and Figure S-6 repair
 
 - User rejected the hybrid linear/log scale. Current `code/benchmarks/report.py`
