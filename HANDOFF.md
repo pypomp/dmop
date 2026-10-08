@@ -1,5 +1,18 @@
 # Handoff
 
+## October 8, 2026: align the Del Moral--Jasra citation with the SPA article
+
+- Checked the journal and preprint PDFs in `dmop_private/refs`. Updated
+  the bibliography to Del Moral and Jasra (2018), including the Part I
+  title, and replaced `chanDelMoral18` with `delmoral18` in main and SI.
+- Mapped preprint Theorems 3.3 and 3.5 to journal Theorems 3.1 and 3.3,
+  including the SI's subsequent theorem calls without repeated citations.
+  Updated the inactive historical proof's Equation (3.9) to (3.10);
+  the backward representation remains Equation (3.3) in both versions.
+- Main and SI compile successfully (24 and 75 pages), with no undefined
+  references or citations. Existing layout warnings are unchanged.
+  Checked both generated bibliography entries and `git diff --check`.
+
 ## October 7, 2026: incorporate the revised Particle Marginals lemma
 
 - Updated Lemma S6 and its proof on top of `828e6669d`, after comparing

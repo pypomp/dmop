@@ -3316,7 +3316,7 @@ h_k
 \label{eq:actual-path-score}
 \end{equation}
 for the measurement gradient on an ancestral path. Following
-\citet{chanDelMoral18}, let
+\citet{delmoral18}, let
 \begin{equation}
 m(\xi_t)
 =
@@ -5596,7 +5596,7 @@ manuscript's prediction-cloud notation and put
 Thus we condition on all prediction clouds through time $t$, but not on
 the complete predicted genealogies $\xi_{t,1:J}^P$.
 The exact backward representation of a randomly selected ancestral line
-in Equation~(3.3) of \citet{chanDelMoral18} has, from time $s$ to time
+in Equation~(3.3) of \citet{delmoral18} has, from time $s$ to time
 $s-1$, the transition
 \begin{align}
 &\sum_{j=1}^{J}
@@ -5613,7 +5613,7 @@ f_{X_s\mid X_{s-1}}
 \delta_{x_{s-1,j}^{P}}(dx_{s-1}).
 \label{eq:dmop-particle-backward-kernel}
 \end{align}
-In the notation of \citet{chanDelMoral18}, the density in their backward
+In the notation of \citet{delmoral18}, the density in their backward
 transition is
 $H'_s(x_{s-1},x_s)=G'_{s-1}(x_{s-1})M'_s(x_{s-1},x_s)$.
 Taking $m(\xi'_{s-1})$ to be the empirical prediction cloud,
@@ -5623,7 +5623,7 @@ M'_s(x_{s-1,j}^P,x_s)
 =f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1,j}^P;\theta)
 \end{equation*}
 gives exactly Equation~(\ref{eq:dmop-particle-backward-kernel}).
-Equation~(3.3) of \citet{chanDelMoral18} uses the uniform terminal
+Equation~(3.3) of \citet{delmoral18} uses the uniform terminal
 empirical measure.  Selecting its terminal state instead with
 probability proportional to $g_{t,j}$ gives
 $\Psi_t\{m(\xi_t^P)\}$ and changes only the terminal distribution, not
@@ -5673,7 +5673,7 @@ This is the point at which the additional current-function premise in
 Lemma~\ref{lem:dmop-alpha-variance} is used.  It makes $h_{u,i}$
 measurable with respect to $X_u$, and it makes $h_{s,i}$ a bounded
 function at the endpoint of the backward composition.  Equation~(3.3)
-of \citet{chanDelMoral18} supplies the conditional genealogy law, but by
+of \citet{delmoral18} supplies the conditional genealogy law, but by
 itself it would not give the following covariance decay for arbitrary
 functionals of the ancestral path.  In particular, the factor $\alpha$
 does not repair this step: it weights the inputs only after the covariance
@@ -6927,7 +6927,7 @@ Section~\ref{appendix:feynman}, and
 \label{eq:historical-filter-bayes-target}
 \end{equation}
 The prediction genealogies $\xi_t^P$ form the historical particle model
-of \citet{chanDelMoral18}: conditionally on the time-$(t-1)$ prediction
+of \citet{delmoral18}: conditionally on the time-$(t-1)$ prediction
 cloud, multinomial selection with $G_{t-1}$ followed by $M_t$ produces
 the $J$ time-$t$ prediction paths independently.  Their conditions (A1)
 and (A2) follow from Assumptions {\refAssumpBoundedProcess} and
@@ -6947,9 +6947,9 @@ F=R+\bar f.
 \end{equation}
 Then $0\leq F\leq2R$ and
 $m(\xi_t^P)(f)-\eta_t(f)=m(\xi_t^P)(F)-\eta_t(F)$.
-Theorem~3.3 of \citet{chanDelMoral18}, applied to $F$ and $F^2$,
-and the $q=2$ comparison following their Equation~(3.9), which is also
-the $q=2$ case of their Theorem~3.5, give, for $J\geq ct$,
+Theorem~3.1 of \citet{delmoral18}, applied to $F$ and $F^2$,
+and the $q=2$ comparison following their Equation~(3.10), which is also
+the $q=2$ case of their Theorem~3.3, give, for $J\geq ct$,
 \begin{align}
 \left|\E m(\xi_t^P)(F)-\eta_t(F)\right|
 &\leq C\frac tJ\eta_t(F),
@@ -7454,8 +7454,8 @@ For the first brace, condition on $\eta_a^J$. Let
 $\nu=m(\xi_b^P)$ and $\mu=\Phi_{a,b}(\eta_a^J)$ on the prediction
 window. The first prediction following selection from $\eta_a^J$
 has conditionally independent particles with common law
-$\Phi_{a,a+1}(\eta_a^J)$. To apply Theorems~3.3 and~3.5 of
-\citet{chanDelMoral18}, first note that future normalizers depend on the current
+$\Phi_{a,a+1}(\eta_a^J)$. To apply Theorems~3.1 and~3.3 of
+\citet{delmoral18}, first note that future normalizers depend on the current
 physical state and satisfy
 Equation~(\ref{eq:weak-bias-uniform-normalizer-ratio}). For a bounded
 function $\psi(X_b,\omega_b)$ of the last state and its innovation,
@@ -7478,7 +7478,7 @@ innovation-augmented marginal has a summable forgetting bound, with a
 one-step delay. For prediction histories, omit the terminal $G_b$:
 the final bracket becomes $\E[\psi(X_b,\omega_b)\mid X_{b-1}=\mathord\cdot]$,
 and the same contraction argument gives the corresponding summable bound.
-Apply the path construction of \citet{chanDelMoral18} to this marginal.
+Apply the path construction of \citet{delmoral18} to this marginal.
 Under (A6-J), use the joint marginal and its transition bounds instead,
 as in Lemma~\ref{lem:lagwise-weak-error}. The cited theorems now apply
 over at most $b-a$ updates, uniformly in $a$.
@@ -7501,8 +7501,8 @@ Then $\mu(\bar f+c)=c$, and
 \label{eq:lag-truncation-prediction-diagonal-expansion-s13}
 \end{align}
 The diagonal terms are at most $\operatorname{osc}(f)^2$.
-Theorem~3.5 bounds the first difference in the second identity by
-$C(b-a)\operatorname{osc}(f)^2/J$; Theorem~3.3 bounds each remaining
+Theorem~3.3 bounds the first difference in the second identity by
+$C(b-a)\operatorname{osc}(f)^2/J$; Theorem~3.1 bounds each remaining
 difference by $C(b-a)\operatorname{osc}(f)/J$, and
 $|c|\leq\operatorname{osc}(f)$. Thus, initially for
 $J\geq c_0(b-a+1)$,
@@ -10158,7 +10158,7 @@ consequence of Assumptions {\refAssumpBoundedMeasurement} and
 stability theorem of \citet{tadicHigher20} and the
 time-uniform results for the $O(J^2)$ backward derivative estimator
 \citep{delMoral15derivative,tadic18} do not establish it for the $O(J)$
-DMOP genealogy. The finite-horizon result of \citet{chanDelMoral18} gives
+DMOP genealogy. The finite-horizon result of \citet{delmoral18} gives
 the factor $n/J$ in Lemma~\ref{lem:lagwise-weak-error}. It cannot be applied
 only to the last $r+1$ steps of the actual DMOP coefficient because the
 total reparameterized-simulator derivative carried at time $n-r$ already
@@ -10680,7 +10680,7 @@ therefore gives $N^2G'(\theta)^2/J$, not $N^3/J$.
 
 Larger powers can still arise if one begins from a less specialized
 path-space theorem. A norm-one historical estimate with MSE order $N/J$,
-such as the finite-horizon estimate of \citet{chanDelMoral18}, becomes
+such as the finite-horizon estimate of \citet{delmoral18}, becomes
 $N^3G'(\theta)^2/J$ after the additional $N^2G'(\theta)^2$ rescaling. A
 generic norm-one RMSE bound of order $N/\sqrt J$, as in the direct
 path-space bound of \citet{delMoral03}, similarly gives
@@ -11787,7 +11787,7 @@ variance-sensitive two- and four-lineage estimates still requiring a
 proof.  They are not needed for the direct bound in Lemma~
 \ref{lem:dmop-alpha-variance}.  The current-cloud oscillation result of
 \citet{karjalainen23} does not supply the joint-lineage estimate, and the
-first-order path-space estimates of \citet{chanDelMoral18} do not by
+first-order path-space estimates of \citet{delmoral18} do not by
 themselves control the required joint-time centered covariance.
 \end{remark}
 \fi
