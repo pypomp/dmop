@@ -35,7 +35,7 @@ def make_filter(model, particles=25, config=TransportConfig(),
                 x, z, process_key, struct.covars_extended,
                 struct.dt_array_extended, t, t_idx,
                 struct.nstep_array[i].astype(int), struct.accumvars, True)
-            t = struct.times[i]
+            t = struct.times[i].astype(float)
             cov = None if struct.covars_extended is None else struct.covars_extended[t_idx]
             unnormalized = weights + struct.dmeas_pf(struct.ys[i], x, z, cov, t, True)
             increment = jax.scipy.special.logsumexp(unnormalized)
