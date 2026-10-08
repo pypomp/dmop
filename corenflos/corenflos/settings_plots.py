@@ -34,6 +34,15 @@ METHOD_KEYS = {
 }
 
 
+# Keep historical result identifiers separate from manuscript display names.
+ALGORITHM_LABELS = {
+    "Corenflos": "CTDD21",
+    "Corenflos + IF2": "CTDD21 + IF2 warm start",
+    "Ditlevsen": "DS19",
+    "Ditlevsen + IF2": "DS19 + IF2 warm start",
+}
+
+
 def sources_for(corenflos_particles=100, ditlevsen_particles=1000):
     directories, labels = {}, {}
     for key, method in METHOD_KEYS.items():
@@ -42,7 +51,7 @@ def sources_for(corenflos_particles=100, ditlevsen_particles=1000):
             raise ValueError("Complete standalone and warm-start arms require J=100 or J=1000")
         variant = key.replace("_cold", "_vanilla")
         directories[key] = LOW[key] if particles == 100 else HIGH / variant
-        labels[method] = f"{w.DISPLAY_LABELS.get(method, method)} (J={particles:,})"
+        labels[method] = f"{ALGORITHM_LABELS[method]} (J={particles:,})"
     labels["IF2 warm start"] = "IF2 warm start"
     return SimpleNamespace(
         **directories,

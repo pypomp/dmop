@@ -13093,16 +13093,16 @@ IFAD-0.97 and IFAD-1 have similar distributions, with generally higher log-likel
 \label{sec:dhaka-competitors}
 
 We compared IFAD with the transition-density method of \citet{ditlevsen19}
-and the differentiable particle filter of \citet{corenflos21} on the Dhaka
+(DS19) and the differentiable particle filter of \citet{corenflos21}
+(CTDD21) on the Dhaka
 cholera model. We tested whether these methods could find high-likelihood
 parameter estimates from the wide range of starting points used in the
 main text, and whether they could improve estimates obtained by IF2.
-We describe our implementations below, which we label Ditlevsen and
-Corenflos in the figures and tables.
+We describe our implementations below.
 
 \subsection{Methods}
 
-\paragraph{Ditlevsen.}
+\paragraph{DS19.}
 The method of \citet{ditlevsen19} combines an approximate transition density
 with particle smoothing and stochastic approximation expectation
 maximization (SAEM). Their construction assumes that one smooth state
@@ -13146,7 +13146,7 @@ We also checked the particle filter on the harmonic oscillator example of
 With 100 particles and 1,000 observations, the root mean squared difference
 between the particle and analytic filtered means was 0.00523.
 
-\paragraph{Corenflos.}
+\paragraph{CTDD21.}
 The method of \citet{corenflos21} uses entropy-regularized optimal transport
 to make particle resampling differentiable. We implemented it using the
 same Euler simulator as in the main text, with 20 steps per month.
@@ -13175,13 +13175,13 @@ particle filter estimate used to evaluate the results.
 For each method, we performed 100 global searches from starting parameter
 vectors drawn uniformly from the same wide bounding box as in the main
 text. We tested 100 and 1,000 particles, using learning rates of 0.02 for
-Corenflos and 0.10 for Ditlevsen. We allowed each search 800 seconds and
-selected parameter estimates at approximately 700 seconds. For Corenflos,
+CTDD21 and 0.10 for DS19. We allowed each search 800 seconds and
+selected parameter estimates at approximately 700 seconds. For CTDD21,
 we selected the saved estimate with the highest fitting objective before
 700 seconds. If none was valid, we used another valid saved estimate or
-the initial parameter vector. For Ditlevsen, we selected the first saved
+the initial parameter vector. For DS19, we selected the first saved
 estimate at or after 700 seconds, or the last estimate if the search ended
-earlier. Thus a Ditlevsen search could exceed the selection time by one
+earlier. Thus a DS19 search could exceed the selection time by one
 iteration.
 
 To assess the benefit of an IF2 warm start, we also initialized both
@@ -13191,18 +13191,18 @@ directly, including those outside the initial bounding box. The IF2 stage
 used 175 iterations and 5,000 particles, taking 92.160 seconds under the
 timing procedure described in the main text. We then allowed each method
 400 iterations or another 850.657 seconds, giving a total time limit of
-942.817 seconds. The learning rates were 0.0002 for Corenflos and 0.0005
-for Ditlevsen, at both 100 and 1,000 particles. We selected the last valid
-Corenflos estimate before the time limit and the first Ditlevsen estimate
+942.817 seconds. The learning rates were 0.0002 for CTDD21 and 0.0005
+for DS19, at both 100 and 1,000 particles. We selected the last valid
+CTDD21 estimate before the time limit and the first DS19 estimate
 at or after it, or the last estimate if the search ended earlier.
 
 We kept the other optimization settings fixed when increasing the number
 of particles from 100 to 1,000. The 1,000-particle experiments ran
 sequentially on one RTX 3090 GPU, as did the 100-particle experiments
-initialized by IF2. The 100-particle Ditlevsen global searches ran four at
+initialized by IF2. The 100-particle DS19 global searches ran four at
 a time on that GPU. Consequently, both the particle count and GPU
 scheduling affect the number of iterations completed within the time limit.
-We also ran Ditlevsen with 5,000 particles from the global starting points.
+We also ran DS19 with 5,000 particles from the global starting points.
 For that experiment, we separately tuned the learning rate to 0.20 and
 began decreasing the stochastic approximation step size earlier.
 
@@ -13221,23 +13221,23 @@ excluded the additional evaluations from the reported computation times.
 Our findings are summarized in Tables~\ref{tab:dhaka-competitors}
 and~\ref{tab:dhaka-competitors-paired} and
 Figures~\ref{fig:dhaka-competitors-final}--\ref{fig:dhaka-competitors-parameters}.
-The figures show Corenflos with 100 particles and Ditlevsen with 1,000,
+The figures show CTDD21 with 100 particles and DS19 with 1,000,
 using the same particle count for each method with and without an IF2
 warm start. IFAD-0.97 uses 5,000 particles. The tables include all particle
 counts tested.
 
 Both methods attained lower median log-likelihoods than IFAD-0.97 in the
 global searches. At the particle counts shown in the figures, the medians
-were $-4554.67$ for Corenflos and $-3998.93$ for Ditlevsen, compared with
+were $-4554.67$ for CTDD21 and $-3998.93$ for DS19, compared with
 $-3744.40$ for IFAD-0.97. Increasing the number of particles did not
-consistently improve performance within the allotted time. For Corenflos,
+consistently improve performance within the allotted time. For CTDD21,
 increasing from 100 to 1,000 particles reduced the median number of updates
 from 255 to 28, and the median log-likelihood fell to $-6312.89$.
-For Ditlevsen, the median improved from $-4100.34$ with 100 particles to
+For DS19, the median improved from $-4100.34$ with 100 particles to
 $-3998.93$ with 1,000 particles, while the median number of updates rose
 from 55 to 147. This comparison also includes the change in GPU scheduling
 described above. With 5,000 particles and separately tuned settings,
-Ditlevsen attained a median of $-4100.40$ after a median of 47 updates.
+DS19 attained a median of $-4100.40$ after a median of 47 updates.
 
 \begin{table}[htbp!]
 \centering
@@ -13250,19 +13250,19 @@ warm start. Median and maximum use independent particle filter evaluations
 with 20 Euler steps per month. Updates gives the median number of
 optimization updates. The IF2 checkpoint row reports the 175 iterations
 used for initialization; the IFAD-0.97 row reports the 400 subsequent
-gradient updates. The 5,000-particle Ditlevsen experiment used separate
+gradient updates. The 5,000-particle DS19 experiment used separate
 tuning, as described in the text.}
 \label{tab:dhaka-competitors}
 \end{table}
 
 Starting from IF2 estimates substantially improved the final log-likelihoods
 of both methods, but neither consistently improved on the IF2 estimates
-themselves. With 100 particles, Corenflos improved on 45 of the 100 starting
-estimates and Ditlevsen improved on 18. The median changes were $-0.10$
+themselves. With 100 particles, CTDD21 improved on 45 of the 100 starting
+estimates and DS19 improved on 18. The median changes were $-0.10$
 and $-1.78$ log-likelihood units, respectively. With 1,000 particles, these
 counts were 48 and 24, and the median changes were $-0.03$ and $-1.15$.
-Corenflos completed a median of 213 updates with 100 particles and 20 with
-1,000 particles; Ditlevsen completed 252 and 171, respectively.
+CTDD21 completed a median of 213 updates with 100 particles and 20 with
+1,000 particles; DS19 completed 252 and 171, respectively.
 IFAD-0.97 continued from the same IF2 estimates to a median log-likelihood
 of $-3744.40$, compared with $-3766.64$ at the end of IF2.
 
@@ -13281,8 +13281,8 @@ independently evaluated log-likelihood increased.}
 For both methods and both particle counts, the median change in the fitting
 objective was positive even though the median change in the independently
 evaluated log-likelihood was negative (Table~\ref{tab:dhaka-competitors-paired}).
-The two evaluations use different likelihood approximations: Ditlevsen
-fits the monthly Gaussian transition model, while Corenflos uses entropic
+The two evaluations use different likelihood approximations: DS19
+fits the monthly Gaussian transition model, while CTDD21 uses entropic
 resampling. The fitting objectives are also estimated using a single
 particle filter, and the updates depend on clipping and the numerical
 safeguards described above. These experiments do not determine how much
@@ -13292,8 +13292,8 @@ each of these factors contributes to the disagreement.
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/likelihood_if2warm_comparison_r20.pdf}
 \caption{Raincloud plots of the log-likelihoods found in 100 searches for the
-Dhaka model, with and without an IF2 warm start. Corenflos uses 100 particles,
-Ditlevsen 1,000, and IFAD-0.97 5,000 during optimization. The IF2 checkpoint
+Dhaka model, with and without an IF2 warm start. CTDD21 uses 100 particles,
+DS19 1,000, and IFAD-0.97 5,000 during optimization. The IF2 checkpoint
 shows the starting estimates for the warm starts. The plot shows
 log-likelihoods between $-4800$ and $-3735$; all 100 searches contribute to
 the densities, medians, and quartiles.}
@@ -13304,7 +13304,7 @@ the densities, medians, and quartiles.}
 \centering
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/optimization_if2warm_elapsed_full_r20.pdf}
 \caption{Optimization progress for the Dhaka model, with and without an IF2
-warm start. Corenflos uses 100 particles, Ditlevsen 1,000, and IFAD-0.97
+warm start. CTDD21 uses 100 particles, DS19 1,000, and IFAD-0.97
 5,000 during optimization. Heavy lines show the median log-likelihood,
 and shaded regions cover the area between the 10th and 100th percentiles.
 The vertical dotted line indicates the end of IF2 at 92.160 seconds.
@@ -13331,7 +13331,7 @@ Figure~\ref{fig:dhaka-competitors-progress}. Elapsed time includes the
 \includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/parameter_if2warm_comparison_r20.pdf}
 \caption{Density plots of the final parameter estimates across 100 searches
 for nine selected parameters of the Dhaka model. Each panel has its own
-density scale. Corenflos uses 100 particles and Ditlevsen 1,000, with and
+density scale. CTDD21 uses 100 particles and DS19 1,000, with and
 without an IF2 warm start; IFAD-0.97 uses 5,000 particles. The IF2 checkpoint
 shows the starting estimates for the warm starts.}
 \label{fig:dhaka-competitors-parameters}

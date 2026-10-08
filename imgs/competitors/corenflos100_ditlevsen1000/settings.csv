@@ -1,5 +1,5 @@
 method,initialization,particles,learning_rate,fitting_budget_seconds,output_selection_seconds,starts,median_euler_loglik,median_updates,source
-Corenflos (J=100),standalone,100,0.02,800.0,700.0,100,-4554.6742997797555,255.0,corenflos/results/corenflos_j100_eps025_final_100
-Corenflos + IF2 warm start (J=100),IF2,100,0.0002,850.6569547653198,942.8173823356628,100,-3765.9143772376237,213.0,corenflos/results/if2warm_ifad097_budget_j100_final_100
-"Ditlevsen (J=1,000)",standalone,1000,0.1,800.0,700.0,100,-3998.931175821779,147.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_vanilla
-"Ditlevsen + IF2 warm start (J=1,000)",IF2,1000,0.0005,850.6569547653198,942.8173823356628,100,-3769.0381745512896,171.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_warm
+CTDD21 (J=100),standalone,100,0.02,800.0,700.0,100,-4554.6742997797555,255.0,corenflos/results/corenflos_j100_eps025_final_100
+CTDD21 + IF2 warm start (J=100),IF2,100,0.0002,850.6569547653198,942.8173823356628,100,-3765.9143772376237,213.0,corenflos/results/if2warm_ifad097_budget_j100_final_100
+"DS19 (J=1,000)",standalone,1000,0.1,800.0,700.0,100,-3998.931175821779,147.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_vanilla
+"DS19 + IF2 warm start (J=1,000)",IF2,1000,0.0005,850.6569547653198,942.8173823356628,100,-3769.0381745512896,171.0,corenflos/results/particle_increase_j1000_final_100/ditlevsen_warm

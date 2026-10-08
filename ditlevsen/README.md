@@ -1,5 +1,8 @@
 # Ditlevsen comparison for the Dhaka model
 
+The manuscript uses **DS19** as the algorithm name for the Ditlevsen comparison.
+Source directory and module names retain their original spelling.
+
 This directory implements the transition-density comparison in SI Section S11.
 The Dhaka model is called `Dacca` in the code and data filenames. The final
 comparison uses a monthly Gaussian transition approximation, a particle filter

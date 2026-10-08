@@ -14,8 +14,8 @@ and CSV summaries in this directory.
 The SI includes the final-likelihood, full-optimization, continuation, and
 parameter-density PDFs in
 [corenflos100_ditlevsen1000/](corenflos100_ditlevsen1000/README.md).
-Both Corenflos variants use 100 fitting particles;
-both Ditlevsen variants use 1,000. These figures were produced by
+Both CTDD21 variants use 100 fitting particles;
+both DS19 variants use 1,000. These figures were produced by
 `corenflos/corenflos/settings_plots.py` using the established `warm_plots.py`
 workflow. All 100 starts contribute to summaries; the displayed limits are coordinate zooms only.
 The tables retain all tested configurations.
@@ -36,8 +36,8 @@ full-budget IF2 comparison in the main manuscript.
 
 Fitting and evaluation are described in the
 [shared reproduction guide](../../code/competitor_reproduction.md), with
-source maps in the [Corenflos](../../corenflos/README.md) and
-[Ditlevsen](../../ditlevsen/README.md) guides. Bulk-result restoration is
+source maps in the [CTDD21](../../corenflos/README.md) and
+[DS19](../../ditlevsen/README.md) guides. Bulk-result restoration is
 described in [artifacts/README.md](../../artifacts/README.md).
 The frozen per-run `configuration.json` files
 and the 1,000-particle `manifest.json` are authoritative for settings.
@@ -50,10 +50,10 @@ searches. These are separate initialization experiments.
 
 | Method | Fitting particles | Initial learning rate |
 |---|---:|---:|
-| Corenflos | 100 | 0.02 |
-| Corenflos + IF2 warm start | 100 | 0.0002 |
-| Ditlevsen | 1,000 | 0.1 |
-| Ditlevsen + IF2 warm start | 1,000 | 0.0005 |
+| CTDD21 | 100 | 0.02 |
+| CTDD21 + IF2 warm start | 100 | 0.0002 |
+| DS19 | 1,000 | 0.1 |
+| DS19 + IF2 warm start | 1,000 | 0.0005 |
 
 Each arm includes all 100 starts. Final likelihoods use independent Euler-20
 evaluation with 5,000 particles and 36 replicates; trajectory points use
