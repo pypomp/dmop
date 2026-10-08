@@ -1,5 +1,28 @@
 # Handoff
 
+## October 8, 2026: linear axes and Figure S-6 repair
+
+- User rejected the hybrid linear/log scale. Current `code/benchmarks/report.py`
+  plots raw log-likelihood on ordinary linear axes for both final distributions
+  and progress. Rebuilt and visually checked the completed Gaussian/Dhaka
+  preview in `/tmp/dmop-benchmark-report-gaussian`; no new panels inserted yet.
+  Historical run source snapshots remain unchanged.
+- Fixed Figure S-6: equal-area violin scaling flattened the broad distributions,
+  and the method-axis limit cut off the top IFAD violin. Each violin now has the
+  same peak height, with room above the top method. Regenerated the cropped and
+  full-range PDF/PNG companions; caption states the density scaling. All 100
+  values per method still contribute. Twelve plotting checks pass. SI builds
+  in place with `make dmop/si.pdf`; native compiler still lacks external macros.tex.
+- User asked whether the Dhaka DS19 adaptation can be corrected. Existing
+  implementation averages scores at changing parameters and applies Adam; it
+  is not SAEM. Plan a separate pilot averaging complete-path objective functions
+  and numerically maximizing each averaged objective. This isolates optimization
+  from the monthly Gaussian approximation, which remains a separate limitation.
+  Do not present poor Dhaka performance as a general failure of DS19.
+- All Gaussian final fits, including the replacement SAEM fits, are complete.
+  Four SPX final batches and two Daphnia tuning runs continue; final Daphnia
+  batches wait on tuning. Their source snapshots and outputs are separate.
+
 ## October 8, 2026: final batches queued; Gaussian DS19 uses SAEM
 
 - Final linear runs and oscillator batches 00/05/10 are complete; oscillator

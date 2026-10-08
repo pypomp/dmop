@@ -67,8 +67,9 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   final checkpoint by a prespecified rule, not the reported evaluation draws.
 - Report convergence and final likelihood distributions in consistent panels;
   give best and median likelihood, spread, failures, and runtime in one table.
-  Do not compare raw likelihoods between datasets. Show deficits from the
-  analytic maximum or a declared model-specific reference.
+  Plot log-likelihood on ordinary linear axes, with a separate range for each
+  model. Do not compare likelihood values between datasets. A reference line
+  marks the analytic maximum or the best displayed final estimate.
 - Measure synchronized wall time, separate compilation and evaluation, and
   record hardware and concurrency. Existing V100 times and new RTX 3090 times
   cannot establish a runtime ranking. Rerun a common timing experiment before
