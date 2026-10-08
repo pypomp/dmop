@@ -23,6 +23,15 @@
   Four SPX final batches and two Daphnia tuning runs continue; final Daphnia
   batches wait on tuning. Their source snapshots and outputs are separate.
 
+## October 8, 2026: README for the Dhaka global search
+
+- Added `code/global_search/README.md`. It separates the files behind the
+  main-text Dhaka table and figures from historical ones (`report.qmd`,
+  `report.sbat`, and their Makefile targets), notes the two unused
+  comparable-effort plots, and records the environment (Pypomp `17f8798`,
+  code identical to v1.0.5; JAX 0.11.2). Linked from `code/README.md`.
+
+
 ## October 8, 2026: final batches queued; Gaussian DS19 uses SAEM
 
 - Final linear runs and oscillator batches 00/05/10 are complete; oscillator
