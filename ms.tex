@@ -6,21 +6,10 @@
 
 %\usepackage[foot]{amsaddr}
 
-\newcommand\suppSecProofFunctionalForms{S1}
-\newcommand\suppSecProofOptimizationConvergence{S2}
-\newcommand\suppSecFeynmanKac{S3}
-\newcommand\suppSecProofTriangularArrays{S4}
-\newcommand\suppSecProofConsistency{S5}
-\newcommand\suppSecProofBiasVar{S6}
-\newcommand\suppSecBayesFigs{S7}
-%\newcommand\suppSecBaselineJustification{S8}
-\newcommand\suppSecAlgorithmicParameters{S9}
-
 \usepackage{natbib}
 \usepackage{hyperref}
 %\hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue, urlcolor=blue}
 \hypersetup{hidelinks}
-
 
 \usepackage{booktabs}
 % \newcommand{\description}{}
@@ -85,7 +74,7 @@
 \maketitle
 
 \begin{abstract}
-  Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm, using AD to refine a coarse solution from an iterated filtering algorithm, shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
+  Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that permits a bias-variance tradeoff and hence a mean squared error substantially lower than existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm, using AD to refine a coarse solution from an iterated filtering algorithm, shows substantial improvement on current state-of-the-art methods on challenging scientific benchmark problems.
 \end{abstract}
 
 % \keywords{Sequential Monte Carlo, Automatic Differentiation, Particle Filter, Markov Process, Likelihood}
@@ -121,21 +110,20 @@ Particle filters have previously been adapted to provide a smooth estimate of th
 DMOP trades bias against variance via a discount factor, $\alpha \in [0,1]$.
 We find that DMOP-$\alpha$ posesses a bias-variance tradeoff that permits both low bias and low variance for suitable choices of $\alpha$ strictly in $(0,1)$, both in theory (Theorem \ref{thm:mop-biasvar}) and practice (Figure \ref{fig:biasvar}).
 Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$\alpha$ coincides with the biased gradient estimator of \cite{naesseth18} when $\alpha=0$.
-In a limit as the number of particles increases, Theorem~\ref{thm:mop-functional-forms} also shows that DMOP-$\alpha$ with $\alpha=1$ matches the high-variance gradient estimate from \cite{poyiadjis11} and \cite{scibior21}.
-In this case, the variance can become prohibitively high, as discovered by these researchers and others \citep{arya22}.
+In the case $\alpha=1$, Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$\alpha$ is a plug-and-play variant of the gradient estimate proposed by \cite{poyiadjis11} and \cite{scibior21}.
+When $\alpha=1$ the variance can become prohibitively high, as discovered by these researchers and others \citep{arya22}.
 However, the variance rapidly reduces as $\alpha$ decreases, and so a choice of $\alpha$ close to one can provide a low-bias, low-variance, plug-and-play gradient estimate with computational scaling linear in the number of particles.
 
 In practice, likelihood optimization via gradient descent with DMOP-$\alpha$ converges quickly within a neighborhood of the maximum but struggles to reach this neighborhood in the presence of local minima and saddle points.
 By contrast, iterated filtering algorithms provide a relatively fast and stable way to identify this neighborhood.
-We therefore build a simple but effective hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
+We therefore build a hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
 We implement our algorithm using JAX \citep{jax}, which also enables us to take advantage of graphical processing unit (GPU) hardware.
 Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
-Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
-IFAD also outperforms marginalized panel iterated filtering on a challenging ecological panel problem, the 38-parameter \textit{Daphnia} model of \citet{yang25daphnia}.
+Promising numerical results in Section~\ref{sec:cholera} indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
+IFAD also outperforms marginalized panel iterated filtering on an ecological panel problem, the 38-parameter \textit{Daphnia} model of \citet{yang25daphnia} (Section~\suppSecDaphnia).
 \newEdit{\editClaim}
 \newEdit{\editPlugAndPlay}
-%The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
 We also demonstrate empirical advances using DMOP-$\alpha$ for Bayesian inference.
 In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14} in conjunction with an empirical Bayes-type prior estimated with IF2 to reduce the burn-in period of particle MCMC \citep{andrieu10} on the Dhaka cholera model of \cite{king08} from the $700,000$ iterations in \cite{fasiolo16} to just $500$.
