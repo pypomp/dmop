@@ -65,16 +65,13 @@ def main():
     parser.add_argument("--ct-learning-rate", type=float)
     parser.add_argument("--eval-particles", type=int, default=2000)
     parser.add_argument("--eval-reps", type=int, default=10)
-    parser.add_argument("--trace-eval-particles", type=int, default=500)
-    parser.add_argument("--trace-eval-reps", type=int, default=2)
     parser.add_argument("--stride", type=int, default=50)
     parser.add_argument("--max-updates", type=int, default=2000)
     parser.add_argument("--purpose", choices=["pilot", "final"], default="pilot")
     args = parser.parse_args()
     if min(args.starts, args.particles, args.warm_iterations, args.mif_iterations,
            args.adam_iterations, args.ds_particles, args.ct_particles,
-           args.eval_particles, args.trace_eval_particles, args.stride, args.max_updates) < 1 or \
-            min(args.eval_reps, args.trace_eval_reps) < 2 or args.start_index < 0:
+           args.eval_particles, args.stride, args.max_updates) < 1 or args.eval_reps < 2 or args.start_index < 0:
         parser.error("Invalid counts")
     args.output.mkdir(parents=True, exist_ok=False)
     starts = d.reference.sample_starts(args.starts+args.start_index, args.seed)[args.start_index:]
@@ -103,8 +100,6 @@ def main():
     ct_score = jax.jit(jax.value_and_grad(ct))
     ds_score, _, _ = d.make_ds_score(args.ds_particles)
     evaluate = jax.jit(jax.vmap(pf, in_axes=(None, 0)))
-    _, trace_pf = d.make_euler_objectives(args.ct_particles, args.trace_eval_particles)
-    trace_evaluate = jax.jit(jax.vmap(trace_pf, in_axes=(None, 0)))
     scores = {"DS19": ds_score, "CTDD21": ct_score}
     fixed = d.reference.FIXED_PARAMETERS
 
@@ -226,22 +221,17 @@ def main():
                            "warm_seconds": warm_time if name != "MPIF" else 0.,
                            "continuation_budget": continuation_time if name != "MPIF" else 0.})
             for i,t,z in trace:
-                is_final = i == trace[-1][0]
-                if not is_final and (args.purpose == "pilot" or i % args.stride != 0):
-                    continue
-                reps = args.eval_reps if is_final else args.trace_eval_reps
-                evaluator = evaluate if is_final else trace_evaluate
-                raw = np.asarray(evaluator(z, jax.random.split(jax.random.key(
-                    args.seed+5000000+100000*start_id+10000*method_id+i), reps)))
-                ll = float((logsumexp(raw, axis=0)-np.log(reps)).sum())
+                raw = np.asarray(evaluate(z, jax.random.split(jax.random.key(
+                    args.seed+5000000+100000*start_id+10000*method_id+i), args.eval_reps)))
+                ll = float((logsumexp(raw, axis=0)-np.log(args.eval_reps)).sum())
                 weights = np.exp(raw-raw.max(0))
-                se = float(np.linalg.norm(weights.std(0, ddof=1)/np.sqrt(reps)/weights.mean(0)))
+                se = float(np.linalg.norm(weights.std(0, ddof=1)/np.sqrt(args.eval_reps)/weights.mean(0)))
                 rows.append({"model": "daphnia", "start": start_id, "method": name,
                              "iteration": i, "seconds": t, "loglik": ll, "mcse": se,
-                             "final": is_final, "status": status, **dict(zip(d.NAMES, z))})
+                             "final": i == trace[-1][0], "status": status, **dict(zip(d.NAMES, z))})
                 replicates.extend({"start": start_id, "method": name, "iteration": i,
                     "replicate": r, "unit": unit, "loglik": raw[r,u]}
-                    for r in range(reps) for u,unit in enumerate(d.reference.UNITS))
+                    for r in range(args.eval_reps) for u,unit in enumerate(d.reference.UNITS))
             print(f"start {start_id+1} {name}: {ll:.3f} ({se:.3f}), {seconds:.2f}s", flush=True)
             pd.DataFrame(rows).to_csv(args.output/"checkpoints.csv", index=False)
             pd.DataFrame(timing).to_csv(args.output/"timings.csv", index=False)

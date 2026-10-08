@@ -1,0 +1,40 @@
+{
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/run.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/final-oscillator-saem",
+    "--purpose",
+    "final",
+    "--starts",
+    "20",
+    "--start-index",
+    "0",
+    "--model",
+    "oscillator",
+    "--iterations",
+    "80",
+    "--if2-iterations",
+    "600",
+    "--warm",
+    "100",
+    "--learning-rate",
+    ".01",
+    "--checkpoint-every",
+    "25",
+    "--methods",
+    "DS19",
+    "--ds-update",
+    "saem",
+    "--checkpoint-every",
+    "5"
+  ],
+  "cores": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "selection_rule": "fewest failed tuning fits, then highest median independent likelihood",
+  "selections": []
+}
