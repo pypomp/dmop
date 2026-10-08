@@ -1,5 +1,33 @@
 # Handoff
 
+## October 8, 2026: cross-model runs resumed
+
+- Completed one-start oscillator/SPX workflow checks and four-start linear
+  tuning. These are pilots, not manuscript results. The linear tuning puts
+  IFAD, DS19 and CTDD21 near the analytic maximum; IF2 is more variable.
+- Final 20-start linear run is active in `code/benchmarks/results/final-linear`
+  (CPU cores 0–3). Four-start oscillator and SPX tuning use disjoint cores
+  4–7 and 8–11. Seeds/settings/hashes and incremental status are in each
+  output directory. Logs are `/tmp/dmop-{final-linear,tuning-oscillator,tuning-spx}.log`.
+  GPU linear tuning was interrupted explicitly; its partial folder is marked.
+- Added Daphnia adapters and runner. CTDD21 and all independent evaluations
+  reuse original S10 Euler components. DS19 uses composed strong-1.5 Gaussian
+  moments, NB-guided proposals, backward paths and numerical score ascent;
+  its boundary treatment differs and its fitting objective is approximate.
+  The original SAEM M-step is not claimed. A small all-method pilot completed.
+- Full-settings Daphnia tuning (four separate starts) is active on the RTX3090,
+  log `/tmp/dmop-tuning-daphnia.log`. IFAD, DS19, CTDD21 share the same MPIF
+  warm estimate; competitors receive the measured IFAD continuation budget.
+  Existing S10/S11 studies are preserved. Runtime comparisons must stay within
+  the new experiment; older V100 times are a different hardware setting.
+- Excel reader `xlrd` 2.0.2 is installed only in `/tmp/dmop-benchmark-deps`;
+  Daphnia commands add that to PYTHONPATH. Nine adapter/likelihood tests cover
+  Gaussian likelihoods, smoothing scores, SPX clipping, original Daphnia drift
+  and measurements, block covariance, and original-PF evaluation agreement.
+- New cross-model panels, central table and SI discussion remain pending
+  complete final runs. Do not claim saturation from pilots or omit failures.
+
+
 ## October 8, 2026: simplify Theorem 5 and reorganize S6–S7
 
 - Applied the chat draft after Kevin approved it. Main text now has a short

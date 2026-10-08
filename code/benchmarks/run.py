@@ -83,6 +83,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--starts", type=int, default=20)
     parser.add_argument("--iterations", type=int, default=200)
+    parser.add_argument("--if2-iterations", type=int)
     parser.add_argument("--warm", type=int, default=100)
     parser.add_argument("--particles", type=int, default=500)
     parser.add_argument("--ds-particles", type=int, default=100)
@@ -93,6 +94,8 @@ def main():
     parser.add_argument("--checkpoint-every", type=int, default=20)
     parser.add_argument("--eval-particles", type=int, default=5000)
     parser.add_argument("--eval-reps", type=int, default=24)
+    parser.add_argument("--trace-eval-particles", type=int, default=1000)
+    parser.add_argument("--trace-eval-reps", type=int, default=4)
     parser.add_argument("--methods", nargs="+", default=["IF2", "IFAD", "DS19", "CTDD21"],
                         choices=["IF2", "IFAD", "DS19", "CTDD21"])
     parser.add_argument("--purpose", choices=["pilot", "final"], default="pilot")
@@ -110,6 +113,7 @@ def main():
     config = {**{k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
               "utc": datetime.now(timezone.utc).isoformat(), "jax": jax.__version__,
               "device": [d.device_kind for d in jax.devices()],
+              "cpu_affinity": sorted(os.sched_getaffinity(0)),
               "pypomp_source": str(Path(pp.__file__).resolve()),
               "parameter_names": model.canonical_param_names,
               "bounds_estimation_scale": bounds.tolist(),
@@ -148,9 +152,12 @@ def main():
     ct_score = jax.jit(jax.value_and_grad(ct))
     _, _, ds_score = make_smoother(args.model, model, y, args.ds_particles)
     scores = {"IFAD": mop_score, "DS19": ds_score, "CTDD21": ct_score}
-    pf_context = PfilterContext.from_struct(model.to_struct(), J=args.eval_particles, should_trans=True)
-    evaluation = jax.jit(jax.vmap(lambda z, key: -_pfilter_internal(z, key, pf_context)["neg_loglik"],
-                                 in_axes=(None, 0)))
+    def make_evaluation(count):
+        context = PfilterContext.from_struct(model.to_struct(), J=count, should_trans=True)
+        return jax.jit(jax.vmap(lambda z, key: -_pfilter_internal(z, key, context)["neg_loglik"],
+                               in_axes=(None, 0)))
+    evaluation = make_evaluation(args.eval_particles)
+    trace_evaluation = make_evaluation(args.trace_eval_particles)
 
     # Warm each required executable independently; these draws never enter fits.
     compilation = {}
@@ -164,24 +171,26 @@ def main():
         compilation[method] = time.perf_counter() - begin
     write_json(args.output / "compilation.json", compilation)
 
-    rows, timings, raw_evaluations = [], [], []
+    rows, timings, raw_evaluations, fit_objectives = [], [], [], []
     for start_id, start in enumerate(starts):
         for method_id, method in enumerate(args.methods):
             z = jnp.array(start)
             swarm = jnp.tile(z, (args.particles, 1))
             m, v, average = jnp.zeros_like(z), jnp.zeros_like(z), jnp.zeros_like(z)
-            elapsed, status = 0., "complete"
+            elapsed, status, completed_updates = 0., "complete", 0
             snapshots = [(0, 0., np.asarray(z))]
             warm = args.warm if method == "IFAD" else 0
-            for iteration in range(args.iterations + warm):
+            updates = args.if2_iterations if method == "IF2" and args.if2_iterations else args.iterations
+            for iteration in range(updates + warm):
                 key = jax.random.key(args.seed + 100000 * start_id + 10000 * method_id + iteration)
                 begin = time.perf_counter()
                 if method == "IF2" or iteration < warm:
-                    swarm, _ = if2(swarm, key, jnp.array(iteration))
+                    swarm, negative_ll = if2(swarm, key, jnp.array(iteration))
+                    fitting_ll = -negative_ll
                     swarm = jnp.clip(swarm, bounds[:, 0], bounds[:, 1])
                     candidate = swarm.mean(0)
                 else:
-                    _, g = scores[method](z, key)
+                    fitting_ll, g = scores[method](z, key)
                     k = iteration - warm
                     if method == "DS19":
                         gain = 1. if k < 30 else (k - 29.)**(-.9)
@@ -194,23 +203,35 @@ def main():
                     candidate = jnp.clip(candidate, bounds[:, 0], bounds[:, 1])
                 jax.block_until_ready(candidate)
                 elapsed += time.perf_counter() - begin
-                if not np.isfinite(candidate).all():
+                fit_objectives.append({"start": start_id, "method": method,
+                                       "iteration": iteration, "fitting_loglik": float(fitting_ll)})
+                if not np.isfinite(fitting_ll) or not np.isfinite(candidate).all():
                     status = "nonfinite_update"
                     break
                 z = candidate
-                if (iteration + 1) % args.checkpoint_every == 0 or iteration + 1 in (warm, warm + args.iterations):
+                completed_updates += 1
+                if (iteration + 1) % args.checkpoint_every == 0 or iteration + 1 in (warm, warm + updates):
                     snapshots.append((iteration + 1, elapsed, np.asarray(z)))
-            if snapshots[-1][0] != iteration + 1:
-                snapshots.append((iteration + 1, elapsed, np.asarray(z)))
-            timings.append({"start": start_id, "method": method, "seconds": elapsed, "status": status})
+            if snapshots[-1][0] != completed_updates:
+                snapshots.append((completed_updates, elapsed, np.asarray(z)))
+            timings.append({"start": start_id, "method": method, "seconds": elapsed,
+                            "completed_updates": completed_updates, "status": status})
+            # Save estimates before evaluation so interrupted evaluations lose no fits.
+            pd.DataFrame([{"iteration": step, "seconds": seconds,
+                           **dict(zip(model.canonical_param_names, params))}
+                          for step, seconds, params in snapshots]).to_csv(
+                args.output / f"parameters_{method}_{start_id:03d}.csv", index=False)
             # Independent seeds and evaluation only after fitting is finished.
             for step, seconds, params in snapshots:
                 if exact is not None:
                     ll, se = float(exact(params)), 0.
                 else:
+                    is_final = step == snapshots[-1][0]
+                    reps = args.eval_reps if is_final else args.trace_eval_reps
+                    evaluator = evaluation if is_final else trace_evaluation
                     keys = jax.random.split(jax.random.key(args.seed + 90000000 + 100000*start_id
-                                            + 10000*method_id + step), args.eval_reps)
-                    raw = np.asarray(evaluation(params, keys))
+                                            + 10000*method_id + step), reps)
+                    raw = np.asarray(evaluator(params, keys))
                     ll = float(logsumexp(raw) - np.log(len(raw)))
                     w = np.exp(raw - raw.max())
                     se = float(w.std(ddof=1) / np.sqrt(len(w)) / w.mean())
@@ -222,9 +243,12 @@ def main():
                              **dict(zip(model.canonical_param_names, params))})
             pd.DataFrame(rows).to_csv(args.output / "checkpoints.csv", index=False)
             pd.DataFrame(timings).to_csv(args.output / "timings.csv", index=False)
+            pd.DataFrame(fit_objectives).to_csv(args.output / "fitting_objectives.csv", index=False)
             if raw_evaluations:
                 pd.DataFrame(raw_evaluations).to_csv(args.output / "evaluation_replicates.csv", index=False)
             print(f"{args.model} {start_id+1}/{args.starts} {method}: {ll:.3f}, {elapsed:.2f}s, {status}", flush=True)
+            write_json(args.output / "status.json", {"complete": False, "fits": len(timings),
+                "expected_fits": args.starts*len(args.methods), "purpose": args.purpose})
     write_json(args.output / "status.json", {"complete": True, "fits": len(timings),
         "failed": sum(row["status"] != "complete" for row in timings), "purpose": args.purpose})
 
