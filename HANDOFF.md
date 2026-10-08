@@ -6,7 +6,10 @@
   batch 15 and SPX batches 05/10/15 are running. CPU-only Daphnia tuning at
   competitor learning rates .01 and .001 is running on disjoint efficiency
   cores. Its full-shape preliminary fits are expensive (roughly 20 minutes);
-  final Daphnia fits have not started. See `results/final_plan.json`.
+  final Daphnia fits have not started. Measured CPU baseline times are about
+  185 s for the MPIF warm start, 640–680 s for full MPIF, and 278–296 s
+  for IFAD continuation. Each competitor receives that continuation budget.
+  Expect several hours for tuning and final fits. See `results/final_plan.json`.
 - `queue_final.py` waits for declared predecessor directories and separate
   four-start tuning runs. It chooses fewer failed fits, then higher median
   independent likelihood, writes the choice, and launches final five-start
