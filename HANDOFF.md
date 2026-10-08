@@ -5,9 +5,10 @@
 - Completed one-start oscillator/SPX workflow checks and four-start linear
   tuning. These are pilots, not manuscript results. The linear tuning puts
   IFAD, DS19 and CTDD21 near the analytic maximum; IF2 is more variable.
-- Final 20-start linear run is active in `code/benchmarks/results/final-linear`
-  (CPU cores 0–3). Four-start oscillator and SPX tuning use disjoint cores
-  4–7 and 8–11. Seeds/settings/hashes and incremental status are in each
+- Final linear run completed all 80 fits with no nonfinite failures in
+  `code/benchmarks/results/final-linear`. Oscillator tuning also completed;
+  final five-start batches 00, 05, 10 are running on cores 4–7, 0–3, 12–15.
+  Batch 15 remains to launch. Four-start SPX tuning uses cores 8–11. Seeds/settings/hashes and incremental status are in each
   output directory. Logs are `/tmp/dmop-{final-linear,tuning-oscillator,tuning-spx}.log`.
   GPU linear tuning was interrupted explicitly; its partial folder is marked.
 - Added Daphnia adapters and runner. CTDD21 and all independent evaluations
@@ -15,8 +16,10 @@
   moments, NB-guided proposals, backward paths and numerical score ascent;
   its boundary treatment differs and its fitting objective is approximate.
   The original SAEM M-step is not claimed. A small all-method pilot completed.
-- Full-settings Daphnia tuning (four separate starts) is active on the RTX3090,
-  log `/tmp/dmop-tuning-daphnia.log`. IFAD, DS19, CTDD21 share the same MPIF
+- GPU Daphnia tuning was interrupted after another GPU workload began. Its
+  partial directory is marked and no final result was selected. Four-start
+  CPU tuning now runs on efficiency cores 16–19, log
+  `/tmp/dmop-tuning-daphnia-cpu.log`. IFAD, DS19, CTDD21 share the same MPIF
   warm estimate; competitors receive the measured IFAD continuation budget.
   Existing S10/S11 studies are preserved. Runtime comparisons must stay within
   the new experiment; older V100 times are a different hardware setting.
@@ -31,8 +34,8 @@
   that reached the restart limit. Nine numerical checks pass. A disjoint-batch
   runner smoke check also passes. Source snapshots preserve final-run hashes.
 - SPX tuning at learning rate .01 made IFAD deteriorate; .001 improved the
-  first separate tuning start substantially. Remaining tuning starts are
-  running before settings are frozen. No saturation claim is warranted yet.
+  all four separate tuning starts substantially. The full-method .01 pilot
+  is still running before SPX settings are frozen. No saturation claim is warranted yet.
 - New cross-model panels, central table and SI discussion remain pending
   complete final runs. Do not claim saturation from pilots or omit failures.
 

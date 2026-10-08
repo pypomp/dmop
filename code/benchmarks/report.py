@@ -174,8 +174,12 @@ def generate(results, output, models, expected):
                             showfliers=False, medianprops={"color": "black", "linewidth": 1.4})
             bp["boxes"][0].set(facecolor=COLORS[method], alpha=.22)
             jitter = np.random.default_rng(719+i*4+j).uniform(-.14, .14, len(frame))
-            ax.scatter(j+jitter, deficits, s=13 if len(frame) == 20 else 7,
+            failed = frame.status.ne("complete").to_numpy()
+            ax.scatter(j+jitter[~failed], deficits[~failed], s=13 if len(frame) == 20 else 7,
                        color=COLORS[method], alpha=.7, linewidths=0, zorder=3)
+            if failed.any():
+                ax.scatter(j+jitter[failed], deficits[failed], s=28, marker="x",
+                           color=COLORS[method], linewidths=1., zorder=4)
         ax.axhline(0., color=".65", lw=.7, ls="--")
         ax.set_yscale("symlog", linthresh=1.)
         ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
