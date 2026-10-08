@@ -79,7 +79,9 @@ Each figure is saved as PNG and PDF:
 
 The overview limits are coordinate zooms only: no starts are discarded before
 computing densities, boxplots, or summaries. The uncropped plots show the tails
-and initial trace segments outside those windows. Trace lines are medians;
+and initial trace segments outside those windows. Half-violin densities are
+scaled separately to the same maximum height; likelihood axes are linear.
+Trace lines are medians;
 bands extend from the 10th percentile to the maximum. Mismatch diamonds show
 the marginal medians. This set omits the historical -3744.17 reference line
 used by earlier plots.

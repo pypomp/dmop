@@ -1,0 +1,28 @@
+{
+  "output": "ditlevsen/results/block_saem_pilot_start1",
+  "starts_file": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/ditlevsen/results/reference/ifad097_comparable_post_if2.npz",
+  "start": 1,
+  "iterations": 8,
+  "burnin": 3,
+  "particles": 100,
+  "mstep_iterations": 25,
+  "seed": 631481,
+  "eval_particles": 5000,
+  "eval_replicates": 24,
+  "purpose": "exploratory numerical generalized-SAEM pilot",
+  "transition": "unchanged monthly Gaussian, 20 internal steps, floor 1e-12",
+  "source_revision": "057b33c1713aefd0eb90dc643d56c53882216541",
+  "cpu_affinity": [
+    28,
+    29,
+    30,
+    31
+  ],
+  "source_hashes": {
+    "block_saem.py": "a80037255564d8b589f879ad35476956c91b32959883a0abcb9339e4f624ce7c",
+    "block_smc.py": "2cd490d3d53c71372a11aaa97b3c7399fc76ed4a7db2bfa9573bfc4fe6778e05",
+    "transition.py": "c241723d888e8680ab518e572ef70a47cbb1f53d8643c23bd764d9da9e014225",
+    "model.py": "1a05776ca116222ad42af5dafbb033fa33fa3bc70a457c377621c2f04dae91c9",
+    "data.py": "87fc700644fcdede41f05043e616a921cfb0a2d5f9302bd5930f5280e183ce7f"
+  }
+}

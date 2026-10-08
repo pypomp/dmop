@@ -15,12 +15,20 @@
   gradient differences between equivalent compiled evaluation orders on a
   three-month example; at 1e-8 this was about 1e-10. This is a conditioning
   diagnostic, not evidence that changing the floor improves estimation.
-- Eight-update, 100-particle pilot at IF2 start 0 is running on CPU cores 24–27,
-  output `ditlevsen/results/block_saem_pilot_start0`, log
-  `/tmp/dmop-block-saem-pilot0.log`. Maximum 25 L-BFGS steps per M-step;
-  initial/final independent Euler evaluations use 5,000 particles and 24 reps.
-  Source snapshots and incremental fits are saved. Do not infer convergence
-  or a runtime ranking from this feasibility pilot.
+- Eight-update, 100-particle pilots at IF2 starts 0 and 1 are complete in
+  `ditlevsen/results/block_saem_pilot_start{0,1}`. They used CPU cores 24–27
+  and 28–31, respectively, and at most 25 L-BFGS steps per M-step. All stored
+  parameters are finite and all M-steps retain or improve the fixed Q objective;
+  four of eight M-steps reported convergence in each run. Initial/final Euler
+  evaluations use 5,000 particles and 24 reps: start 0 changes -3769.754 to
+  -3769.846 (MCSE .151/.141), and start 1 changes -3761.260 to -3760.267
+  (MCSE .158/.228). Fitting times are 349/292 s, excluding preliminary
+  compilation and evaluation. These two short pilots establish feasibility,
+  not convergence, a runtime ranking, or resolution of the Dhaka comparison.
+  Source snapshots, parameter traces and diagnostics are saved. Current S11
+  results are unchanged; all new five-model reporting must distinguish the
+  SAEM and numerical-score implementations. Follow-up needs more starts and
+  iterations, followed by a separate study of transition approximation error.
 - Validated cheaper Daphnia trace evaluations with a small all-method run:
   final and trace replicate counts match their separate requested settings.
   Final production evaluations remain 2,000 particles x 10 reps; traces use

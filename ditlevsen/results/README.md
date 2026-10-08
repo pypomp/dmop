@@ -31,6 +31,21 @@ compact tracked CSVs; the full plotting and audit workflows also need
 
 ## Development results
 
+`block_saem_pilot_start0/` and `block_saem_pilot_start1/` test numerical
+generalized-SAEM from two saved IF2 estimates, using the same monthly Gaussian
+transition model as S11. Each uses eight updates and evaluates its initial and
+final estimates with 5,000 Euler particles and 24 replicates. These are short
+feasibility checks, excluded from the SI results above. The
+[module guide](../README.md) describes the objective and reproduction command.
+Their status files distinguish completed fits from completed evaluations.
+Both pilots completed. Euler log-likelihood changed from -3769.754 to
+-3769.846 for start 0 and from -3761.260 to -3760.267 for start 1. Monte Carlo
+standard errors were .151/.141 and .158/.228, respectively. All eight M-steps
+in each run retained or increased their fixed averaged complete-data objective;
+four M-steps in each run reached the numerical convergence criterion. More
+starts and iterations are needed to assess estimation performance. These
+pilots leave the transition approximation unchanged.
+
 Other directories preserve validation and tuning. `validation/` contains
 numerical and oscillator checks; `particle_sweep*`, `optimizer_tuning*`, and
 `j5000_*` contain tuning and timing. `block_smc_guided_100/` stopped at 50

@@ -102,6 +102,11 @@ renv
 !/ditlevsen/results/**/*.tex
 !/ditlevsen/results/**/*.md
 !/ditlevsen/results/reference/ifad097_comparable_post_if2.npz
+# Small numerical-SAEM pilots retain their complete fitting record.
+!/ditlevsen/results/block_saem_pilot_start[01]/fit.npz
+!/ditlevsen/results/block_saem_pilot_start[01]/trace.csv
+!/ditlevsen/results/block_saem_pilot_start[01]/evaluation.csv
+!/ditlevsen/results/block_saem_pilot_start[01]/source/*.py
 /code/global_search/dmop_results/
 
 # Rebuildable documents; PDF figures under imgs/ remain tracked.

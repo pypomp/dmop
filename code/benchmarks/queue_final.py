@@ -46,7 +46,8 @@ def choose_rate(folders, method, field):
             raise ValueError(f"Expected four tuning starts: {folder}/{method}")
         if not all(math.isfinite(x) for x in frame.loglik):
             raise ValueError(f"Unresolved tuning likelihood evaluation: {folder}/{method}")
-        candidates.append({"source": folder, "rate": config.get(field, config["learning_rate"]),
+        rate = config[field] if field in config else config["learning_rate"]
+        candidates.append({"source": folder, "rate": rate,
                            "failed": int(frame.status.ne("complete").sum()),
                            "median_loglik": float(frame.loglik.median())})
     chosen = min(candidates, key=lambda x: (x["failed"], -x["median_loglik"], x["rate"]))
