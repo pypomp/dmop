@@ -26,17 +26,25 @@ COLORS = {"IFAD": "#31688e", "IF2": "#b59c00", "DS19": "#292929", "CTDD21": "#d9
 
 
 def new_results(root, model, expected=20):
-    folders = sorted(root.glob(f"final-{model}*"))
+    folders = sorted(p for p in root.glob(f"final-{model}*") if p.is_dir())
     if not folders:
         raise ValueError(f"No final results for {model}")
     frames, timings, sources, reference = [], [], [], None
+    saem_found = False
     for folder in folders:
         config = json.loads((folder / "configuration.json").read_text())
         status = json.loads((folder / "status.json").read_text())
         if config["purpose"] != "final" or not status["complete"]:
             raise ValueError(f"Unfinished or pilot run: {folder}")
-        frames.append(pd.read_csv(folder / "checkpoints.csv"))
-        timings.append(pd.read_csv(folder / "timings.csv"))
+        frame = pd.read_csv(folder / "checkpoints.csv")
+        timing = pd.read_csv(folder / "timings.csv")
+        if model in ("linear", "oscillator"):
+            saem = config.get("ds_update") == "saem"
+            saem_found |= saem
+            frame = frame.loc[frame.method.eq("DS19") if saem else frame.method.ne("DS19")]
+            timing = timing.loc[timing.method.eq("DS19") if saem else timing.method.ne("DS19")]
+        frames.append(frame)
+        timings.append(timing)
         sources.extend([folder / "configuration.json", folder / "checkpoints.csv", folder / "timings.csv"])
         if model in ("linear", "oscillator"):
             analytic = json.loads((folder / "analytic_reference.json").read_text())
@@ -45,6 +53,8 @@ def new_results(root, model, expected=20):
             if reference is not None and abs(reference-analytic["loglik"]) > 1e-5:
                 raise ValueError("Analytic references disagree")
             reference = analytic["loglik"]
+    if model in ("linear", "oscillator") and not saem_found:
+        raise ValueError(f"The Gaussian comparison requires completed SAEM results: {model}")
     trace = pd.concat(frames, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     timing = pd.concat(timings, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     final = trace.loc[trace.final].copy()

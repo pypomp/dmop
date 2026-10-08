@@ -61,6 +61,8 @@ def main():
     parser.add_argument("--ct-particles", type=int, default=100)
     parser.add_argument("--learning-rate", type=float, default=.01)
     parser.add_argument("--competitor-learning-rate", type=float, default=.01)
+    parser.add_argument("--ds-learning-rate", type=float)
+    parser.add_argument("--ct-learning-rate", type=float)
     parser.add_argument("--eval-particles", type=int, default=2000)
     parser.add_argument("--eval-reps", type=int, default=10)
     parser.add_argument("--stride", type=int, default=50)
@@ -175,8 +177,10 @@ def main():
                 begin = time.perf_counter()
                 value, g = fn(z, jax.random.key(args.seed+1000000+10000*start_id+3000*method_id+i))
                 jax.block_until_ready(g)
-                objectives.append({"start": start_id, "method": name, "iteration": i,
-                                   "fitting_loglik": float(value), "score_norm": float(jnp.linalg.norm(g))})
+                record = {"start": start_id, "method": name, "iteration": i,
+                          "fitting_loglik": float(value), "score_norm": float(jnp.linalg.norm(g)),
+                          "accepted": False}
+                objectives.append(record)
                 if not np.isfinite(value) or not np.isfinite(g).all():
                     elapsed += time.perf_counter()-begin
                     status = "nonfinite_update"
@@ -187,10 +191,14 @@ def main():
                     g = average
                 g *= jnp.minimum(1., 100./jnp.maximum(jnp.linalg.norm(g), 1e-12))
                 m, v = .9*m+.1*g, .999*v+.001*g*g
-                rate = args.competitor_learning_rate*(.1+.9*.5*(1+np.cos(np.pi*min(elapsed/continuation_time, 1.))))
+                specific_rate = args.ds_learning_rate if name == "DS19" else args.ct_learning_rate
+                base_rate = args.competitor_learning_rate if specific_rate is None else specific_rate
+                rate = base_rate*(.1+.9*.5*(1+np.cos(np.pi*min(elapsed/continuation_time, 1.))))
+                record["learning_rate"] = float(rate)
                 candidate = z+rate*(m/(1-.9**(i+1)))/(jnp.sqrt(v/(1-.999**(i+1)))+1e-8)
                 jax.block_until_ready(candidate)
                 elapsed += time.perf_counter()-begin
+                record["elapsed_seconds"] = elapsed
                 if not np.isfinite(candidate).all():
                     status = "nonfinite_update"
                     break
@@ -198,6 +206,7 @@ def main():
                 if elapsed > continuation_time:
                     break
                 z = candidate
+                record["accepted"] = True
                 updates += 1
                 if updates % 10 == 0:
                     trace.append((args.warm_iterations+updates, warm_time+elapsed, np.asarray(z)))

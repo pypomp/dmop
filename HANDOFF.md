@@ -1,5 +1,39 @@
 # Handoff
 
+## October 8, 2026: final batches queued; Gaussian DS19 uses SAEM
+
+- Final linear runs and oscillator batches 00/05/10 are complete; oscillator
+  batch 15 and SPX batches 05/10/15 are running. CPU-only Daphnia tuning at
+  competitor learning rates .01 and .001 is running on disjoint efficiency
+  cores. Its full-shape preliminary fits are expensive (roughly 20 minutes);
+  final Daphnia fits have not started. See `results/final_plan.json`.
+- `queue_final.py` waits for declared predecessor directories and separate
+  four-start tuning runs. It chooses fewer failed fits, then higher median
+  independent likelihood, writes the choice, and launches final five-start
+  batches on disjoint cores. Four Daphnia batches and SPX batch 00 are queued.
+  Queue logs are `/tmp/dmop-queue-*.log`; final runs preserve source snapshots.
+- Scientific correction before reporting: Gaussian DS19 comparisons now use
+  an actual SAEM M-step, rather than the generic numerical-score extension.
+  `saem.py` averages Gaussian sufficient statistics and maximizes the expected
+  complete log likelihood (explicitly for linear Gaussian; L-BFGS-B for HO).
+  Uses the paper's 80 iterations / 100 particles / 30-step burn-in. Two tests
+  verify the likelihood, derivatives and maximization against direct paths.
+  Four oscillator tuning starts finish within .1 log unit of the exact
+  likelihood reference. Original score-update runs remain archived.
+- Twenty-start SAEM runs are queued on cores 4–7 after oscillator batch 15,
+  followed by SPX batch 00. Combined reporting explicitly requires the SAEM
+  files and excludes Gaussian DS19 score rows; other methods are unchanged.
+  SPX/Daphnia/Dhaka still use the disclosed numerical-score extension.
+- Eight separate deterministic optimizations recover the same Kalman
+  reference maximum for each Gaussian model. Numerical test total is now 11;
+  the updated Daphnia batch/checkpoint workflow also passed a small smoke run,
+  including retention of a failed DS19 fit's last finite estimate.
+- No new cross-model SI section, combined publication plots, or central
+  table has been inserted yet. Those require complete final runs, review,
+  and compilation. Theorem/legend/documentation work from earlier entries
+  is complete. Preserve the existing editor and compile SI in place later.
+
+
 ## October 8, 2026: cross-model runs resumed
 
 - Completed one-start oscillator/SPX workflow checks and four-start linear
