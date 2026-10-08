@@ -1,0 +1,81 @@
+{
+  "starts_per_model": 20,
+  "starts_per_batch": 5,
+  "queued": [
+    {
+      "model": "oscillator",
+      "start_index": 15,
+      "cores": "4,5,6,7",
+      "predecessor": "final-oscillator-00"
+    },
+    {
+      "model": "spx",
+      "start_index": 5,
+      "cores": "0,1,2,3",
+      "predecessor": "final-oscillator-05"
+    },
+    {
+      "model": "spx",
+      "start_index": 10,
+      "cores": "12,13,14,15",
+      "predecessor": "final-oscillator-10"
+    },
+    {
+      "model": "spx",
+      "start_index": 15,
+      "cores": "8,9,10,11",
+      "predecessor": "tuning-spx"
+    },
+    {
+      "model": "daphnia",
+      "start_index": 0,
+      "cores": "16,17,18,19",
+      "predecessor": "tuning-daphnia-cpu"
+    },
+    {
+      "model": "daphnia",
+      "start_index": 5,
+      "cores": "20,21,22,23",
+      "predecessor": "tuning-daphnia-cpu-lr0001"
+    },
+    {
+      "model": "daphnia",
+      "start_index": 10,
+      "cores": "24,25,26,27",
+      "predecessor": "tuning-daphnia-cpu"
+    },
+    {
+      "model": "daphnia",
+      "start_index": 15,
+      "cores": "28,29,30,31",
+      "predecessor": "tuning-daphnia-cpu-lr0001"
+    },
+    {
+      "model": "oscillator",
+      "variant": "saem",
+      "cores": "4,5,6,7",
+      "predecessor": "final-oscillator-15; tuning-oscillator-saem"
+    },
+    {
+      "model": "linear",
+      "variant": "saem",
+      "cores": "4,5,6,7",
+      "predecessor": "final-oscillator-saem"
+    },
+    {
+      "model": "spx",
+      "start_index": 0,
+      "cores": "4,5,6,7",
+      "predecessor": "final-linear-saem"
+    }
+  ],
+  "already_launched": [
+    "final-linear",
+    "final-oscillator-00",
+    "final-oscillator-05",
+    "final-oscillator-10"
+  ],
+  "tuning_rule": "fewest failed fits, then highest median independent likelihood on four separate starts",
+  "scope": "one dataset per model; repeated optimization starts, not repeated simulated datasets",
+  "gaussian_ds19": "SAEM with 80 iterations and 100 particles; supersedes Gaussian score-update rows in combined report"
+}

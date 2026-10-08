@@ -13,11 +13,13 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [models.py](models.py) | Gaussian examples, analytic likelihoods, and the original Pypomp SPX model |
 | [ctdd.py](ctdd.py) | CTDD21 resampling around the existing Pypomp simulator and measurement functions |
 | [smoothing.py](smoothing.py) | Small-model transition densities, particle smoothing, and DS19 score updates |
+| [saem.py](saem.py) | Averaged Gaussian sufficient statistics and SAEM maximization steps |
 | [daphnia.py](daphnia.py) | Original S10 Euler evaluation and the Gaussian block approximation for DS19 |
 | [run.py](run.py) | Repeated oscillator, linear Gaussian, and SPX fits |
 | [run_daphnia.py](run_daphnia.py) | MPIF, IFAD, DS19, and CTDD21 from common Daphnia starts |
 | [report.py](report.py) | Combine completed final runs and the archived Dhaka results into panels and a table |
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
+| [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
 | [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
 
 The transition-density and transport implementations for the existing Dhaka
@@ -72,7 +74,8 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   cannot establish a runtime ranking. Rerun a common timing experiment before
   drawing that conclusion.
 - Describe DS19 extensions explicitly. SMC with a numerical score update is
-  not the original paper's SAEM M-step. Daphnia and SPX require additional
+  not the original paper's SAEM M-step. The Gaussian examples use SAEM;
+  SPX, Daphnia, and Dhaka use the numerical-score extension. Daphnia and SPX require additional
   transition-density work: SPX includes the atom created by its variance
   floor; Daphnia uses the Gaussian block approximation described below.
 - Whether the small benchmarks are saturated is an empirical question. The
@@ -105,12 +108,15 @@ saved before independent evaluation. `checkpoints.csv` contains evaluation
 likelihoods; `fitting_objectives.csv` contains optimization objectives. They
 must not be used interchangeably. `evaluation_replicates.csv` retains the
 individual likelihood estimates used for Monte Carlo errors.
+Refitting a time-limited search can complete a different number of updates
+on a different machine. Saved estimates and evaluations make the figures
+reproducible without refitting; seeds alone do not reproduce a wall-time stop.
 
 For example, a short workflow check is:
 
 ```sh
 JAX_PLATFORMS=cpu python code/benchmarks/run.py --model linear \
-  --starts 2 --iterations 10 --warm 5 --output /tmp/dmop-linear-check
+  --starts 2 --iterations 10 --warm 5 --ds-update saem --output /tmp/dmop-linear-check
 ```
 
 `run.py --start-index` supports disjoint batches of a prespecified set of
@@ -134,6 +140,23 @@ It requires all 20 final starts for all four methods on each new model. It
 rejects incomplete directories, duplicate starts, missing final evaluations,
 and nonconverged analytic reference fits. `--models` and `--output` allow
 checking a completed subset in a separate directory during development.
+
+## Gaussian SAEM
+
+For the oscillator, we use 80 SAEM iterations, 100 particles, a gain of one
+for the first 30 iterations, then `(m-30)^(-0.9)`, following DS19's example.
+Each iteration draws a smoothed state path and updates the sufficient
+statistics of the Gaussian complete-data likelihood. Its maximization step
+uses L-BFGS-B. For the linear Gaussian example the corresponding maximization
+is explicit. The initial distributions and parameter bounds are the same as
+for the other methods. The tests compare sufficient-statistic likelihoods and
+derivatives against direct complete-path calculations.
+
+The first Gaussian runs used the numerical-score extension. Those traces are
+retained as implementation history. The combined report explicitly excludes
+their DS19 rows and uses `final-*-saem` for DS19 on the Gaussian examples.
+This choice follows the published algorithm, rather than selecting the best
+output across variants. IFAD, IF2, and CTDD21 use the original run directories.
 
 ## Daphnia approximation
 
