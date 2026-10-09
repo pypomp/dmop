@@ -24,6 +24,7 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
+| [audit_results.py](audit_results.py) | Recalculate saved likelihood summaries and check Dhaka A/B checkpoint selection and M-step acceptance |
 | [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
 
 The transition-density and transport implementations for the existing Dhaka

@@ -1,0 +1,120 @@
+{
+  "model": "spx",
+  "output": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/final-spx-00",
+  "starts": 5,
+  "start_index": 0,
+  "iterations": 300,
+  "if2_iterations": 600,
+  "warm": 100,
+  "particles": 500,
+  "ds_particles": 100,
+  "ds_update": "score",
+  "ct_particles": 25,
+  "learning_rate": 0.01,
+  "ifad_learning_rate": 0.001,
+  "alpha": 0.97,
+  "rw_sd": 0.02,
+  "seed": 631450,
+  "checkpoint_every": 25,
+  "eval_particles": 5000,
+  "eval_reps": 24,
+  "trace_eval_particles": 1000,
+  "trace_eval_reps": 4,
+  "methods": [
+    "IF2",
+    "IFAD",
+    "DS19",
+    "CTDD21"
+  ],
+  "purpose": "final",
+  "utc": "2026-10-08T21:03:03.562740+00:00",
+  "jax": "0.9.0.1",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "pypomp_source": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/__init__.py",
+  "parameter_names": [
+    "mu",
+    "kappa",
+    "theta",
+    "xi",
+    "rho",
+    "V_0"
+  ],
+  "bounds_estimation_scale": [
+    [
+      -16.11809565095832,
+      -4.605170185988091
+    ],
+    [
+      -11.512925464970229,
+      0.0
+    ],
+    [
+      -16.11809565095832,
+      -4.605170185988091
+    ],
+    [
+      -13.815510557964274,
+      -2.3025850929940455
+    ],
+    [
+      -5.293304824724491,
+      5.293304824724491
+    ],
+    [
+      -18.420680743952367,
+      -4.605170185988091
+    ]
+  ],
+  "start_jitter_sd": 0.35,
+  "selection": "last finite parameter vector; failures retained",
+  "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+  "ds19": "backward path simulation; numerical score ascent; not SAEM M-step",
+  "source_sha256": {
+    "queue_final.py": "67e307f46dc080b84522950f2441744a0f5188ae17d8875e11a19f403a298387",
+    "run_daphnia.py": "1572032fa98453b213168a84f1eb96a11d86b3b34c63c6c5931035a480b02cd9",
+    "models.py": "b62b3c4a0b3de2e2f87bf862aa93379c7a3c4095a6c45be841dc1231fc62bdf6",
+    "saem.py": "3615737c0615550ede5d647916c8f9b92d7ebf6f38ac9bf24c4048759fa492f8",
+    "export_dhaka.py": "ea732fef92e32739cec90887dda77a9612468ca3f26d44c60c3dff17e3c362a7",
+    "report.py": "af26535cf665f019f7577846df28ccb54470cfff031792de02955b5ed23e454c",
+    "ctdd.py": "c5203f939f3ca93a92814b5da6940e4ba151f176a479059cacee725d2b8b2cc4",
+    "run.py": "013dc761a0bf2b6e9cade5174afbd1f6c9bfe61e337d5d349adff4f1f09611d7",
+    "daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "smoothing.py": "03061c964aca190310389652bceec1b74a54565a9da7e76c12b2b15c7ff778ee"
+  },
+  "dmop_commit": "d4fae9504a47498fffbb18dd784dab2a14ab48b2",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "spx": {
+    "files": {
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/models/spx.py": "fa0b273d59bd58cce8c58076b6c0743cc0ff69ea8930bd5c56f36b321b2f7665",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/models/../data/SPX.csv": "b9a59c5f133a8d899a4848c6df0f50f7acecd9837fd487122da9330a6800c0f5"
+    },
+    "observations_sha256": "b881c73756946bd6aa3dbdb727e2cff8c29707e9cc982842152015dcd828490c",
+    "observations": 3523,
+    "covariates_sha256": "103b9f5a53ad100120d27d5d2a8861e136c110ed58926ff0b3ae564102360be2"
+  },
+  "recovery": {
+    "rule": "retain completely evaluated starts; rerun the interrupted suffix, regardless of likelihood",
+    "completed_starts_retained": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "rerun_starts": [
+      4
+    ],
+    "original_archive": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/interrupted/final-spx-00",
+    "rerun": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/recovery-final-spx-00",
+    "original_configuration_sha256": "b33430e3cb38523d1e4097e1011c019f3f6a2ffc3509e6fa045afdf7f133a618",
+    "rerun_configuration_sha256": "9585cc64a40c9210b31a9a45a6be0cc664f7fd2fa82ca67b906af95744279e4b",
+    "completed_utc": "2026-10-09T04:43:19.105367+00:00"
+  }
+}

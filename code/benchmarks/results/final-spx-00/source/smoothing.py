@@ -1,7 +1,7 @@
 """SMC backward simulation and complete-data scores for the small models.
 
-The Gaussian SAEM implementation uses this sampler with the maximization
-steps in saem.py. SPX uses the complete-data score and an Adam update.
+These are the numerical-score extensions used for the DS19 comparison, not
+an implementation of the paper's model-specific SAEM maximization step.
 """
 
 import jax

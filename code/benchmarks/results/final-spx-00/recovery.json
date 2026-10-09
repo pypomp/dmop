@@ -1,0 +1,17 @@
+{
+  "rule": "retain completely evaluated starts; rerun the interrupted suffix, regardless of likelihood",
+  "completed_starts_retained": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "rerun_starts": [
+    4
+  ],
+  "original_archive": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/interrupted/final-spx-00",
+  "rerun": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/recovery-final-spx-00",
+  "original_configuration_sha256": "b33430e3cb38523d1e4097e1011c019f3f6a2ffc3509e6fa045afdf7f133a618",
+  "rerun_configuration_sha256": "9585cc64a40c9210b31a9a45a6be0cc664f7fd2fa82ca67b906af95744279e4b",
+  "completed_utc": "2026-10-09T04:43:19.105367+00:00"
+}

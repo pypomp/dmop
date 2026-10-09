@@ -12689,8 +12689,10 @@ At each optimization step, we run the particle filter through the data,
 then sample a trajectory of monthly states backward through the stored
 particles. We differentiate the complete-data log-likelihood of this
 trajectory and average the resulting scores using stochastic approximation.
-For the 23-parameter Dhaka model, we use numerical score ascent in place
-of the closed-form SAEM maximization step. We clip the scores and use
+For the 23-parameter Dhaka model, these searches use averaged-score ascent.
+This differs from averaging and maximizing the complete-data objective in
+SAEM. Section~\ref{sec:ds19-update-equations} gives both updates and describes
+the separate numerical-SAEM comparison. We clip the scores and use
 backtracking, with periodic checks of the log-likelihood under the monthly
 Gaussian transition approximation. The 100- and 1,000-particle fits use
 100 particles for these checks; the separately tuned 5,000-particle
@@ -12915,6 +12917,228 @@ These examples complement the Daphnia and Dhaka applications above.
 Within each example, the methods use common starting points and the final
 parameter estimates are evaluated using the same likelihood.
 For the two Gaussian examples, this evaluation is available analytically.
+
+\subsection{SAEM and averaged-score updates}
+\label{sec:ds19-update-equations}
+
+Stochastic approximation expectation maximization (SAEM) alternates
+imputation of the latent states with maximization of an averaged
+complete-data log-likelihood.
+Let $x$ denote a latent trajectory and write
+$C(\vartheta;x)=\log\widetilde p_\vartheta(x,y)$ for the complete-data
+objective of the fitted model. The tilde allows for a transition-density
+approximation. Deterministic initial states are functions of the candidate
+parameter; only random states are imputed. At iteration $m$, a particle
+filter followed by backward
+simulation draws one trajectory $X^{(m)}$ from an approximation to the
+smoothing distribution at $\vartheta_{m-1}$.
+SAEM updates a function of the candidate parameter $\vartheta$:
+\begin{align}
+ \overline Q_m(\vartheta)
+ &= (1-\rho_m)\overline Q_{m-1}(\vartheta)
+       +\rho_m C(\vartheta;X^{(m)}),
+ \label{eq:benchmark-saem-q}\\
+ \vartheta_m &\in
+       \mathop{\mathrm{argmax}}_{\vartheta}\overline Q_m(\vartheta).
+ \label{eq:benchmark-saem-m}
+\end{align}
+The maximization holds the imputed paths and their averaging weights fixed.
+A numerical maximization step still has this form. A truncated step that
+only increases $\overline Q_m$ gives a generalized EM update.
+
+The averaged-score implementation instead calculates
+\begin{align}
+ g_m &= \left.\nabla_\vartheta C(\vartheta;X^{(m)})
+                         \right|_{\vartheta=\vartheta_{m-1}},
+ \label{eq:benchmark-path-score}\\
+ \overline g_m &=(1-\rho_m)\overline g_{m-1}+\rho_m g_m,
+ \label{eq:benchmark-score-average}
+\end{align}
+then uses the clipped $\overline g_m$ in an Adam step.
+Derivatives hold the imputed path fixed; they do not pass through the
+particle filter or backward sampler.
+With exact smoothing, the conditional expectation of $g_m$ is the score
+of the fitted model's observed-data likelihood.
+The particle smoother approximates this expectation.
+Before clipping or safeguard resets, the distinction between the two
+averages can be written as
+\begin{align}
+ \nabla\overline Q_m(\vartheta)
+   &=\sum_{r=1}^m w_{mr}\nabla_\vartheta C(\vartheta;X^{(r)}),
+ &\overline g_m
+   &=\sum_{r=1}^m w_{mr}
+       \nabla_\vartheta C(\vartheta_{r-1};X^{(r)}),
+ \label{eq:benchmark-q-versus-score}\\
+ w_{mr}&=\rho_r\prod_{k=r+1}^m(1-\rho_k).\nonumber
+\end{align}
+SAEM reevaluates the retained information at the candidate parameter.
+The averaged-score update retains gradients calculated at earlier
+parameter values, so it is generally not the gradient of
+$\overline Q_m$ at the current parameter.
+Our gain schedule is $\rho_m=1$ for $m\leq b$ and
+$\rho_m=(m-b)^{-0.9}$ thereafter.
+We use $b=30$ for the Gaussian SAEM and averaged-score runs, and $b=3$
+for numerical SAEM on Dhaka.
+Clipping and Adam act on the existing estimation scales.
+In the Dhaka score implementation, the clipped average is also carried
+into the next iteration, and failed safeguard checks can reset it.
+
+\paragraph{Linear Gaussian model: explicit SAEM.}
+The latent states satisfy
+$X_t=\operatorname{diag}(a_1,a_2)X_{t-1}+\varepsilon_t$,
+with $\varepsilon_t\sim\mathcal N(0,0.5I)$,
+$Y_t\mid X_t\sim\mathcal N(X_t,0.1I)$, and
+$X_0\sim\mathcal N(0,I)$.
+For a fixed path, the terms depending on $a=(a_1,a_2)$ are
+\[
+ C(a;x)=-\frac{1}{2(0.5)}
+     \sum_{t=1}^T\sum_{d=1}^2(x_{t,d}-a_dx_{t-1,d})^2
+     +\text{constant}.
+\]
+For each coordinate, the sufficient statistics are
+\[
+ S_{00,d}(x)=\sum_t x_{t-1,d}^2,
+ \qquad S_{10,d}(x)=\sum_t x_{t,d}x_{t-1,d}.
+\]
+We update their averages by
+$\overline S_m=(1-\rho_m)\overline S_{m-1}+\rho_m S(X^{(m)})$.
+The M-step is
+\begin{equation}
+ a_{d,m}=\operatorname{clip}_{[-0.98,0.98]}
+       \left(\frac{\overline S_{10,d,m}}{\overline S_{00,d,m}}\right).
+ \label{eq:benchmark-linear-mstep}
+\end{equation}
+Thus each iteration needs a particle filter and one backward path,
+followed by two scalar ratios. No score averaging is used.
+
+\paragraph{Harmonic oscillator: SAEM with a numerical M-step.}
+Write $x_t=(v_t,u_t)^\mathsf T$, where the positions $v_t$ are observed
+without measurement error and the velocities $u_t$ are imputed.
+For $\theta=(D,\gamma,\sigma)$ and observation interval $\Delta=0.02$,
+the fitted Gaussian transition has
+\begin{align*}
+ A_\theta&=\begin{pmatrix}0&1\\-D&-\gamma\end{pmatrix},
+ &F_\theta&=I+\Delta A_\theta+\tfrac12\Delta^2 A_\theta^2,\\
+ Q_\theta&=\sigma^2
+ \begin{pmatrix}
+ \Delta^3/3&\Delta^2/2-\gamma\Delta^3/3\\
+ \Delta^2/2-\gamma\Delta^3/3&
+       \Delta-\gamma\Delta^2+\gamma^2\Delta^3/3
+ \end{pmatrix}.
+\end{align*}
+Conditional on the first position, $U_0\sim\mathcal N(0,v_\theta)$,
+where $v_\theta=\sigma^2/(2\gamma)$.
+Let $S_{ij}=\sum_{t=1}^T x_{t-1+i}x_{t-1+j}^\mathsf T$ for
+$(i,j)=(0,0),(1,0),(1,1)$, and let $h=u_0^2$.
+Average these quantities with the same recursion as above.
+Up to constants independent of $\theta$, the function maximized is
+\begin{equation}
+ \overline Q_m(\theta)=-\tfrac12\left\{
+  \log v_\theta+\frac{\overline h_m}{v_\theta}
+  +T\log\det Q_\theta
+  +\operatorname{tr}\!\left(Q_\theta^{-1}\overline R_m(\theta)\right)
+ \right\},
+ \label{eq:benchmark-oscillator-mstep}
+\end{equation}
+where
+\[
+ \overline R_m(\theta)=\overline S_{11,m}
+     -F_\theta\overline S_{10,m}^{\mathsf T}
+     -\overline S_{10,m}F_\theta^{\mathsf T}
+     +F_\theta\overline S_{00,m}F_\theta^{\mathsf T}.
+\]
+We use L-BFGS-B on $(\log D,\log\gamma,\log\sigma)$, retaining a finite
+step only if this objective does not decrease, up to numerical tolerance.
+The code accumulates state increments to evaluate the same quadratic form
+with less cancellation. This is SAEM using averaged sufficient statistics.
+
+\paragraph{SPX: averaged complete-data scores.}
+Let $r_t$ be the observed return and $v_t$ the latent variance.
+The Pypomp model's conditional variance transition has Gaussian mean
+and standard deviation
+\[
+ m_t(v)=v+\kappa(\bar v-v)+\xi\rho(r_{t-1}-\mu+v/2),
+ \qquad s(v)=\xi\sqrt{v(1-\rho^2)},
+\]
+followed by a floor $\epsilon=10^{-32}$.
+Writing $\phi(z;m,s^2)$ for a Gaussian density and $\Phi$ for the
+standard normal distribution function, its transition is
+\[
+ f_{\theta,t}(v'\mid v)=
+ \begin{cases}
+  \phi(v';m_t(v),s(v)^2),&v'>\epsilon,\\
+  \Phi((\epsilon-m_t(v))/s(v)),&v'=\epsilon.
+ \end{cases}
+\]
+The second case is a probability mass; the reference measure is Lebesgue
+measure plus an atom at $\epsilon$.
+The complete-path objective is
+\begin{equation}
+ C(\theta;v)=\sum_{t=1}^T\left\{
+    \log f_{\theta,t}(v_t\mid v_{t-1})
+    +\log\phi(r_t;\mu-v_t/2,v_t)\right\}.
+ \label{eq:benchmark-spx-score-objective}
+\end{equation}
+The initial variance $v_0=V_0$ is a parameter, so its current candidate
+value enters the first transition when differentiating.
+We use Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average})
+and Adam for this example. There is no SAEM M-step.
+
+\paragraph{Daphnia: averaged scores for the Gaussian block approximation.}
+For mesocosm $u$, let $m_{\theta,u,t}$ and $\Sigma_{\theta,u,t}$ be the
+mean and covariance obtained by composing the local Gaussian transitions
+over an observation interval, including the inoculation in the first interval.
+Let $g_{\theta,u}$ be the product of the four negative-binomial measurement
+probabilities in Section~S10.
+For the eight imputed mesocosm paths, the complete-path objective is
+\begin{equation}
+ C(\theta;x)=\sum_{u=1}^{8}\sum_{t=1}^{10}
+ \left\{\log\phi_8\!\left(x_{u,t};
+ m_{\theta,u,t}(x_{u,t-1}),\Sigma_{\theta,u,t}(x_{u,t-1})\right)
+       +\log g_{\theta,u}(y_{u,t}\mid x_{u,t})\right\}.
+ \label{eq:benchmark-daphnia-score-objective}
+\end{equation}
+Initial states are fixed. The covariance uses a relative diagonal floor
+of $10^{-8}$ on scaled states. The particle filter uses the observations
+to guide proposals and excludes invalid states.
+After backward simulation of one path per mesocosm, we differentiate this
+sum with respect to the 38 estimated parameters and use the averaged-score
+Adam update. There is no SAEM M-step. Final likelihoods are evaluated
+with the original Euler model from Section~S10.
+
+\paragraph{Dhaka: score updates and numerical generalized SAEM.}
+Both arms use the monthly Gaussian transition described in
+Section~\ref{sec:dhaka-competitors}, with 20 internal time steps and
+a relative covariance floor of $10^{-12}$.
+Let $\mathcal R x$ reset the accumulated monthly deaths to zero, and
+write $d_t=P_tM_t$ for the predicted deaths at a sampled endpoint.
+Here $P_t$ is the population and $M_t$ is the accumulated death count
+divided by population. The objective used by both arms is
+\begin{align}
+ C(\theta;x)=\sum_{t=1}^T\big\{&
+   \log\phi_6\!\left(x_t;m_{\theta,t}(\mathcal R x_{t-1}),
+                     \Sigma_{\theta,t}(\mathcal R x_{t-1})\right)
+   \nonumber\\[-2pt]
+   &+\log[\phi(y_t;d_t,(\tau d_t+\delta)^2)+\delta]\big\},
+ \qquad \delta=10^{-18}.
+ \label{eq:benchmark-dhaka-objective}
+\end{align}
+The initial state $x_0=x_0(\theta)$ is recalculated at each candidate
+parameter, while the sampled monthly endpoints are held fixed.
+The score arm uses the gradient average in
+Equation~(\ref{eq:benchmark-score-average}), with Adam and the safeguards
+described above.
+The numerical-SAEM arm retains paths and weights and forms
+$\overline Q_m(\theta)=\sum_{r=1}^m w_{mr}C(\theta;X^{(r)})$.
+Each L-BFGS-B evaluation recalculates every retained path's objective
+and gradient at the same candidate $\theta$.
+We allow at most 25 L-BFGS-B iterations per M-step and retain a candidate
+only if it is finite and increases or leaves unchanged this fixed
+$\overline Q_m$. An M-step interrupted by the time limit is discarded.
+This is a numerical generalized-SAEM update; it does not require an
+explicit sufficient-statistic maximizer.
+Both arms are evaluated afterward with the Euler likelihood, which differs
+from the monthly Gaussian objective being optimized.
 
 \paragraph{Interpreting computation times for the Gaussian examples.}
 DS19, IFAD, and IF2 use the same particle count in the Gaussian examples.
