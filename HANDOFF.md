@@ -1,5 +1,46 @@
 # Handoff
 
+## October 9, 2026: SAEM equations and completed SPX runs
+
+- Added S12.1 in `si.tex`: the SAEM objective recursion and M-step, the
+  averaged-score recursion, and the distinction between reevaluating retained
+  paths at a candidate parameter and retaining gradients at old parameters.
+  Each example has its actual complete-path objective: explicit Gaussian
+  regression update; oscillator sufficient-statistic maximization; SPX
+  transition including its variance-floor atom; Daphnia block-Gaussian score;
+  and Dhaka score versus numerical generalized SAEM. Included deterministic
+  initial-state dependence, gain schedules, and acceptance rules. S11 now
+  points to this explanation rather than implying that SAEM needs a
+  closed-form M-step. No fitting code changed (only a sampler docstring).
+- `make dmop/si.pdf` succeeds (78 pages), with no overfull boxes, undefined
+  references or multiply defined labels in the build log. Visually reviewed
+  pages S-73 through S-76 after fixing equation-reference wording and a long
+  sufficient-statistic line. The built-in compiler stalled again and its
+  call was cancelled. The existing source editor remains unchanged.
+- SPX recovery completed at 04:43 UTC. All 80 final fits are complete, with
+  20 starts per method. `audit_results.py` independently recalculates all
+  final likelihoods and Monte Carlo errors from saved replicates; all pass.
+  The script also checks completed Dhaka A/B selections, time eligibility,
+  and nondecreasing numerical M-steps (four pairs passed at 04:50 UTC).
+  README links the audit script. Inspect newly completed pairs again later.
+- SPX median log-likelihoods: IFAD 11838.633, IF2 11841.959, DS19 11844.828,
+  CTDD21 11796.975. No failed fits. Generated and visually inspected the
+  three linear-scale SPX panels in `/tmp/dmop-spx-complete`; these are preview
+  artifacts pending the combined report. The results do not support saying
+  that all methods perform equally well on SPX. Preserve actual differences.
+  The recovered start 4 used E-cores; all methods at that start used the same
+  core group, recorded in execution provenance. Earlier SPX starts used
+  P-cores. Do not generalize these timings beyond the recorded setting.
+- Persistent services remain active. At 04:50 UTC, matched oscillator J=100
+  IFAD/IF2 had reached start 17; both Daphnia tuning recoveries had completed
+  warm compilation and started fitting start 1. Dhaka workers were fitting
+  their second cold pairs. Daphnia final queues, Gaussian tuning queue, and
+  final report queue still wait for their dependencies. Do not duplicate or
+  restart live jobs. Full goal remains unfinished: final matched Gaussian
+  selection, Daphnia runs, all 40 Dhaka A/B pairs, combined figures/table,
+  final SI results prose and visual/compilation checks remain outstanding.
+  The score update-count reporting correction below also remains pending.
+
 ## October 9, 2026: equal-particle Gaussian tuning and progress bands
 
 - Latest user steering supersedes the earlier unequal-count Gaussian setup:
