@@ -1,5 +1,27 @@
 # Handoff
 
+## October 9, 2026: sixteen corrected cold pairs audited; Daphnia fitting
+
+- Corrected cold starts 0--15 pass the A/B audit. New score/SAEM Euler
+  likelihoods: start 13 (-4113.783415, -4436.841451), start 14
+  (-5074.391802, -6269.649828), start 15 (-4042.373562, -4258.714804).
+  Scores for these starts were newly fitted, not reused. Both arms used
+  their declared time budgets and retained the last eligible estimates.
+- Workers are on the final four cold starts, 16--19. Worker 0 has completed
+  the score arm of start 16 and is fitting SAEM; the other workers have
+  advanced to their next score fits. No warm pair has completed. Do not
+  use this partial cold comparison as the full cold/warm result.
+- All four final Daphnia batches completed compilation and the first warm
+  MPIF stage. They have now also completed their first full MPIF searches,
+  at starts 0, 5, 10 and 15, in 647.35, 653.36, 660.15 and 639.78 s.
+  IFAD and competitor stages/evaluations remain. No final Daphnia batch is
+  complete. Actual subprocesses 1515337, 1515335, 1515336 and 1515829 remain
+  live with increasing CPU time; the same four corrected A/B children are
+  live as well. No restart or fitting-setting change occurred.
+- Final five-model panels/table, full A/B report, results prose and SI
+  integration remain pending. This continuation audited and preserved
+  three complete pairs after a verified computational wait.
+
 ## October 9, 2026: thirteenth corrected pair complete
 
 - Cold start 12 passes the A/B audit, bringing the total to 13 complete
