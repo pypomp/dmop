@@ -1,5 +1,24 @@
 # Handoff
 
+## October 9, 2026: first corrected warm-start pair underway
+
+- Cold start 16 completed and passed the 17-pair A/B audit. Euler
+  likelihoods: initial -10545.466753, score -4131.177923 (MCSE .519321),
+  SAEM -4498.273845 (.297115). Score used its time budget; SAEM completed
+  14 eligible iterations, selecting at 819.54 s before its 850 s deadline.
+- Worker 0 has begun warm start 0 (SAEM first under the alternating arm
+  order). The other workers are finishing cold starts 17--19. No warm
+  pair is complete. At the current budgets the remaining warm fits take
+  roughly 2.5--3 hours including evaluation; this is an estimate, not a
+  deadline or a reason to change the declared experiment.
+- Verified the SAEM objective uses a fixed-size path buffer and compiles
+  that shape before the fitting timer starts. No timing-caption or source
+  change was needed. Frozen fitting code remains untouched.
+- All four first DS19 Daphnia fits completed successfully at starts 0, 5,
+  10 and 15 (539, 545, 536 and 514 updates respectively). CTDD21 and
+  independent evaluation follow. The same eight actual fitting subprocesses
+  remain live. Full reports, results prose and SI integration remain pending.
+
 ## October 9, 2026: Gaussian timing hardware stated in SI
 
 - Added the recorded CPU distinction to the Gaussian timing paragraph:
