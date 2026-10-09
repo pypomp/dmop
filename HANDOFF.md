@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: eight final Daphnia starts evaluated
+
+- Starts 0, 1, 5, 6, 10, 11, 15 and 16 now have all four final method
+  evaluations. Recalculated all 32 log-likelihoods and MCSEs from the ten
+  raw replicates for each of eight mesocosms; all agree with checkpoints.
+  Snapshot: `/tmp/dmop-daphnia-live-evaluation-audit.json`. This does not
+  certify the unfinished five-start batches or the full 20-start study.
+- Newly complete starts (MPIF, IFAD, DS19, CTDD21):
+  1: (-865.214432, -861.859893, -865.151186, -865.572389);
+  6: (-862.884996, -857.131953, -864.009556, -860.967115);
+  11: (-865.743639, -861.580744, -871.777049, -864.091729);
+  16: (-864.742519, -863.680370, -877.160630, -868.104683).
+- All eight fitting processes are live and accumulating CPU time; Daphnia
+  workers proceed to their third starts. The corrected A/B study remains
+  at 20 complete cold pairs and one complete warm pair. Completed warm
+  data are pushed; live partial Daphnia directories remain untracked until
+  their batches finish. Full reports and SI integration remain pending.
+
 ## October 9, 2026: first corrected warm pair complete
 
 - Warm start 0 completed both 850-second fits and independent Euler
