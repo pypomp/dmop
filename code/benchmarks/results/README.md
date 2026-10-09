@@ -13,6 +13,11 @@ whose name begins with `final-` can still be incomplete while it is running.
 - `recovery-*`: reruns of unfinished starting points. Their completed rows
   are merged into the original batch by `recover.py`; `recovery.json` links
   the original and rerun configurations. Do not count these rows twice.
+- `matched-*-j100-*`, `matched-*-j500-*`: equal-particle Gaussian runs for
+  IFAD/IF2 (`-if`) and DS19 (`-ds`), sharing starts and CPU assignment.
+- `matched-particle-tuning/selection.json`: selection of the common Gaussian
+  particle count using separate IFAD tuning starts. The report uses the chosen
+  count; the alternative runs stay here as supporting computation.
 - `dhaka_reference.csv`: exact archived main-text IFAD/IF2 estimates and their
   recovered Monte Carlo errors. Rebuild with `../export_dhaka.py` using the
   original result objects. The combined report uses the existing tracked

@@ -12917,15 +12917,13 @@ parameter estimates are evaluated using the same likelihood.
 For the two Gaussian examples, this evaluation is available analytically.
 
 \paragraph{Interpreting computation times for the Gaussian examples.}
-DS19 uses 100 particles and 80 SAEM iterations for both the harmonic
-oscillator and the linear Gaussian model.
-IFAD uses 500 particles for 100 IF2 iterations followed by 300 gradient
-iterations; IF2 uses 500 particles for 600 iterations.
+DS19, IFAD, and IF2 use the same particle count in the Gaussian examples.
+We select between 100 and 500 particles using separate tuning starts.
+DS19 uses 80 SAEM iterations.
+IFAD uses 100 IF2 iterations followed by 300 gradient iterations;
+IF2 uses 600 iterations.
 CTDD21 uses 25 particles and 300 gradient iterations.
-Thus these comparisons use different particle numbers and iteration
-counts, rather than a common computational budget.
-The 100-particle setting for DS19 was not selected by a particle-number
-sensitivity study.
+The iteration counts therefore differ even when the particle counts agree.
 
 Each DS19 iteration runs a particle filter through the observations and
 samples one trajectory by backward simulation.
@@ -12940,8 +12938,10 @@ finish; compilation and the subsequent likelihood evaluations are excluded.
 The analytic Gaussian likelihood is used for evaluation, not to replace
 DS19's particle filter during fitting.
 The resulting times describe these implementations and settings.
-They do not establish a general runtime ordering, or show that 100
-particles would suffice for the Daphnia or Dhaka models.
+They do not establish a general runtime ordering across models.
+In the progress plots, solid lines show the median log-likelihood and
+shaded regions span the 10th through 100th percentiles across searches,
+as in Section~\ref{sec:dhaka-competitors}.
 
 \clearpage
 \bibliography{bib-ifad}

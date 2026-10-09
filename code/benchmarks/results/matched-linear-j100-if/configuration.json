@@ -1,0 +1,75 @@
+{
+  "model": "linear",
+  "output": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/matched-linear-j100-if",
+  "starts": 20,
+  "start_index": 0,
+  "iterations": 300,
+  "if2_iterations": 600,
+  "warm": 100,
+  "particles": 100,
+  "ds_particles": 100,
+  "ds_update": "saem",
+  "ct_particles": 25,
+  "learning_rate": 0.01,
+  "ifad_learning_rate": null,
+  "alpha": 0.97,
+  "rw_sd": 0.02,
+  "seed": 631450,
+  "checkpoint_every": 25,
+  "eval_particles": 5000,
+  "eval_reps": 24,
+  "trace_eval_particles": 1000,
+  "trace_eval_reps": 4,
+  "methods": [
+    "IF2",
+    "IFAD"
+  ],
+  "purpose": "final",
+  "utc": "2026-10-09T04:31:22.279449+00:00",
+  "jax": "0.9.0.1",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    28,
+    29,
+    30,
+    31
+  ],
+  "pypomp_source": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/pypomp/pypomp/__init__.py",
+  "parameter_names": [
+    "a1",
+    "a2"
+  ],
+  "bounds_estimation_scale": [
+    [
+      -0.98,
+      0.98
+    ],
+    [
+      -0.98,
+      0.98
+    ]
+  ],
+  "start_jitter_sd": 0.35,
+  "selection": "last finite parameter vector; failures retained",
+  "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+  "ds19": "backward path simulation; SAEM maximization of averaged sufficient statistics",
+  "source_sha256": {
+    "queue_final.py": "1510a365f1c327c9d0ab0f6afce8273d2f1900cc8b7924db4a2d34f2f1e6cd87",
+    "finish_report.py": "07c692ac98b5369a15621d65d3606d111ba33126107f38f77852607e8f93c3cc",
+    "run_daphnia.py": "95ebf183d498f87a0a712d40f67a9c3ba5eec35b3ac36cfb7e5571c0465dbdb6",
+    "models.py": "b62b3c4a0b3de2e2f87bf862aa93379c7a3c4095a6c45be841dc1231fc62bdf6",
+    "saem.py": "3615737c0615550ede5d647916c8f9b92d7ebf6f38ac9bf24c4048759fa492f8",
+    "export_dhaka.py": "ea732fef92e32739cec90887dda77a9612468ca3f26d44c60c3dff17e3c362a7",
+    "report.py": "ec2bcbaef6252b10f53babfba973576354d85dfb71baa88b90efea01624485f4",
+    "ctdd.py": "c5203f939f3ca93a92814b5da6940e4ba151f176a479059cacee725d2b8b2cc4",
+    "matched_particles.py": "2ca8ae48584a609095ae9cfc7b433bcb4c1ae0a204f4ca13b0ddf3d71ce7b84a",
+    "recover.py": "1ca625c2aec4a5551ee653be8d5de0436c3cde905271c9d0c3d09229cf512b2e",
+    "run.py": "013dc761a0bf2b6e9cade5174afbd1f6c9bfe61e337d5d349adff4f1f09611d7",
+    "daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "smoothing.py": "03061c964aca190310389652bceec1b74a54565a9da7e76c12b2b15c7ff778ee"
+  },
+  "dmop_commit": "1b6d498da576bfa431d58016d88df7918035fe6d",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+}
