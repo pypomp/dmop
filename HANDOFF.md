@@ -1,5 +1,28 @@
 # Handoff
 
+## October 9, 2026: complete corrected global-start comparison
+
+- All 20 corrected cold pairs pass `audit_results.py` (raw likelihood and
+  MCSE recalculation, selected checkpoints, fixed-Q acceptance and reused
+  score provenance where applicable). Starts 17--19 are newly complete.
+  Global-start medians: score -4050.488630, numerical SAEM -4834.427999;
+  maxima: -3967.135085 and -3963.488588. SAEM is higher in 2/20 pairs.
+  Two score fits stopped early and retain their last eligible estimates;
+  all SAEM calls ended at their time budget. No fit is omitted.
+- Generated and visually inspected the complete cold-only two-panel figure
+  at `/tmp/dmop-saem-ab-global/comparison.{png,pdf}`. `plot.py` there refuses
+  incomplete cold data and reruns the full audit; `paired.csv`, `summary.csv`
+  and `audit.json` preserve its inputs/results. All axes are linear, failed
+  score fits are crosses, and paired differences have twice paired MCSE.
+  Its title explicitly states that the warm-start comparison is running.
+  This preview is not inserted into the SI or the complete 40-pair report.
+- All four A/B workers are now on warm starts 0--3. No warm pair has
+  completed. Daphnia has completed four starts (16 fits) and is fitting
+  the next four; all four second full-MPIF searches have finished.
+  The same eight subprocesses remain live. Full warm comparison, complete
+  Daphnia study, final publication figures/tables and SI results remain
+  outstanding; goal active.
+
 ## October 9, 2026: search/evaluation settings added to SI
 
 - Added S12.2, `sec:benchmark-settings`, giving the common 20-start design,
