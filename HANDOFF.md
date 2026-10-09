@@ -1,5 +1,20 @@
 # Handoff
 
+## October 9, 2026: results directory navigation clarified
+
+- Expanded `code/benchmarks/results/README.md` with the exact inputs to the
+  current report: selected J=500 Gaussian IFAD/IF2/DS19 replacements,
+  CTDD21-only use of the original Gaussian final directories, the four
+  SPX/Daphnia batches, and archived 100-start Dhaka sources. Earlier
+  Gaussian alternatives are clearly identified as retained history.
+- Linked the separate corrected 20-cold/20-warm score/SAEM study and the
+  publication-output README; clarified that a missing completion status
+  means unfinished. Verified all five local Markdown links and checked
+  whitespace. No fitting or reporting source changed.
+- All eight experiment subprocesses remain active. Complete cold A/B
+  results are saved and previewed; warm A/B and final Daphnia fitting
+  continue. Final figures/tables and SI results remain pending.
+
 ## October 9, 2026: complete corrected global-start comparison
 
 - All 20 corrected cold pairs pass `audit_results.py` (raw likelihood and
