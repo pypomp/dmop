@@ -1,5 +1,32 @@
 # Handoff
 
+## October 9, 2026: matched Gaussian runs and higher-rate Daphnia tuning complete
+
+- All eight equal-particle Gaussian batches are complete. The final
+  oscillator J=500 batch has 20 fits each for IFAD, IF2 and DS19, all with
+  successful status. Median likelihood/time (s): IFAD 5403.6663/70.0061,
+  IF2 5401.9489/89.4258, DS19 5403.6880/9.3939. CTDD21 retains its original
+  J=25 run (5397.1785/117.3200); its core type differs, as documented.
+- Ran the batch audit and report validation, then visually inspected all
+  three oscillator J=500 plots at `/tmp/dmop-oscillator-j500-complete`.
+  All use linear axes; progress has 10th--100th percentile shading at .10.
+  The complete cross-model publication report still awaits particle-count
+  selection and Daphnia final fits. Do not promote this explicit-J preview
+  before the separately declared tuning selects the common count.
+- `dmop-matched-particles` is inactive after successful completion. The
+  existing `dmop-tune-particles` service (PID 1437187) has started
+  `tuning-linear-particles100` on the freed E cores. It will also evaluate
+  oscillator and J=500, then choose the shared count by the existing rule.
+- Higher-rate Daphnia tuning recovery is complete, and all 16 final
+  evaluations pass raw-replicate likelihood/MCSE recalculation. All four
+  DS19 fits failed on nonfinite updates and remain included. Median
+  likelihoods: MPIF -864.5831, IFAD -861.5425, DS19 -937.4442,
+  CTDD21 -867.5931. Immutable original archive and recovery provenance are
+  retained. The lower-rate recovery is still finishing its last start;
+  final Daphnia queues still wait for both tuning batches.
+- Corrected Dhaka A/B workers remain active with eight completed cold
+  pairs. Full cold/warm report and SI integration remain outstanding.
+
 ## October 9, 2026: eight corrected cold pairs audited
 
 - Corrected cold starts 0--7 now pass `audit_results.py --dhaka-ab`, including

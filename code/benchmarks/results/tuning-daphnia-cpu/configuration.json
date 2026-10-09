@@ -1,0 +1,57 @@
+{
+  "output": "code/benchmarks/results/tuning-daphnia-cpu",
+  "starts": 4,
+  "seed": 2026091801,
+  "particles": 1000,
+  "warm_iterations": 200,
+  "mif_iterations": 680,
+  "adam_iterations": 200,
+  "ds_particles": 100,
+  "ct_particles": 100,
+  "learning_rate": 0.01,
+  "eval_particles": 2000,
+  "eval_reps": 10,
+  "stride": 50,
+  "max_updates": 2000,
+  "purpose": "pilot",
+  "utc": "2026-10-08T20:29:02.426705+00:00",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    16,
+    17,
+    18,
+    19
+  ],
+  "jax": "0.9.0.1",
+  "dmop_commit": "f6205e8fd0da1cc62fad715003989248d594ea5d",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "source_sha256": {
+    "code/benchmarks/run_daphnia.py": "78084c57cbfe3ceb08402948579401758881577b1c8ef65554a58fbf2c31c4d9",
+    "code/benchmarks/daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "code/daphnia/model.py": "b9d195fd1796d47bef32909a90fc744273fee17ee3c779890b0adc6ffa28f61c",
+    "code/daphnia/data/Mesocosmdata.xls": "1c67690802183cc3aabd95d552090b1b0c1e22731aa7282904af411502fe9605"
+  },
+  "ds_model": "composed strong-1.5 Gaussian moments with endpoint floor 1e-8; guided NB surrogate",
+  "ds_update": "backward-simulated complete-data score and Adam; not the SAEM M-step",
+  "selection": "last finite parameter vector",
+  "timing": "serial fits; compilation reported separately; evaluation excluded",
+  "progress_time": "uniform within the two Pypomp stages; measured per-update for DS19/CTDD21",
+  "recovery": {
+    "rule": "retain completely evaluated starts; rerun the interrupted suffix, regardless of likelihood",
+    "completed_starts_retained": [
+      0
+    ],
+    "rerun_starts": [
+      1,
+      2,
+      3
+    ],
+    "original_archive": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/interrupted/tuning-daphnia-cpu",
+    "rerun": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/recovery-tuning-daphnia-cpu",
+    "original_configuration_sha256": "e3d0f807419a13b7fb8b000e3cc21610a929e10c10c5e84b74319fec62a0eb33",
+    "rerun_configuration_sha256": "2344a7408317ccafffcc48e9664427a55f0ce9d768d332ce7447ff99d4a3409a",
+    "completed_utc": "2026-10-09T05:59:59.403682+00:00"
+  }
+}

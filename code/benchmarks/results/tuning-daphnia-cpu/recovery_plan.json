@@ -1,0 +1,49 @@
+{
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/run_daphnia.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/recovery-tuning-daphnia-cpu",
+    "--start-index",
+    "1",
+    "--starts",
+    "3",
+    "--seed",
+    "2026091801",
+    "--particles",
+    "1000",
+    "--ds-particles",
+    "100",
+    "--ct-particles",
+    "100",
+    "--learning-rate",
+    "0.01",
+    "--eval-particles",
+    "2000",
+    "--eval-reps",
+    "10",
+    "--purpose",
+    "pilot",
+    "--warm-iterations",
+    "200",
+    "--mif-iterations",
+    "680",
+    "--adam-iterations",
+    "200",
+    "--stride",
+    "50",
+    "--max-updates",
+    "2000"
+  ],
+  "cpu_affinity": [
+    16,
+    17,
+    18,
+    19
+  ],
+  "completed_starts_retained": [
+    0
+  ],
+  "original_archive": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/interrupted/tuning-daphnia-cpu",
+  "utc": "2026-10-09T04:18:16.306321+00:00"
+}
