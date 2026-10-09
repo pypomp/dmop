@@ -1,5 +1,29 @@
 # Handoff
 
+## October 9, 2026: four corrected pairs audited and previewed
+
+- Corrected cold starts 0--3 are complete; `audit_results.py --dhaka-ab`
+  passes all four, including raw likelihood replicates, reused score hashes,
+  selected checkpoints and M-step acceptance. Score/SAEM likelihoods are
+  (-4027.31, -5785.06), (-4010.90, -4352.70), (-4040.37, -4598.35), and
+  (-3983.29, -6614.14). No warm pair is complete. Do not infer the full
+  comparison from these four starts.
+- At the user's request, generated and visually inspected a partial two-panel
+  preview: `/tmp/dmop-saem-ab-preview/comparison.png` and `.pdf`; generating
+  script, paired CSV and audit JSON are in the same directory. The plot uses
+  linear axes, connected matched starts and paired differences with twice
+  Monte Carlo SE. It explicitly says 4/20 global pairs and warm starts pending.
+  Shown in chat only; no partial figure was inserted into the SI.
+- Confirmed all corrected worker service handles live (PIDs 1474287,
+  1474290, 1474327, 1474357), now fitting starts 4--7. Matched-particle
+  oscillator J=500 is fitting start 14; six of eight batches are complete.
+  Both Daphnia tuning recovery services are live and finishing their last
+  recovery start. Final Daphnia, particle tuning and reporting queues are
+  still waiting for their declared dependencies. No run was restarted.
+- The previous user-request turn made progress by producing and validating
+  the requested partial A/B figure. Final benchmark panels/table, complete
+  cold/warm A/B report and SI integration remain outstanding; goal active.
+
 ## October 9, 2026: first corrected Dhaka pair complete and audited
 
 - Corrected `saem_ab_scaled/cold/start000` is complete. Euler log-likelihoods
