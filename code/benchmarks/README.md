@@ -23,6 +23,7 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [tune_particles.py](tune_particles.py) | Select the shared Gaussian particle count on separate IFAD tuning starts |
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
+| [queue_saem_scaled.py](queue_saem_scaled.py) | Replace an unscaled Dhaka worker after its current score fit is saved |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
 | [audit_results.py](audit_results.py) | Recalculate saved likelihood summaries and check Dhaka A/B checkpoint selection and M-step acceptance |
 | [diagnose_saem.py](diagnose_saem.py) | Replay a fixed Dhaka path to diagnose false L-BFGS convergence and objective scaling |
