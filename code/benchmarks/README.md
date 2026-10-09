@@ -18,6 +18,7 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [run.py](run.py) | Repeated oscillator, linear Gaussian, and SPX fits |
 | [run_daphnia.py](run_daphnia.py) | MPIF, IFAD, DS19, and CTDD21 from common Daphnia starts |
 | [report.py](report.py) | Combine completed final runs and the archived Dhaka results into panels and a table |
+| [finish_report.py](finish_report.py) | Generate the complete report after declared final batches finish |
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
@@ -71,6 +72,10 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   Plot log-likelihood on ordinary linear axes, with a separate range for each
   model. Do not compare likelihood values between datasets. A reference line
   marks the analytic maximum or the best displayed final estimate.
+  `optimization.pdf` retains the full range of the median trajectories;
+  `optimization_detail.pdf` shows the same curves near their final medians,
+  also on linear axes. `plot_ranges.json` records the limits and their rule.
+  All final estimates, including outliers, appear in `final_likelihoods.pdf`.
 - Measure synchronized wall time, separate compilation and evaluation, and
   record hardware and concurrency. Existing V100 times and new RTX 3090 times
   cannot establish a runtime ranking. Rerun a common timing experiment before
@@ -165,6 +170,16 @@ uses L-BFGS-B. For the linear Gaussian example the corresponding maximization
 is explicit. The initial distributions and parameter bounds are the same as
 for the other methods. The tests compare sufficient-statistic likelihoods and
 derivatives against direct complete-path calculations.
+
+The Gaussian DS19 timing includes the particle filter, backward simulation,
+sufficient-statistic update and M-step. The sampler uses 100 particles for
+80 iterations. IFAD uses 500 particles for 100 IF2 plus 300 gradient updates;
+IF2 uses 600 updates with 500 particles, and CTDD21 uses 300 updates with 25
+particles. These configurations have unequal budgets. There was no DS19
+particle-number sensitivity study. The linear Gaussian M-step is explicit;
+the oscillator's three-parameter M-step works with sufficient statistics.
+Compilation and final analytic likelihood evaluations are excluded for all
+methods. These timings do not establish a general runtime ordering.
 
 The first Gaussian runs used the numerical-score extension. Those traces are
 retained as implementation history. The combined report explicitly excludes

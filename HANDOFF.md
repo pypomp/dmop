@@ -1,5 +1,74 @@
 # Handoff
 
+## October 9, 2026: recovery pipeline, figure scales, Gaussian timing caveats
+
+- Active goal is to finish every benchmark and the Dhaka A/B experiment,
+  generate the requested panels and central table, insert/review them in the
+  existing `si.tex`, and compile it. This goal is unfinished. User additionally
+  requested reasonable scales, visual inspection, and explicit caveats about
+  the fast Gaussian DS19 timings and its smaller particle count.
+- All four Dhaka A/B services from the entry below remain active. By 04:27 UTC
+  each had finished its first score arm and was fitting numerical SAEM. The
+  time budget includes filtering and backward simulation. Do not modify the
+  frozen `ditlevsen/ditlevsen/*.py` sources while these workers may need resume.
+  Reporting issue to fix after completion: score `updates` currently stores
+  the selected trace index, while `updates_attempted` actually stores the
+  fitter's total accepted updates. For the selected parameter vector, count
+  positive `accepted_step_size_trace[:selected_index]` in the saved NPZ.
+  The parameter selection and elapsed-time eligibility are unaffected.
+  Preserve raw metadata and document the reporting correction before using
+  update counts in the SI table.
+- Added/tested `code/benchmarks/recover.py`. It archives the complete original
+  partial batch under `results/interrupted/`, retains all fully evaluated
+  starting points (including failed fits), and reruns only the unfinished
+  suffix using its original seeds/settings. After completion it merges the
+  suffix, checks all expected method/start pairs, and writes recovery provenance
+  before marking the original batch complete. Interrupted individual fits
+  within an unfinished start are retained in the archive, not selected by score.
+- Persistent recovery services: `dmop-recover-final-spx-00` (cores 24–27,
+  reruns start 4), `dmop-recover-tuning-daphnia-cpu` (16–19, starts 1–3), and
+  `dmop-recover-tuning-daphnia-cpu-lr0001` (20–23, starts 1–3). Logs are
+  `/tmp/dmop-recover-NAME.log`; suffix outputs are `results/recovery-NAME`.
+  SPX's recovered IF2 fit was evaluated by 04:27 UTC. Its four methods share
+  the E-core assignment, unlike the original P-core SPX batches; timing
+  heterogeneity is recorded in `results/execution.json` and recovery configs.
+- Persistent `dmop-final-daphnia-0` through `-3` queue the 20 final starts in
+  five-start batches on E-core groups 16–19/20–23/24–27/28–31. All wait for
+  both tuning batches and SPX batch 00 to finish. Their commands use
+  `queue_final.py`; tuning chooses each competitor's rate separately, by
+  failures then median independent likelihood. Logs `/tmp/dmop-final-daphnia-N.log`.
+  No final batch has started yet. Do not duplicate these queues.
+- `dmop-benchmark-report` runs `finish_report.py`, waiting for SPX and all four
+  Daphnia batches, then generating the complete five-model report under
+  `imgs/benchmarks`. Log `/tmp/dmop-benchmark-report.log`. It does not insert
+  anything into the manuscript. Dhaka A/B workers generate their own report
+  when all 40 pairs finish. Both reports still require scientific review.
+- Report checks now reject invalid MC errors and times, and verify recovery
+  configuration hashes using checkout-relative paths. Ten recovery/report
+  checks pass, covering failed-fit retention, missing/duplicate data and
+  incomplete batches. Plot layout is sized for manuscript width. All axes
+  are linear; final distributions retain every point. `optimization.pdf`
+  shows full median trajectories; `optimization_detail.pdf` uses a separate
+  labeled window spanning method final medians through the reference, with
+  padding. `plot_ranges.json` records the rule and limits. Visually inspected
+  all three completed-subset preview images in `/tmp/dmop-benchmark-report-preview`.
+  Inspect every final figure again after full generation, including A/B.
+- Added SI S12 with Gaussian timing caveats: DS19 100 particles/80 SAEM steps;
+  IFAD 500 particles/100 IF2 plus 300 gradient steps; IF2 500/600; CTDD21 25/300.
+  No particle-count sensitivity study was done. DS19's filter and backward
+  pass are timed; its M-steps exploit sufficient statistics (explicit linear,
+  three-parameter oscillator). All methods exclude compilation/evaluation.
+  These are configuration-specific timings, not a general speed ranking.
+  Built the existing SI in place (75 pages) and visually inspected page S-73.
+  Native compile was called but stalled for several minutes and was cancelled;
+  repository `make dmop/si.pdf` succeeded. The source editor remains open.
+- Next: monitor live service PIDs and logs; finish/review results; add model
+  settings and actual results to S12, with final panels/table and the Dhaka
+  A/B subsection. Follow the MS voice and completed data, without assuming
+  saturation. Build and inspect the final SI pages, save all compact source
+  records/results, and commit/push. Do not mark the active goal complete until
+  all requested results and manuscript figures/tables are present and checked.
+
 ## October 9, 2026: interrupted workers and persistent Dhaka restart
 
 - Status audit found all previous Dhaka, SPX and Daphnia tool-session

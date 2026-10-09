@@ -8,6 +8,11 @@ whose name begins with `final-` can still be incomplete while it is running.
 - `tuning-*`: separate tuning starts. The first GPU linear run was interrupted;
   its partial results and reason are retained.
 - `final-*`: final starts, with configurations and incremental status.
+- `interrupted/`: immutable copies of the October 8 partial batches, retained
+  before recovery. Do not pool these with the final results.
+- `recovery-*`: reruns of unfinished starting points. Their completed rows
+  are merged into the original batch by `recover.py`; `recovery.json` links
+  the original and rerun configurations. Do not count these rows twice.
 - `dhaka_reference.csv`: exact archived main-text IFAD/IF2 estimates and their
   recovered Monte Carlo errors. Rebuild with `../export_dhaka.py` using the
   original result objects. The combined report uses the existing tracked

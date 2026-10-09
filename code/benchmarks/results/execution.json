@@ -1,7 +1,7 @@
 {
   "cpu": "Intel Core i9-13900K",
   "gpu": "NVIDIA RTX 3090",
-  "small_models": "serial methods within each batch; concurrently running batches pinned to disjoint pairs of performance cores (four hardware threads)",
+  "small_models": "serial methods within each batch; concurrently running batches pinned to disjoint pairs of performance cores (four hardware threads). Exception: interrupted SPX start 4 is recovered on efficiency cores 24-27; all four methods share that assignment. See recovery-final-spx-00/configuration.json.",
   "daphnia": "CPU final batches assigned disjoint four-core efficiency-core groups 16\u201319,20\u201323,24\u201327,28\u201331; GPU pilot retained as interrupted",
   "other_work": "A separate GPU workload began during Daphnia tuning. Numerical checks and plotting use other efficiency cores.",
   "timing_scope": "within experiment; no cross-hardware runtime ranking"

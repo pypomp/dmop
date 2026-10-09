@@ -1,0 +1,43 @@
+{
+  "output": "code/benchmarks/results/tuning-daphnia-cpu-lr0001",
+  "starts": 4,
+  "start_index": 0,
+  "seed": 2026091801,
+  "particles": 1000,
+  "warm_iterations": 200,
+  "mif_iterations": 680,
+  "adam_iterations": 200,
+  "ds_particles": 100,
+  "ct_particles": 100,
+  "learning_rate": 0.01,
+  "competitor_learning_rate": 0.001,
+  "eval_particles": 2000,
+  "eval_reps": 10,
+  "stride": 50,
+  "max_updates": 2000,
+  "purpose": "pilot",
+  "utc": "2026-10-08T20:31:54.590005+00:00",
+  "device": [
+    "cpu"
+  ],
+  "cpu_affinity": [
+    20,
+    21,
+    22,
+    23
+  ],
+  "jax": "0.9.0.1",
+  "dmop_commit": "51da1e5c8994dee1d30664f99473f3f02e353d94",
+  "pypomp_commit": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "source_sha256": {
+    "code/benchmarks/run_daphnia.py": "dee4d1152f507abfd0b6980422786e859694f4026e49f39cea35c80ca1a80df3",
+    "code/benchmarks/daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "code/daphnia/model.py": "b9d195fd1796d47bef32909a90fc744273fee17ee3c779890b0adc6ffa28f61c",
+    "code/daphnia/data/Mesocosmdata.xls": "1c67690802183cc3aabd95d552090b1b0c1e22731aa7282904af411502fe9605"
+  },
+  "ds_model": "composed strong-1.5 Gaussian moments with endpoint floor 1e-8; guided NB surrogate",
+  "ds_update": "backward-simulated complete-data score and Adam; not the SAEM M-step",
+  "selection": "last finite parameter vector",
+  "timing": "serial fits; compilation reported separately; evaluation excluded",
+  "progress_time": "uniform within the two Pypomp stages; measured per-update for DS19/CTDD21"
+}
