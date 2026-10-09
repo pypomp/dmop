@@ -1914,7 +1914,7 @@ We choose our specific choice of notation and definitions to be in line with tha
 
 \paragraph{\bf Total variation distance:} The total variation distance between two measures $\mu$ and $\nu$ on $\gX$ is
 \begin{equation}
-\|\mu-\nu\|_{\mathrm{TV}}=\sup _{\|h\|_{\infty} \leq 1 / 2}|\mu(\phi)-\nu(\phi)|=\sup _{\operatorname{osc}(h) \leq 1}|\mu(h)-\nu(h)|.    
+\|\mu-\nu\|_{\mathrm{TV}}=\sup _{\|h\|_{\infty} \leq 1 / 2}|\mu(h)-\nu(h)|=\sup _{\operatorname{osc}(h) \leq 1}|\mu(h)-\nu(h)|.    
 \end{equation}
 
 \paragraph{\bf Dobrushin contraction:} The Dobrushin contraction coefficient $\beta_{\text{TV}}$ of a Markov kernel $M$ is given by
@@ -1987,7 +1987,7 @@ Equipped with the above formalisms and results, we are now in a position to prov
 
 
 
-Here, we prove Theorem~{\thmMopTargeting} by deriving more general result, from which it will be clear that MOP-$\alpha$ targets the filtering distribution and is strongly consistent for the likelihood.
+Here, we prove Theorem~{\thmMopTargeting} by deriving more general results, from which it will be clear that MOP-$\alpha$ targets the filtering distribution and is strongly consistent for the likelihood.
 We will prove a strong law of large numbers for triangular arrays of particles with off-parameter resampling, meaning that we resample the particles according to an arbitrary resampling rule that is not necessarily in proportion to the target distribution of interest. 
 Using weights that encode the cumulative discrepancy between the resampling distribution and the target distribution (instead of resampling to equal weights, as in the basic particle filter) provides a sufficient correction to ensure almost sure convergence.
 We now introduce the precise definition of an off-parameter resampled particle filter. 
@@ -2108,6 +2108,7 @@ We state Lemma~\ref{lem:change-measure-proper-weights} assuming multinomial resa
 
 \noindent \textbf{Remark:} Note that Lemma \ref{lem:change-measure-proper-weights} permits $\pi_{1:J}$ to depend on $\{(X_j,u_j)\}$ as long as the resampling is carried out independently of $\{(X_j,u_j)\}$, conditional on $\pi_{1:J}$.
 
+
 \begin{lem}[Particle Marginals]
 \label{lem:marginal-proper-weights}
 Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
@@ -2181,12 +2182,23 @@ together with $D_J\stackrel{a.s.}{\to}0$, gives
 
 \noindent\textbf{Remark.} The conditional independence assumption in Lemma~\ref{lem:marginal-proper-weights} holds for
 standard particle filters, and for our MOP filter it is guaranteed by step 1
-of Definition~\ref{defn:off-parameter-filter}. For nonnegative weights with positive sum, the weight
-condition can be replaced by the weaker requirement
+of Definition~\ref{defn:off-parameter-filter}. 
+
+\vspace{1mm}
+
+\noindent \textbf{Remark:}  The uniform boundedness condition in Lemma~\ref{lem:marginal-proper-weights} can be guaranteed by construction in the context of Definition~\ref{defn:off-parameter-filter} for suitable choices of the resampling probabilities $\pi_{1:J}$ at an earlier iteration.
+In the context of DMOP-$\alpha$, this is guaranteed if the measurement density is similarly bounded, which holds under Assumption (A2) for our theoretical analysis. 
+It is trivially true for MOP-$\alpha$ at $\theta=\phi$, since in this case the weights at each propagation step are equal.
+The smoothness assumption (A5) therefore also guarantees this condition in a neighborhood of $\theta=\phi$.
+
+\vspace{1mm}
+
+\noindent\textbf{Remark.} For nonnegative weights with positive sum, the weight condition in Lemma~\ref{lem:marginal-proper-weights} can be replaced by the weaker requirement
 \[
  \max_{1\le j\le J}\frac{JU_j^J}{\sum_mU_m^J}\le B<\infty,
 \]
 almost surely, for a constant $B$ independent of $J$. The same proof applies.
+
 
 \begin{lem}[Particle Posteriors]
     \label{lem:posterior-proper-weights}
@@ -2282,7 +2294,7 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
 
 \begin{thm}[Off-Parameter Resampled Particle Filters Target the Filtering Distribution]
     \label{thm:off-parameter-targeting}
-    The off-parameter resampled particle filter as outlined in Definition \ref{defn:off-parameter-filter} targets the filtering distribution.
+    The off-parameter resampled particle filter of Definition \ref{defn:off-parameter-filter} targets the filtering distribution when the resampling probabilities $(p_{n,j})_{j=1}^J$ are chosen so that $g_{n,j}/p_{n,j}$ is uniformly bounded above and away from zero whenever $g_{n,j}>0$.
 \end{thm}
 \begin{proof}[Proof.]
     Recursively applying Lemmas \ref{lem:change-measure-proper-weights}, \ref{lem:marginal-proper-weights}, and \ref{lem:posterior-proper-weights}, we obtain that the off-parameter resampled particle filter targets the posterior.
