@@ -1,0 +1,70 @@
+{
+  "cold_start": 2,
+  "seed": 20651483,
+  "particles": 1000,
+  "q_initial": 4447.014145692764,
+  "gradient_norm": 82133.6675844863,
+  "largest_gradient_parameter": "gamma",
+  "largest_absolute_gradient": 54031.229756374894,
+  "directional_probes": [
+    {
+      "step": 1e-08,
+      "q_change": 0.0028688285101452493,
+      "linear_prediction": 0.0012485256900502488
+    },
+    {
+      "step": 1e-06,
+      "q_change": 0.12210506167321,
+      "linear_prediction": 0.12485256915998426
+    },
+    {
+      "step": 0.0001,
+      "q_change": 10.33810594620445,
+      "linear_prediction": 12.485256915223877
+    },
+    {
+      "step": 0.001,
+      "q_change": -88.64760689019295,
+      "linear_prediction": 124.85256915216003
+    },
+    {
+      "step": 0.01,
+      "q_change": -19883.641840105858,
+      "linear_prediction": 1248.525691521656
+    },
+    {
+      "step": 0.1,
+      "q_change": -1909170.3377563078,
+      "linear_prediction": 12485.25691521667
+    }
+  ],
+  "msteps": [
+    {
+      "variant": "original",
+      "divisor": 1.0,
+      "q_change": 0.0,
+      "parameter_displacement": 0.0,
+      "q_before": 4447.014145692764,
+      "q_after": 4447.014145692764,
+      "accepted": true,
+      "mstep_converged": true,
+      "mstep_iterations": 1,
+      "mstep_evaluations": 3,
+      "mstep_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+    },
+    {
+      "variant": "gradient_scaled",
+      "divisor": 54031.229756374894,
+      "q_change": 13968.789905102221,
+      "parameter_displacement": 1.0822043889663229,
+      "q_before": 0.08230451473609263,
+      "q_after": 0.3408362928963724,
+      "accepted": true,
+      "mstep_converged": false,
+      "mstep_iterations": 25,
+      "mstep_evaluations": 28,
+      "mstep_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+    }
+  ],
+  "scope": "one fixed path; no observed likelihood evaluation or benchmark selection"
+}

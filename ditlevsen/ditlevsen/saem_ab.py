@@ -64,6 +64,20 @@ def prepare(args):
         comparison="optimizer packages: archived score settings versus pilot numerical-SAEM settings",
         score_settings={regime: score_settings(regime, args.particles, args.budget)
                         for regime in ("cold", "warm")})
+    config["saem_objective_scaling"] = "fixed max(1, initial gradient infinity norm) within each M-step"
+    if args.reuse_score_from:
+        previous = args.reuse_score_from.resolve()
+        old = json.loads((previous / "protocol.json").read_text())
+        for field in ("starts", "particles", "budget_seconds", "seed", "score_settings", "pypomp_revision"):
+            if old[field] != config[field]:
+                raise ValueError(f"Cannot reuse scores with different {field}")
+        for name in ("block_smc.py", "model.py", "transition.py", "data.py"):
+            if old["source_hashes"][name] != hashes[name]:
+                raise ValueError(f"Score fitting source changed: {name}")
+        with np.load(previous / "starts.npz") as saved:
+            np.testing.assert_array_equal(saved["cold"], cold)
+            np.testing.assert_array_equal(saved["warm"], warm)
+        config["reuse_score_from"] = str(previous.relative_to(ROOT))
     write_json(args.output/"protocol.json", config)
 
 
@@ -110,6 +124,20 @@ def run_pair(output, config, regime, index, initial, warmup, order):
     data = load_dacca_data(20)
     estimates = {"initial": initial}
     seed = config["seed"]+1000003*20+10007*index
+    if config.get("reuse_score_from") and not (directory / "score.json").exists():
+        previous = ROOT / config["reuse_score_from"] / regime / f"start{index:03d}"
+        if (previous / "score.json").exists():
+            # The JSON is written atomically after the parameter file. Reuse
+            # every completed score fit, including failures, without using its
+            # evaluation likelihood to decide whether to retain it.
+            copied = {}
+            for name in ("score_parameters.npz", "score.json"):
+                source = previous / name
+                shutil.copy2(source, directory / name)
+                copied[name] = hashlib.sha256(source.read_bytes()).hexdigest()
+            write_json(directory / "score_reuse.json", dict(
+                source=str(previous.relative_to(ROOT)), source_sha256=copied,
+                rule="reuse every completed compatible score fit, including failures"))
     for method in order:
         fit_file = directory/f"{method}.json"
         parameter_file = directory/f"{method}_parameters.npz"
@@ -214,6 +242,8 @@ def main():
     parser.add_argument("--worker", type=int, default=0)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--wait-for", type=Path)
+    parser.add_argument("--reuse-score-from", type=Path,
+                        help="During preparation, validate an earlier protocol for reuse of completed score fits")
     parser.add_argument("--starts", type=int, default=20)
     parser.add_argument("--particles", type=int, default=1000)
     parser.add_argument("--budget", type=float, default=850.)

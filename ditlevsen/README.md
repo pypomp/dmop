@@ -49,6 +49,17 @@ and burn-in 30. Numerical SAEM uses the pilot settings: burn-in 3, at most
 80 updates, and at most 25 L-BFGS iterations per M-step. Thus this compares
 the two optimizer packages, including their schedules.
 
+Each numerical M-step divides the objective and gradient by
+`max(1, max(abs(initial_gradient)))`, fixed throughout that M-step. This
+preserves the objective's maximizer and its nondecreasing acceptance test.
+The original unscaled run encountered false L-BFGS-B convergence at unchanged
+parameters. Two saved fixed-path diagnostics reproduced this behavior and
+showed substantial objective increases after scaling. The corrected study
+is in `results/saem_ab_scaled`; `results/saem_ab` preserves the superseded
+run. Compatible completed score fits are reused, including failed fits,
+with hashes recorded in `score_reuse.json`. Starts, score settings, particle
+counts, time budgets and score-fitting source hashes must match before reuse.
+
 Both arms retain the last finite estimate recorded within the budget. A failed
 fit contributes its last eligible estimate, or the input estimate if no update
 completed. Computation used to detect a deadline overrun is recorded, but its
@@ -59,15 +70,17 @@ warm arms, so this experiment does not compare total global-versus-warm cost.
 All initial and final estimates receive independent Euler-20 evaluations with
 5,000 particles and 36 replicates. Within each pair, evaluation random numbers
 are shared to estimate the Monte Carlo error of the difference. These draws
-never select a fitting output. The order of the two fitting methods alternates
-across pairs within each CPU worker.
+never select a fitting output. For pairs fitted from scratch, the order of
+the two fitting methods alternates across pairs within each CPU worker.
+Reused score fits retain their recorded fitting times.
 
 ```sh
 PYTHONPATH=ditlevsen:../pypomp JAX_PLATFORMS=cpu python -m ditlevsen.saem_ab \
-  --prepare --output ditlevsen/results/saem_ab
+  --prepare --output ditlevsen/results/saem_ab_scaled \
+  --reuse-score-from ditlevsen/results/saem_ab
 # Run worker indices 0, 1, 2, 3 on separate CPU cores, or use --workers 1.
 PYTHONPATH=ditlevsen:../pypomp JAX_PLATFORMS=cpu python -m ditlevsen.saem_ab \
-  --output ditlevsen/results/saem_ab --worker 0 --workers 4
+  --output ditlevsen/results/saem_ab_scaled --worker 0 --workers 4
 ```
 
 `protocol.json` freezes settings, source hashes and starting points before

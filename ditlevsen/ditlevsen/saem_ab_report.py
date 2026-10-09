@@ -68,7 +68,8 @@ def _generate(root):
             rows.append(dict(regime=first.regime, start=int(first.start), method=method,
                 loglik=float(frame.loc[method, "loglik"]), mcse=float(frame.loc[method, "mcse"]),
                 change=float(frame.loc[method, "loglik"]-first.loglik),
-                updates=meta["updates"], seconds=meta["seconds"],
+                iterations=max(meta["selected_index"], 0) if method == "score" else meta["updates"],
+                seconds=meta["seconds"],
                 failed=meta["status"] not in successful, status=meta["status"]))
     final, paired = pd.DataFrame(rows), pd.DataFrame(pairs)
     output = root/"report"
@@ -78,7 +79,7 @@ def _generate(root):
     summary = final.groupby(["regime", "method"], sort=False).agg(
         starts=("start", "size"), median=("loglik", "median"), maximum=("loglik", "max"),
         median_change=("change", "median"), median_mcse=("mcse", "median"),
-        median_updates=("updates", "median"), median_seconds=("seconds", "median"), failed=("failed", "sum"))
+        median_iterations=("iterations", "median"), median_seconds=("seconds", "median"), failed=("failed", "sum"))
     summary.to_csv(output/"summary.csv")
     paired.groupby("regime").agg(starts=("start", "size"), median_difference=("difference", "median"),
         mean_difference=("difference", "mean"), saem_higher=("difference", lambda x: int((x > 0).sum())),
@@ -117,10 +118,10 @@ def _generate(root):
         fig.savefig(output/f"comparison.{ext}", dpi=220)
     plt.close(fig)
     table = [r"\begin{tabular}{llrrrrr}", r"\toprule",
-        r"Initialization & Optimizer & Median $\ell$ & Median change & Updates & Time (s) & Failed \\", r"\midrule"]
+        r"Initialization & Optimizer & Median $\ell$ & Median change & Iterations & Time (s) & Failed \\", r"\midrule"]
     for (regime, method), row in summary.iterrows():
         table.append(f"{'Global' if regime == 'cold' else 'IF2'} & {LABELS[method]} & "
-            f"{row['median']:.2f} & {row.median_change:.2f} & {row.median_updates:.0f} & "
+            f"{row['median']:.2f} & {row.median_change:.2f} & {row.median_iterations:.0f} & "
             f"{row.median_seconds:.1f} & {row.failed:.0f} "+r"\\")
     table.extend([r"\bottomrule", r"\end{tabular}"])
     (output/"table.tex").write_text("\n".join(table)+"\n")
@@ -137,8 +138,9 @@ def _generate(root):
         "The bottom panels show SAEM minus score, with twice the paired Monte Carlo standard error. "
         "Evaluation draws are shared within each pair and independent of fitting. "
         "No fitting output is selected using these evaluations.\n\n"
-        "Median change subtracts each fit's own initial log-likelihood. Updates counts completed "
-        "updates at the selected estimate. Time records the fitting call, including an overrun "
+        "Median change subtracts each fit's own initial log-likelihood. Iterations counts completed "
+        "outer iterations at the selected estimate, including iterations with no parameter change; "
+        "it is not a count of accepted nonzero steps. Time records the fitting call, including an overrun "
         "needed to detect the deadline; over-budget estimates are discarded. Compilation, final "
         "evaluation, and the cost of the precomputed IF2 starting points are excluded.\n")
     (output/"provenance.json").write_text(json.dumps({

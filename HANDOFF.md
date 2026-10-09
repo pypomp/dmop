@@ -1,5 +1,44 @@
 # Handoff
 
+## October 9, 2026: numerical SAEM defect confirmed and corrected
+
+- IMPORTANT: the unscaled Dhaka A/B study is superseded by a corrected
+  numerical M-step. Fixed-path replays of cold starts 2 and 5 reproduced
+  L-BFGS-B convergence with exactly zero movement. Dividing Q and its
+  gradient by the initial gradient infinity norm produced Q increases
+  13968.79 and 74520.02 under the same 25-iteration limit. Saved diagnostics
+  are `code/benchmarks/results/saem-scaling-{002,005}`; the replay script is
+  `diagnose_saem.py`. These are fixed-path diagnostics, not fitted results.
+- `maximize_objective` now fixes the divisor to max(1, initial gradient
+  infinity norm) within an M-step, while acceptance uses the original Q.
+  A regression test reproduces the original false convergence after an
+  undefined line-search trial and checks the corrected optimum. The five
+  block-SAEM tests pass. Four A/B tests pass, including reuse of a failed
+  score fit without refitting or dropping it. No score kernel changed.
+- Prepare the new study in `ditlevsen/results/saem_ab_scaled` with
+  `--reuse-score-from ditlevsen/results/saem_ab`. Preparation verifies score
+  settings, seeds, budget, particles, model source hashes, Pypomp revision
+  and exact starts. Each reused score fit gets file hashes and source path.
+  Old score/SAEM outputs remain in place; never pool the old SAEM arm with
+  corrected results. The audit defaults to the corrected directory now;
+  `--dhaka-ab-root` allows explicit inspection of the old study.
+- At 05:15 UTC the old worker 0 was stopped after saving cold start 8's
+  score fit (its subsequent partial old-SAEM trace is preserved). Old
+  workers 1--3 still run their score arms for cold starts 9--11; stop them
+  once their respective score.json exists, preserving those complete fits.
+  Do not restart old workers against the modified source: they intentionally
+  fail the frozen-source check. Existing processes still hold the old code.
+  The corrected study is not yet prepared/launched at this checkpoint.
+- The report now labels outer iteration counts explicitly as iterations,
+  including iterations without parameter movement; it no longer implies
+  they count accepted nonzero updates. This resolves the pending metadata
+  interpretation issue noted in older entries below.
+- SI S12.1 now gives the fixed scaling in the numerical-SAEM M-step.
+  Compilation/visual review of this latest small edit is in progress.
+  Eight original cold pairs are complete and audited. Full goal remains
+  active, including corrected cold and warm comparisons, Gaussian selection,
+  Daphnia, final panels/table and SI integration.
+
 ## October 9, 2026: J=500 linear comparison complete
 
 - Verified the same live service/process handles throughout this continuation;
