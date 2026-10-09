@@ -12922,13 +12922,14 @@ iterations are in \path{artifacts/README.md}.
 \section{Comparisons Across Models}
 \label{sec:cross-model-benchmarks}
 
-We consider the harmonic oscillator in \citet{ditlevsen19},
-the two-dimensional linear Gaussian example of \citet{corenflos21}, and
-the stochastic volatility model supplied with Pypomp's SPX data.
-These examples complement the Daphnia and Dhaka applications above.
-Within each example, the methods use common starting points and the final
-parameter estimates are evaluated using the same likelihood.
-For the two Gaussian examples, this evaluation is available analytically.
+We compared IFAD, IF2, DS19, and CTDD21 on the harmonic oscillator of
+\citet{ditlevsen19}, the two-dimensional linear Gaussian model of
+\citet{corenflos21}, and the stochastic volatility model supplied with
+Pypomp's SPX data, in addition to the Daphnia and Dhaka models.
+For each example, we used the same starting parameter vectors for all
+methods and evaluated the resulting estimates under the same model.
+The two Gaussian examples have analytic likelihoods, allowing us to
+assess maximization error without Monte~Carlo evaluation error.
 
 \subsection{SAEM and averaged-score updates}
 \label{sec:ds19-update-equations}
@@ -12954,9 +12955,10 @@ SAEM updates a function of the candidate parameter $\vartheta$:
        \mathop{\mathrm{argmax}}_{\vartheta}\overline Q_m(\vartheta).
  \label{eq:benchmark-saem-m}
 \end{align}
-The maximization holds the imputed paths and their averaging weights fixed.
-A numerical maximization step still has this form. A truncated step that
-only increases $\overline Q_m$ gives a generalized EM update.
+In the maximization step, we hold the imputed paths and their averaging
+weights fixed. This maximization can be carried out numerically; a step
+that increases $\overline Q_m$ without maximizing it gives a generalized
+EM update.
 
 The averaged-score implementation instead calculates
 \begin{align}
@@ -12983,10 +12985,11 @@ averages can be written as
  \label{eq:benchmark-q-versus-score}\\
  w_{mr}&=\rho_r\prod_{k=r+1}^m(1-\rho_k).\nonumber
 \end{align}
-SAEM reevaluates the retained information at the candidate parameter.
-The averaged-score update retains gradients calculated at earlier
-parameter values, so it is generally not the gradient of
-$\overline Q_m$ at the current parameter.
+The SAEM gradient evaluates all path contributions at the same candidate
+parameter, whereas $\overline g_m$ averages gradients evaluated at the
+parameter values used in earlier iterations. Consequently,
+$\overline g_m$ generally differs from the gradient of $\overline Q_m$
+at the current parameter.
 Our gain schedule is $\rho_m=1$ for $m\leq b$ and
 $\rho_m=(m-b)^{-0.9}$ thereafter.
 We use $b=30$ for the Gaussian SAEM and averaged-score runs, and $b=3$
@@ -13020,8 +13023,9 @@ The M-step is
        \left(\frac{\overline S_{10,d,m}}{\overline S_{00,d,m}}\right).
  \label{eq:benchmark-linear-mstep}
 \end{equation}
-Thus each iteration needs a particle filter and one backward path,
-followed by two scalar ratios. No score averaging is used.
+Each iteration therefore requires a particle filter and backward
+simulation of one path, after which the maximization reduces to two
+scalar ratios.
 
 \paragraph{Harmonic oscillator: SAEM with a numerical M-step.}
 Write $x_t=(v_t,u_t)^\mathsf T$, where the positions $v_t$ are observed
@@ -13042,8 +13046,8 @@ Conditional on the first position, $U_0\sim\mathcal N(0,v_\theta)$,
 where $v_\theta=\sigma^2/(2\gamma)$.
 Let $S_{ij}=\sum_{t=1}^T x_{t-1+i}x_{t-1+j}^\mathsf T$ for
 $(i,j)=(0,0),(1,0),(1,1)$, and let $h=u_0^2$.
-Average these quantities with the same recursion as above.
-Up to constants independent of $\theta$, the function maximized is
+We average these quantities using the recursion above, giving the
+following objective up to constants independent of $\theta$:
 \begin{equation}
  \overline Q_m(\theta)=-\tfrac12\left\{
   \log v_\theta+\frac{\overline h_m}{v_\theta}
@@ -13061,8 +13065,9 @@ where
 \]
 We use L-BFGS-B on $(\log D,\log\gamma,\log\sigma)$, retaining a finite
 step only if this objective does not decrease, up to numerical tolerance.
-The code accumulates state increments to evaluate the same quadratic form
-with less cancellation. This is SAEM using averaged sufficient statistics.
+To reduce numerical cancellation, we evaluate this quadratic form using
+accumulated state increments. The M-step thus uses averaged sufficient
+statistics of the imputed paths.
 
 \paragraph{SPX: averaged complete-data scores.}
 Let $r_t$ be the observed return and $v_t$ the latent variance.
@@ -13093,8 +13098,9 @@ The complete-path objective is
 \end{equation}
 The initial variance $v_0=V_0$ is a parameter, so its current candidate
 value enters the first transition when differentiating.
-We use Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average})
-and Adam for this example. There is no SAEM M-step.
+For this example, we update the parameters with Adam using the averaged
+scores in Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average}),
+without a SAEM maximization step.
 
 \paragraph{Daphnia: averaged scores for the Gaussian block approximation.}
 For mesocosm $u$, let $m_{\theta,u,t}$ and $\Sigma_{\theta,u,t}$ be the
@@ -13114,18 +13120,19 @@ Initial states are fixed. The covariance uses a relative diagonal floor
 of $10^{-8}$ on scaled states. The particle filter uses the observations
 to guide proposals and excludes invalid states.
 After backward simulation of one path per mesocosm, we differentiate this
-sum with respect to the 38 estimated parameters and use the averaged-score
-Adam update. There is no SAEM M-step. Final likelihoods are evaluated
-with the original Euler model from Section~S10.
+sum with respect to the 38 estimated parameters and update them with
+Adam using the averaged scores. As for SPX, we do not carry out a SAEM
+maximization step. We evaluate the resulting parameter estimates using
+the original Euler model from Section~S10.
 
 \paragraph{Dhaka: score updates and numerical generalized SAEM.}
-Both arms use the monthly Gaussian transition described in
+We compare score updates with numerical SAEM using the monthly Gaussian transition described in
 Section~\ref{sec:dhaka-competitors}, with 20 internal time steps and
 a relative covariance floor of $10^{-12}$.
 Let $\mathcal R x$ reset the accumulated monthly deaths to zero, and
 write $d_t=P_tM_t$ for the predicted deaths at a sampled endpoint.
 Here $P_t$ is the population and $M_t$ is the accumulated death count
-divided by population. The objective used by both arms is
+divided by population. Both methods use the complete-data objective
 \begin{align}
  C(\theta;x)=\sum_{t=1}^T\big\{&
    \log\phi_6\!\left(x_t;m_{\theta,t}(\mathcal R x_{t-1}),
@@ -13137,10 +13144,10 @@ divided by population. The objective used by both arms is
 \end{align}
 The initial state $x_0=x_0(\theta)$ is recalculated at each candidate
 parameter, while the sampled monthly endpoints are held fixed.
-The score arm uses the gradient average in
+For the score updates, we use the gradient average in
 Equation~(\ref{eq:benchmark-score-average}), with Adam and the safeguards
 described above.
-The numerical-SAEM arm retains paths and weights and forms
+For numerical SAEM, we retain the paths and weights to calculate
 $\overline Q_m(\theta)=\sum_{r=1}^m w_{mr}C(\theta;X^{(r)})$.
 Each L-BFGS-B evaluation recalculates every retained path's objective
 and gradient at the same candidate $\theta$.
@@ -13150,76 +13157,68 @@ This reduces numerical line-search failures without changing the maximizer.
 We allow at most 25 L-BFGS-B iterations per M-step and retain a candidate
 only if it is finite and increases or leaves unchanged this fixed
 $\overline Q_m$. An M-step interrupted by the time limit is discarded.
-This is a numerical generalized-SAEM update; it does not require an
-explicit sufficient-statistic maximizer.
-Both arms are evaluated afterward with the Euler likelihood, which differs
-from the monthly Gaussian objective being optimized.
+This gives a generalized-SAEM update when an explicit maximizer in terms
+of sufficient statistics is unavailable.
+We evaluate both methods with the Euler likelihood, so the evaluation
+model differs from the monthly Gaussian approximation used for fitting.
 
-\paragraph{Interpreting computation times for the Gaussian examples.}
-DS19, IFAD, and IF2 each use 500 particles in the Gaussian examples.
-DS19 uses 80 SAEM iterations.
-IFAD uses 100 IF2 iterations followed by 300 gradient iterations;
-IF2 uses 600 iterations.
-CTDD21 uses 25 particles and 300 gradient iterations.
-The iteration counts therefore differ even when the particle counts agree.
+\paragraph{Computation times for the Gaussian examples.}
+We used 500 particles for DS19, IFAD, and IF2 in both Gaussian examples.
+DS19 ran for 80 SAEM iterations, IFAD for 100 IF2 iterations followed by
+300 gradient iterations, and IF2 for 600 iterations.
+CTDD21 used 25 particles and 300 gradient iterations.
+The common particle count for DS19, IFAD, and IF2 therefore does not
+imply equal computational effort.
 
-Each DS19 iteration runs a particle filter through the observations and
-samples one trajectory by backward simulation.
-Both operations are included in its reported fitting time.
-The Gaussian models also make the maximization step inexpensive:
-the linear Gaussian model has an explicit update, and the oscillator
-requires numerical optimization over three parameters using averaged
-sufficient statistics. Neither maximization step differentiates through
-the particle filter.
-For every method, the timer waits for the numerical calculations to
-finish; compilation and the subsequent likelihood evaluations are excluded.
-The analytic Gaussian likelihood is used for evaluation, not to replace
-DS19's particle filter during fitting.
-The Gaussian IFAD, IF2, and DS19 runs used four efficiency cores of an
-Intel Core i9-13900K; CTDD21 used two performance cores with four hardware
-threads. Concurrent batches used disjoint core groups.
-The resulting times describe these implementations and hardware settings.
-They do not establish a general runtime ordering across models.
-In the progress plots, solid lines show the median log-likelihood and
-shaded regions span the 10th through 100th percentiles across searches,
-as in Section~\ref{sec:dhaka-competitors}.
+DS19 runs a particle filter and samples one trajectory by backward
+simulation at every iteration, and both are included in its computation
+time. Its maximization step is inexpensive for these models: the linear
+Gaussian model has an explicit update, while the oscillator requires
+optimization over three parameters using averaged sufficient statistics.
+Neither maximization requires differentiation through the particle filter.
+The analytic likelihoods are used only to evaluate the fitted parameters.
+For all methods, we wait for the numerical calculations to finish before
+recording the time, excluding compilation and likelihood evaluation.
+IFAD, IF2, and DS19 used four efficiency cores of an Intel Core i9-13900K;
+CTDD21 used two performance cores with four hardware threads.
+Concurrent batches used separate core groups. These hardware differences
+also affect the comparison of computation times.
 
 \subsection{Search and evaluation settings}
 \label{sec:benchmark-settings}
 
-The oscillator, linear Gaussian, SPX, and Daphnia comparisons each use
-20 starting parameter vectors, shared by the methods within each example.
-The five-model comparison uses the 100 Dhaka searches in
+We ran 20 searches per method for the oscillator, linear Gaussian, SPX,
+and Daphnia models, using the same starting parameter vectors for each
+method. For Dhaka, we used the 100 searches from
 Section~\ref{sec:dhaka-competitors}.
 
-For SPX, IFAD and IF2 use 500 particles, DS19 uses 100, and CTDD21 uses 25.
-IFAD uses 100 IF2 iterations followed by 300 gradient iterations;
-IF2 uses 600 iterations, and DS19 and CTDD21 each use 300 updates.
-The Adam learning rates start at $0.001$ for IFAD and $0.01$ for DS19
-and CTDD21, with cosine decay to one tenth of these values.
+For SPX, we used 500 particles for IFAD and IF2, 100 for DS19, and 25
+for CTDD21. IFAD ran for 100 IF2 iterations followed by 300 gradient
+iterations, IF2 for 600 iterations, and DS19 and CTDD21 for 300 updates
+each. The Adam learning rates started at $0.001$ for IFAD and $0.01$
+for DS19 and CTDD21, decreasing to one tenth of these values by cosine decay.
 
-For Daphnia, MPIF and IFAD use 1,000 particles per mesocosm, and
-DS19 and CTDD21 use 100.
-MPIF runs for 680 iterations.
-IFAD starts from a separate 200-iteration MPIF estimate and takes
-200 gradient steps.
-DS19 and CTDD21 start from that same estimate and each receive the
-measured duration of the IFAD gradient stage, with at most 2,000 updates.
-Their learning rates decrease from $0.001$ to $0.0001$ by cosine decay
-as the allotted time elapses.
-An update completed after the time limit is discarded.
-The IFAD, DS19, and CTDD21 times include the common MPIF warm start.
+For Daphnia, we used 1,000 particles per mesocosm for MPIF and IFAD,
+and 100 for DS19 and CTDD21. We ran MPIF for 680 iterations.
+IFAD used a separate 200-iteration MPIF warm start followed by 200
+gradient steps. To compare refinement of the same starting estimate,
+we initialized DS19 and CTDD21 at this MPIF warm start and allowed each
+the time taken by the IFAD gradient stage, with a maximum of 2,000 updates.
+Their learning rates decreased from $0.001$ to $0.0001$ by cosine decay
+over the allotted time. We discarded updates completed after the time
+limit and included the common MPIF warm start in the computation times
+for all three methods.
 
-Final SPX likelihoods use 24 independent particle-filter replicates with
-5,000 particles. Final Daphnia likelihoods use 10 replicates with
+We evaluated the final SPX estimates using 24 independent particle-filter
+replicates with 5,000 particles. For Daphnia, we used 10 replicates with
 2,000 particles per mesocosm under the original Euler model.
-For each mesocosm, we average the likelihood estimates before taking the
-logarithm, then sum over mesocosms; Monte Carlo errors combine the
-independent mesocosm errors.
-Intermediate evaluations use four replicates with 1,000 particles for SPX
-and two replicates with 500 particles per mesocosm for Daphnia.
-These evaluations are independent of fitting and do not select the
-reported parameter estimates.
+We averaged the likelihood estimates for each mesocosm before taking
+logarithms, then summed the log-likelihoods over mesocosms, combining
+their independent Monte~Carlo errors.
+For the optimization trajectories, we used four replicates with 1,000
+particles for SPX and two replicates with 500 particles per mesocosm
+for Daphnia. All these evaluations were independent of fitting;
+we did not use them to select the reported parameter estimates.
 
 SPX fits used two performance cores with four hardware threads, except
 for one recovered starting point for which all four methods used four
@@ -13230,57 +13229,52 @@ Section~\ref{sec:dhaka-competitors}.
 
 \subsection{Repeated-search results}
 
-Table~\ref{tab:benchmark-results} summarizes the five comparisons.
-Figure~\ref{fig:benchmark-final-likelihoods} shows the final estimates,
-and Figures~\ref{fig:benchmark-optimization-detail}
-and~\ref{fig:benchmark-optimization-full} show progress during fitting.
-For the two Gaussian models, IFAD and DS19 obtain log-likelihoods close
-to the analytic maximum. DS19 is faster in these implementations, for
-the reasons discussed above. IF2 has greater variability across starts,
-and CTDD21 gives lower likelihoods, particularly for the oscillator.
-For SPX, DS19 has both the highest median likelihood and the shortest
-median fitting time. Thus these examples do not show a consistent
-advantage for IFAD in either likelihood or computation time.
+IFAD and DS19 both approached the maximum likelihood for the two
+Gaussian models (Table~\ref{tab:benchmark-results} and
+Figure~\ref{fig:benchmark-final-likelihoods}). DS19 did so more quickly,
+benefiting from the inexpensive maximization steps described above.
+IF2 gave more variable results, while CTDD21 attained lower likelihoods,
+particularly for the oscillator. DS19 also had the highest median
+log-likelihood and shortest median computation time for SPX.
+We therefore found no consistent improvement from IFAD on these examples.
 
-The Daphnia comparison shows a different ordering. IFAD has a median
-log-likelihood of $-861.30$, compared with $-864.98$ for MPIF, $-867.02$
-for DS19 and $-865.03$ for CTDD21. IFAD also gives the highest likelihood
-among the final estimates. The DS19 and CTDD21 continuations use the
-same MPIF starting estimates and time allowance as IFAD, so their
-differences are not explained by the cost of obtaining the warm starts.
-One DS19 search stops prematurely; its last finite estimate is retained.
-The separation is greater for Dhaka, where IFAD has a median likelihood
-of $-3744.40$, compared with $-3755.41$ for IF2, $-3769.04$ for DS19
-and $-3765.91$ for CTDD21. The likelihood approximations and optimization
-settings differ across methods, as detailed above. These results compare
-the specified implementations rather than establishing a general
-ordering of the algorithms.
+For Daphnia, IFAD attained the highest maximum and median log-likelihoods.
+The median was $-861.30$, compared with $-864.98$ for MPIF, $-867.02$
+for DS19, and $-865.03$ for CTDD21.
+Figure~\ref{fig:benchmark-optimization-detail} shows IFAD continuing to
+improve after the common MPIF warm start, while DS19 and CTDD21 made
+less progress with the same time allowance.
+The full trajectories are shown in Figure~\ref{fig:benchmark-optimization-full};
+the shaded regions in both figures cover the 10th through 100th
+percentiles, as in Section~\ref{sec:dhaka-competitors}.
+We retained the last finite estimate from one DS19 search that stopped
+prematurely. For Dhaka, the differences were larger: IFAD attained a
+median log-likelihood of $-3744.40$, compared with $-3755.41$ for IF2,
+$-3769.04$ for DS19, and $-3765.91$ for CTDD21.
 
 \subsection{Score updates and numerical SAEM on Dhaka}
 
-Figure~\ref{fig:dhaka-saem-ab} and Table~\ref{tab:dhaka-saem-ab} compare
-the two updates using the same monthly Gaussian transition approximation
-and particle smoother. Each fit uses 1,000 particles and an allowance of
-850 seconds, with 20 global starts and 20 IF2 warm starts.
-From global starts, numerical SAEM gives a higher final Euler likelihood
-than the score updates in only two of the 20 pairs. The median paired
-difference, numerical SAEM minus score, is $-608.83$ log-likelihood units.
-The median numbers of completed outer iterations are 15.5 for numerical
-SAEM and 86 for the score updates. Repeated numerical maximization of
-the averaged path objective therefore leaves time for fewer smoothing
-iterations in this experiment.
+To assess whether the score updates accounted for the poor performance
+of DS19 on Dhaka, we repeated the comparison using numerical SAEM with
+the same monthly Gaussian transition approximation and particle smoother.
+We used 1,000 particles and allowed 850 seconds per search, starting
+from 20 global parameter vectors and 20 IF2 estimates.
+Numerical SAEM gave higher Euler log-likelihoods than the score updates
+for only two of the 20 global starts
+(Figure~\ref{fig:dhaka-saem-ab} and Table~\ref{tab:dhaka-saem-ab}).
+The median paired difference was $-608.83$ log-likelihood units, taking
+numerical SAEM minus score updates. The numerical M-steps were expensive:
+SAEM completed a median of 15.5 outer iterations in the allotted time,
+compared with 86 for the score updates.
 
-Warm starts greatly reduce the difference between the updates, but
-numerical SAEM gives a higher likelihood in only four of the 20 pairs.
-The median paired difference is $-0.62$ log-likelihood units, with one
-pair differing by $-39.59$. Neither update improves the warm-start
-likelihood at the median: the median changes are $-0.27$ for score
-updates and $-1.37$ for numerical SAEM.
-Increasing the averaged complete-path objective does not guarantee an
-increase in the independently evaluated Euler likelihood. The former
-uses the monthly Gaussian transition approximation and sampled paths.
-Under these settings, replacing score updates by numerical SAEM does
-not resolve the difficulty of fitting Dhaka with this approximation.
+Starting from the IF2 estimates reduced this difference substantially.
+The median paired difference was $-0.62$ log-likelihood units, although
+one SAEM search finished $39.59$ units below its score counterpart.
+SAEM gave higher likelihoods in four of the 20 pairs.
+Neither method improved on the IF2 estimates at the median, with changes
+of $-0.27$ for score updates and $-1.37$ for numerical SAEM.
+Thus numerical maximization of the SAEM objective did not improve the
+Dhaka results.
 
 \clearpage
 \input{imgs/benchmarks/figures.tex}

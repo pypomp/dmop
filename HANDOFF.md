@@ -1,5 +1,20 @@
 # Handoff
 
+## October 9, 2026: revise benchmark prose against the manuscript
+
+- Reread the cholera application and computational-efficiency sections of
+  `ms.tex` as the writing sample. Reworked S12's results, SAEM explanations,
+  computation-time discussion and experimental settings to use the authors'
+  direct account of the experiments. Removed table-by-table narration and
+  generic qualifications. Revised both benchmark caption fragments as well.
+- Preserved all equations, algorithm settings and numerical results; no code,
+  fits or plots changed. Verified displayed equations against HEAD and that
+  the source before S12 is unchanged. `git diff --check` passes.
+- Native compilation still cannot access `macros.tex`. The existing in-place
+  local SI build succeeds, with no errors, undefined references or overfull
+  boxes. Reviewed the compiled results prose and page breaks. Existing
+  amsthm/hyperref warnings remain.
+
 ## October 9, 2026: benchmark reports integrated and verified
 
 - Finished the requested benchmark deliverables. Existing `si.tex` now includes
