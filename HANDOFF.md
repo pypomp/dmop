@@ -1,5 +1,33 @@
 # Handoff
 
+## October 9, 2026: benchmark reports integrated and verified
+
+- Finished the requested benchmark deliverables. Existing `si.tex` now includes
+  the five-model results discussion, three comparison figures and the central
+  table, followed by the full cold/warm Dhaka score-versus-SAEM comparison and
+  its table. These are Figures S-10--S-13 and Tables S-6--S-7 in Section S12.
+  All numerical jobs were already complete; no fitting source or runs changed.
+- Fixed the missing optimization-detail legend by reserving a figure footer.
+  A/B starting-point labels are now one-based integers; its table preserves
+  the 15.5 median iteration count. Regenerated both reports from all completed
+  inputs and updated result/publication READMEs with current navigation.
+- The prose reports actual outcomes: no consistent IFAD advantage on the
+  smaller examples; higher median/best likelihoods on Daphnia and Dhaka.
+  Numerical SAEM is higher in only 2/20 cold and 4/20 warm A/B pairs. Its
+  median paired differences are -608.83 and -0.62, respectively. Full ranges,
+  failures and outliers remain visible; detail panels are explicitly cropped
+  linear views with corresponding full-range plots. Bands use alpha .10.
+- Verification: regenerated reports pass all completeness/provenance checks;
+  12 targeted report/A/B tests pass. The preceding saved independent audit
+  covers all 80 Daphnia fits and 40 A/B pairs. Visually inspected every new
+  figure and both tables in the compiled SI. `make dmop/si.pdf` succeeds
+  in place (87 pages), with no undefined references, TeX errors or overfull
+  boxes. Existing amsthm/hyperref warnings remain. Built-in compilation was
+  attempted but cannot find the project dependency `macros.tex`; source and
+  editor were preserved, using the established local build instead.
+- No numerical jobs or requested benchmark integration work remain. The
+  sections below are historical progress records, not the current job state.
+
 ## October 9, 2026: all numerical jobs complete; final reports generated
 
 - Rechecked after the user's status request: all eight fitting subprocesses

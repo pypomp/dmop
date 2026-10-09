@@ -13221,6 +13221,71 @@ and two replicates with 500 particles per mesocosm for Daphnia.
 These evaluations are independent of fitting and do not select the
 reported parameter estimates.
 
+SPX fits used two performance cores with four hardware threads, except
+for one recovered starting point for which all four methods used four
+efficiency cores. Daphnia fits used four efficiency cores.
+These runs used the same processor as the Gaussian comparisons.
+The archived Dhaka comparison used GPU computations as described in
+Section~\ref{sec:dhaka-competitors}.
+
+\subsection{Repeated-search results}
+
+Table~\ref{tab:benchmark-results} summarizes the five comparisons.
+Figure~\ref{fig:benchmark-final-likelihoods} shows the final estimates,
+and Figures~\ref{fig:benchmark-optimization-detail}
+and~\ref{fig:benchmark-optimization-full} show progress during fitting.
+For the two Gaussian models, IFAD and DS19 obtain log-likelihoods close
+to the analytic maximum. DS19 is faster in these implementations, for
+the reasons discussed above. IF2 has greater variability across starts,
+and CTDD21 gives lower likelihoods, particularly for the oscillator.
+For SPX, DS19 has both the highest median likelihood and the shortest
+median fitting time. Thus these examples do not show a consistent
+advantage for IFAD in either likelihood or computation time.
+
+The Daphnia comparison shows a different ordering. IFAD has a median
+log-likelihood of $-861.30$, compared with $-864.98$ for MPIF, $-867.02$
+for DS19 and $-865.03$ for CTDD21. IFAD also gives the highest likelihood
+among the final estimates. The DS19 and CTDD21 continuations use the
+same MPIF starting estimates and time allowance as IFAD, so their
+differences are not explained by the cost of obtaining the warm starts.
+One DS19 search stops prematurely; its last finite estimate is retained.
+The separation is greater for Dhaka, where IFAD has a median likelihood
+of $-3744.40$, compared with $-3755.41$ for IF2, $-3769.04$ for DS19
+and $-3765.91$ for CTDD21. The likelihood approximations and optimization
+settings differ across methods, as detailed above. These results compare
+the specified implementations rather than establishing a general
+ordering of the algorithms.
+
+\subsection{Score updates and numerical SAEM on Dhaka}
+
+Figure~\ref{fig:dhaka-saem-ab} and Table~\ref{tab:dhaka-saem-ab} compare
+the two updates using the same monthly Gaussian transition approximation
+and particle smoother. Each fit uses 1,000 particles and an allowance of
+850 seconds, with 20 global starts and 20 IF2 warm starts.
+From global starts, numerical SAEM gives a higher final Euler likelihood
+than the score updates in only two of the 20 pairs. The median paired
+difference, numerical SAEM minus score, is $-608.83$ log-likelihood units.
+The median numbers of completed outer iterations are 15.5 for numerical
+SAEM and 86 for the score updates. Repeated numerical maximization of
+the averaged path objective therefore leaves time for fewer smoothing
+iterations in this experiment.
+
+Warm starts greatly reduce the difference between the updates, but
+numerical SAEM gives a higher likelihood in only four of the 20 pairs.
+The median paired difference is $-0.62$ log-likelihood units, with one
+pair differing by $-39.59$. Neither update improves the warm-start
+likelihood at the median: the median changes are $-0.27$ for score
+updates and $-1.37$ for numerical SAEM.
+Increasing the averaged complete-path objective does not guarantee an
+increase in the independently evaluated Euler likelihood. The former
+uses the monthly Gaussian transition approximation and sampled paths.
+Under these settings, replacing score updates by numerical SAEM does
+not resolve the difficulty of fitting Dhaka with this approximation.
+
+\clearpage
+\input{imgs/benchmarks/figures.tex}
+\input{imgs/benchmarks/saem_ab_figures.tex}
+
 \clearpage
 \bibliography{bib-ifad}
 

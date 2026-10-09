@@ -107,8 +107,10 @@ def _generate(root):
         ax.ticklabel_format(axis="y", useOffset=False, style="plain")
         ax.grid(axis="y", color=".92")
         ax = axes[1, j]
-        ax.errorbar(subset.start, subset.difference, yerr=2*subset.mcse,
+        ax.errorbar(subset.start+1, subset.difference, yerr=2*subset.mcse,
                     fmt="o", color=COLORS["saem"], ms=4, capsize=2, lw=1.)
+        ax.set_xticks([i for i in [1, 5, 10, 15, 20] if i <= config["starts"]])
+        ax.set_xlim(.4, config["starts"]+.6)
         ax.axhline(0, color=".4", lw=.8, ls="--")
         ax.set_xlabel("Starting point")
         ax.set_ylabel("Log-likelihood: SAEM minus score")
@@ -121,7 +123,7 @@ def _generate(root):
         r"Initialization & Optimizer & Median $\ell$ & Median change & Iterations & Time (s) & Failed \\", r"\midrule"]
     for (regime, method), row in summary.iterrows():
         table.append(f"{'Global' if regime == 'cold' else 'IF2'} & {LABELS[method]} & "
-            f"{row['median']:.2f} & {row.median_change:.2f} & {row.median_iterations:.0f} & "
+            f"{row['median']:.2f} & {row.median_change:.2f} & {row.median_iterations:g} & "
             f"{row.median_seconds:.1f} & {row.failed:.0f} "+r"\\")
     table.extend([r"\bottomrule", r"\end{tabular}"])
     (output/"table.tex").write_text("\n".join(table)+"\n")

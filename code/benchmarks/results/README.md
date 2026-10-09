@@ -16,7 +16,7 @@ particle count is 500, as recorded in
 | Harmonic oscillator | `matched-oscillator-j500-if` for IFAD/IF2; `matched-oscillator-j500-ds` for DS19; `final-oscillator-{00,05,10,15}` for CTDD21 only |
 | Linear Gaussian | `matched-linear-j500-if` for IFAD/IF2; `matched-linear-j500-ds` for DS19; `final-linear` for CTDD21 only |
 | SPX | `final-spx-{00,05,10,15}` for all four methods |
-| Daphnia | `final-daphnia-{00,05,10,15}` for all four methods, once complete |
+| Daphnia | `final-daphnia-{00,05,10,15}` for all four methods |
 | Dhaka | `dhaka_reference.csv` for IFAD/IF2, with the tracked [S11 competitor exports](../../../imgs/competitors/corenflos100_ditlevsen1000/) and archived fit statuses read by `dhaka_results()` in the report source |
 
 For each model, its four directories divide 20 starting points into batches
@@ -59,4 +59,6 @@ runs. Pilot/tuning results are never pooled with final results. Source copies,
 where present, match the hashes recorded at launch and preserve the code used
 by long-running experiments while development continues.
 
-The combined SI figures and table are still pending the complete final runs.
+All final runs listed above are complete. The combined panels and table are
+included in [the SI](../../../si.tex). The final Daphnia and paired Dhaka
+audit is saved in [final-daphnia-and-saem-audit.json](final-daphnia-and-saem-audit.json).
