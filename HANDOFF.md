@@ -1,5 +1,22 @@
 # Handoff
 
+## October 9, 2026: add DS19 implementation table for panels A--E
+
+- Added Table S-6 near the start of S12, mapping each model to its DS19
+  transition density, parameter update and evaluation likelihood. Later
+  table numbers update automatically. The Gaussian/SPX fitting and evaluation
+  transitions agree; Daphnia/Dhaka use separate Gaussian fitting models.
+- Explained that Daphnia and Dhaka already use local order-1.5 moments,
+  composed across an observation interval using linearization. This is not
+  a claim of strong order 1.5 for the resulting block Gaussian. Dhaka's
+  single-step covariance has rank at most two in six dimensions; Daphnia
+  uses quarter-day steps, and a single coarse observation-interval step
+  has not been validated. No fitting procedure or result changed.
+- Local SI build passes with no errors, undefined references or overfull
+  boxes. Visually reviewed the explanation and table, and made the table
+  columns ragged right for readability. Native compiler still lacks access
+  to `macros.tex`; `git diff --check` passes.
+
 ## October 9, 2026: explain DS19 density requirements and comparison limits
 
 - Added to S11 why SAEM and the implemented score update both require

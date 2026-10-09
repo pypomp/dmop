@@ -12946,6 +12946,79 @@ methods and evaluated the resulting estimates under the same model.
 The two Gaussian examples have analytic likelihoods, allowing us to
 assess maximization error without Monte~Carlo evaluation error.
 
+Table~\ref{tab:ds19-models} summarizes the DS19 implementation for each
+panel. All five implementations evaluate process transition densities.
+For the linear Gaussian model and the implemented SPX model, these
+densities are available directly. For the oscillator, all methods fit
+the same order-1.5 Gaussian approximation, whose likelihood we evaluate
+by Kalman filtering. Thus these three comparisons use the same transition
+model for fitting and evaluation.
+
+For Daphnia and Dhaka, we also use moments from the order-1.5 expansion,
+but compose them over smaller time steps and approximate the transition
+between observations by a Gaussian distribution. This composition adds
+a linearization of the nonlinear dynamics. It does not imply that the
+resulting Gaussian approximation has strong order 1.5 over the full
+observation interval. For Dhaka, a single local Gaussian approximation
+has covariance rank at most two in six dimensions, as explained in
+Section~\ref{sec:dhaka-competitors}. Composing the local covariances allows
+noise to propagate into additional state directions. For Daphnia, we
+compose moments at the 0.25-day simulation step rather than apply a
+single Taylor expansion across the five-day observation interval.
+We have not tested the accuracy of such a single coarse step.
+Both models are evaluated using their original Euler simulators, so the
+Gaussian approximation introduces a difference between the fitting and
+evaluation likelihoods.
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}
+>{\raggedright\arraybackslash}p{0.29\textwidth}
+>{\raggedright\arraybackslash}p{0.21\textwidth}
+>{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
+\toprule
+Model & DS19 transition density & Parameter update & Likelihood evaluation \\
+\midrule
+A: Harmonic oscillator
+& Order-1.5 Gaussian approximation at the observation interval
+& SAEM; numerical maximization of averaged sufficient statistics
+& Kalman likelihood of the same approximation \\
+\addlinespace
+B: Linear Gaussian
+& Exact Gaussian density of the specified discrete-time model
+& SAEM; explicit maximization using averaged sufficient statistics
+& Kalman likelihood of the same model \\
+\addlinespace
+C: SPX
+& Pypomp transition law: Gaussian above the variance floor, with a point mass at the floor
+& Averaged scores and Adam
+& Particle-filter likelihood of the same Pypomp model \\
+\addlinespace
+D: Daphnia
+& Gaussian approximation across each observation interval, composed from local order-1.5 moments
+& Averaged scores and Adam
+& Particle-filter likelihood of the original Euler model; transition and boundary rules differ \\
+\addlinespace
+E: Dhaka
+& Monthly Gaussian approximation composed from local order-1.5 moments
+& Averaged scores and Adam; numerical SAEM in a separate comparison
+& Particle-filter likelihood of the original Euler model; transition differs \\
+\bottomrule
+\end{tabular}
+\caption{DS19 implementations for panels A--E of
+Figure~\ref{fig:benchmark-final-likelihoods}.
+Each uses transition-density evaluation for backward smoothing and either
+maximization or differentiation of a complete-data objective.
+For SPX, the density includes a discrete mass and is exact for the
+implemented model, not for a continuous-time diffusion.
+The Daphnia and Dhaka covariances are regularized as described below.
+The separate Dhaka SAEM comparison retains the same Gaussian transition.}
+\label{tab:ds19-models}
+\end{table}
+
 \subsection{SAEM and averaged-score updates}
 \label{sec:ds19-update-equations}
 
