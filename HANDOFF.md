@@ -1,5 +1,21 @@
 # Handoff
 
+## October 9, 2026: first corrected warm pair complete
+
+- Warm start 0 completed both 850-second fits and independent Euler
+  evaluations. Log-likelihoods (MCSE): initial -3769.681021 (.118786),
+  score -3770.771569 (.142097), numerical SAEM -3769.895942 (.156746).
+  Neither final point improves on this starting estimate. This is one
+  pair, not the full warm-start comparison.
+- All 21 completed pairs pass `audit_results.py --dhaka-ab`, including
+  raw likelihood/MCSE recalculation, selected checkpoint timing, and
+  fixed-Q acceptance. Audit: `/tmp/dmop-corrected-pair-audit.json`.
+  Only the complete `warm/start000` directory is saved in this commit.
+- All eight fitting subprocesses remain live. The next four Daphnia
+  DS19 fits (starts 1, 6, 11, 16) have finished; CTDD21 and evaluation
+  follow. The remaining warm pairs, Daphnia searches, final reports and
+  SI integration are outstanding. No frozen fitting source changed.
+
 ## October 9, 2026: results directory navigation clarified
 
 - Expanded `code/benchmarks/results/README.md` with the exact inputs to the
