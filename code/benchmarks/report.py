@@ -13,6 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 import pandas as pd
 
@@ -45,6 +46,17 @@ def new_results(root, model, expected=20):
         frames.append(frame)
         timings.append(timing)
         sources.extend([folder / "configuration.json", folder / "checkpoints.csv", folder / "timings.csv"])
+        if (folder / "recovery.json").exists():
+            recovery = json.loads((folder / "recovery.json").read_text())
+            # Locate saved configurations relative to this checkout, including
+            # when launch-time paths refer to another machine.
+            archived = root / "interrupted" / Path(recovery["original_archive"]).name / "configuration.json"
+            rerun = root / Path(recovery["rerun"]).name / "configuration.json"
+            for path, key in ((archived, "original_configuration_sha256"),
+                              (rerun, "rerun_configuration_sha256")):
+                if hashlib.sha256(path.read_bytes()).hexdigest() != recovery[key]:
+                    raise ValueError(f"Changed recovery configuration: {path}")
+            sources.extend([folder / "recovery.json", archived, rerun])
         if model in ("linear", "oscillator"):
             analytic = json.loads((folder / "analytic_reference.json").read_text())
             if not analytic["converged"]:
@@ -65,6 +77,10 @@ def new_results(root, model, expected=20):
         raise ValueError(f"Invalid timing records for {model}")
     if not np.isfinite(final.loglik).all():
         raise ValueError(f"Unresolved final likelihood evaluations in {model}; report and resolve before plotting")
+    if not np.isfinite(final.mcse).all() or (final.mcse < 0).any():
+        raise ValueError(f"Invalid Monte Carlo errors in {model}")
+    if not np.isfinite(timing.seconds).all() or (timing.seconds < 0).any():
+        raise ValueError(f"Invalid fitting times in {model}")
     final = final.drop(columns="seconds").merge(
         timing[["start", "method", "seconds"]], on=["start", "method"], validate="one_to_one")
     if reference is None:
@@ -137,12 +153,12 @@ def dhaka_results():
 
 def axes_for(models):
     if len(models) == 5:
-        fig = plt.figure(figsize=(11.4, 6.4), layout="constrained")
+        fig = plt.figure(figsize=(7.2, 5.8), layout="constrained")
         grid = fig.add_gridspec(2, 6)
         axes = [fig.add_subplot(grid[0, 2*i:2*i+2]) for i in range(3)]
         axes += [fig.add_subplot(grid[1, 3*i:3*i+3]) for i in range(2)]
     else:
-        fig, axes = plt.subplots(1, len(models), figsize=(3.8*len(models), 3.4), squeeze=False,
+        fig, axes = plt.subplots(1, len(models), figsize=(2.4*len(models), 2.8), squeeze=False,
                                  layout="constrained")
         axes = list(axes.flat)
     return fig, axes
@@ -173,8 +189,10 @@ def generate(results, output, models, expected):
         "axis_scale": "linear",
         "inputs": {str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p):
                    hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}}, indent=2)+"\n")
-    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9,
+    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8,
                          "axes.spines.top": False, "axes.spines.right": False,
+                         "axes.titlesize": 8.5, "axes.labelsize": 8,
+                         "xtick.labelsize": 7, "ytick.labelsize": 7.5,
                          "axes.titleweight": "semibold", "pdf.fonttype": 42})
     fig, axes = axes_for(models)
     for i, (ax, model) in enumerate(zip(axes, models)):
@@ -193,26 +211,47 @@ def generate(results, output, models, expected):
                            color=COLORS[method], linewidths=1., zorder=4)
         ax.axhline(references[model], color=".65", lw=.7, ls="--")
         ax.ticklabel_format(axis="y", style="plain", useOffset=False)
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=5))
         ax.set_xticks(range(4), ["IFAD", "MPIF" if model == "daphnia" else "IF2", "DS19", "CTDD21"])
         ax.set_ylabel("Log-likelihood")
         ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
         ax.grid(axis="y", color=".92", zorder=0)
     save(fig, output, "final_likelihoods")
 
-    fig, axes = axes_for(models)
-    for i, (ax, model) in enumerate(zip(axes, models)):
-        for method in METHODS:
-            frame = progress.loc[progress.model.eq(model) & progress.method.eq(method)].sort_values("seconds")
-            ax.plot(frame.seconds, frame["median"], color=COLORS[method], lw=1.6)
-        ax.ticklabel_format(axis="y", style="plain", useOffset=False)
-        ax.axhline(references[model], color=".65", lw=.7, ls="--")
-        ax.set_xlabel("Fitting time (s)")
-        ax.set_ylabel("Median log-likelihood")
-        ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
-        ax.grid(color=".92")
-    fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
-                        for m in METHODS], loc="outside lower center", ncols=4, frameon=False)
-    save(fig, output, "optimization")
+    # Two ordinary linear views retain the full trajectory while making
+    # differences near the fitted solutions legible. Never splice scales.
+    detail_ranges = {}
+    for detail in (False, True):
+        fig, axes = axes_for(models)
+        for i, (ax, model) in enumerate(zip(axes, models)):
+            for method in METHODS:
+                frame = progress.loc[progress.model.eq(model) & progress.method.eq(method)].sort_values("seconds")
+                ax.plot(frame.seconds, frame["median"], color=COLORS[method], lw=1.4)
+            ax.ticklabel_format(axis="y", style="plain", useOffset=False)
+            ax.yaxis.set_major_locator(MaxNLocator(nbins=5))
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=4))
+            ax.axhline(references[model], color=".65", lw=.7, ls="--")
+            if detail:
+                medians = final.loc[final.model.eq(model)].groupby("method").loglik.median()
+                low, high = float(medians.min()), references[model]
+                span = max(high-low, .1)
+                detail_ranges[model] = [low-.15*span, high+.1*span]
+                ax.set_ylim(*detail_ranges[model])
+            ax.set_xlabel("Fitting time (s)")
+            ax.set_ylabel("Median log-likelihood")
+            ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
+            ax.grid(color=".92")
+        fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
+                            for m in METHODS], loc="outside lower center", ncols=4, frameon=False)
+        if detail:
+            fig.suptitle("Detail near final medians", fontsize=9)
+        save(fig, output, "optimization_detail" if detail else "optimization")
+    (output/"plot_ranges.json").write_text(json.dumps({
+        "scale": "linear for every axis",
+        "optimization_detail": detail_ranges,
+        "detail_rule": "minimum method final median to reference, padded by 15% below and 10% above; minimum span 0.1",
+        "full_range_companion": "optimization.pdf",
+        "final_distributions": "all final estimates included without cropping"}, indent=2)+"\n")
 
     summary = []
     table = [r"\begin{tabular}{lrrrrrr}", r"\toprule",
