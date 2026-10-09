@@ -1,6 +1,7 @@
 """Check saved evaluations and Dhaka A/B output selection without refitting."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -50,6 +51,20 @@ def audit_batch(folder):
     return {"folder": str(folder), "finals": len(final), "raw_replicate_checks": len(final)}
 
 
+def verify_reused_score(directory):
+    provenance = directory / "score_reuse.json"
+    if not provenance.exists():
+        return None
+    info = json.loads(provenance.read_text())
+    if set(info["source_sha256"]) != {"score.json", "score_parameters.npz"}:
+        raise ValueError(f"Incomplete score-reuse provenance: {directory}")
+    for name, digest in info["source_sha256"].items():
+        for path in (directory / name, ROOT / info["source"] / name):
+            if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                raise ValueError(f"Reused score differs from its recorded source: {path}")
+    return info["source"]
+
+
 def audit_ab(root):
     protocol = json.loads((root / "protocol.json").read_text())
     starts = np.load(root / "starts.npz")
@@ -60,6 +75,7 @@ def audit_ab(root):
             status = folder / "status.json"
             if not status.exists() or not json.loads(status.read_text())["complete"]:
                 continue
+            reused_from = verify_reused_score(folder)
             score = np.load(folder / "score_parameters.npz")
             info = json.loads((folder / "score.json").read_text())
             eligible = np.flatnonzero((score["elapsed_trace"] <= protocol["budget_seconds"])
@@ -96,7 +112,8 @@ def audit_ab(root):
                 np.testing.assert_allclose(likelihood_summary(raw[method]),
                     final.loc[method, ["loglik", "mcse"]].astype(float), rtol=1e-10, atol=1e-8)
             checked.append({"regime": regime, "start": index, "score_selected_iteration": selected_index,
-                            "score_accepted_updates_before_selection": accepted, **saem_diagnostics})
+                            "score_accepted_updates_before_selection": accepted,
+                            "score_reused_from": reused_from, **saem_diagnostics})
     return {"root": str(root), "checked_pairs": len(checked), "expected_pairs": 2 * protocol["starts"], "pairs": checked}
 
 
