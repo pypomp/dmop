@@ -1,5 +1,33 @@
 # Handoff
 
+## October 9, 2026: tuning finished; all final Daphnia batches launched
+
+- Separate Gaussian tuning selected J=500 for IFAD, IF2 and DS19 in both
+  examples. Both counts had no failed tuning fits; summed median analytic
+  likelihood deficits were .674126 (J=100) and .048004 (J=500). Selection
+  and all 16 tuning fits are saved under `code/benchmarks/results`.
+  The completed batches pass validation; no final starts selected J.
+- Regenerated the completed four-model preview using the default selected
+  count: `/tmp/dmop-four-model-selected`. Visually inspected final
+  distributions, full-range progress and the separate linear detail view.
+  All points and bands are visible in their appropriate full-range plots;
+  detail views are explicitly labeled. Daphnia is still absent, so these
+  artifacts remain previews outside `imgs/benchmarks` and the SI.
+- Lower-rate Daphnia recovery completed with 16 fits and no failures. All
+  16 raw final evaluations pass independent likelihood/MCSE recalculation.
+  DS19 median is -870.817540 and CTDD21 median is -866.542933; both select
+  learning rate .001 under the saved tuning rule. Recovery provenance and
+  the interrupted original archive are preserved.
+- All final Daphnia queues have launched: `final-daphnia-00`, `05`, `10`
+  and `15`, five starts each, on E-core groups 16--19, 20--23, 24--27 and
+  28--31. Initial child PIDs 1515337, 1515335 and 1515336 correspond to
+  the first three batches. The fourth launched after particle tuning freed
+  its cores. Source/settings unchanged; jobs begin with compilation.
+- Corrected cold start 8 is now complete and passes the nine-pair A/B
+  audit: score -4050.744, SAEM -4409.795. The A/B workers continue;
+  no warm pair is complete. Final cross-model report and full A/B report,
+  SI results prose, inclusion, compilation and visual review remain pending.
+
 ## October 9, 2026: matched Gaussian runs and higher-rate Daphnia tuning complete
 
 - All eight equal-particle Gaussian batches are complete. The final
