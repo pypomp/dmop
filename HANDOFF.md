@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: twelve corrected cold pairs complete
+
+- Corrected starts 0--11 pass the A/B audit. New score/SAEM Euler
+  likelihoods: start 9 (-4046.263869, -5628.450932), start 10
+  (-4148.924998, -4949.562755), and start 11 (-4059.624215, -4719.293243).
+  All completed compatible old score fits have now been reused and audited;
+  remaining starts require both fits. All paired evaluations remain
+  independent of fitting and are retained even when a fit stops early.
+- Workers have advanced to cold starts 12--15. No warm pair is complete.
+  The full 20-cold/20-warm experiment and its complete report remain pending.
+- Confirmed all eight actual fitting subprocesses live with accumulating CPU
+  time. Final Daphnia children 1515337, 1515335, 1515336 and 1515829 are
+  compiling; A/B children 1474435, 1479209, 1479396 and 1478936 are fitting.
+  No process was restarted on account of quiet compilation logs.
+- The current continuation made progress by auditing and preserving three
+  more complete pairs. Full plots/tables, results prose and SI integration
+  still depend on the remaining declared jobs.
+
 ## October 9, 2026: selected settings reflected in SI and documentation
 
 - Updated the Gaussian runtime paragraph in `si.tex` to state the selected
