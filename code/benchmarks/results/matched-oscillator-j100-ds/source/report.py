@@ -36,7 +36,6 @@ def new_results(root, model, expected=20, gaussian_particles=None):
     if not folders:
         raise ValueError(f"No final results for {model}")
     frames, timings, sources, reference = [], [], [], None
-    shared_starts, parameter_names = {}, None
     saem_found = False
     for folder in folders:
         config = json.loads((folder / "configuration.json").read_text())
@@ -45,23 +44,6 @@ def new_results(root, model, expected=20, gaussian_particles=None):
             raise ValueError(f"Unfinished or pilot run: {folder}")
         frame = pd.read_csv(folder / "checkpoints.csv")
         timing = pd.read_csv(folder / "timings.csv")
-        starts = pd.read_csv(folder / "starts.csv")
-        # Older single-batch runs used the row order as the start identifier.
-        if "start" not in starts:
-            starts.insert(0, "start", np.arange(len(starts)) + config.get("start_index", 0))
-        names = list(starts.drop(columns="start").columns)
-        if starts.start.duplicated().any() or not np.isfinite(starts.to_numpy()).all():
-            raise ValueError(f"Invalid starting vectors: {folder}")
-        if parameter_names is not None and names != parameter_names:
-            raise ValueError(f"Starting parameter names disagree: {folder}")
-        parameter_names = names
-        for row in starts.itertuples(index=False, name=None):
-            start, vector = row[0], np.asarray(row[1:])
-            if start in shared_starts and not np.array_equal(vector, shared_starts[start]):
-                raise ValueError(f"Starting vectors disagree for start {start}: {folder}")
-            shared_starts[start] = vector
-        if not set(frame.start).issubset(set(starts.start)):
-            raise ValueError(f"Evaluation has no recorded starting vector: {folder}")
         if model in ("linear", "oscillator"):
             if matched:
                 role = folder.name.rsplit("-", 1)[-1] if folder.name.startswith("matched-") else "ct"
@@ -79,8 +61,7 @@ def new_results(root, model, expected=20, gaussian_particles=None):
             timing = timing.loc[timing.method.isin(keep)]
         frames.append(frame)
         timings.append(timing)
-        sources.extend([folder / name for name in
-                        ("configuration.json", "status.json", "starts.csv", "checkpoints.csv", "timings.csv")])
+        sources.extend([folder / "configuration.json", folder / "checkpoints.csv", folder / "timings.csv"])
         if (folder / "recovery.json").exists():
             recovery = json.loads((folder / "recovery.json").read_text())
             # Locate saved configurations relative to this checkout, including
@@ -94,7 +75,6 @@ def new_results(root, model, expected=20, gaussian_particles=None):
             sources.extend([folder / "recovery.json", archived, rerun])
         if model in ("linear", "oscillator"):
             analytic = json.loads((folder / "analytic_reference.json").read_text())
-            sources.append(folder / "analytic_reference.json")
             if not analytic["converged"]:
                 raise ValueError(f"Unconverged analytic reference: {folder}")
             if reference is not None and abs(reference-analytic["loglik"]) > 1e-5:

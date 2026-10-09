@@ -82,9 +82,9 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   also on linear axes. `plot_ranges.json` records the limits and their rule.
   All final estimates, including outliers, appear in `final_likelihoods.pdf`.
 - Measure synchronized wall time, separate compilation and evaluation, and
-  record hardware and concurrency. Existing V100 times and new RTX 3090 times
-  cannot establish a runtime ranking. Rerun a common timing experiment before
-  drawing that conclusion.
+  record hardware and concurrency. The final new experiments run on CPU;
+  the archived Dhaka study has its own hardware and timing convention.
+  Times from different hardware do not establish a runtime ranking.
 - Describe DS19 extensions explicitly. SMC with a numerical score update is
   not the original paper's SAEM M-step. The Gaussian examples use SAEM;
   SPX, Daphnia, and Dhaka use the numerical-score extension. Daphnia and SPX require additional
@@ -148,9 +148,13 @@ starts. The starting vectors and random streams do not depend on the batch
 boundary or on which other methods run. Run each method serially within a
 batch. On the i9-13900K used here, affinity groups 0–3, 4–7, 8–11, and 12–15
 each contain two performance cores with their hardware threads. Concurrent
-batches use disjoint groups. These are shared-machine timings, not isolated
-whole-machine benchmarks. The initial Daphnia GPU pilot was interrupted when another GPU workload
-started; CPU tuning is in progress on cores 16–19. The older
+batches use disjoint groups. The matched Gaussian runs use efficiency cores
+28–31 for DS19, IFAD and IF2; their retained CTDD21 results used performance
+cores. The recovered SPX start 4 and Daphnia runs also use efficiency-core
+groups, recorded in their configurations. Earlier SPX starts used performance
+cores, with all methods at each start sharing the same group. These are
+shared-machine timings, not isolated whole-machine benchmarks. The initial
+Daphnia GPU pilot was interrupted when another GPU workload started. The older
 Dhaka timing convention is retained and must not be compared directly with
 these new per-fit measurements.
 
@@ -161,9 +165,26 @@ python code/benchmarks/report.py
 ```
 
 It requires all 20 final starts for all four methods on each new model. It
-rejects incomplete directories, duplicate starts, missing final evaluations,
-and nonconverged analytic reference fits. `--models` and `--output` allow
+rejects incomplete directories, duplicate starts, differing starting vectors
+between batches, missing final evaluations, and nonconverged analytic
+reference fits. `--models` and `--output` allow
 checking a completed subset in a separate directory during development.
+
+To check saved likelihood evaluations without refitting:
+
+```sh
+python code/benchmarks/audit_results.py \
+  --batch code/benchmarks/results/final-spx-{00,05,10,15} \
+  --dhaka-ab --output /tmp/dmop-evaluation-audit.json
+```
+
+The audit recalculates likelihood averages and Monte Carlo errors from raw
+replicates. For completed Dhaka A/B pairs, it also checks checkpoint selection,
+time limits and numerical M-step acceptance, and counts M-steps whose Q
+increase exceeds `1e-7`. A solver convergence flag alone does not establish
+that parameters improved. The output records the number of completed pairs
+checked and the number expected; it does not treat a partial A/B study as
+complete.
 
 ## Gaussian SAEM
 

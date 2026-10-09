@@ -72,21 +72,11 @@ def audit_ab(root):
             accepted = int(np.count_nonzero(score["accepted_step_size_trace"][:max(selected_index, 0)] > 0))
             saem = np.load(folder / "saem_parameters.npz")
             np.testing.assert_array_equal(saem["selected"], saem["parameters"][-1])
-            np.testing.assert_allclose(saem["parameters"][0], starts[regime][index], rtol=0, atol=1e-12)
             trace_path = folder / "saem_trace.csv"
-            saem_diagnostics = {"saem_completed_iterations": 0, "saem_q_increases_over_1e_minus_7": 0,
-                                "saem_mstep_converged": 0, "saem_total_mstep_evaluations": 0}
             if trace_path.exists() and trace_path.stat().st_size > 1:
                 trace = pd.read_csv(trace_path)
-                assert len(trace) == len(saem["parameters"]) - 1
                 assert (trace.seconds <= protocol["budget_seconds"]).all()
-                assert np.isfinite(trace[["q_before", "q_after"]].to_numpy()).all()
                 assert (trace.q_after >= trace.q_before - 1e-7).all()
-                saem_diagnostics = {
-                    "saem_completed_iterations": len(trace),
-                    "saem_q_increases_over_1e_minus_7": int((trace.q_after - trace.q_before > 1e-7).sum()),
-                    "saem_mstep_converged": int(trace.mstep_converged.sum()),
-                    "saem_total_mstep_evaluations": int(trace.mstep_evaluations.sum())}
             final = pd.read_csv(folder / "evaluation.csv").set_index("method")
             draws = pd.read_csv(folder / "evaluation_replicates.csv")
             raw = draws.pivot(index="replicate", columns="method", values="loglik")
@@ -96,7 +86,7 @@ def audit_ab(root):
                 np.testing.assert_allclose(likelihood_summary(raw[method]),
                     final.loc[method, ["loglik", "mcse"]].astype(float), rtol=1e-10, atol=1e-8)
             checked.append({"regime": regime, "start": index, "score_selected_iteration": selected_index,
-                            "score_accepted_updates_before_selection": accepted, **saem_diagnostics})
+                            "score_accepted_updates_before_selection": accepted})
     return {"checked_pairs": len(checked), "expected_pairs": 2 * protocol["starts"], "pairs": checked}
 
 
@@ -104,12 +94,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--batch", type=Path, nargs="*", default=[])
     parser.add_argument("--dhaka-ab", action="store_true")
-    parser.add_argument("--output", type=Path, help="Save the same audit printed to stdout")
     args = parser.parse_args()
-    result = {"batches": [audit_batch(folder) for folder in args.batch]}
+    for folder in args.batch:
+        print(json.dumps(audit_batch(folder), indent=2))
     if args.dhaka_ab:
-        result["dhaka_ab"] = audit_ab(ROOT / "ditlevsen/results/saem_ab")
-    output = json.dumps(result, indent=2) + "\n"
-    if args.output:
-        args.output.write_text(output)
-    print(output, end="")
+        print(json.dumps(audit_ab(ROOT / "ditlevsen/results/saem_ab"), indent=2))
