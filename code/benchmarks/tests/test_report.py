@@ -11,6 +11,7 @@ def make_result(root):
     folder.mkdir()
     (folder / "configuration.json").write_text(json.dumps({"purpose": "final"}))
     (folder / "status.json").write_text(json.dumps({"complete": True}))
+    pd.DataFrame({"start": [0, 1], "theta": [.2, .4]}).to_csv(folder / "starts.csv", index=False)
     frame = pd.DataFrame([{"start": start, "method": method, "seconds": 1.,
                            "final": True, "loglik": 100. + start, "mcse": .1,
                            "status": "nonfinite_update" if method == "DS19" else "complete"}
@@ -48,6 +49,14 @@ def test_gaussian_report_uses_one_common_particle_count(tmp_path):
     assert final.loc[final.method.eq("IFAD"), "loglik"].min() == 100.25
     assert (progress.maximum >= progress["median"]).all()
     assert (progress.q10 <= progress["median"]).all()
+    starts_path = tmp_path / "matched-linear-j500-ds" / "starts.csv"
+    starts = pd.read_csv(starts_path)
+    starts.loc[0, "theta"] += .01
+    starts.to_csv(starts_path, index=False)
+    with pytest.raises(ValueError, match="Starting vectors disagree"):
+        new_results(tmp_path, "linear", expected=2, gaussian_particles=500)
+    starts.loc[0, "theta"] = .2
+    starts.to_csv(starts_path, index=False)
     path = tmp_path / "matched-linear-j500-ds" / "configuration.json"
     config = json.loads(path.read_text())
     config["ds_particles"] = 100

@@ -1,5 +1,38 @@
 # Handoff
 
+## October 9, 2026: completed J=100 Gaussian runs and report checks
+
+- Previous goal turn made progress: committed the per-model SAEM equations
+  and completed SPX recovery. This continuation verified the persistent
+  service handles and completed further reporting work. Goal remains active.
+- All four `matched-{linear,oscillator}-j100-{if,ds}` batches are complete:
+  20 starts for each of IFAD, IF2 and DS19 in each model, no failed fits.
+  The serial service has moved on to `matched-linear-j500-if`. Do not choose
+  the manuscript count until the separate tuning service writes its selection.
+- `report.py` now verifies identical starting vectors wherever batches
+  overlap, with matching parameter columns and a recorded vector for every
+  evaluated start. It handles the older start files whose row order supplies
+  the identifier. Provenance now hashes starting vectors, complete statuses
+  and analytic references as well as evaluation/configuration files.
+  Eight report and three recovery tests pass. Actual J=100 Gaussian and SPX
+  data pass the common-start checks. No fitting code or protocol changed.
+- Generated `/tmp/dmop-four-model-j100` from completed oscillator, linear,
+  SPX and archived Dhaka data. Visually inspected all three panels and checked
+  that every progress median/band is finite and ordered. All scales are
+  linear. These are development previews: Daphnia is absent and the Gaussian
+  count is not selected yet. Do not insert these previews as the final report.
+- The audit now reports Dhaka numerical-SAEM iteration counts, Q increases
+  above `1e-7`, solver convergence counts and total M-step evaluations. It
+  also verifies the saved initial parameters and trace length. Among the
+  first four completed cold pairs, start 2 had zero Q increases in 35
+  iterations and retained its initial estimate despite solver convergence
+  flags. Treat this as an implementation diagnostic, not proof about SAEM
+  generally. Other workers are still fitting their second cold pairs.
+- README now describes the actual CPU/core assignments, replacing outdated
+  GPU timing wording, and gives the saved-evaluation audit command. The
+  remaining full-goal deliverables and frozen-source restrictions below
+  still apply. Daphnia tuning/final queues and Dhaka A/B remain live.
+
 ## October 9, 2026: SAEM equations and completed SPX runs
 
 - Added S12.1 in `si.tex`: the SAEM objective recursion and M-step, the
