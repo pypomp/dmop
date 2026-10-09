@@ -97,18 +97,19 @@ def audit_ab(root):
                     final.loc[method, ["loglik", "mcse"]].astype(float), rtol=1e-10, atol=1e-8)
             checked.append({"regime": regime, "start": index, "score_selected_iteration": selected_index,
                             "score_accepted_updates_before_selection": accepted, **saem_diagnostics})
-    return {"checked_pairs": len(checked), "expected_pairs": 2 * protocol["starts"], "pairs": checked}
+    return {"root": str(root), "checked_pairs": len(checked), "expected_pairs": 2 * protocol["starts"], "pairs": checked}
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--batch", type=Path, nargs="*", default=[])
     parser.add_argument("--dhaka-ab", action="store_true")
+    parser.add_argument("--dhaka-ab-root", type=Path, default=ROOT / "ditlevsen/results/saem_ab_scaled")
     parser.add_argument("--output", type=Path, help="Save the same audit printed to stdout")
     args = parser.parse_args()
     result = {"batches": [audit_batch(folder) for folder in args.batch]}
     if args.dhaka_ab:
-        result["dhaka_ab"] = audit_ab(ROOT / "ditlevsen/results/saem_ab")
+        result["dhaka_ab"] = audit_ab(args.dhaka_ab_root)
     output = json.dumps(result, indent=2) + "\n"
     if args.output:
         args.output.write_text(output)

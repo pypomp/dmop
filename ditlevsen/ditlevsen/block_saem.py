@@ -61,7 +61,8 @@ class TimeBudgetExceeded(RuntimeError):
     """An incomplete M-step must not replace the last completed estimate."""
 
 
-def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=None):
+def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=None,
+                       scale_objective=True):
     """Numerically increase the fixed Q function, retaining the input on failure.
 
     A truncated M-step is generalized EM. Improvement here is in Q, not a
@@ -70,6 +71,11 @@ def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=
     initial_value, initial_grad = value_and_grad(start)
     if not np.isfinite(initial_value) or not np.isfinite(initial_grad).all():
         raise ValueError("Nonfinite starting complete-data objective or gradient")
+    # Large complete-path gradients can send the bounded first trial into an
+    # undefined region, after which L-BFGS-B may report convergence at the
+    # unchanged input. Fix a positive scale for this entire M-step; the Q
+    # maximizer and the acceptance check on the original objective are unchanged.
+    scale = max(1., float(np.max(np.abs(initial_grad)))) if scale_objective else 1.
 
     def loss(theta):
         if deadline is not None and perf_counter() >= deadline:
@@ -79,7 +85,7 @@ def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=
             # Reject undefined line-search trials while preserving a finite
             # input estimate; these evaluations are not candidate estimates.
             return 1e100, np.zeros_like(theta)
-        return -float(value), -np.asarray(grad, dtype=float)
+        return -float(value) / scale, -np.asarray(grad, dtype=float) / scale
 
     result = minimize(loss, np.asarray(start), jac=True, method="L-BFGS-B", bounds=bounds,
                       options={"maxiter": maxiter, "maxls": 30,
@@ -93,6 +99,7 @@ def maximize_objective(value_and_grad, start, *, maxiter, bounds=None, deadline=
         "accepted": bool(accepted), "mstep_converged": bool(result.success),
         "mstep_iterations": int(result.nit), "mstep_evaluations": int(result.nfev),
         "mstep_message": str(result.message).strip(),
+        "objective_scale": scale,
     }
 
 

@@ -13132,6 +13132,9 @@ The numerical-SAEM arm retains paths and weights and forms
 $\overline Q_m(\theta)=\sum_{r=1}^m w_{mr}C(\theta;X^{(r)})$.
 Each L-BFGS-B evaluation recalculates every retained path's objective
 and gradient at the same candidate $\theta$.
+Within each M-step, we divide the objective and its gradient by the fixed
+scale $\max\{1,\|\nabla\overline Q_m(\theta_{m-1})\|_\infty\}$.
+This reduces numerical line-search failures without changing the maximizer.
 We allow at most 25 L-BFGS-B iterations per M-step and retain a candidate
 only if it is finite and increases or leaves unchanged this fixed
 $\overline Q_m$. An M-step interrupted by the time limit is discarded.

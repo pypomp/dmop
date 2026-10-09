@@ -41,6 +41,23 @@ def test_numerical_mstep_respects_bounds_and_deadline():
         maximize_objective(vg, np.array([0.]), maxiter=30, deadline=0.)
 
 
+def test_objective_scaling_avoids_false_convergence_after_invalid_trial():
+    optimum = np.array([.1, .0001])
+    def vg(z):
+        if abs(z[1]) >= .01:
+            return np.nan, np.full(2, np.nan)
+        return -1e6 * np.sum((z - optimum)**2), -2e6 * (z - optimum)
+    start = np.zeros(2)
+    old, old_info = maximize_objective(vg, start, maxiter=25,
+        bounds=[(-1., 1.)] * 2, scale_objective=False)
+    np.testing.assert_array_equal(old, start)
+    assert old_info['mstep_converged']  # The failure observed on fixed Dhaka paths.
+    fitted, info = maximize_objective(vg, start, maxiter=25, bounds=[(-1., 1.)] * 2)
+    np.testing.assert_allclose(fitted, optimum, atol=1e-8)
+    assert info['q_after'] > info['q_before'] and info['accepted']
+    assert info['objective_scale'] == 200000.
+
+
 def test_dhaka_average_matches_separate_complete_path_evaluations():
     data = load_dacca_data(20, max_observations=3)
     theta = jnp.asarray(default_unconstrained_parameters())

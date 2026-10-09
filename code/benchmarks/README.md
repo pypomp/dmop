@@ -25,6 +25,7 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
 | [audit_results.py](audit_results.py) | Recalculate saved likelihood summaries and check Dhaka A/B checkpoint selection and M-step acceptance |
+| [diagnose_saem.py](diagnose_saem.py) | Replay a fixed Dhaka path to diagnose false L-BFGS convergence and objective scaling |
 | [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
 
 The transition-density and transport implementations for the existing Dhaka
@@ -185,6 +186,11 @@ increase exceeds `1e-7`. A solver convergence flag alone does not establish
 that parameters improved. The output records the number of completed pairs
 checked and the number expected; it does not treat a partial A/B study as
 complete.
+
+The A/B audit defaults to the corrected `ditlevsen/results/saem_ab_scaled`
+experiment. Use `--dhaka-ab-root ditlevsen/results/saem_ab` to inspect the
+superseded unscaled run. Fixed-path diagnostics under `results/saem-scaling-*`
+show why it was superseded; they are not fitted benchmark results.
 
 ## Gaussian SAEM
 
