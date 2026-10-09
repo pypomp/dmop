@@ -1,5 +1,30 @@
 # Handoff
 
+## October 9, 2026: interrupted workers and persistent Dhaka restart
+
+- Status audit found all previous Dhaka, SPX and Daphnia tool-session
+  workers had exited. The original sessions no longer exist; logs contain
+  no traceback. The interruption coincided with the previous turn ending,
+  but its cause has not been established. No production Dhaka A/B arm or
+  pair finished. The October 8 launch status below is historical.
+- Restarted all four Dhaka workers at 00:05 EDT (04:05 UTC), using persistent
+  systemd user services `dmop-saem-ab-w0.service` through `w3.service`.
+  Verified all four active/running in a separate call. They use the unchanged
+  frozen protocol, ten pairs per worker, CPU groups 0–3/4–7/8–11/12–15,
+  and append to `/tmp/dmop-saem-ab-workerN.log`. No SPX dependency is needed
+  now. Check `systemctl --user status dmop-saem-ab-w{0,1,2,3}` on the host;
+  do not launch duplicates. Completed arms and pairs resume automatically.
+- Oscillator and linear-Gaussian runs remain complete. SPX has 76/80 final
+  fits evaluated: batches 05/10/15 complete, batch 00 has four of five starts
+  complete and the fifth IF2 parameter trace saved. Preserve these partial
+  outputs when implementing recovery; the small-model runner currently
+  refuses an existing output directory and has no resume option.
+- Both four-start CPU Daphnia tuning runs stopped after one fully evaluated
+  start, with additional partial parameter traces saved. No final Daphnia
+  batch ran. Those tuning runs and dependent queues still need recovery;
+  they are not running. The combined five-model panels and central SI table
+  remain unfinished. No manuscript results were changed in this status audit.
+
 ## October 8, 2026: paired Dhaka A/B experiment
 
 - User requested score versus numerical SAEM both with and without an IF2
