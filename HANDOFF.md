@@ -1,5 +1,31 @@
 # Handoff
 
+## October 9, 2026: J=500 linear comparison complete
+
+- Verified the same live service/process handles throughout this continuation;
+  no job was restarted. Both `matched-linear-j500-{if,ds}` batches completed
+  all 20 starts without failed fits. The serial Gaussian service has advanced
+  to `matched-oscillator-j500-if`. Six of eight matched batches are complete;
+  the independent particle-count tuning still waits for the final two.
+- Generated and visually inspected all three plots in
+  `/tmp/dmop-linear-j500-complete`. Shared-start and completeness checks pass.
+  At J=500, linear-model median log-likelihoods/times are IFAD -359.960533/
+  16.085 s, IF2 -362.144909/13.261 s, and DS19 -359.927143/2.096 s. Retained
+  CTDD21 J=25 gives -360.306505/51.631 s on its original core assignment.
+  These are the completed J=500 results, not the tuning selection.
+- Checked that observation arrays are exactly identical across all existing
+  original and matched batches for each Gaussian model (five linear and
+  seven oscillator batches at the time of the check). Starting vectors also
+  pass the report's comparison. Recorded completed-batch checks in the
+  temporary `/tmp/dmop-latest-evaluation-audit.json`; the source audit command
+  remains in the benchmark README.
+- Daphnia tuning start 1 has reached the competitor stage. DS19 at rate .01
+  stopped with `nonfinite_update` after 101 updates, retaining its last valid
+  estimate; at .001 it completed 525 updates within its roughly 305-second
+  continuation budget. Do not select a rate until all tuning starts finish.
+  The live Dhaka A/B experiment still has five complete cold pairs and no
+  completed warm pairs. Full figures/table and SI integration remain pending.
+
 ## October 9, 2026: SI figure captions prepared; fifth A/B pair audited
 
 - Added `imgs/benchmarks/figures.tex` with the final-distribution figure,
