@@ -1,0 +1,16 @@
+{
+  "rule": "retain completely evaluated starts; rerun the interrupted suffix, regardless of likelihood",
+  "completed_starts_retained": [
+    0
+  ],
+  "rerun_starts": [
+    1,
+    2,
+    3
+  ],
+  "original_archive": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/interrupted/tuning-daphnia-cpu-lr0001",
+  "rerun": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/recovery-tuning-daphnia-cpu-lr0001",
+  "original_configuration_sha256": "6d2b5f9c189b228be44ab064d3adaf2253f55fb93dddcc5b3a3d60c6f9c01d92",
+  "rerun_configuration_sha256": "bd6278447224293ad950e7353024064236087c99c81a30fcd568487074b0fa10",
+  "completed_utc": "2026-10-09T06:08:33.695234+00:00"
+}

@@ -1,0 +1,29 @@
+{
+  "seed": 2026100901,
+  "starts_per_model": 4,
+  "candidates": [
+    {
+      "particles": 100,
+      "failed": 0,
+      "summed_median_deficit": 0.6741262707351439,
+      "summed_median_seconds": 26.948689699405804,
+      "sources": [
+        "tuning-linear-particles100",
+        "tuning-oscillator-particles100"
+      ]
+    },
+    {
+      "particles": 500,
+      "failed": 0,
+      "summed_median_deficit": 0.04800379950927436,
+      "summed_median_seconds": 82.61404690751806,
+      "sources": [
+        "tuning-linear-particles500",
+        "tuning-oscillator-particles500"
+      ]
+    }
+  ],
+  "chosen_particles": 500,
+  "rule": "fewest failed IFAD tuning fits, then smallest sum of median analytic-likelihood deficits, then time",
+  "scope": "same chosen count for IFAD, IF2 and DS19 in both Gaussian examples"
+}

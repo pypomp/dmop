@@ -1,0 +1,73 @@
+{
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/run_daphnia.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/results/final-daphnia-05",
+    "--purpose",
+    "final",
+    "--starts",
+    "5",
+    "--start-index",
+    "5",
+    "--ds-learning-rate",
+    "0.001",
+    "--ct-learning-rate",
+    "0.001"
+  ],
+  "cores": [
+    20,
+    21,
+    22,
+    23
+  ],
+  "selection_rule": "fewest failed tuning fits, then highest median independent likelihood",
+  "selections": [
+    {
+      "method": "DS19",
+      "candidates": [
+        {
+          "source": "tuning-daphnia-cpu",
+          "rate": 0.01,
+          "failed": 4,
+          "median_loglik": -937.4441753958276
+        },
+        {
+          "source": "tuning-daphnia-cpu-lr0001",
+          "rate": 0.001,
+          "failed": 0,
+          "median_loglik": -870.8175400737096
+        }
+      ],
+      "chosen": {
+        "source": "tuning-daphnia-cpu-lr0001",
+        "rate": 0.001,
+        "failed": 0,
+        "median_loglik": -870.8175400737096
+      }
+    },
+    {
+      "method": "CTDD21",
+      "candidates": [
+        {
+          "source": "tuning-daphnia-cpu",
+          "rate": 0.01,
+          "failed": 0,
+          "median_loglik": -867.5931396566076
+        },
+        {
+          "source": "tuning-daphnia-cpu-lr0001",
+          "rate": 0.001,
+          "failed": 0,
+          "median_loglik": -866.5429325090187
+        }
+      ],
+      "chosen": {
+        "source": "tuning-daphnia-cpu-lr0001",
+        "rate": 0.001,
+        "failed": 0,
+        "median_loglik": -866.5429325090187
+      }
+    }
+  ]
+}
