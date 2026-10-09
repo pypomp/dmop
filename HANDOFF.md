@@ -1,5 +1,25 @@
 # Handoff
 
+## October 9, 2026: explain DS19 density requirements and comparison limits
+
+- Added to S11 why SAEM and the implemented score update both require
+  process densities: the objective contains their logarithms, score updates
+  differentiate them, and backward smoothing evaluates them. Explained
+  singular single-step Dhaka Euler transitions and the unavailable monthly
+  endpoint density, versus simulator-based IF2/IFAD.
+- Expanded S12's Daphnia description with interval lengths and differing
+  boundary rules. Discussed the Gaussian fitting/evaluation mismatch,
+  100 versus 1,000 fitting particles, sampled-path gradient error and
+  averaged-score optimization as possible contributors, not established
+  causes. Explicitly noted the absent Daphnia SAEM comparison and proposed,
+  unperformed comparison of Gaussian/Euler objectives along saved searches.
+- Clarified that the completed Dhaka optimizer comparison retained the same
+  Gaussian transition and therefore does not isolate approximation error.
+- Verification: built-in compiler attempted (project `macros.tex` unavailable);
+  local in-place SI build passes with no errors, undefined references or
+  overfull boxes. Revised pages visually reviewed; `git diff --check` passes.
+  No numerical code, results or equations changed.
+
 ## October 9, 2026: revise benchmark prose against the manuscript
 
 - Reread the cholera application and computational-efficiency sections of

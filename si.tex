@@ -12677,6 +12677,21 @@ remaining coordinates. Applying it to Dhaka requires some modifications:
 the six state coordinates $(S,I,R^1,R^2,R^3,M)$ are driven by one Brownian
 motion, and the monthly death counts are observed with measurement error.
 
+The SAEM objective includes the process log-density, which DS19 must
+therefore be able to evaluate. Replacing the
+SAEM maximization with a score update retains this requirement: the score
+includes derivatives of the process log-density, evaluated along the
+imputed path. Our backward smoother also evaluates the transition density
+to sample that path. For Dhaka, a single Euler step is driven by one
+Brownian increment and has no density with respect to Lebesgue measure
+on the six-dimensional state space. Composing 20 Euler steps gives a
+monthly transition that we can
+simulate, but whose density we cannot evaluate directly after integrating
+out the intermediate states. IF2 and IFAD use this simulator without
+evaluating its transition density; IFAD additionally differentiates
+through the simulation. They retain the Euler discretization error but
+do not require a separate approximation to the monthly transition density.
+
 We approximate the transition over each month by a Gaussian distribution.
 The local strong-order-1.5 approximation has a covariance matrix of rank
 at most two, so it does not have a density in the six-dimensional state
@@ -13118,7 +13133,18 @@ For the eight imputed mesocosm paths, the complete-path objective is
 \end{equation}
 Initial states are fixed. The covariance uses a relative diagonal floor
 of $10^{-8}$ on scaled states. The particle filter uses the observations
-to guide proposals and excludes invalid states.
+to guide proposals, with the original negative-binomial measurement
+probabilities in the importance weights.
+We approximate each observation interval by one eight-dimensional
+Gaussian transition, composing local moments over 24 steps for the first
+interval and 20 thereafter. The step size is 0.25 days, so these
+transitions cover six days initially and five days between observations.
+This approximates the distribution produced by the nonlinear dynamics
+over the whole interval. Boundary handling also differs: we assign zero
+weight to Gaussian proposals outside the allowed state range, whereas
+the Euler simulator resets an offending state to zero and assigns a
+log weight of $-150$ to that particle at the next observation.
+Both differences can change the likelihood being maximized.
 After backward simulation of one path per mesocosm, we differentiate this
 sum with respect to the 38 estimated parameters and update them with
 Adam using the averaged scores. As for SPX, we do not carry out a SAEM
@@ -13252,6 +13278,21 @@ prematurely. For Dhaka, the differences were larger: IFAD attained a
 median log-likelihood of $-3744.40$, compared with $-3755.41$ for IF2,
 $-3769.04$ for DS19, and $-3765.91$ for CTDD21.
 
+The Daphnia comparison does not determine how much of the DS19 shortfall
+comes from the Gaussian transition approximation. Smoothing error and
+optimization may also contribute. DS19 used 100 particles per mesocosm,
+compared with 1,000 for IFAD, and estimated each gradient from one
+backward-sampled path per mesocosm for the 38-parameter optimization.
+Moreover, the Daphnia implementation uses averaged-score Adam updates,
+whereas the Gaussian examples use SAEM maximization with sufficient
+statistics. We have not compared these updates with numerical SAEM on
+Daphnia. Evaluating both the Gaussian fitting objective and the Euler
+likelihood along the same searches would help assess the effect of the
+transition approximation: improvement in the former accompanied by
+deterioration in the latter would indicate that improving the approximate
+objective need not improve the likelihood of interest. We have not
+carried out this diagnostic.
+
 \subsection{Score updates and numerical SAEM on Dhaka}
 
 To assess whether the score updates accounted for the poor performance
@@ -13275,6 +13316,13 @@ Neither method improved on the IF2 estimates at the median, with changes
 of $-0.27$ for score updates and $-1.37$ for numerical SAEM.
 Thus numerical maximization of the SAEM objective did not improve the
 Dhaka results.
+Both methods retained the same monthly Gaussian transition and particle
+smoother, so this comparison does not measure the effect of the transition
+approximation. Increasing the number of particles can improve the
+particle approximation to this Gaussian model, but does not remove its
+difference from the Euler model. The results therefore leave open the
+relative contributions of transition approximation, smoothing error,
+numerical conditioning, and optimization cost to the Dhaka shortfall.
 
 \clearpage
 \input{imgs/benchmarks/figures.tex}
