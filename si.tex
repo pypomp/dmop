@@ -13163,7 +13163,10 @@ For every method, the timer waits for the numerical calculations to
 finish; compilation and the subsequent likelihood evaluations are excluded.
 The analytic Gaussian likelihood is used for evaluation, not to replace
 DS19's particle filter during fitting.
-The resulting times describe these implementations and settings.
+The Gaussian IFAD, IF2, and DS19 runs used four efficiency cores of an
+Intel Core i9-13900K; CTDD21 used two performance cores with four hardware
+threads. Concurrent batches used disjoint core groups.
+The resulting times describe these implementations and hardware settings.
 They do not establish a general runtime ordering across models.
 In the progress plots, solid lines show the median log-likelihood and
 shaded regions span the 10th through 100th percentiles across searches,

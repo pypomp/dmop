@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: Gaussian timing hardware stated in SI
+
+- Added the recorded CPU distinction to the Gaussian timing paragraph:
+  IFAD, IF2 and DS19 used four efficiency cores of the i9-13900K; CTDD21
+  used two performance cores with four hardware threads. Verified all
+  retained configurations and the local CPU/core mapping before editing.
+  Concurrent batches used disjoint groups. This supplements the particle
+  and iteration-count caveats requested for the runtime comparison.
+- Native compiler attempt returned `No handler registered`; local
+  `make dmop/si.pdf` succeeded in place. No errors, undefined references or
+  overfull boxes were found. Visually inspected page S76; still 78 pages.
+  Build log `/tmp/dmop-si-hardware-build.log` and page image
+  `/tmp/dmop-si-hardware-76.png` retain verification output.
+- All eight final fitting subprocesses remain live. Daphnia's first full
+  MPIF fits are complete and its IFAD stages are running. Corrected A/B
+  remains at 16 audited cold pairs with workers fitting starts 16--19;
+  no warm pair is complete. Final reports and SI results remain pending.
+
 ## October 9, 2026: sixteen corrected cold pairs audited; Daphnia fitting
 
 - Corrected cold starts 0--15 pass the A/B audit. New score/SAEM Euler
