@@ -267,7 +267,8 @@ def generate(results, output, models, expected, gaussian_particles=500):
             ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
             ax.grid(color=".92")
         fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
-                            for m in METHODS], loc="outside lower center", ncols=4, frameon=False)
+                            for m in METHODS], loc="outside lower center",
+                   ncols=2 if len(models) == 1 else 4, frameon=False)
         if detail:
             fig.suptitle("Detail near final estimates", fontsize=9)
         save(fig, output, "optimization_detail" if detail else "optimization")
