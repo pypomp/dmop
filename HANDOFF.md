@@ -1,5 +1,21 @@
 # Handoff
 
+## October 9, 2026: thirteenth corrected pair complete
+
+- Cold start 12 passes the A/B audit, bringing the total to 13 complete
+  cold pairs and no warm pairs. Its score fit stopped with
+  `non-finite-path-or-score` after three updates (37.88 s); the last valid
+  estimate is retained. SAEM completed 31 eligible outer iterations by
+  841.09 s. Independent Euler log-likelihoods: initial -7044.278648,
+  score -6282.268162 (MCSE .825878), SAEM -5836.647378 (.367649).
+  Preserve the failed-fit marker and include this pair in all summaries.
+- Worker 0 has finished cold start 12; the other workers are finishing
+  numerical SAEM on starts 13--15, with score fits still needed. All four
+  final Daphnia subprocesses continue accumulating CPU time while compiling.
+  The same eight actual process handles were repeatedly confirmed live;
+  none was restarted. Goal remains active, awaiting full experiments and
+  the final plots/table/SI integration.
+
 ## October 9, 2026: twelve corrected cold pairs complete
 
 - Corrected starts 0--11 pass the A/B audit. New score/SAEM Euler
