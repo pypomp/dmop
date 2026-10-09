@@ -1,5 +1,26 @@
 # Handoff
 
+## October 9, 2026: all corrected workers have taken over
+
+- At 05:23 UTC all four `dmop-saem-scaled-wN` services were active and had
+  launched their corrected fitting subprocesses. All old `dmop-saem-ab-wN`
+  services were inactive with MainPID=0. The queue preserved the in-flight
+  score fits for cold starts 8--11 before stopping the old processes.
+  There are 12 complete original score fits eligible for reuse, eight
+  complete original cold pairs, and no original warm pairs. Added an archive
+  README clarifying the incomplete original pairs and the corrected study.
+- `audit_results.py` now verifies both copied and original score files
+  against every `score_reuse.json` hash. The actual copied cold-start-0
+  files pass this check. The sibling Pypomp worktree is clean at the recorded
+  revision. No frozen fitting source changed in this continuation.
+- The corrected worker 0's first six M-steps all increased their fixed Q
+  objectives. This establishes progress of the corrected implementation,
+  not an observed-likelihood or final-performance conclusion. Continue to
+  evaluate completed pairs independently and inspect all final results.
+- Gaussian J=500 oscillator fits and both Daphnia tuning recoveries remain
+  active. The full final report and SI integration still await the declared
+  experiments and Gaussian tuning choice. Goal remains active.
+
 ## October 9, 2026: corrected SAEM services launched
 
 - The corrected experiment is now frozen in `ditlevsen/results/saem_ab_scaled`
