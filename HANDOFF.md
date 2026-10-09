@@ -1,5 +1,24 @@
 # Handoff
 
+## October 9, 2026: first four warm pairs audited and previewed
+
+- Warm starts 1--3 completed; all 24 completed A/B pairs pass the full
+  audit (20 cold, four warm). New Euler log-likelihoods (initial, score,
+  SAEM): 1 (-3761.386114, -3763.034330, -3763.489515);
+  2 (-3768.131797, -3768.580306, -3768.771922);
+  3 (-3775.662563, -3775.024334, -3775.599359).
+- Generated and visually reviewed `/tmp/dmop-saem-ab-warm-preview/`:
+  `comparison.{png,pdf}`, `plot.py`, `paired.csv`, `summary.csv`, `audit.json`.
+  This explicitly shows only the first four of 20 warm pairs, using linear
+  axes and twice paired MCSE for differences. It is outside the SI and
+  official full-study report. Among these four, score is higher in three;
+  all absolute paired differences are below one log-likelihood unit.
+  No conclusion about the full warm comparison is warranted yet.
+- All eight worker processes continue. Daphnia remains at eight complete
+  starts; its third group is fitting. Remaining warm pairs, Daphnia
+  searches, final reports and SI integration are still outstanding.
+  Frozen fitting/reporting source is unchanged.
+
 ## October 9, 2026: eight final Daphnia starts evaluated
 
 - Starts 0, 1, 5, 6, 10, 11, 15 and 16 now have all four final method
