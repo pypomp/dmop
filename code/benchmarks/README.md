@@ -204,7 +204,7 @@ is explicit. The initial distributions and parameter bounds are the same as
 for the other methods. The tests compare sufficient-statistic likelihoods and
 derivatives against direct complete-path calculations.
 
-DS19, IFAD and IF2 use equal particle counts in the manuscript's Gaussian
+DS19, IFAD and IF2 each use 500 particles in the manuscript's Gaussian
 panels. `matched_particles.py` runs both 100 and 500 particles on the same
 20 final starts (seed 631450) and CPU group. `tune_particles.py` selects one
 common count using four separate IFAD starts per model (seed 2026100901):
@@ -212,6 +212,8 @@ fewest failed fits, then smallest sum of median deficits from the two analytic
 maxima, then fitting time. The SI reports the selected common setting; the
 other configuration remains in the repository. `report.py` reads this
 selection by default and rejects unequal IFAD/IF2/DS19 particle counts.
+The completed selection is recorded in
+[results/matched-particle-tuning/selection.json](results/matched-particle-tuning/selection.json).
 CTDD21 retains its 25-particle configuration and original timing hardware.
 
 The Gaussian DS19 timing includes the particle filter, backward simulation,
@@ -240,6 +242,10 @@ to the four observed counts, with their negative-binomial variances evaluated
 at the predicted counts. Weights include the transition/proposal ratio and
 the original measurement density. Out-of-range Gaussian proposals receive
 zero weight. This boundary treatment differs from the original Euler model.
+
+The final runs use learning rate 0.001 for both DS19 and CTDD21, selected
+from the separate four-start tuning batches. The `final-daphnia-*-launch.json`
+files record both candidates and the selection.
 
 All Daphnia final estimates are therefore evaluated using the original Euler
 particle filter. Likelihood estimates are averaged within each unit before

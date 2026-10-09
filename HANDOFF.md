@@ -1,5 +1,25 @@
 # Handoff
 
+## October 9, 2026: selected settings reflected in SI and documentation
+
+- Updated the Gaussian runtime paragraph in `si.tex` to state the selected
+  500 particles for DS19, IFAD and IF2. Removed the provisional sentence
+  about selecting between counts; the repository retains the tuning record.
+  The benchmark README now links the completed selection and gives .001
+  for both Daphnia competitor learning rates.
+- Native `compile_latex_document` now responds, but failed because its
+  standalone compiler could not load the existing project `macros.tex`.
+  Do not replace the document or inline its dependencies to work around this
+  service limitation. `make dmop/si.pdf` succeeded in place (78 pages);
+  visually checked updated page S76. Existing theoremstyle/PDF-string
+  warnings remain; no new source error or overfull box was reported.
+  Build log: `/tmp/dmop-si-selected-particles-build.log`.
+- All four final Daphnia child processes are live, initially compiling:
+  1515337, 1515335, 1515336, 1515829. All four corrected A/B workers are
+  also live. Nine cold pairs pass the audit; starts 9--11 are evaluating
+  and worker 0 is fitting start 12. No warm pair or final Daphnia batch
+  is complete yet. Complete plots/tables and SI results remain pending.
+
 ## October 9, 2026: tuning finished; all final Daphnia batches launched
 
 - Separate Gaussian tuning selected J=500 for IFAD, IF2 and DS19 in both
