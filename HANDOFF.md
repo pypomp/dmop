@@ -1,5 +1,24 @@
 # Handoff
 
+## October 9, 2026: first corrected Dhaka pair complete and audited
+
+- Corrected `saem_ab_scaled/cold/start000` is complete. Euler log-likelihoods
+  are initial -6207.322898 (MCSE .159354), score -4027.308296 (.882202), and
+  numerical SAEM -5785.058460 (.469738). SAEM completed 14 eligible outer
+  iterations; all 14 increased their fixed Q by more than 1e-7. Its selected
+  estimate is from 765.85 s; the call ended at 853.19 s after discarding an
+  incomplete over-budget M-step. This single corrected pair still favors
+  score updates; it is not a result for the whole cold or warm comparison.
+- `audit_results.py --dhaka-ab` passes for this pair, including original and
+  reused score hashes, checkpoint eligibility, M-step acceptance and raw
+  Euler likelihood/MCSE recalculation. Audit output is temporarily saved at
+  `/tmp/dmop-corrected-pair-audit.json`. Use the same audit as more pairs finish.
+- All seven fitting services remained live through 05:35 UTC. Worker 0 is
+  advancing to the next corrected pair. Oscillator J=500 had completed 11
+  of 20 IFAD/IF2 starts. Daphnia's higher-rate tuning recovery had completed
+  start index 2 (DS19 again stopped on a nonfinite update); the lower-rate
+  run was still finishing that start. Full report/SI work remains pending.
+
 ## October 9, 2026: A/B caption fragment prepared during verified wait
 
 - Added `imgs/benchmarks/saem_ab_figures.tex` for the corrected Dhaka paired
