@@ -1,5 +1,25 @@
 # Handoff
 
+## October 9, 2026: sixteen Daphnia starts and nine warm pairs audited
+
+- Daphnia now has 16/20 complete starts. Recomputed all 64 final
+  likelihoods and MCSEs from raw per-unit replicates; all match. New
+  fourth-group likelihoods (MPIF, IFAD, DS19, CTDD21):
+  3 (-866.203513, -860.261047, -864.597464, -865.291328);
+  8 (-866.507163, -860.965894, -863.516247, -864.396072);
+  13 (-863.607608, -864.769183, -869.968223, -871.970273);
+  18 (-869.537062, -863.561325, -867.357687, -868.548024).
+  These 16 fits are successful; the earlier DS19 start-17 failure remains.
+- Warm start 8 completed: initial Euler likelihood -3789.371005
+  (MCSE .159980), score -3789.211443 (.240365), SAEM -3789.252831
+  (.185231). All 29 complete A/B pairs pass the audit (20 cold, nine warm).
+  Only this newly completed pair is saved here; live partial batches remain
+  untracked. Audit snapshots: `/tmp/dmop-corrected-pair-audit.json` and
+  `/tmp/dmop-daphnia-live-evaluation-audit.json`.
+- All eight subprocesses remain live. Each Daphnia worker now has only
+  its fifth start remaining. Eleven warm pairs and the final reports/SI
+  integration are still outstanding. No frozen source changed.
+
 ## October 9, 2026: eight warm pairs audited and previewed
 
 - Warm starts 5--7 completed; all 28 complete A/B pairs pass the audit
