@@ -3,12 +3,14 @@
 \centering
 \includegraphics[width=\textwidth]{imgs/benchmarks/final_likelihoods.pdf}
 \caption{Final log-likelihoods from repeated parameter searches.
-Each point is one search: 20 per method in panels A--D and 100 in panel E.
+Each point represents one of 20 searches per method in panels A--D
+or 100 searches in panel E.
 Boxes show the median and interquartile range; whiskers extend to the most
 extreme values within 1.5 interquartile ranges of the box.
 All estimates are shown, including those outside the whiskers.
-Crosses mark searches that stopped prematurely, evaluated at their last
-eligible estimate. Dashed lines mark the analytic maximum in panels A and B
+Crosses mark searches that stopped prematurely, for which we evaluated
+the last estimate obtained before failure or the time limit.
+Dashed lines mark the analytic maximum in panels A and B
 and the best displayed estimate in panels C--E.
 Likelihoods are evaluated independently of fitting, using the same model
 within each panel. All axes are linear.}
@@ -19,16 +21,14 @@ within each panel. All axes are linear.}
 \centering
 \includegraphics[width=\textwidth]{imgs/benchmarks/optimization_detail.pdf}
 \caption{Optimization progress near the final estimates.
-Solid lines show median log-likelihoods and shaded regions span the 10th
-through 100th percentiles across searches, with the same shading opacity
-as Figure~\ref{fig:benchmark-optimization-full}.
-Intermediate likelihoods are evaluated at saved checkpoints; these
-evaluations do not select the fitted parameter estimates.
-Values are interpolated linearly between checkpoints, and each search's
-final value is retained after it stops.
-Each panel uses a linear vertical scale restricted to the region near the
-final estimates. Figure~\ref{fig:benchmark-optimization-full} shows the full
-range of these trajectories and percentile bands.
+Solid lines show the median log-likelihoods, and the shaded regions cover
+the area between the 10th and 100th percentiles across searches.
+We evaluated likelihoods at saved iterations and interpolated linearly
+between them, retaining each search's final value after it stopped.
+These evaluations were not used to select the fitted parameters.
+The vertical axes are linear and restricted to the region near the
+final estimates; Figure~\ref{fig:benchmark-optimization-full} shows
+the full range, with the same shading opacity.
 The starting points, reference lines and final evaluations are those of
 Figure~\ref{fig:benchmark-final-likelihoods}.}
 \label{fig:benchmark-optimization-detail}
@@ -40,11 +40,10 @@ Figure~\ref{fig:benchmark-final-likelihoods}.}
 \caption{Optimization progress over the full range of the median
 trajectories and percentile bands. Lines, shading and reference lines are
 defined in Figure~\ref{fig:benchmark-optimization-detail}.
-All axes are linear. The ranges differ between models because the
-log-likelihoods are for different data sets.
-Fitting times exclude compilation and independent likelihood evaluation;
-the implementation and hardware settings described in the text govern
-their interpretation.}
+All axes are linear, with separate ranges for each model and data set.
+Computation times exclude compilation and independent likelihood
+evaluation. The hardware and algorithmic settings are given in
+Section~\ref{sec:benchmark-settings} and the preceding paragraph.}
 \label{fig:benchmark-optimization-full}
 \end{figure}
 
@@ -58,8 +57,9 @@ across searches. MCSE is the median Monte Carlo standard error of an
 individual final log-likelihood estimate; it is zero for the analytic
 Gaussian evaluations. Time is the median fitting time, including any IF2
 or MPIF warm start and excluding compilation and independent evaluation.
-Failed counts searches that stopped prematurely; their last eligible
-estimates remain in all summaries. Hardware and fitting settings differ
+Failed is the number of searches that stopped prematurely. We retained
+their last estimates before failure or the time limit in all summaries.
+Hardware and fitting settings differ
 between experiments, as described in the text.}
 \label{tab:benchmark-results}
 \end{table}
