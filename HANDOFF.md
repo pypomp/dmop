@@ -1,5 +1,20 @@
 # Handoff
 
+## October 9, 2026: Daphnia DS19 failure retained
+
+- At zero-based final start 17, DS19 accepted five updates and then
+  produced a nonfinite score on its sixth attempt (finite fitting
+  log-likelihood -916.925841, NaN score norm). Verified the last saved
+  parameter vector is finite at iteration 205 and the fit JSON records
+  `nonfinite_update`. No rerun or omission: the existing pipeline evaluates
+  this last estimate and carries the failure status into plots and tables.
+- The 190.23-second recorded fitting time includes the shared MPIF warm
+  start; DS19 continuation itself ended after 3.29 seconds. CTDD21 and
+  independent evaluations for this start are still pending. This result
+  must remain a failure even if its final likelihood is competitive.
+- All eight subprocesses remain live; no frozen source changed. Complete
+  counts remain eight Daphnia starts and 24 A/B pairs (20 cold, four warm).
+
 ## October 9, 2026: first four warm pairs audited and previewed
 
 - Warm starts 1--3 completed; all 24 completed A/B pairs pass the full
