@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: A/B caption fragment prepared during verified wait
+
+- Added `imgs/benchmarks/saem_ab_figures.tex` for the corrected Dhaka paired
+  figure and table. Captions define cold/warm starts, the common particle
+  and time budgets, paired Monte Carlo error bars, retained failed fits,
+  iteration counts and exclusion of precomputed IF2 cost. The fragment is
+  not yet included in `si.tex`; include and compile it only after all 40
+  corrected pairs and the generated report have been reviewed.
+- Repeatedly verified the same live service handles and advancing fitting
+  logs. At 05:31 UTC corrected worker 0 had reached 765.85 seconds in its
+  first SAEM fit, with no completed corrected pair yet. The other corrected
+  workers were progressing through their first fits. The oscillator J=500
+  IFAD/IF2 batch had completed 10 of 20 starts; Daphnia tuning was fitting
+  its next start. No restart or change of fitting settings occurred.
+- This continuation is a verified computational wait plus preparation of
+  the remaining SI caption fragment. The requested final figures/table and
+  SI integration still require the unfinished experiments. Goal is active.
+
 ## October 9, 2026: all corrected workers have taken over
 
 - At 05:23 UTC all four `dmop-saem-scaled-wN` services were active and had

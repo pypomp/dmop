@@ -35,3 +35,6 @@ For a development preview of completed models, pass `--models`, an explicit
 `--output` directory. Keep such partial previews outside this publication
 directory. The Dhaka score-versus-numerical-SAEM A/B study is a separate
 experiment in [../../ditlevsen/](../../ditlevsen/README.md).
+[saem_ab_figures.tex](saem_ab_figures.tex) supplies its SI captions and
+references the corrected `saem_ab_scaled/report/` outputs. Include this
+fragment only after all 40 paired comparisons and their report are reviewed.
