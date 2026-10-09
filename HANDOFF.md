@@ -1,5 +1,21 @@
 # Handoff
 
+## October 9, 2026: eight corrected cold pairs audited
+
+- Corrected cold starts 0--7 now pass `audit_results.py --dhaka-ab`, including
+  reused-source hashes, selected estimates, M-step Q acceptance and raw
+  likelihood/MCSE recalculation. Newly completed score/SAEM likelihoods:
+  start 5 (-3980.858, -10675.681), start 6 (-3967.135, -3963.489), and
+  start 7 (-3972.757, -6549.959). Numerical SAEM is higher for one of these
+  eight starts; no warm pair is complete. Avoid full-study conclusions.
+- All four corrected workers have advanced to cold starts 8--11. The
+  oscillator J=500 IFAD/IF2 batch is finishing start 20; the final DS19
+  batch and separate particle selection are still downstream. Both
+  Daphnia tuning processes remain live, finishing their final start.
+- This continuation made progress by auditing and saving three new complete
+  pairs, after monitoring the actual child PIDs and increasing CPU time.
+  Full report generation, visual review and SI integration remain pending.
+
 ## October 9, 2026: fifth corrected pair complete
 
 - Corrected cold start 4 completed and passed the five-pair audit. Its score
