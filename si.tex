@@ -13172,6 +13172,43 @@ In the progress plots, solid lines show the median log-likelihood and
 shaded regions span the 10th through 100th percentiles across searches,
 as in Section~\ref{sec:dhaka-competitors}.
 
+\subsection{Search and evaluation settings}
+\label{sec:benchmark-settings}
+
+The oscillator, linear Gaussian, SPX, and Daphnia comparisons each use
+20 starting parameter vectors, shared by the methods within each example.
+The five-model comparison uses the 100 Dhaka searches in
+Section~\ref{sec:dhaka-competitors}.
+
+For SPX, IFAD and IF2 use 500 particles, DS19 uses 100, and CTDD21 uses 25.
+IFAD uses 100 IF2 iterations followed by 300 gradient iterations;
+IF2 uses 600 iterations, and DS19 and CTDD21 each use 300 updates.
+The Adam learning rates start at $0.001$ for IFAD and $0.01$ for DS19
+and CTDD21, with cosine decay to one tenth of these values.
+
+For Daphnia, MPIF and IFAD use 1,000 particles per mesocosm, and
+DS19 and CTDD21 use 100.
+MPIF runs for 680 iterations.
+IFAD starts from a separate 200-iteration MPIF estimate and takes
+200 gradient steps.
+DS19 and CTDD21 start from that same estimate and each receive the
+measured duration of the IFAD gradient stage, with at most 2,000 updates.
+Their learning rates decrease from $0.001$ to $0.0001$ by cosine decay
+as the allotted time elapses.
+An update completed after the time limit is discarded.
+The IFAD, DS19, and CTDD21 times include the common MPIF warm start.
+
+Final SPX likelihoods use 24 independent particle-filter replicates with
+5,000 particles. Final Daphnia likelihoods use 10 replicates with
+2,000 particles per mesocosm under the original Euler model.
+For each mesocosm, we average the likelihood estimates before taking the
+logarithm, then sum over mesocosms; Monte Carlo errors combine the
+independent mesocosm errors.
+Intermediate evaluations use four replicates with 1,000 particles for SPX
+and two replicates with 500 particles per mesocosm for Daphnia.
+These evaluations are independent of fitting and do not select the
+reported parameter estimates.
+
 \clearpage
 \bibliography{bib-ifad}
 

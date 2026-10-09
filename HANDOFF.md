@@ -1,5 +1,26 @@
 # Handoff
 
+## October 9, 2026: search/evaluation settings added to SI
+
+- Added S12.2, `sec:benchmark-settings`, giving the common 20-start design,
+  SPX particle counts and iteration schedules, Daphnia's common 200-MPIF
+  starting estimate and time-matched continuations, learning-rate schedules,
+  and independent final/intermediate evaluation particle and replicate
+  counts. The 100-search Dhaka comparison is explicitly linked to S11.
+  Verified details against saved final configurations and the fitting code.
+- Clarified that IFAD/DS19/CTDD21 Daphnia times include their shared warm
+  start; the separate MPIF search has 680 iterations. No fitting source,
+  settings, checkpoint selection or active run was changed.
+- Native compiler attempts returned `No handler registered`. Local in-place
+  build succeeded, with no errors, undefined references or overfull boxes.
+  Visually inspected S76--S77. The SI is now 79 pages; results and figure
+  fragments remain to be added after the full experiments complete.
+  Build log: `/tmp/dmop-si-benchmark-settings-build.log`; page images:
+  `/tmp/dmop-si-benchmark-settings-{76,77}.png`.
+- All eight persistent fitting processes continue. Four complete Daphnia
+  starts (16 method estimates) and 17 cold A/B pairs have been audited;
+  remaining cold/warm A/B pairs and Daphnia starts are in progress.
+
 ## October 9, 2026: first four final Daphnia starts evaluated
 
 - Final starts 0, 5, 10 and 15 now have complete MPIF/IFAD/DS19/CTDD21
