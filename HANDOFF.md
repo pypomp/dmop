@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: fifth corrected pair complete
+
+- Corrected cold start 4 completed and passed the five-pair audit. Its score
+  fit stopped after ten updates with `non-finite-path-or-score`; retain the
+  last eligible estimate and mark it failed. Euler likelihoods are initial
+  -8887.596107, score -5831.464297 and SAEM -8862.452111. SAEM completed 16
+  eligible iterations; nine increased Q by more than 1e-7. Its final MCSE
+  is approximately 1, with the likelihood mean dominated by a replicate;
+  do not interpret this delta-method MCSE as reliable confidence coverage.
+- Worker 0 has advanced to cold start 8. The other three corrected workers
+  are finishing cold starts 5--7. All seven fitting subprocesses were
+  confirmed live with increasing CPU time during this continuation.
+- The oscillator J=500 IFAD/IF2 batch has completed 18 of 20 starts; DS19
+  J=500 and separate particle tuning remain queued. Both Daphnia recovery
+  tuning processes are finishing their last start. No final Daphnia batch
+  or warm A/B pair is complete yet. Prepared publication fragments remain
+  unincluded until complete reports can be reviewed and compiled.
+
 ## October 9, 2026: four corrected pairs audited and previewed
 
 - Corrected cold starts 0--3 are complete; `audit_results.py --dhaka-ab`
