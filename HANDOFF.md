@@ -1,5 +1,35 @@
 # Handoff
 
+## October 9, 2026: all numerical jobs complete; final reports generated
+
+- Rechecked after the user's status request: all eight fitting subprocesses
+  and the report waiter have exited. All four Daphnia batches are complete
+  (80 final fits, 20 starts); corrected Dhaka A/B is complete (40 pairs:
+  20 cold and 20 warm). Both report jobs generated their full artifacts.
+- `audit_results.py` passes all 80 raw Daphnia final evaluations and all
+  40 A/B pairs, including checkpoint selection, Q acceptance, reused-score
+  provenance and raw likelihood/MCSE reconstruction. Saved audit:
+  `code/benchmarks/results/final-daphnia-and-saem-audit.json`.
+- Daphnia median likelihoods: IFAD -861.297586, MPIF -864.978475,
+  DS19 -867.021166, CTDD21 -865.026518; one DS19 failure retained.
+  Warm A/B medians: score -3771.543503, SAEM -3772.440844. SAEM is
+  higher in 4/20 warm pairs; median paired difference is -.619493.
+  Cold A/B is unchanged: SAEM higher in 2/20 pairs, median paired
+  difference -608.825345. The warm start greatly reduces discrepancies
+  but the numerical SAEM update does not improve the overall comparison.
+- Visually inspected all three cross-model panels and the full A/B plot.
+  All use linear axes and retain failures/outliers. One presentation issue
+  remains: `optimization_detail` lacks a visible legend despite the
+  generator requesting an outside legend; fix its layout before SI use.
+  The A/B start-index ticks are fractional (0, 2.5, ...); use integer,
+  preferably one-based labels for the final publication figure.
+- No numerical jobs remain. Required next work: fix these figure layout
+  details without refitting; review tables; add the prepared figure/table
+  fragments and concise actual-results prose to existing `si.tex`; attempt
+  native compilation, run the in-place local build if needed, inspect the
+  changed pages, update READMEs/handoff, and commit/push final artifacts.
+  The goal remains active; generated reports alone do not complete it.
+
 ## October 9, 2026: twelve warm pairs audited
 
 - Warm starts 9--11 completed; all 32 complete A/B pairs pass the full
