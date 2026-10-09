@@ -1,8 +1,8 @@
 """Gaussian comparisons at equal particle counts for DS19, IFAD and IF2.
 
 Run both 100 and 500 particles on the same 20 starts and CPU assignment.
-Keep all configurations for reporting; choosing a primary configuration
-after looking at the results must be disclosed. CTDD21 is unchanged.
+Keep both configurations in the repository. Separate tuning starts select
+the common count for the manuscript; see tune_particles.py. CTDD21 is unchanged.
 """
 
 import json
@@ -34,7 +34,7 @@ def main():
                            "--methods", *methods]
                 jobs.append({"name": name, "command": command})
     plan = {"utc": datetime.now(timezone.utc).isoformat(), "cores": sorted(os.sched_getaffinity(0)),
-            "jobs": jobs, "reporting": "report both counts; disclose any primary setting chosen after inspection",
+            "jobs": jobs, "reporting": "separate tuning starts select the common manuscript count; retain all runs in the repository",
             "fixed_settings": "same 20 starts and method-specific iteration schedules at both counts"}
     plan_path = protocol / "configuration.json"
     if not plan_path.exists():
@@ -51,7 +51,7 @@ def main():
         subprocess.run(job["command"], cwd=HERE.parents[1], check=True)
         (protocol / "status.json").write_text(json.dumps({"complete": index + 1 == len(jobs),
             "batches": index + 1, "expected_batches": len(jobs)}) + "\n")
-    print("Both particle counts complete; compare and report every configuration", flush=True)
+    print("Both particle counts complete; use the separate tuning selection for the manuscript", flush=True)
 
 
 if __name__ == "__main__":

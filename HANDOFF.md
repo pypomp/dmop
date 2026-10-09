@@ -1,5 +1,60 @@
 # Handoff
 
+## October 9, 2026: equal-particle Gaussian tuning and progress bands
+
+- Latest user steering supersedes the earlier unequal-count Gaussian setup:
+  DS19, IFAD and IF2 must use the same particle count in panels A/B. Compare
+  100 and 500 as ordinary tuning, report the chosen common setting in the SI,
+  and do not add a separate sensitivity section or a disclosure discussion.
+  CTDD21 was not included in this new equal-count request and retains J=25.
+- `matched_particles.py` runs both counts on all 20 original final starts,
+  with all three methods on E-core group 28–31. IFAD/IF2 and DS19 are separate
+  batches so their original 300/600 and 80 iteration schedules are retained.
+  Service `dmop-matched-particles` is active, log `/tmp/dmop-matched-particles.log`.
+  By 04:36 UTC both `matched-linear-j100-{if,ds}` batches were complete and
+  `matched-oscillator-j100-if` was running. Remaining jobs are serial.
+  These files are not named `final-*` and must not be pooled with old runs.
+- `tune_particles.py` waits for the matched runs, then uses four separate
+  IFAD starts per Gaussian model/count (seed 2026100901, versus final 631450).
+  It selects a shared count by fewer failures, then the smallest sum of median
+  deficits from the analytic maxima, then time. Service `dmop-tune-particles`
+  is waiting on the same E-core group; log `/tmp/dmop-tune-particles.log`.
+  Its output will be `results/matched-particle-tuning/selection.json` and a
+  complete status. `dmop-final-daphnia-3` now waits for that complete status
+  as well as both Daphnia tuning batches and SPX; other Daphnia queues unchanged.
+  Confirm service handles before restarting; these are persistent jobs.
+- `report.py` now uses the tuning selection by default for Gaussian IFAD,
+  IF2 and DS19, verifies equal counts, and takes only CTDD21 from the original
+  Gaussian runs. `--gaussian-particles 100|500` allows explicit inspection.
+  The automatically queued complete report will therefore use the selected
+  common count once the Daphnia batches complete. Eleven recovery/report
+  tests pass, including rejection of unequal Gaussian particle counts.
+- User requested the Dhaka SI's shading. Verified it is 10th–100th
+  percentiles at alpha .10. Added `Axes.fill_between` accordingly in full
+  and detail progress plots, with median curves. The detail window now
+  starts below the smallest method final 10th percentile so the bands are
+  legible; it stays linear, as does the full-range companion. Inspected the
+  regenerated historical-subset preview in `/tmp/dmop-benchmark-report-preview`.
+  Those previews still use the old unequal-count data for layout inspection;
+  they are not manuscript results and must be replaced with completed matched
+  results. Inspect every final image and its compiled SI page again.
+- Updated S12's timing paragraph to equal counts selected on separate tuning
+  starts, retained the different iteration schedules and cheap-M-step caveats,
+  and added the median/band definition. Local `make dmop/si.pdf` succeeds,
+  with no overfull boxes or undefined references. Visually inspected S-73.
+  A second native compile call also stalled and was cancelled; no source
+  editor/tab was replaced. Current source is 75 PDF pages, still awaiting
+  final benchmark figures/table and Dhaka A/B results.
+- First four global Dhaka A/B pairs are complete and workers continue to the
+  next starts. Score/SAEM Euler log-likelihoods: start0 -4027.308/-5747.392;
+  start1 -4010.903/-4326.347; start2 -4040.366/-8353.122; start3
+  -3983.291/-7196.461. This early numerical-SAEM result is worse on all four;
+  do not extrapolate to the unrun warm-start pairs. Starting-point and some
+  poor-fit evaluations have MCSE near 1 from highly concentrated likelihood
+  averages; inspect raw replicates before interpreting MC uncertainty.
+  The metadata update-count reporting correction described below is still
+  needed. Frozen fitting sources remain unchanged.
+
 ## October 9, 2026: recovery pipeline, figure scales, Gaussian timing caveats
 
 - Active goal is to finish every benchmark and the Dhaka A/B experiment,

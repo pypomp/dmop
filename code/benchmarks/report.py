@@ -25,8 +25,14 @@ METHODS = ["IFAD", "IF2", "DS19", "CTDD21"]
 COLORS = {"IFAD": "#31688e", "IF2": "#b59c00", "DS19": "#292929", "CTDD21": "#d95f02"}
 
 
-def new_results(root, model, expected=20):
+def new_results(root, model, expected=20, gaussian_particles=None):
     folders = sorted(p for p in root.glob(f"final-{model}*") if p.is_dir())
+    matched = model in ("linear", "oscillator") and gaussian_particles is not None
+    if matched:
+        # Keep CTDD21 from its original batch; replace every IFAD/IF2/DS19
+        # row with the declared equal-particle comparison, never pool counts.
+        folders = [p for p in folders if not p.name.endswith("-saem")]
+        folders += [root / f"matched-{model}-j{gaussian_particles}-{group}" for group in ("if", "ds")]
     if not folders:
         raise ValueError(f"No final results for {model}")
     frames, timings, sources, reference = [], [], [], None
@@ -39,10 +45,20 @@ def new_results(root, model, expected=20):
         frame = pd.read_csv(folder / "checkpoints.csv")
         timing = pd.read_csv(folder / "timings.csv")
         if model in ("linear", "oscillator"):
-            saem = config.get("ds_update") == "saem"
+            if matched:
+                role = folder.name.rsplit("-", 1)[-1] if folder.name.startswith("matched-") else "ct"
+                keep = {"if": ["IFAD", "IF2"], "ds": ["DS19"], "ct": ["CTDD21"]}[role]
+                saem = role == "ds" and config.get("ds_update") == "saem"
+                if role in ("if", "ds"):
+                    field = "ds_particles" if role == "ds" else "particles"
+                    if config[field] != gaussian_particles:
+                        raise ValueError(f"Unequal particle count: {folder}")
+            else:
+                saem = config.get("ds_update") == "saem"
+                keep = ["DS19"] if saem else ["IFAD", "IF2", "CTDD21"]
             saem_found |= saem
-            frame = frame.loc[frame.method.eq("DS19") if saem else frame.method.ne("DS19")]
-            timing = timing.loc[timing.method.eq("DS19") if saem else timing.method.ne("DS19")]
+            frame = frame.loc[frame.method.isin(keep)]
+            timing = timing.loc[timing.method.isin(keep)]
         frames.append(frame)
         timings.append(timing)
         sources.extend([folder / "configuration.json", folder / "checkpoints.csv", folder / "timings.csv"])
@@ -66,6 +82,9 @@ def new_results(root, model, expected=20):
             reference = analytic["loglik"]
     if model in ("linear", "oscillator") and not saem_found:
         raise ValueError(f"The Gaussian comparison requires completed SAEM results: {model}")
+    selection_path = root / "matched-particle-tuning" / "selection.json"
+    if matched and selection_path.exists():
+        sources.append(selection_path)
     trace = pd.concat(frames, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     timing = pd.concat(timings, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     final = trace.loc[trace.final].copy()
@@ -95,9 +114,9 @@ def new_results(root, model, expected=20):
         for _, run in frame.groupby("start"):
             run = run.sort_values("seconds").drop_duplicates("seconds", keep="last")
             values.append(np.interp(grid, run.seconds, run.loglik))
-        q10, median, q90 = np.quantile(values, [.1, .5, .9], axis=0)
+        q10, median, q90, maximum = np.quantile(values, [.1, .5, .9, 1.], axis=0)
         progress.append(pd.DataFrame({"model": model, "method": method, "seconds": grid,
-                                      "median": median, "q10": q10, "q90": q90}))
+                                      "median": median, "q10": q10, "q90": q90, "maximum": maximum}))
     return final, pd.concat(progress), reference, sources
 
 
@@ -145,7 +164,7 @@ def dhaka_results():
                              & old_trace.method.isin(["IFAD-0.97", "IF2"])].copy()
     old_trace["method"] = old_trace.method.replace({"IFAD-0.97": "IFAD"})
     trace = pd.concat([trace, old_trace]).rename(columns={"elapsed_seconds": "seconds"})
-    # The archive stores q10 and maximum, not q90. Plot median curves only.
+    # Preserve the SI's 10th-to-100th-percentile band; q90 is not archived.
     trace["q90"] = np.nan
     trace["model"] = "dhaka"
     return final, trace, float(final.loglik.max()), sources
@@ -171,10 +190,11 @@ def save(fig, output, name):
     plt.close(fig)
 
 
-def generate(results, output, models, expected):
+def generate(results, output, models, expected, gaussian_particles=500):
     all_final, all_progress, references, sources = [], [], {}, []
     for model in models:
-        final, progress, ref, paths = dhaka_results() if model == "dhaka" else new_results(results, model, expected)
+        final, progress, ref, paths = dhaka_results() if model == "dhaka" else new_results(
+            results, model, expected, gaussian_particles=gaussian_particles)
         all_final.append(final)
         all_progress.append(progress)
         references[model] = ref
@@ -187,6 +207,9 @@ def generate(results, output, models, expected):
         "reference_definition": "analytic maximum for Gaussian models; best displayed final estimate otherwise",
         "plot_quantity": "independently evaluated log likelihood",
         "axis_scale": "linear",
+        "gaussian_ifad_if2_ds19_particles": gaussian_particles,
+        "gaussian_ctdd21_particles": 25,
+        "progress_band": {"lower_quantile": .1, "upper_quantile": 1., "alpha": .1},
         "inputs": {str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p):
                    hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}}, indent=2)+"\n")
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8,
@@ -226,30 +249,32 @@ def generate(results, output, models, expected):
         for i, (ax, model) in enumerate(zip(axes, models)):
             for method in METHODS:
                 frame = progress.loc[progress.model.eq(model) & progress.method.eq(method)].sort_values("seconds")
+                ax.fill_between(frame.seconds, frame.q10, frame.maximum,
+                                color=COLORS[method], alpha=.10, linewidth=0)
                 ax.plot(frame.seconds, frame["median"], color=COLORS[method], lw=1.4)
             ax.ticklabel_format(axis="y", style="plain", useOffset=False)
             ax.yaxis.set_major_locator(MaxNLocator(nbins=5))
             ax.xaxis.set_major_locator(MaxNLocator(nbins=4))
             ax.axhline(references[model], color=".65", lw=.7, ls="--")
             if detail:
-                medians = final.loc[final.model.eq(model)].groupby("method").loglik.median()
-                low, high = float(medians.min()), references[model]
+                lower_quantiles = final.loc[final.model.eq(model)].groupby("method").loglik.quantile(.1)
+                low, high = float(lower_quantiles.min()), references[model]
                 span = max(high-low, .1)
                 detail_ranges[model] = [low-.15*span, high+.1*span]
                 ax.set_ylim(*detail_ranges[model])
             ax.set_xlabel("Fitting time (s)")
-            ax.set_ylabel("Median log-likelihood")
+            ax.set_ylabel("Log-likelihood")
             ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
             ax.grid(color=".92")
         fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
                             for m in METHODS], loc="outside lower center", ncols=4, frameon=False)
         if detail:
-            fig.suptitle("Detail near final medians", fontsize=9)
+            fig.suptitle("Detail near final estimates", fontsize=9)
         save(fig, output, "optimization_detail" if detail else "optimization")
     (output/"plot_ranges.json").write_text(json.dumps({
         "scale": "linear for every axis",
         "optimization_detail": detail_ranges,
-        "detail_rule": "minimum method final median to reference, padded by 15% below and 10% above; minimum span 0.1",
+        "detail_rule": "minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
         "full_range_companion": "optimization.pdf",
         "final_distributions": "all final estimates included without cropping"}, indent=2)+"\n")
 
@@ -282,5 +307,10 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, default=ROOT/"imgs/benchmarks")
     parser.add_argument("--models", nargs="+", choices=MODELS, default=MODELS)
     parser.add_argument("--expected-starts", type=int, default=20)
+    parser.add_argument("--gaussian-particles", type=int, choices=[100, 500],
+                        help="Equal particle count for Gaussian IFAD, IF2 and DS19; defaults to separate tuning selection")
     args = parser.parse_args()
-    generate(args.results, args.output, args.models, args.expected_starts)
+    if args.gaussian_particles is None and any(m in ("linear", "oscillator") for m in args.models):
+        selection = json.loads((args.results / "matched-particle-tuning" / "selection.json").read_text())
+        args.gaussian_particles = selection["chosen_particles"]
+    generate(args.results, args.output, args.models, args.expected_starts, args.gaussian_particles)

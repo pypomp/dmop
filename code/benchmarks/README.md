@@ -19,6 +19,8 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [run_daphnia.py](run_daphnia.py) | MPIF, IFAD, DS19, and CTDD21 from common Daphnia starts |
 | [report.py](report.py) | Combine completed final runs and the archived Dhaka results into panels and a table |
 | [finish_report.py](finish_report.py) | Generate the complete report after declared final batches finish |
+| [matched_particles.py](matched_particles.py) | Gaussian DS19, IFAD and IF2 runs with equal particle counts, at 100 and 500 |
+| [tune_particles.py](tune_particles.py) | Select the shared Gaussian particle count on separate IFAD tuning starts |
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
@@ -72,8 +74,10 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   Plot log-likelihood on ordinary linear axes, with a separate range for each
   model. Do not compare likelihood values between datasets. A reference line
   marks the analytic maximum or the best displayed final estimate.
+  Progress curves show medians, with `fill_between` from the 10th to 100th
+  percentiles at alpha 0.10, matching the existing Dhaka SI plots.
   `optimization.pdf` retains the full range of the median trajectories;
-  `optimization_detail.pdf` shows the same curves near their final medians,
+  `optimization_detail.pdf` shows the same curves near the final estimates,
   also on linear axes. `plot_ranges.json` records the limits and their rule.
   All final estimates, including outliers, appear in `final_likelihoods.pdf`.
 - Measure synchronized wall time, separate compilation and evaluation, and
@@ -162,7 +166,7 @@ checking a completed subset in a separate directory during development.
 
 ## Gaussian SAEM
 
-For the oscillator, we use 80 SAEM iterations, 100 particles, a gain of one
+For the oscillator, we use 80 SAEM iterations, a gain of one
 for the first 30 iterations, then `(m-30)^(-0.9)`, following DS19's example.
 Each iteration draws a smoothed state path and updates the sufficient
 statistics of the Gaussian complete-data likelihood. Its maximization step
@@ -171,21 +175,29 @@ is explicit. The initial distributions and parameter bounds are the same as
 for the other methods. The tests compare sufficient-statistic likelihoods and
 derivatives against direct complete-path calculations.
 
+DS19, IFAD and IF2 use equal particle counts in the manuscript's Gaussian
+panels. `matched_particles.py` runs both 100 and 500 particles on the same
+20 final starts (seed 631450) and CPU group. `tune_particles.py` selects one
+common count using four separate IFAD starts per model (seed 2026100901):
+fewest failed fits, then smallest sum of median deficits from the two analytic
+maxima, then fitting time. The SI reports the selected common setting; the
+other configuration remains in the repository. `report.py` reads this
+selection by default and rejects unequal IFAD/IF2/DS19 particle counts.
+CTDD21 retains its 25-particle configuration and original timing hardware.
+
 The Gaussian DS19 timing includes the particle filter, backward simulation,
-sufficient-statistic update and M-step. The sampler uses 100 particles for
-80 iterations. IFAD uses 500 particles for 100 IF2 plus 300 gradient updates;
-IF2 uses 600 updates with 500 particles, and CTDD21 uses 300 updates with 25
-particles. These configurations have unequal budgets. There was no DS19
-particle-number sensitivity study. The linear Gaussian M-step is explicit;
+sufficient-statistic update and M-step. DS19 uses 80 iterations; IFAD uses
+100 IF2 plus 300 gradient updates; IF2 uses 600 updates; CTDD21 uses 300
+gradient updates. Iteration counts differ even at equal particle counts.
+The linear Gaussian M-step is explicit;
 the oscillator's three-parameter M-step works with sufficient statistics.
 Compilation and final analytic likelihood evaluations are excluded for all
 methods. These timings do not establish a general runtime ordering.
 
-The first Gaussian runs used the numerical-score extension. Those traces are
-retained as implementation history. The combined report explicitly excludes
-their DS19 rows and uses `final-*-saem` for DS19 on the Gaussian examples.
-This choice follows the published algorithm, rather than selecting the best
-output across variants. IFAD, IF2, and CTDD21 use the original run directories.
+The first Gaussian runs used the numerical-score extension. Those traces and
+the subsequent `final-*-saem` runs remain as implementation history. The main
+report now uses `matched-*-jCOUNT-if` for IFAD/IF2 and `matched-*-jCOUNT-ds`
+for DS19. Only CTDD21 comes from the original Gaussian `final-*` directories.
 
 ## Daphnia approximation
 
