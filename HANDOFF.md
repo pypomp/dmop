@@ -1,5 +1,28 @@
 # Handoff
 
+## October 9, 2026: SI figure captions prepared; fifth A/B pair audited
+
+- Added `imgs/benchmarks/figures.tex` with the final-distribution figure,
+  detail and full-range progress figures, and central results table. Captions
+  define boxes, failure markers, linear scales, interpolation, percentile
+  bands, reference lines, Monte Carlo errors and timing boundaries. This
+  fragment is deliberately not yet included in `si.tex`: generated final
+  five-model artifacts are still pending. Compile and visually inspect it
+  in the existing SI after all outputs are ready. Added the directory README
+  with the regeneration command and artifact map. No SI source changed.
+- Audited the fifth completed Dhaka A/B pair, cold start 4. Score stopped
+  early with `non-finite-path-or-score`, retaining iteration 10. Its final
+  Euler log-likelihood is -5831.464, versus numerical SAEM -8863.604 and
+  initial -8887.596. Keep the failure status and last eligible estimate in
+  the final report. All five completed pairs pass selection, M-step and
+  raw-evaluation checks. There are still no completed warm-start pairs.
+- At approximately 04:59 UTC, all seven fitting service handles remained
+  active: matched Gaussian, both Daphnia tuning recoveries and four Dhaka
+  A/B workers. Gaussian J=500 linear IFAD/IF2 is progressing through its
+  20 starts; Daphnia tuning is fitting start 1. Queued final/report services
+  remain dependent on these runs. This is a verified computational wait,
+  not a failed or blocked experiment. The full goal remains unfinished.
+
 ## October 9, 2026: completed J=100 Gaussian runs and report checks
 
 - Previous goal turn made progress: committed the per-model SAEM equations
