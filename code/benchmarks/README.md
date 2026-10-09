@@ -20,6 +20,7 @@ been added to the manuscript. Existing Daphnia and Dhaka results remain in
 | [report.py](report.py) | Combine completed final runs and the archived Dhaka results into panels and a table |
 | [export_dhaka.py](export_dhaka.py) | Recover MC errors for the exact archived IFAD/IF2 estimates used in the manuscript |
 | [queue_final.py](queue_final.py) | Wait for tuning and free assigned cores, then run a declared final batch |
+| [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
 | [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
 
 The transition-density and transport implementations for the existing Dhaka
@@ -112,6 +113,18 @@ individual likelihood estimates used for Monte Carlo errors.
 Refitting a time-limited search can complete a different number of updates
 on a different machine. Saved estimates and evaluations make the figures
 reproducible without refitting; seeds alone do not reproduce a wall-time stop.
+
+For an interrupted SPX or Daphnia batch, `recover.py --model MODEL --folder
+PATH` retains all completely evaluated starts, including unsuccessful fits,
+and reruns the unfinished suffix with the same seeds and fitting settings.
+It copies the original directory to `results/interrupted/` before doing any
+work. The suffix has its own configuration and source snapshot under
+`results/recovery-*`; `recovery.json` in the combined directory records the
+provenance of both parts. The final status is written only after checking
+that every expected start and method has exactly one final evaluation.
+Incomplete fits are archived even when the whole start must be rerun.
+Run long experiments as persistent services; terminal sessions did not
+survive the October 8 interruption. Never start a second writer to a batch.
 
 For example, a short workflow check is:
 
