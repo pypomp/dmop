@@ -1,5 +1,39 @@
 # Handoff
 
+## October 9, 2026: corrected SAEM services launched
+
+- The corrected experiment is now frozen in `ditlevsen/results/saem_ab_scaled`
+  (source revision c24b11e9e, frozen in commit 1a227456e). Use this directory
+  for the final A/B report and SI. The original unscaled results remain an
+  implementation diagnostic; eight complete cold pairs are preserved.
+  Do not modify the new frozen `ditlevsen/ditlevsen/*.py` while these workers
+  are active or may need resume, unless another concrete defect warrants a
+  separately documented experiment amendment.
+- Persistent services `dmop-saem-scaled-w0` through `w3` are active, parent
+  PIDs 1474287, 1474290, 1474327, 1474357 at 05:18 UTC. Logs are
+  `/tmp/dmop-saem-scaled-wN.log`. They run `queue_saem_scaled.py`, which waits
+  until the corresponding old worker has saved the current cold score fit
+  (indices 8--11), stops only that superseded worker and runs the corrected
+  worker on the same four-core group. Worker 0 has transitioned and begun
+  the corrected run. Workers 1--3 still wait for their old score checkpoints;
+  this preserves in-flight work. If an old worker terminates before saving,
+  the new worker proceeds and fits any missing score arm normally.
+- New preparation verified exact starts, score source hashes/settings,
+  particle counts, budget and Pypomp revision for reuse. New workers verify
+  the corrected source hashes at launch. All completed compatible score
+  fits, including failures, are reused with provenance; no old-SAEM outputs
+  are reused. Remaining score arms are fitted normally. The full target is
+  still 20 cold and 20 warm pairs, not the eight completed old pairs.
+- Local SI build succeeds with no overfull boxes or undefined/multiple
+  references; visually reviewed the revised page S-76. Native compilation
+  was attempted and returned `No handler registered`. Existing editor and
+  document remain open. Five block-SAEM and four A/B tests pass.
+- Other experiments continue unchanged. At 05:18 UTC oscillator J=500
+  IFAD/IF2 had completed five starts; both Daphnia tuning recoveries had
+  finished all four methods for start index 1 and begun index 2. All final
+  report, Daphnia and Gaussian-selection queues retain their dependencies.
+  Goal remains active; final outputs and their SI integration are pending.
+
 ## October 9, 2026: numerical SAEM defect confirmed and corrected
 
 - IMPORTANT: the unscaled Dhaka A/B study is superseded by a corrected

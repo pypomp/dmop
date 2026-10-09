@@ -1,0 +1,23 @@
+{
+  "worker": 0,
+  "replaced_service": "dmop-saem-ab-w0.service",
+  "old_score_checkpoint_exists": true,
+  "cores": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "-u",
+    "-m",
+    "ditlevsen.saem_ab",
+    "--output",
+    "ditlevsen/results/saem_ab_scaled",
+    "--worker",
+    "0",
+    "--workers",
+    "4"
+  ]
+}
