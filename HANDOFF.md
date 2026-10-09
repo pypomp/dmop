@@ -1,5 +1,25 @@
 # Handoff
 
+## October 9, 2026: first four final Daphnia starts evaluated
+
+- Final starts 0, 5, 10 and 15 now have complete MPIF/IFAD/DS19/CTDD21
+  evaluations, all with successful status. Independently recalculated all
+  16 saved likelihoods and MCSE values from their raw per-unit replicates;
+  all match. Temporary audit record:
+  `/tmp/dmop-daphnia-live-evaluation-audit.json`. This is a partial-run audit,
+  not proof that any five-start batch or the 20-start comparison is complete.
+- Likelihoods by start (MPIF, IFAD, DS19, CTDD21):
+  0: (-864.678419, -867.404201, -872.316008, -872.010359);
+  5: (-865.992761, -861.385910, -866.684644, -864.251885);
+  10: (-862.849314, -861.015475, -865.709665, -864.902989);
+  15: (-866.634277, -859.958297, -864.380405, -864.407348).
+  Do not infer the complete study's ranking or omit the first start, where
+  MPIF is best. All fitting stages and evaluations retain every search.
+- The four persistent Daphnia workers are advancing to their next starts.
+  All four corrected Dhaka A/B workers remain live; 17 cold pairs are
+  complete and the first warm pair is underway. Full reports, results
+  prose, SI integration and final visual/compilation checks remain pending.
+
 ## October 9, 2026: first corrected warm-start pair underway
 
 - Cold start 16 completed and passed the 17-pair A/B audit. Euler
