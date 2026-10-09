@@ -1,8 +1,8 @@
 # Cross-model benchmark figures and table
 
 The source is [../../code/benchmarks/](../../code/benchmarks/README.md).
-From the repository root, after the declared final batches and separate
-Gaussian particle-count tuning have completed, run:
+All declared final batches and separate Gaussian particle-count tuning are
+complete. To regenerate the publication outputs from the repository root, run:
 
 ```sh
 python code/benchmarks/report.py
@@ -25,10 +25,9 @@ Generated files:
 | `final_results.csv`, `progress_summary.csv` | Values used in the figures and table |
 | `provenance.json`, `plot_ranges.json` | Input hashes, particle count, reference definitions and axis limits |
 
-[figures.tex](figures.tex) supplies the SI figure and table environments and
-captions. Include it from `si.tex` only after all generated artifacts have
-been reviewed. The source fragment alone does not indicate that the jobs
-or manuscript integration are complete.
+[figures.tex](figures.tex) supplies the figure and table environments and
+captions included in [the SI](../../si.tex). The final panels show all five
+models, including all 20 Daphnia starts and the archived 100 Dhaka starts.
 
 For a development preview of completed models, pass `--models`, an explicit
 `--gaussian-particles` value if tuning is unfinished, and a separate
@@ -36,5 +35,5 @@ For a development preview of completed models, pass `--models`, an explicit
 directory. The Dhaka score-versus-numerical-SAEM A/B study is a separate
 experiment in [../../ditlevsen/](../../ditlevsen/README.md).
 [saem_ab_figures.tex](saem_ab_figures.tex) supplies its SI captions and
-references the corrected `saem_ab_scaled/report/` outputs. Include this
-fragment only after all 40 paired comparisons and their report are reviewed.
+references the corrected `saem_ab_scaled/report/` outputs. All 40 paired
+comparisons are complete, audited and included in the SI through this fragment.

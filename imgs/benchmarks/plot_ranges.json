@@ -1,0 +1,28 @@
+{
+  "scale": "linear for every axis",
+  "optimization_detail": {
+    "oscillator": [
+      5395.5291258678235,
+      5404.40193995867
+    ],
+    "linear": [
+      -366.2488381446526,
+      -359.37201595659184
+    ],
+    "spx": [
+      11723.5703509427,
+      11861.913584404747
+    ],
+    "daphnia": [
+      -876.9901722897326,
+      -855.4051512974831
+    ],
+    "dhaka": [
+      -3814.850646432559,
+      -3737.494033338276
+    ]
+  },
+  "detail_rule": "minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
+  "full_range_companion": "optimization.pdf",
+  "final_distributions": "all final estimates included without cropping"
+}

@@ -286,8 +286,11 @@ def generate(results, output, models, expected, gaussian_particles=500):
             ax.set_ylabel("Log-likelihood")
             ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
             ax.grid(color=".92")
+        # Reserve a footer explicitly: an outside legend can disappear when
+        # constrained layout also makes room for the detail-view title.
+        fig.get_layout_engine().set(rect=(0, .08, 1, .92))
         fig.legend(handles=[Line2D([], [], color=COLORS[m], lw=2, label="IF2 / MPIF" if m == "IF2" else m)
-                            for m in METHODS], loc="outside lower center",
+                            for m in METHODS], loc="lower center", bbox_to_anchor=(.5, 0),
                    ncols=2 if len(models) == 1 else 4, frameon=False)
         if detail:
             fig.suptitle("Detail near final estimates", fontsize=9)
