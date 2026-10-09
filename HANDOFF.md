@@ -1,5 +1,23 @@
 # Handoff
 
+## October 9, 2026: twelve warm pairs audited
+
+- Warm starts 9--11 completed; all 32 complete A/B pairs pass the full
+  audit (20 cold, 12 warm). New Euler likelihoods (initial, score, SAEM):
+  9 (-3756.297483, -3755.768214, -3755.204008);
+  10 (-3791.836165, -3792.611014, -3795.287949);
+  11 (-3893.986468, -3893.893114, -3933.479175).
+  The last pair has SAEM 39.586061 log-likelihood units below score;
+  raw replicate summaries and fixed-Q acceptance pass the audit. Retain
+  this result and include its full range in the final warm-start plot.
+- The three newly completed pair directories are saved here. Latest audit:
+  `/tmp/dmop-corrected-pair-audit.json`. The prior eight-pair preview is
+  historical and must not be presented as the latest full comparison.
+- All eight workers remain live. Daphnia remains at 16/20 complete starts;
+  the final four starts are fitting. Eight warm pairs, complete reports,
+  SI integration and final compilation/visual checks remain outstanding.
+  No frozen fitting/reporting source changed.
+
 ## October 9, 2026: sixteen Daphnia starts and nine warm pairs audited
 
 - Daphnia now has 16/20 complete starts. Recomputed all 64 final
