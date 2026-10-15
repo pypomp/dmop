@@ -23,6 +23,8 @@ def main():
     p.add_argument('--precision',required=True,choices=['float32','float64'])
     p.add_argument('--particles',type=int,default=5000)
     p.add_argument('--force-particles',type=int,default=1000)
+    p.add_argument('--force-precision',choices=['float32'],default=None,
+                   help='Optional reduced precision for the proposal force only')
     p.add_argument('--reps',type=int,default=16)
     p.add_argument('--kernel-reps',type=int,default=3,
                    help='Postcompile updates at a fixed state; zero skips NUTS timing')
@@ -46,7 +48,8 @@ def main():
     zs=jnp.asarray(data['z'],dtype=dtype);chols=jnp.asarray(data['chol'],dtype=dtype)
     eps=jnp.asarray(data['step'],dtype=dtype)
     assert zs.ndim==2 and len(zs)>=a.batch_size
-    m=setup(a.particles,.95,1.,force_particles=a.force_particles)
+    m=setup(a.particles,.95,1.,force_particles=a.force_particles,
+            force_precision=a.force_precision)
     repo=Path(pypomp.__file__).resolve().parents[1]
     result={'utc':datetime.now(timezone.utc).isoformat(),'precision':a.precision,
             'devices':[str(x) for x in jax.devices()],'jax':jax.__version__,
