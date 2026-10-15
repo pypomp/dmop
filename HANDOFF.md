@@ -1,5 +1,40 @@
 # Handoff
 
+## October 15: GPU batching evidence and completed depth4 pilot
+
+- Main precision checks complete: float32/float64 each128 PF evaluations at
+  four saved warmup points. precision-comparison.json and its reproducible
+  summarize_precision.py report log-average-likelihood differences .050/.062/
+  .332/.108. Point2 bootstrap95% interval [.071,.582] excludes0; others include0.
+  Do NOT claim all differences are Monte Carlo noise or global equivalence.
+- Float32 GPU batch2 and batch4 complete/terminal: median33.53s per pair and
+  39.11s per four-chain update, each15 integration steps, no divergences in
+  these short fixed-point checks. Scalar float32 median34.50s. Shared GPU
+  load and different points preclude an ESS/sec speedup claim.
+- LIVE float64-batch4 PID3025464 on GPU0, launched under protocol bf150d29f.
+  Its launch JSON/log are under gpu-precision-check-v1; revalidate PID/create
+  time. It checks whether batching is worthwhile without changing precision.
+  All other GPU benchmark jobs are complete; no production GPU chain yet.
+- Longer NUTS pilot completed120 total/60 retained. Report generated and all18
+  traces visually inspected: substantial drift, trend ESS4.49, minimum bulk
+  ESS1.59, zero divergences, all15-step trajectories forced to stop at depth4.
+  This is tuning evidence, not convergence. Monitor43525 is terminal0.
+- Verified pilot PID2932372 terminal, then moved PMMH chain3 PID2932371 from
+  core28 to released core10; affinity_change.json records it. Thus PMMH0..3
+  now use cores8/12/14/10. Main NUTS0..3 still use cores0/2/4/6, untouched.
+- Next: finish full-precision batch timing and select the GPU execution plan
+  using measured throughput and numerical evidence. GPU batching will need
+  a checkpointed multi-chain runner with scalar-versus-batched kernel checks.
+  Reuse existing kernels; preserve independent seeds, complete traces, warmup
+  adaptation, prior and untempered target. No such production runner exists yet.
+  Consider trajectory depth and covariance adaptation using the completed
+  pilot; current main chains have only~55 warmup iterations. Do not mistake
+  lack of divergences for mixing. Current CPU runs remain live and must not
+  be duplicated or discarded without a concrete replacement protocol.
+- All main/SI text and original figure assets remain unchanged. Convergence,
+  prior/particle checks, final same-hardware comparison and manuscript edits
+  still outstanding; goal active.
+
 ## October 15: float32 GPU and precision checks underway
 
 - Previous goal turn completed actual float64 GPU timing and verified original
