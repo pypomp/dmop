@@ -1,0 +1,17 @@
+{
+  "purpose": "Resolve likelihood precision uncertainty and measure GPU throughput with two chains batched; follow-up to 16-replicate screen.",
+  "likelihood_replicates_per_point": 128,
+  "points": 4,
+  "precision": [
+    "float32",
+    "float64"
+  ],
+  "kernel_reps_for_likelihood_checks": 0,
+  "batch_timing": {
+    "precision": "float32",
+    "batch_size": 2,
+    "kernel_postcompile_reps": 3,
+    "likelihood_reps": 1
+  },
+  "note": "Extended likelihood checks reuse the first16 seed values; use each128-replicate result alone, never pool it with the screen. No production changes yet."
+}
