@@ -48,6 +48,13 @@ def main():
         raise ValueError('Pypomp source differs from parent')
     if [str(x) for x in jax.devices()]!=cfg['devices']:
         raise ValueError('Continue on the same backend as the parent')
+    if jax.__version__!=cfg['jax'] or bool(jax.config.jax_enable_x64)!=cfg['x64']:
+        raise ValueError('JAX version or precision differs from parent')
+    if cfg.get('nuts_dependencies'):
+        import importlib.metadata
+        for name,version in cfg['nuts_dependencies'].items():
+            if importlib.metadata.version(name)!=version:
+                raise ValueError(f'Changed NUTS dependency: {name}')
     cp=np.load(a.parent/'checkpoint.npz')
     old=len(cp['trace']);total=old+a.draws
     if old<=cfg['warmup']:
@@ -57,6 +64,7 @@ def main():
     key=jax.random.wrap_key_data(jnp.asarray(cp['key']))
     chol=jnp.asarray(cp['chol']);eps=float(cp['next_step_size'])
     traces=list(cp['trace']);infos=list(cp['info']);eps_trace=list(cp['step_size'])
+    iteration_seconds=list(cp['iteration_seconds']) if 'iteration_seconds' in cp else [np.nan]*old
     a.output.mkdir(parents=True,exist_ok=False)
     shutil.copytree(source,a.output/'source')
     cfg.update(output=str(a.output),draws=total-cfg['warmup'],parent=str(a.parent.resolve()),
@@ -72,14 +80,17 @@ def main():
     start=time.monotonic()
     parent_seconds=json.loads((a.parent/'status.json').read_text())['seconds']
     for i in range(old,total):
+        iteration_start=time.monotonic()
         key,k=jax.random.split(key)
         state,info=kernel(state,k,eps,chol)
         infos.append(np.asarray(info))
+        iteration_seconds.append(time.monotonic()-iteration_start)
         traces.append(np.r_[float(state.loglik),float(m['logprior'](state.z)),np.asarray(state.z)])
         eps_trace.append(eps)
         if (i+1)%a.checkpoint==0 or i+1==total:
             tmp=a.output/'checkpoint.tmp.npz'
             np.savez_compressed(tmp,trace=np.array(traces),info=np.array(infos),step_size=np.array(eps_trace),
+                iteration_seconds=np.asarray(iteration_seconds),
                 z=np.asarray(state.z),u=np.asarray(jax.random.key_data(state.u)),force=np.asarray(state.force),
                 loglik=np.asarray(state.loglik),key=np.asarray(jax.random.key_data(key)),
                 chol=np.asarray(chol),next_step_size=eps)
