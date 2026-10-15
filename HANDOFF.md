@@ -1,5 +1,27 @@
 # Handoff
 
+## October 15: user asked about GPU and original configuration
+
+- User objected to CPU use, then asked for the original experiment settings.
+  Answer verified against archived sampling_cells.py and arrays: original
+  TFP NUTS J1000/alpha.95, fixed step.05, depth5, four sequential chains,
+  1500 draws with first500 discarded, IF2 M40/J10000 KDE per chain; likelihood
+  AND log prior divided600. All four saved arrays are float32. Device was not
+  recorded in the archived sampling source. Current runs are float64 and
+  J5000/G1000, an additional change requiring attention in hardware comparison.
+- Completed actual current-config GPU benchmark, session68980 terminal0,
+  results/gpu-current-config-check-v1. GPU0 RTX3090 shared with unrelated
+  workloads (both GPUs ~65% utilized before benchmark; no external process
+  touched). Same current model, J5000/G1000, depth4, float64, saved chain0 point.
+  Three postcompile15-step NUTS updates took60.46/61.42/58.58s. Recent CPU
+  updates median53.89s, but these are different states and shared hardware:
+  this does NOT establish dedicated-GPU performance or ESS/sec. Original
+  float32 and batched GPU execution have NOT been benchmarked for this target.
+- All CPU samplers remain unchanged/live at last process verification. Ongoing
+  monitor session43525 watches all nine detached runs and exits on pilot
+  completion/interruption or after~34min. Resume that handle, do not duplicate.
+  Goal remains active; no converged new posterior or replacement figures.
+
 ## October 15: verified sampling wait and PMMH affinity change
 
 - Previous turn made progress: exact PMMH/pilot recovery and comparison tools.

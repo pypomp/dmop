@@ -6,6 +6,7 @@ four-chain posterior figure. Read each run's `status.json` or
 
 | Directory | Purpose |
 |---|---|
+| `gpu-current-config-check-v1` | Current float64 J5000/G1000 NUTS on shared GPU0; excludes compilation in three measured updates. Does not assess the original float32 configuration or batched execution |
 | `preflight-j5000-full-x64` | Authoritative precision check: x64 enabled before importing model data; full 600-observation PF/MOP agreement and floor check |
 | Other `preflight-*` | Earlier precision, particle-count and CPU/GPU timing checks; retained for provenance |
 | `coupling-j1000` | Paired nearby-parameter PF estimates, comparing endpoint sorting; little variance reduction, so sorting is not selected |
