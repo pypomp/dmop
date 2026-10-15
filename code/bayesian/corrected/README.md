@@ -56,3 +56,33 @@ Prior sensitivity and doubled-particle checks follow. If these checks fail,
 retain the failed runs and tune/extend sampling. Aesthetic similarity to the
 old plots is not a convergence criterion. Keep the existing figure layout
 where it remains informative; revise empirical claims only as needed.
+
+## Running and reviewing
+
+- `preflight.py`: PF/MOP agreement, observation-floor effect, noise and timing.
+- `coupling.py`: paired likelihood estimates with optional endpoint sorting.
+- `kernels.py`: corrected proposal kernels; see [METHOD.md](METHOD.md).
+- `run.py`: one chain, complete checkpoint and warmup history, frozen source.
+- `report.py`: all-coordinate diagnostics and the original four-panel trend
+  layout, plus full trace/marginal grids with common-prior overlays.
+- `results/`: all pilots, including unsuccessful settings. No pilot is a
+  final posterior sample. The historical files one level up stay unchanged.
+
+Example from dmop, with Pypomp/JAX installed:
+
+```sh
+JAX_ENABLE_X64=true python code/bayesian/corrected/run.py \
+  --method pmmala --particles 5000 --seed 2026101600 \
+  --output code/bayesian/corrected/results/new-chain
+```
+
+Use distinct seeds and disjoint output directories for independent chains.
+`report.py` additionally requires ArviZ and Matplotlib. It checks target
+settings and chain seeds before pooling. Never run with an existing output
+folder: overwrite protection preserves failed tuning as well as successful
+runs. Checkpoints retain the random state needed to continue the chain.
+
+The current candidates are joint particle MALA and fixed-length HMC powered
+by MOP, together with ordinary particle random-walk MH. The joint MALA
+proposal refreshes parameters and randomness together, with its reverse
+proposal density in the acceptance ratio. See METHOD.md for each kernel.

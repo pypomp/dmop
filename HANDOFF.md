@@ -38,6 +38,42 @@
   No manuscript changes or final replacement figures yet.
 
 
+### Pypomp pilot status (same task, latest)
+
+- All four kernels (conditional MALA, fixed-length HMC, joint particle MALA,
+  and particle random-walk MH) pass the known-target test, together with
+  reversibility/determinant and force-regularization checks: 3 tests, 10.70s.
+  `METHOD.md` gives exact acceptance ratios; no posterior approximation is
+  hidden in the MOP force. Joint particle MALA follows Nemeth et al. 2016.
+- The first conditional-MALA J1000 pilot completed (session 10897 terminal).
+  Its step size collapsed to 2.14e-5; retained parameter/randomness acceptance
+  .38/.04. It does NOT converge. Report/plots generated and inspected;
+  no manuscript image is replaced. Endpoint sorting barely reduces paired
+  log-ratio variance (5.64 to5.48 in24 pairs), so it is not selected.
+- Complete preflights: J5000 reduces variance substantially. Authoritative
+  `preflight-j5000-full-x64` sets x64 before importing model data and gives
+  variance .262 over16 seeds, max MOP/PF discrepancy8.7e-12, floor effect
+  5.9e-12. Earlier x64 preflights imported library covariates before changing
+  precision; retained as development artifacts, not final settings. GPU1
+  J1000 timing was worse than CPU; no GPU worker remains. One CPU core gives
+  about1.6s/PF and6.2s/force atJ5000.
+- Live tuning jobs: session70285 joint particle MALA J5000, log
+  /tmp/dmop-bayes-pilot-pmmala.log (100warm+100draws, accepting .3-.5 early);
+  session85177 matched particle random-walk MH J5000, log
+  /tmp/dmop-bayes-pilot-pmrw.log (same initial vector and prior).
+  These read frozen source snapshots in their own result directories.
+- Hessian-based proposal metric failed with nonfinite second derivatives;
+  preserved attempt.py/failure.json under results/metric-j1000. No such
+  matrix was used. Replacement score-second-moment preconditioning is a
+  proposal-tuning heuristic only (not Fisher/posterior covariance), running
+  session16923, log /tmp/dmop-bayes-score-metric.log. It saves64 scores and
+  a regularized Cholesky factor. Runner accepts --metric for subsequent
+  candidates and freezes tuning after warmup.
+- `report.py` regenerates the old four-panel trend layout plus18-coordinate
+  traces and common-prior overlays; it checks settings/seeds before pooling.
+  Still no independent four-chain final run, sensitivity analysis, replacement
+  figures, or manuscript integration. Goal remains active.
+
 ## October 15: benchmark follow-up completed
 
 - All 28 SPX tuning fits completed. Alpha .97, rate .001 with cosine decay,

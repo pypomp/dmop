@@ -5,10 +5,10 @@ import json
 from pathlib import Path
 import subprocess
 import time
+from model import setup, NAMES, CENTER, SCALE
 import jax
 import numpy as np
 import pypomp
-from model import setup, NAMES, CENTER, SCALE
 
 
 def main():
@@ -44,7 +44,7 @@ def main():
                     pypomp=str(Path(pypomp.__file__).resolve()),
                     pypomp_revision=subprocess.check_output(['git','-C',str(Path(pypomp.__file__).parents[1]),
                                                               'rev-parse','HEAD'],text=True).strip(),
-                    devices=[str(x) for x in jax.devices()],
+                    devices=[str(x) for x in jax.devices()], x64=jax.config.jax_enable_x64,
                     source_sha256={f.name:hashlib.sha256(f.read_bytes()).hexdigest()
                                    for f in Path(__file__).parent.glob('*.py')},
                     loglik_variance=float(np.var([r['loglik'] for r in rows], ddof=1)),

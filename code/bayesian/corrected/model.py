@@ -16,7 +16,8 @@ import pypomp as pp
 import importlib
 d = importlib.import_module("pypomp.models.dacca")
 from pypomp.functional import mop, pfilter
-from pypomp.types import ObservationDict, StateDict, ParamDict, CovarDict, TimeFloat
+from pypomp.types import ObservationDict, StateDict, ParamDict, CovarDict, TimeFloat, RNGKey, StepSizeFloat
+from pypomp.core.model_mechanics import vectorized
 
 NAMES = ('gamma', 'm', 'epsilon', 'beta_trend', 'sigma', 'tau',
          *(f'bs{i}' for i in range(1, 7)), *(f'omegas{i}' for i in range(1, 7)))
@@ -47,10 +48,29 @@ def gaussian_measurement(Y_: ObservationDict, X_: StateDict, theta_: ParamDict,
     return jnp.where(valid, value, -jnp.inf)
 
 
-def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian'):
+@vectorized
+def sorted_rproc(X_: StateDict, theta_: ParamDict, key: RNGKey,
+                 covars: CovarDict, t: TimeFloat, dt: StepSizeFloat):
+    """Library simulator, with particles ordered by deaths before resampling.
+
+    Permuting exchangeable particles changes neither the transition law nor
+    the PF likelihood expectation. It improves the common-random-number
+    coupling between nearby parameter values. Sorting occurs only at monthly
+    endpoints; the intermediate Euler steps remain unchanged.
+    """
+    states = d._rproc(X_, theta_, key, covars, t, dt)
+    phase = (t+dt-1891.)*12
+    def ordered(states):
+        order = jnp.argsort(states['Mn'], stable=True)
+        return {name: value[order] for name, value in states.items()}
+    return jax.lax.cond(jnp.abs(phase-jnp.round(phase)) < 1e-6,
+                        ordered, lambda x: x, states)
+
+
+def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sort_particles=False):
     # Construct via the same library components as d.dhaka; change only the
     # explicitly documented measurement floor. Keep Gaussian process noise.
-    model = pp.Pomp(rinit=d._rinit, rproc=d._rproc,
+    model = pp.Pomp(rinit=d._rinit, rproc=sorted_rproc if sort_particles else d._rproc,
                     dmeas=gaussian_measurement if measurement == 'gaussian' else d._dmeas,
                     ys=d.ys, t0=1891., dt=None, nstep=20,
                     theta=pp.PompParameters(d.theta), covars=d.covars,
@@ -59,7 +79,12 @@ def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian'):
     struct = model.to_struct()
     # The stabilized library measurement supplies a finite approximate force.
     # The acceptance target uses the normalized measurement above.
-    force_struct = d.dhaka(dt=None, nstep=20).to_struct()
+    force_model = pp.Pomp(rinit=d._rinit, rproc=sorted_rproc if sort_particles else d._rproc,
+                         dmeas=d._dmeas, ys=d.ys, t0=1891., dt=None, nstep=20,
+                         theta=pp.PompParameters(d.theta), covars=d.covars,
+                         statenames=d.statenames, accumvars=d.accumvars,
+                         par_trans=pp.ParTrans(to_est=d._to_est, from_est=d._from_est))
+    force_struct = force_model.to_struct()
     names = model.canonical_param_names
     index = jnp.array([names.index(n) for n in NAMES])
     baseline = jnp.array([d._to_est(d.theta)[n] for n in names])
