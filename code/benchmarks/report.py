@@ -34,10 +34,19 @@ def new_results(root, model, expected=20, gaussian_particles=None):
         folders = [p for p in folders if not p.name.endswith("-saem")]
         folders += [root / f"matched-{model}-j{gaussian_particles}-{group}" for group in ("if", "ds")]
     retuned = model == "spx" and (root / "spx-retuning/status.json").exists()
+    reused = False
     if retuned:
-        if not json.loads((root / "spx-retuning/status.json").read_text())["complete"]:
+        retuning_status = json.loads((root / "spx-retuning/status.json").read_text())
+        if not retuning_status["complete"]:
             raise ValueError("SPX replacement has not completed")
-        folders += sorted((root / "spx-retuning").glob("final-*"))
+        reused = retuning_status.get("reused_final", False)
+        if reused:
+            reuse = json.loads((root / "spx-retuning/reuse_final.json").read_text())
+            for name, digest in reuse["files"].items():
+                if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:
+                    raise ValueError(f"Reused SPX input changed: {name}")
+        else:
+            folders += sorted((root / "spx-retuning").glob("final-*"))
     if not folders:
         raise ValueError(f"No final results for {model}")
     frames, timings, sources, reference = [], [], [], None
@@ -70,13 +79,14 @@ def new_results(root, model, expected=20, gaussian_particles=None):
         if retuned:
             replacement = folder.parent.name == "spx-retuning"
             keep = ["IFAD"] if replacement else ["IF2", "DS19", "CTDD21"]
-            if replacement:
+            if replacement or reused:
                 chosen = json.loads((root / "spx-retuning/selection.json").read_text())["chosen"]
                 for key in ("alpha", "warm", "ifad_learning_rate"):
                     if config[key] != chosen[key]:
                         raise ValueError(f"SPX final recipe disagrees with tuning: {key}")
-            frame = frame.loc[frame.method.isin(keep)]
-            timing = timing.loc[timing.method.isin(keep)]
+            if not reused:
+                frame = frame.loc[frame.method.isin(keep)]
+                timing = timing.loc[timing.method.isin(keep)]
         if model in ("linear", "oscillator"):
             if matched:
                 role = folder.name.rsplit("-", 1)[-1] if folder.name.startswith("matched-") else "ct"
@@ -123,6 +133,8 @@ def new_results(root, model, expected=20, gaussian_particles=None):
     if retuned:
         sources.extend(root / "spx-retuning" / n for n in
                        ("protocol.json", "selection.json", "status.json"))
+        if reused:
+            sources.append(root / "spx-retuning/reuse_final.json")
     trace = pd.concat(frames, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     timing = pd.concat(timings, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     final = trace.loc[trace.final].copy()

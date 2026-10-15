@@ -24,6 +24,9 @@ of five. The Dhaka archive contains 100 starting points per method.
 Earlier Gaussian `final-*-saem` runs and the IFAD/IF2/DS19 rows in the original
 Gaussian `final-*` directories are retained as history; the current report
 uses the matched-particle replacements listed above.
+The [October 15 SPX tuning](spx-retuning/README.md) selected the original
+IFAD recipe. All 20 archived IFAD fits therefore remain in the report;
+the reuse audit verifies settings, source equivalence and raw evaluations.
 
 The separate [Dhaka score-versus-numerical-SAEM experiment](../../../ditlevsen/results/saem_ab_scaled/README.md)
 lives under `ditlevsen/results/saem_ab_scaled`, with 20 global-start and

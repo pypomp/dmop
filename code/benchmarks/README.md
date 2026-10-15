@@ -26,6 +26,7 @@ Daphnia and Dhaka results remain in
 | [queue_saem_scaled.py](queue_saem_scaled.py) | Replace an unscaled Dhaka worker after its current score fit is saved |
 | [recover.py](recover.py) | Retain completed starts and recover an interrupted batch, preserving the original files |
 | [audit_results.py](audit_results.py) | Recalculate saved likelihood summaries and check Dhaka A/B checkpoint selection and M-step acceptance |
+| [audit_spx_retuning.py](audit_spx_retuning.py) | Verify the completed SPX tuning and reuse of the unchanged final IFAD recipe |
 | [diagnose_saem.py](diagnose_saem.py) | Replay a fixed Dhaka path to diagnose false L-BFGS convergence and objective scaling |
 | [tests/](tests/) | Independent checks of likelihoods, scores, model adapters, and report completeness |
 

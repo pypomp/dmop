@@ -13,6 +13,8 @@ linear Gaussian, SPX and Daphnia models, plus the archived 100-start Dhaka
 comparison. It rejects incomplete runs or incompatible starting vectors.
 The Gaussian panels use the common IFAD/IF2/DS19 particle count selected on
 separate tuning starts. No fitting or parameter selection occurs here.
+The additional SPX tuning also selected its existing IFAD recipe; the
+original 20 fits and timings are retained with verified reuse provenance.
 
 Generated files:
 

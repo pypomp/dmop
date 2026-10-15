@@ -28,6 +28,29 @@ def test_report_keeps_failed_fits(tmp_path):
     assert final.status.ne("complete").sum() == 2
 
 
+def test_spx_reuse_requires_unchanged_recipe_and_inputs(tmp_path):
+    import hashlib
+    folder, frame = make_result(tmp_path)
+    chosen = {"alpha": .97, "warm": 100, "ifad_learning_rate": .001}
+    (folder / "configuration.json").write_text(json.dumps({"purpose": "final", **chosen}))
+    retuned = tmp_path / "spx-retuning"
+    retuned.mkdir()
+    (retuned / "selection.json").write_text(json.dumps({"chosen": chosen}))
+    (retuned / "protocol.json").write_text("{}")
+    (retuned / "status.json").write_text(json.dumps({"complete": True, "reused_final": True}))
+    path = folder / "checkpoints.csv"
+    (retuned / "reuse_final.json").write_text(json.dumps({"files": {
+        str(path.relative_to(tmp_path)): hashlib.sha256(path.read_bytes()).hexdigest()}}))
+    final, _, _, _ = new_results(tmp_path, "spx", expected=2)
+    assert len(final) == 8
+    (retuned / "selection.json").write_text(json.dumps({"chosen": {**chosen, "alpha": 1.}}))
+    with pytest.raises(ValueError, match="recipe disagrees"):
+        new_results(tmp_path, "spx", expected=2)
+    path.write_text(path.read_text() + "\n")
+    with pytest.raises(ValueError, match="Reused SPX input changed"):
+        new_results(tmp_path, "spx", expected=2)
+
+
 def test_spx_replacement_uses_all_starts_even_when_worse(tmp_path):
     import shutil
     folder, frame = make_result(tmp_path)

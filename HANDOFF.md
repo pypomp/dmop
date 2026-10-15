@@ -1,5 +1,30 @@
 # Handoff
 
+## October 15: benchmark follow-up completed
+
+- All 28 SPX tuning fits completed. Alpha .97, rate .001 with cosine decay,
+  and warm=100 won; alpha .995/1, rate .01 and warm=300 did not improve the
+  tuning median. No claim that these candidates exhaust useful tuning.
+- The selected recipe is already represented by the 20 archived final IFAD
+  fits. Reused all 20 with unchanged 24x5000 evaluations and original timings.
+  Checked model/data/Pypomp/settings/seeds and reviewed the historical
+  runner difference (Gaussian DS19 additions only, no IFAD changes).
+  `audit_spx_retuning.py` verifies 28 tuning fits and 80 archived SPX finals.
+  Raw files, selection, hashes and protocol deviation are in spx-retuning.
+- Automatically launched duplicate final fits were stopped and preserved in
+  abandoned-repeat, including a brief accidental restart after an audit
+  assertion. They are excluded from reports. No SPX worker remains needed.
+  Session 87247 and restarted session 84469 are terminal (SIGTERM).
+- Report now verifies both fresh replacement and unchanged-recipe reuse.
+  Ten report tests pass. Regeneration preserves all numerical results and
+  the corrected Dhaka E range; provenance now includes the SPX tuning.
+  SI explicitly states alpha=.97 and its existing cosine schedule.
+- Bayesian additions above are also implemented. Local main/SI builds pass;
+  new SI pages 59–61 and main pages 13–14 were visually inspected. The native
+  compiler was attempted for both but cannot access project macros.tex.
+  Main has one unrelated pre-existing overfull theorem-table line.
+  Final SI build/check after the alpha wording and final push remain.
+
 ## October 15: Bayesian implementation recovered and documented
 
 - User authorized a short SI implementation/prior subsection and diagnostic

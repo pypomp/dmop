@@ -1,0 +1,171 @@
+{
+  "candidates": [
+    {
+      "name": "a0.97-r0.001-w100",
+      "alpha": 0.97,
+      "ifad_learning_rate": 0.001,
+      "warm": 100,
+      "median_loglik": 11839.016681366094,
+      "failed": 0,
+      "median_seconds": 186.03020380195812,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-0",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-1",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-2",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-3"
+      ]
+    },
+    {
+      "name": "a0.97-r0.01-w100",
+      "alpha": 0.97,
+      "ifad_learning_rate": 0.01,
+      "warm": 100,
+      "median_loglik": 11719.262136691406,
+      "failed": 0,
+      "median_seconds": 191.99503573350376,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a0.97-r0.01-w100-0",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.01-w100-1",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.01-w100-2",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.01-w100-3"
+      ]
+    },
+    {
+      "name": "a0.995-r0.001-w100",
+      "alpha": 0.995,
+      "ifad_learning_rate": 0.001,
+      "warm": 100,
+      "median_loglik": 11837.959975414273,
+      "failed": 0,
+      "median_seconds": 198.83106263792436,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a0.995-r0.001-w100-0",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.001-w100-1",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.001-w100-2",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.001-w100-3"
+      ]
+    },
+    {
+      "name": "a0.995-r0.01-w100",
+      "alpha": 0.995,
+      "ifad_learning_rate": 0.01,
+      "warm": 100,
+      "median_loglik": 11678.557951834635,
+      "failed": 0,
+      "median_seconds": 206.51531641244947,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a0.995-r0.01-w100-0",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.01-w100-1",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.01-w100-2",
+        "code/benchmarks/results/spx-retuning/a0.995-r0.01-w100-3"
+      ]
+    },
+    {
+      "name": "a1-r0.001-w100",
+      "alpha": 1.0,
+      "ifad_learning_rate": 0.001,
+      "warm": 100,
+      "median_loglik": 11838.019973815986,
+      "failed": 0,
+      "median_seconds": 190.7168077789829,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a1-r0.001-w100-0",
+        "code/benchmarks/results/spx-retuning/a1-r0.001-w100-1",
+        "code/benchmarks/results/spx-retuning/a1-r0.001-w100-2",
+        "code/benchmarks/results/spx-retuning/a1-r0.001-w100-3"
+      ]
+    },
+    {
+      "name": "a1-r0.01-w100",
+      "alpha": 1.0,
+      "ifad_learning_rate": 0.01,
+      "warm": 100,
+      "median_loglik": 11660.525589834095,
+      "failed": 0,
+      "median_seconds": 198.03584007147583,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a1-r0.01-w100-0",
+        "code/benchmarks/results/spx-retuning/a1-r0.01-w100-1",
+        "code/benchmarks/results/spx-retuning/a1-r0.01-w100-2",
+        "code/benchmarks/results/spx-retuning/a1-r0.01-w100-3"
+      ]
+    },
+    {
+      "name": "a0.97-r0.001-w300",
+      "alpha": 0.97,
+      "ifad_learning_rate": 0.001,
+      "warm": 300,
+      "median_loglik": 11837.869502423664,
+      "failed": 0,
+      "median_seconds": 309.48646477198054,
+      "folders": [
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w300-0",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w300-1",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w300-2",
+        "code/benchmarks/results/spx-retuning/a0.97-r0.001-w300-3"
+      ]
+    }
+  ],
+  "chosen": {
+    "name": "a0.97-r0.001-w100",
+    "alpha": 0.97,
+    "ifad_learning_rate": 0.001,
+    "warm": 100,
+    "median_loglik": 11839.016681366094,
+    "failed": 0,
+    "median_seconds": 186.03020380195812,
+    "folders": [
+      "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-0",
+      "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-1",
+      "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-2",
+      "code/benchmarks/results/spx-retuning/a0.97-r0.001-w100-3"
+    ]
+  },
+  "protocol": {
+    "seed": 2026101501,
+    "starts": 4,
+    "candidates": [
+      {
+        "name": "a0.97-r0.001-w100",
+        "alpha": 0.97,
+        "ifad_learning_rate": 0.001,
+        "warm": 100
+      },
+      {
+        "name": "a0.97-r0.01-w100",
+        "alpha": 0.97,
+        "ifad_learning_rate": 0.01,
+        "warm": 100
+      },
+      {
+        "name": "a0.995-r0.001-w100",
+        "alpha": 0.995,
+        "ifad_learning_rate": 0.001,
+        "warm": 100
+      },
+      {
+        "name": "a0.995-r0.01-w100",
+        "alpha": 0.995,
+        "ifad_learning_rate": 0.01,
+        "warm": 100
+      },
+      {
+        "name": "a1-r0.001-w100",
+        "alpha": 1.0,
+        "ifad_learning_rate": 0.001,
+        "warm": 100
+      },
+      {
+        "name": "a1-r0.01-w100",
+        "alpha": 1.0,
+        "ifad_learning_rate": 0.01,
+        "warm": 100
+      }
+    ],
+    "second_stage": "compare winning alpha/rate at warm=100 and warm=300",
+    "selection": "fewest failures, then highest median independent final likelihood, then shortest median time",
+    "final": "20 original starts, all retained; 24 independent PF evaluations with J=5000",
+    "learning_rate_schedule": "existing cosine decay to 0.1 times initial rate",
+    "run_sha256": "013dc761a0bf2b6e9cade5174afbd1f6c9bfe61e337d5d349adff4f1f09611d7"
+  }
+}

@@ -1,0 +1,85 @@
+--- archived/run.py
++++ current/run.py
+@@ -90,6 +90,7 @@
+     parser.add_argument("--warm", type=int, default=100)
+     parser.add_argument("--particles", type=int, default=500)
+     parser.add_argument("--ds-particles", type=int, default=100)
++    parser.add_argument("--ds-update", choices=["score", "saem"], default="score")
+     parser.add_argument("--ct-particles", type=int, default=25)
+     parser.add_argument("--learning-rate", type=float, default=.01)
+     parser.add_argument("--ifad-learning-rate", type=float,
+@@ -106,6 +107,8 @@
+                         choices=["IF2", "IFAD", "DS19", "CTDD21"])
+     parser.add_argument("--purpose", choices=["pilot", "final"], default="pilot")
+     args = parser.parse_args()
++    if args.ds_update == "saem" and args.model == "spx":
++        parser.error("Gaussian SAEM is available for oscillator and linear models")
+     if min(args.starts, args.iterations, args.particles, args.ds_particles, args.ct_particles,
+            args.checkpoint_every, args.eval_particles, args.trace_eval_particles) < 1 or \
+             min(args.eval_reps, args.trace_eval_reps) < 2 or min(args.warm, args.start_index) < 0 or \
+@@ -133,7 +136,8 @@
+               "start_jitter_sd": .35,
+               "selection": "last finite parameter vector; failures retained",
+               "runtime": "synchronized serial fitting; excludes compilation and evaluation",
+-              "ds19": "backward path simulation and numerical score ascent; not SAEM M-step",
++              "ds19": "backward path simulation; " + ("SAEM maximization of averaged sufficient statistics"
++                        if args.ds_update == "saem" else "numerical score ascent; not SAEM M-step"),
+               "source_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                                  for p in source_dir.glob("*.py")}}
+     for label, directory in (("dmop", source_dir.parents[1]), ("pypomp", Path(pp.__file__).parents[1])):
+@@ -166,7 +170,10 @@
+                      active_names=["U"] if args.model == "oscillator" else
+                                   ["V"] if args.model == "spx" else None)
+     ct_score = jax.jit(jax.value_and_grad(ct))
+-    _, _, ds_score = make_smoother(args.model, model, y, args.ds_particles)
++    ds_sample, _, ds_score = make_smoother(args.model, model, y, args.ds_particles)
++    if args.ds_update == "saem":
++        from saem import make_saem
++        sufficient, complete_objective, maximize = make_saem(args.model, model, y, bounds)
+     scores = {"IFAD": mop_score, "DS19": ds_score, "CTDD21": ct_score}
+     def make_evaluation(count):
+         context = PfilterContext.from_struct(model.to_struct(), J=count, should_trans=True)
+@@ -182,7 +189,10 @@
+         if method in ("IF2", "IFAD"):
+             jax.block_until_ready(if2(jnp.tile(center, (args.particles, 1)),
+                                       jax.random.key(9), jnp.array(0)))
+-        if method != "IF2":
++        if method == "DS19" and args.ds_update == "saem":
++            path, _ = ds_sample(jnp.array(center), jax.random.key(9))
++            maximize(jnp.array(center), sufficient(path))
++        elif method != "IF2":
+             jax.block_until_ready(scores[method](jnp.array(center), jax.random.key(9)))
+         compilation[method] = time.perf_counter() - begin
+     write_json(args.output / "compilation.json", compilation)
+@@ -194,6 +204,7 @@
+             z = jnp.array(start)
+             swarm = jnp.tile(z, (args.particles, 1))
+             m, v, average = jnp.zeros_like(z), jnp.zeros_like(z), jnp.zeros_like(z)
++            averaged_statistics = jnp.zeros(13)
+             elapsed, status, completed_updates = 0., "complete", 0
+             snapshots = [(0, 0., np.asarray(z))]
+             warm = args.warm if method == "IFAD" else 0
+@@ -206,6 +217,14 @@
+                     fitting_ll = -negative_ll
+                     swarm = jnp.clip(swarm, bounds[:, 0], bounds[:, 1])
+                     candidate = swarm.mean(0)
++                elif method == "DS19" and args.ds_update == "saem":
++                    path, fitting_ll = ds_sample(z, key)
++                    stats = sufficient(path)
++                    gain = 1. if iteration < 30 else (iteration-29.)**(-.9)
++                    averaged_statistics = (1-gain)*averaged_statistics+gain*stats
++                    candidate, valid_mstep = maximize(z, averaged_statistics)
++                    if not valid_mstep:
++                        status = "mstep_failure"
+                 else:
+                     fitting_ll, g = scores[method](z, key)
+                     k = iteration - warm
+@@ -225,6 +244,8 @@
+                                        "iteration": iteration, "fitting_loglik": float(fitting_ll)})
+                 if not np.isfinite(fitting_ll) or not np.isfinite(candidate).all():
+                     status = "nonfinite_update"
++                    break
++                if status != "complete":
+                     break
+                 z = candidate
+                 completed_updates += 1
