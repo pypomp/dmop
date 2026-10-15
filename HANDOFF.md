@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: deterministic production-size benchmark live
+
+- LIVE detached benchmark PID3098070/create1792108682.20 onGPU1. Command/log in gpu-precision-check-v1/deterministic-mixed-batch4-launch.json; log /tmp/dmop-bayes-deterministic-mixed-batch4.log. Protocol a26dff2e9. Revalidate host process; do not duplicate.
+- Session37490 deterministic repeated-force test is terminal0 and passed. Session92016 GPU replay terminal0 but comparison failed bitwise as recorded; session6814 repeated-default-force terminal0 confirmed nondeterminism. All tests after flag-recording changes:9 passed (batch continuation plus scalar recovery).
+- Both production batches remain unchanged/live. Finish actual-size timing, then run check.py with deterministic flags and a new output /tmp/dmop-batch-continuation-gpu-deterministic-v1. That complete deterministic replay is still TODO.
+- Production files record initial flags empty. Any switch to deterministic execution must be an explicit new warmup/configuration, not silent continuation. Keep current run until a validated concrete replacement. PMMH evaluates no force and had bitwise-stable likelihoods.
+- Convergence, local PF-noise check for sticky PMMH chain0, prior/particle sensitivity and manuscript results remain outstanding. Goal active.
+
 ## October 15: deterministic GPU force option verified at small size
 
 - Session37490 completed. With XLA_FLAGS=--xla_gpu_deterministic_ops=true, all five repeated four-chain J100/G20 force and likelihood evaluations match bitwise. Postcompile force~4.9s. Result copied to batch-continuation-check-v1/force-repeatability-deterministic.json.

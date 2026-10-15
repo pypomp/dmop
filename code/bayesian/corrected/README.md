@@ -86,6 +86,13 @@ where it remains informative; revise empirical claims only as needed.
   process and retains the original run length. It handles unequal saved
   iteration counts after a partial write. Every output chain includes its
   parent trace; never pool parent and continuation as separate chains.
+  CPU replay is bitwise identical in the recorded test. With the default GPU
+  execution settings, repeated float32 force evaluations vary slightly;
+  GPU replay preserves random states but is not bitwise identical. The
+  deterministic XLA option removes this variation in the repeated-force
+  test. Its full replay and production-cost checks are in progress under
+  `results/batch-continuation-check-v1` and `results/gpu-precision-check-v1`.
+  Both continuation drivers require the parent's recorded XLA flags.
 - `extend.py`: exact continuation into a new directory, preserving the parent,
   tuning and random state. `--recover-interrupted` requires a recorded terminal
   interruption and resumes the original run length and warmup schedule.
