@@ -24,6 +24,24 @@
 - Still to do: finish tuning/final fits, select all-20 replacement in report,
   adjust E and captions, SI prose/rank explanation, tests/build/visual review.
 
+### Presentation and density explanation completed; SPX jobs continue
+
+- Panel E's final/distribution and progress detail views now use
+  [-3840,-3740]. The cropped final plot identifies seven omitted estimates
+  (IF2 1, DS19 3, CTDD21 3); the new `final_likelihoods_full` preserves all
+  points, and all data remain in every summary. Captions identify D/E warm
+  starts and the identical archived Dhaka source. Visually checked the plot.
+- SI now defines `pypomp.models.spx`, explains that Fisher scores still use
+  fixed-path AD, gives the Dhaka support plane and Daphnia interior/boundary
+  ranks, and distinguishes these from the fine-grid mixing issue discussed
+  by Karppinen et al. The covariance floor is explicitly at the endpoint.
+  Added a short benchmarking paragraph, without calling SPX saturated.
+- The report supports the all-20 SPX replacement when the completion marker
+  appears, validates starts and chosen settings, and never chooses per-run
+  winners. Nine report tests pass, including retaining a worse replacement
+  fit. Local SI build passes with no errors, undefined references or
+  overfull boxes. Final SPX integration and final compile/visual check remain.
+
 ## October 9, 2026: add DS19 implementation table for panels A--E
 
 - Added Table S-6 near the start of S12, mapping each model to its DS19

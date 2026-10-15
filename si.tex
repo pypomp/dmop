@@ -12704,6 +12704,36 @@ we add $10^{-12}$ times its largest diagonal entry to each diagonal entry.
 This gives a monthly transition density that differs from the Euler
 approximation used to evaluate the final parameter estimates.
 
+The rank deficiency also affects parameter updates on an augmented path.
+At a fixed interior state, the range of the unregularized local covariance is
+\[
+ \operatorname{span}\left\{
+ (-1,1,0,0,0,0)^{\mathsf T},\;
+ (0,-\gamma-m,\gamma,0,0,m)^{\mathsf T}
+ \right\}.
+\]
+This follows by writing the diffusion vector as $g=q(-1,1,0,0,0,0)^{\mathsf T}$:
+its diffusion derivatives are parallel to $g$, while the drift derivative
+$(Db)g$ supplies the second direction. The plane depends on $m/\gamma$.
+Changing this ratio changes the support of the local Gaussian transition,
+so augmenting the states at every internal step does not provide an
+ordinary full-state density for parameter optimization. Changes in the
+transition mean can also change its affine support. An augmentation in
+terms of driving noise would require a different parameter-update scheme.
+Our implementation adds the covariance floor only after composing the
+monthly transition, not at each internal step.
+
+There is a separate difficulty with finely augmented paths even when the
+transition densities are nonsingular. As the time step decreases, transitions
+become concentrated and observations at intermediate steps are uninformative,
+which can make particle resampling and backward sampling ineffective
+\citep{karppinen24}. This concerns mixing of the path sampler and does not
+by itself establish mutual singularity of path laws at different parameter
+values. Our smoother samples monthly endpoints, so it does not assess
+this fine-grid behavior. We restrict the comparison to this implementable
+adaptation of DS19; constructing and validating a different augmented-path
+method is beyond the present comparison.
+
 We use each month's observation to guide the particle filter toward states
 that are consistent with the observed death count. For each particle, we
 calculate the measurement variance using the predicted monthly death count
@@ -12939,8 +12969,9 @@ iterations are in \path{artifacts/README.md}.
 
 We compared IFAD, IF2, DS19, and CTDD21 on the harmonic oscillator of
 \citet{ditlevsen19}, the two-dimensional linear Gaussian model of
-\citet{corenflos21}, and the stochastic volatility model supplied with
-Pypomp's SPX data, in addition to the Daphnia and Dhaka models.
+\citet{corenflos21}, and the Pypomp library implementation of a stochastic
+volatility model at \texttt{pypomp.models.spx}, subsequently called
+\texttt{spx}, in addition to the Daphnia and Dhaka models.
 For each example, we used the same starting parameter vectors for all
 methods and evaluated the resulting estimates under the same model.
 The two Gaussian examples have analytic likelihoods, allowing us to
@@ -12948,7 +12979,7 @@ assess maximization error without Monte~Carlo evaluation error.
 
 Table~\ref{tab:ds19-models} summarizes the DS19 implementation for each
 panel. All five implementations evaluate process transition densities.
-For the linear Gaussian model and the implemented SPX model, these
+For the linear Gaussian model and \texttt{spx}, these
 densities are available directly. For the oscillator, all methods fit
 the same order-1.5 Gaussian approximation, whose likelihood we evaluate
 by Kalman filtering. Thus these three comparisons use the same transition
@@ -12993,9 +13024,9 @@ B: Linear Gaussian
 & Kalman likelihood of the same model \\
 \addlinespace
 C: SPX
-& Pypomp transition law: Gaussian above the variance floor, with a point mass at the floor
+& \texttt{spx} transition law: Gaussian above the variance floor, with a point mass at the floor
 & Averaged scores and Adam
-& Particle-filter likelihood of the same Pypomp model \\
+& Particle-filter likelihood of the same \texttt{spx} model \\
 \addlinespace
 D: Daphnia
 & Gaussian approximation across each observation interval, composed from local order-1.5 moments
@@ -13159,7 +13190,7 @@ statistics of the imputed paths.
 
 \paragraph{SPX: averaged complete-data scores.}
 Let $r_t$ be the observed return and $v_t$ the latent variance.
-The Pypomp model's conditional variance transition has Gaussian mean
+The \texttt{spx} conditional variance transition has Gaussian mean
 and standard deviation
 \[
  m_t(v)=v+\kappa(\bar v-v)+\xi\rho(r_{t-1}-\mu+v/2),
@@ -13186,9 +13217,17 @@ The complete-path objective is
 \end{equation}
 The initial variance $v_0=V_0$ is a parameter, so its current candidate
 value enters the first transition when differentiating.
+For $v>0$, $\xi>0$, and $|\rho|<1$, the conditional transition variance
+$\xi^2v(1-\rho^2)$ is positive. This scalar latent process therefore has
+no missing covariance direction in the interior; its boundary atom is
+included explicitly in the density above.
 For this example, we update the parameters with Adam using the averaged
 scores in Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average}),
 without a SAEM maximization step.
+We obtain these complete-data derivatives by AD while holding the imputed
+path fixed. This avoids differentiation through the filtering and resampling
+calculations, but does not avoid AD itself. The runtime difference from
+IFAD also reflects the particle counts and optimization settings below.
 
 \paragraph{Daphnia: averaged scores for the Gaussian block approximation.}
 For mesocosm $u$, let $m_{\theta,u,t}$ and $\Sigma_{\theta,u,t}$ be the
@@ -13218,6 +13257,20 @@ weight to Gaussian proposals outside the allowed state range, whereas
 the Euler simulator resets an offending state to zero and assigns a
 log weight of $-150$ to that particle at the next observation.
 Both differences can change the likelihood being maximized.
+The local covariance need not be rank deficient in this model.
+At a strictly positive state, the six independent noises span the six
+directly forced coordinates. The integrated juvenile noises contribute
+two further directions through maturation into susceptible adults, with
+nonzero coefficients $\lambda_J\sigma_J^{\mathrm n}J^{\mathrm n}$ and
+$\lambda_J\sigma_J^{\mathrm i}J^{\mathrm i}$.
+The implemented order-1.5 covariance is therefore full rank in this
+interior when the six fitted noise coefficients are positive, and its
+range is independent of the parameter values there. At the specified
+initial state several populations are zero, and the local covariance has
+rank three. Daphnia thus differs from Dhaka's rank-two interior covariance.
+The algebra and numerical checks, including parameter perturbations at
+fixed states, are provided in \path{code/benchmarks/covariance_support.py}
+and its accompanying note.
 After backward simulation of one path per mesocosm, we differentiate this
 sum with respect to the 38 estimated parameters and update them with
 Adam using the averaged scores. As for SPX, we do not carry out a SAEM
@@ -13365,6 +13418,17 @@ transition approximation: improvement in the former accompanied by
 deterioration in the latter would indicate that improving the approximate
 objective need not improve the likelihood of interest. We have not
 carried out this diagnostic.
+
+The Gaussian examples provide useful numerical checks because their
+likelihoods are available analytically. Once methods repeatedly approach
+these maxima, the examples offer limited evidence about further
+improvements in likelihood maximization. The SPX comparison still shows
+differences between methods and is not saturated in this sense.
+Daphnia and Dhaka retain difficulties encountered in scientific
+applications, including many estimated parameters, nonlinear dynamics,
+partially observed states, and, for Daphnia, multiple experimental units.
+Assessing methods for such applications requires benchmarks that retain
+these difficulties alongside tractable examples used to verify implementations.
 
 \subsection{Score updates and numerical SAEM on Dhaka}
 

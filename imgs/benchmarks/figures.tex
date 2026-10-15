@@ -7,13 +7,19 @@ Each point represents one of 20 searches per method in panels A--D
 or 100 searches in panel E.
 Boxes show the median and interquartile range; whiskers extend to the most
 extreme values within 1.5 interquartile ranges of the box.
-All estimates are shown, including those outside the whiskers.
+All estimates are shown in panels A--D. Panel E uses the range
+$[-3840,-3740]$; the number of estimates below the axis is indicated.
+The uncropped figure is available with the source code, and all estimates
+contribute to the boxes and numerical summaries.
 Crosses mark searches that stopped prematurely, for which we evaluated
 the last estimate obtained before failure or the time limit.
 Dashed lines mark the analytic maximum in panels A and B
 and the best displayed estimate in panels C--E.
 Likelihoods are evaluated independently of fitting, using the same model
-within each panel. All axes are linear.}
+within each panel. DS19 and CTDD21 use the common MPIF warm start in D
+and the common IF2 warm start in E. Panel E uses the same estimates as
+the warm-start comparison in Figure~\ref{fig:dhaka-competitors-final}.
+All axes are linear.}
 \label{fig:benchmark-final-likelihoods}
 \end{figure}
 
@@ -29,6 +35,7 @@ These evaluations were not used to select the fitted parameters.
 The vertical axes are linear and restricted to the region near the
 final estimates; Figure~\ref{fig:benchmark-optimization-full} shows
 the full range, with the same shading opacity.
+Panel E uses the range $[-3840,-3740]$.
 The starting points, reference lines and final evaluations are those of
 Figure~\ref{fig:benchmark-final-likelihoods}.}
 \label{fig:benchmark-optimization-detail}

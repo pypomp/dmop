@@ -18,7 +18,7 @@ import numpy as np
 import daphnia as d
 from ditlevsen.data import load_dacca_data
 from ditlevsen.model import (default_unconstrained_parameters, diffusion, drift,
-                             initial_state, ESTIMATED_PARAMETER_NAMES)
+                             initial_state, decode_parameters, ESTIMATED_PARAMETER_NAMES)
 from ditlevsen.transition import ditlevsen_covariance
 
 jax.config.update("jax_enable_x64", True)
@@ -85,6 +85,12 @@ def main():
         return support(np.column_stack((g,A)))
     rank, P, s = plane(theta)
     assert rank == 2
+    rates = decode_parameters(theta)
+    e = np.array([-1.,1.,0.,0.,0.,0.])
+    v = np.array([0.,-rates["gamma"]-rates["m"],rates["gamma"],0.,0.,rates["m"]])
+    np.testing.assert_allclose(support(np.column_stack((e,v)))[1],P,atol=1e-12)
+    joint_change = theta.at[0].add(.1).at[1].add(.1)
+    np.testing.assert_allclose(plane(joint_change)[1],P,atol=1e-12)
     perturbations = []
     for i,name in enumerate(ESTIMATED_PARAMETER_NAMES):
         candidate = theta.at[i].add(.1)
