@@ -120,3 +120,11 @@ The local test environment installs them under `/tmp/dmop-nuts-deps`, without
 changing Pypomp. The source snapshot and dependency versions are saved with
 each NUTS run. The existing manuscript uses NUTS; this candidate is included
 to preserve that presentation if its corrected runs pass the checks.
+
+The optional `--force-particles` setting changes the MOP force alone. The
+bootstrap likelihood in every acceptance ratio retains `--particles`
+particles. The different force is still a deterministic function of z and u;
+its reverse proposal density or trajectory energy correction is retained.
+`test_model.py` verifies that changing the force count leaves the Pypomp
+acceptance likelihood and prior exactly unchanged at the same input and key.
+The smaller-force-count pilots have not yet established adequate mixing.

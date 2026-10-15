@@ -26,6 +26,34 @@
   and both TeX documents remain unchanged; main/SI revision waits on results.
 
 
+### Latest live run map and checks
+
+- All four MALA candidates finished400 optimization updates with finite
+  objectives (-3751,-3751,-3753,-3755 including prior) and entered MCMC warmup.
+  Their handles34823/66148/60444/98321 remain live; do not relaunch.
+- Same-target RW protocol cfe20cb0a was committed before launch. Four chains
+  under results/candidate-pmrw-4chain-v1 share the exact four optimized starts
+  and score-derived initial metric. They therefore do not have derivative-free
+  preparation. J5000,1000warm+3000draws, seeds2026102400--03. Live sessions:
+  chain0 61014(core22), chain1 83054(core24), chain2 40197(core26),
+  chain3 54096(core28). Logs /tmp/dmop-bayes-rw-chain{0,1,2,3}.log.
+  Timing.md explicitly says these E-core vs MALA P-core wall times cannot
+  substantiate a speedup. A serial same-core timing check is still required.
+- NUTS/HMC/MALA original pilot handles are still live below. NUTS with full
+  J5000 force is expensive; added a separate force-particle count while
+  retaining J5000 in the acceptance target. Exact target-invariance test
+  passed (39.48s); model.py defaults preserve existing runs. Known-target
+  kernel + NUTS suite:6passed,23.48s, only optional jaxopt deprecation warning.
+- Cheaper-force pilots: NUTS G1000/J5000 session86306(core18), log
+  /tmp/dmop-bayes-pilot-nuts-g1000.log; joint MALA G1000/J5000 session83983
+  (core20), log /tmp/dmop-bayes-pilot-pmmala-g1000.log. Source snapshots
+  preserve all earlier configurations. No convergence conclusion yet.
+- report.py now reads/hashes one atomic checkpoint snapshot, checks common
+  model source and actual completion lengths, and reports NUTS divergences,
+  step counts and depth saturation. extend.py checks JAX precision/version
+  and NUTS dependency versions as well as Pypomp source/backend; it preserves
+  per-iteration timings. No manuscript change yet. Remaining gates unchanged.
+
 ## October 15: corrected Bayesian rerun in progress
 
 - User authorized rerunning the untempered target, replacing the empirical
