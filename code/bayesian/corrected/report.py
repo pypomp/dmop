@@ -9,6 +9,7 @@ import arviz as az
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 import pandas as pd
@@ -102,28 +103,41 @@ def main():
     x=draws[:,:,3]
     lo,hi=x.min(),x.max()
     span=max(hi-lo,1e-8);grid=np.linspace(lo-.1*span,hi+.1*span,400)
+    autocorrelations=[]
     for c,chain in enumerate(x):
         color=COLORS[c%len(COLORS)]
         axes[0,0].hist(chain,bins=np.linspace(lo,hi,26),alpha=.45,color=color)
         if np.std(chain)>1e-10:
             axes[0,1].plot(grid,gaussian_kde(chain)(grid),color=color,label=f'Chain {c+1}')
         maxlag=min(100,len(chain)//4)
-        axes[1,0].plot(np.arange(maxlag+1),acf(chain,maxlag),color=color)
+        autocorrelation=acf(chain,maxlag)
+        autocorrelations.append(autocorrelation)
+        axes[1,0].plot(np.arange(maxlag+1),autocorrelation,color=color)
         axes[1,1].plot(np.arange(1,n+1),full[c,:,3],color=color,lw=.65,alpha=.8)
     axes[0,0].set(xlabel=LABELS[3],ylabel='Count')
     axes[0,1].set(xlabel=LABELS[3],ylabel='Density')
     axes[0,1].legend(fontsize=9,frameon=False)
-    axes[1,0].set(xlabel='Lag',ylabel='Autocorrelation',ylim=(-.15,1.05))
+    acf_min=min(float(np.nanmin(values)) for values in autocorrelations)
+    axes[1,0].set(xlabel='Lag',ylabel='Autocorrelation',ylim=(min(-.15,acf_min-.05),1.05))
     axes[1,1].axvline(warm,color='k',ls='--',lw=1,label='End of warmup')
     axes[1,1].set(xlabel='Iteration',ylabel=LABELS[3])
     axes[1,1].legend(fontsize=9,frameon=False)
     for letter,ax in zip('ABCD',axes.flat):
-        style(ax);ax.text(.02,.98,letter,va='top',transform=ax.transAxes,fontweight='bold',fontsize=18)
+        style(ax);ax.set_title(letter,loc='left',fontweight='bold',fontsize=18)
     fig.savefig(a.output/'trend_panels.png');plt.close(fig)
     # Keep all estimated coordinates visible; prior overlays use the actual
     # common proper prior, with axes set by draws rather than arbitrary limits.
     for kind in ['marginals','traces']:
         fig,axes=plt.subplots(6,3,figsize=(11,15),layout='constrained')
+        handles=[Line2D([],[],color=COLORS[c%len(COLORS)],label=f'Chain {c+1}')
+                 for c in range(len(draws))]
+        handles.append(Line2D([],[],color='k',ls='--',
+                              label='Prior' if kind=='marginals' else 'End of warmup'))
+        fig.legend(handles=handles,loc='outside upper center',ncol=len(handles),frameon=False)
+        if kind=='traces':
+            fig.supxlabel('Iteration')
+        else:
+            fig.supylabel('Density')
         for j,ax in enumerate(axes.flat):
             x=draws[:,:,j];lo,hi=x.min(),x.max();span=max(hi-lo,1e-8)
             grid=np.linspace(lo-.15*span,hi+.15*span,300)
