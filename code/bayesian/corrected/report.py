@@ -64,6 +64,8 @@ def main():
     full=center+raw*scale
     draws=full[:,warm:]
     a.output.mkdir(parents=True,exist_ok=True)
+    # Freeze the exact arrays used by this report for between-method review.
+    np.savez_compressed(a.output/'posterior_draws.npz',draws=draws)
     rows=[]
     for j,name in enumerate(NAMES):
         x=draws[:,:,j]
@@ -93,6 +95,11 @@ def main():
                rhat=bool(np.isfinite(table.rhat).all() and (table.rhat<=1.01).all()),
                ess=bool((table[['ess_bulk','ess_tail']]>=400).all().all()))
     audit=dict(chains=[str(d) for d in a.chains],warmup=warm,retained=n-warm,
+               method=configs[0]['method'],
+               target={field:configs[0][field] for field in
+                       ['particles','prior_scale','names','prior_center','prior_sd','pypomp_revision']},
+               model_sha256=configs[0]['source_sha256']['model.py'],
+               draws_sha256=hashlib.sha256((a.output/'posterior_draws.npz').read_bytes()).hexdigest(),
                diagnostic_convention='Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates',
                marginal_density_estimator='Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain',
                available_iterations=lengths,truncated_iterations=[length-n for length in lengths],gates=gates,
@@ -111,6 +118,8 @@ def main():
             if x['info'].shape[1]>9:
                 diagnostics['forced_depth_limit_fraction']=float(((x['info'][warm:n,8]>=configs[0]['max_depth']) &
                     (x['info'][warm:n,9]==0) & (x['info'][warm:n,6]==0)).mean())
+        gates['no_divergences']=all(d['divergences']==0 for d in audit['nuts'])
+        audit['numerical_convergence']=all(gates.values())
     (a.output/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
     plt.rcParams.update({'font.size':12,'axes.labelsize':13,'savefig.dpi':220})
     fig,axes=plt.subplots(2,2,figsize=(10,6),layout='constrained')

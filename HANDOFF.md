@@ -1,5 +1,30 @@
 # Handoff
 
+## October 15: recover interrupted PMMH and NUTS pilot
+
+- Previous turn made progress: verified four NUTS startups and matching inputs.
+  This turn found original PMMH handles61014/83054/40197/54096 and pilot59154
+  absent, with their host PIDs absent too. No completion or Python error; cause
+  unknown. PMMH checkpoints all1075/4000, pilot72/120.
+- Protocol b5a5f032a committed before exact recovery. New detached processes in
+  results/sampling-recovery-v1: pmrw-chain0..3 PIDs2932368..2932371 on
+  cores22/24/26/28; nuts-depth4-pilot PID2932372 on core10. Read launch JSON
+  for create times and logs. All five saved likelihood/force checks match
+  exactly. All four PMMH recoveries advanced to1100 and the pilot to74.
+  recovery-verification.json verifies unchanged parent traces, diagnostics,
+  steps and timings followed by new finite samples.
+- Fixed recovery validation to respect PMMH cached-zero-force convention;
+  two recovery tests pass, including corruption detection and warmup replay.
+  No target, seed, tuning, initialization or total draw count changed.
+- Main NUTS PIDs2917966/68/70/72 remain live. MALA stays stopped. Use recovered
+  PMMH paths in reports; do not pool parent and continuation as independent.
+- Added compare.py for all-coordinate NUTS/PMMH agreement from frozen reports.
+  Development generation passed on completed depth3 NUTS (30 draws) versus
+  original PMMH prefixes (75 draws each); visible disagreement, no convergence.
+  Visual inspection found/fixed an overlapping legend/title. Reports now freeze
+  exact plotted arrays and include NUTS divergences in numerical checks.
+  Final posterior, sensitivity, timing and manuscript integration remain unfinished.
+
 ## October 15: user restored NUTS versus PMMH as the primary comparison
 
 - The user objected to MALA becoming the main experiment. All eight live
