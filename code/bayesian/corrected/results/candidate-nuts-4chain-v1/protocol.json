@@ -1,0 +1,57 @@
+{
+  "purpose": "Primary NUTS versus PMMH comparison requested by user; MALA is development only.",
+  "method": "nuts",
+  "particles": 5000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "max_depth": 4,
+  "warmup": 500,
+  "draws": 1000,
+  "step_size": 0.0622,
+  "max_step_size": 2.0,
+  "seeds": [
+    2026102900,
+    2026102901,
+    2026102902,
+    2026102903
+  ],
+  "cores": [
+    0,
+    2,
+    4,
+    6
+  ],
+  "initialization": "Use each corresponding PMMH initial.npy and initial_chol.npy, without further optimization or MALA warmup. Shared optimization/preconditioner preparation must be included in cost reporting.",
+  "budget": "Initial 500 warmup plus 1000 retained draws per chain. Extend frozen chains if diagnostics require it; do not equate completion with convergence. PMMH has 1000 warmup plus 3000 draws; compare precision per cost, not raw iteration counts.",
+  "selection": "Depth4 and initial step from the ongoing depth4 pilot; J5000 target and G1000 proposal force from existing precision/cost checks. No posterior claim from pilots.",
+  "checks": "All 18 parameters: rank Rhat <=1.01, bulk and tail ESS >=400; inspect all traces, divergences, depth saturation and prior/particle sensitivity.",
+  "timing": "Concurrent PMMH uses E cores and NUTS P cores. No walltime speedup claim without a same-core comparison.",
+  "inputs_sha256": {
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain0/initial.npy": "b8bf97d124144c5ff4334092d471d0b4908e5d830679a5d10805e44f9990e122",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain0/initial_chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain1/initial.npy": "fd72f8e223d9a42a2f9ccfe35f3367d2996a66e80d5813d1e55d8a3715794e29",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain1/initial_chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain2/initial.npy": "d61911be2b9eefe7248a9ba8b99124b9afa3b61e0e25dfe36eda678759f56bd7",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain2/initial_chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain3/initial.npy": "e982981da813b28c49d9c084e251b7bea9bff12aea577bb95e8dac3e1d9f9169",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain3/initial_chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b"
+  },
+  "source_sha256": {
+    "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "extend.py": "bcd13b26445798bee4efa24b7d6b5fe8a9926bcdb09badd8fb1789d11969a02f",
+    "test_model.py": "a3d053125563f847d8765be186c1d3371a289d2dc6789c4e5c0f02404a000b8d",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "76c67bc5dc2608b555838efe7b6b70e47a7ee2ab8afcc0fffe2b2671bdd9e5e5",
+    "report.py": "9e9df7a08d24545e9923849aa970ead85f5576955be7472773ee42400ca5e64a",
+    "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+    "run.py": "bff74f03c9d219ea0f4b97b31eaa9bbebe224999d012b2d97ba42d66c0d0fff5",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "test_recovery.py": "9ff3ccd6259258b3a93320a04b90c45cbbd3437b58cbcd4816eb805d79b7c90c",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+    "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984"
+  }
+}

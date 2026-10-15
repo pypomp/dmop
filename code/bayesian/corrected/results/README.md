@@ -24,9 +24,11 @@ four-chain posterior figure. Read each run's `status.json` or
 | `pilot-nuts-depth4-g1000-j5000` | Follow-up with maximum depth4, under the committed `nuts-depth4-protocol.json` |
 | `timing-pmmala-*-core8` | Short exact continuations of completed pilots for serial same-core timing; parent draws are duplicated and must not be treated as independent samples |
 | `candidate-pmmala-4chain-v1` | Four independent optimization/warmup runs, deliberately stopped during warmup after the controlled timing comparison; termination records retained |
-| `candidate-pmmala-g1000-4chain-v2` | Current four independent MALA candidates; exact saved v1 warmup states, 1,000 force/5,000 target particles, fresh warmup and seeds; protocol committed before launch |
+| `candidate-pmmala-g1000-4chain-v2` | Stopped development MALA candidates after the user clarified NUTS versus PMMH; exact saved v1 warmup states, 1,000 force/5,000 target particles, fresh warmup and seeds; protocol committed before launch |
+| `candidate-nuts-4chain-v1` | Primary four-chain NUTS comparison, matched to the PMMH starts and initial metrics; read protocol and status for progress |
+| `prior-sd2-recovery-v1` | Exact recovery of two interrupted MALA warmups; subsequently stopped with the other MALA development runs |
 | `candidate-pmrw-4chain-v1` | Four matching random-walk chains, using the same optimized starts and initial proposal scales |
-| `prior-sd2-pmmala-4chain-v1` | Four independent prior-sensitivity chains with twice the reference-prior SD; same likelihood and process model |
+| `prior-sd2-pmmala-4chain-v1` | Stopped MALA development sensitivity chains with twice the reference-prior SD; sensitivity remains to be checked for the final NUTS result |
 
 See [timing.md](timing.md) before comparing elapsed times. The concurrent
 candidates use different core classes and cannot establish a speedup.

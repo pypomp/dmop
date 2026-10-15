@@ -1,5 +1,21 @@
 # Handoff
 
+## October 15: user restored NUTS versus PMMH as the primary comparison
+
+- The user objected to MALA becoming the main experiment. All eight live
+  MALA/reference or sensitivity processes were verified and stopped; checkpoints
+  and termination reasons are retained. They are development evidence only.
+- Four PMMH chains remain running unchanged; depth4 NUTS pilot remains running.
+- candidate-nuts-4chain-v1/protocol.json specifies four independent NUTS chains,
+  J5000/G1000, alpha .95, common proper prior, depth4, 500 warmup/1000 retained
+  initially. They use PMMH initial positions and metrics, not MALA checkpoints.
+  Commit this protocol before launching; record PIDs/create times and logs.
+- Prior MALA chains0/2 unexpectedly exited143; exact warmup recovery passed
+  saved-state and replay tests before those recovery jobs were also stopped
+  for this scope correction. No scientific failure or cause of exit established.
+- Need NUTS/PMMH convergence, prior/particle checks and same-core timing before
+  replacing paper figures. No manuscript edits in this continuation.
+
 ## October 15: full-force NUTS complete; fixed-seed force check
 
 - This continuation included a verified wait on live session83471 (monitor

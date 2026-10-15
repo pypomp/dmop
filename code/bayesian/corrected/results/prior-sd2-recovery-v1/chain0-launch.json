@@ -1,0 +1,24 @@
+{
+  "pid": 2898791,
+  "process_create_time": 1792102827.16,
+  "utc": "2026-10-15T22:20:28.108241+00:00",
+  "argv": [
+    "taskset",
+    "-c",
+    "8",
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/extend.py",
+    "--recover-interrupted",
+    "--parent",
+    "code/bayesian/corrected/results/prior-sd2-pmmala-4chain-v1/chain0",
+    "--output",
+    "code/bayesian/corrected/results/prior-sd2-recovery-v1/chain0",
+    "--checkpoint",
+    "25"
+  ],
+  "log": "/tmp/dmop-bayes-prior-recovery-chain0.log",
+  "affinity": [
+    8
+  ],
+  "detached": true
+}

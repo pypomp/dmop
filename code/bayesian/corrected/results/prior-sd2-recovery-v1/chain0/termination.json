@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-15T22:29:11.206776+00:00",
+  "pid": 2898791,
+  "create_time": 1792102827.16,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/extend.py",
+    "--recover-interrupted",
+    "--parent",
+    "code/bayesian/corrected/results/prior-sd2-pmmala-4chain-v1/chain0",
+    "--output",
+    "code/bayesian/corrected/results/prior-sd2-recovery-v1/chain0",
+    "--checkpoint",
+    "25"
+  ],
+  "reason": "User clarified that the main comparison must be NUTS versus PMMH. Preserve MALA as development only; release cores for independent NUTS chains.",
+  "checkpoint_sha256": "108e21345d2b076cb4a93d991b5cc3725dd5644f294e641c2d464881955be9ed",
+  "last_status": {
+    "iteration": 525,
+    "warmup": 1000,
+    "total": 4000,
+    "complete": false,
+    "phase": "warmup",
+    "seconds": 1844.2975984449731,
+    "loglik": -3752.7885861094046,
+    "step_size": 0.20249667754874406,
+    "parameter_acceptance_recent": 0.12,
+    "randomness_acceptance_recent": 0.12
+  },
+  "verified_terminal": true
+}
