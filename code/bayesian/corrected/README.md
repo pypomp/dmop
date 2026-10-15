@@ -5,6 +5,10 @@ The archived NUTS calculation divided both log likelihood and log prior by
 without importing the archived diffPomp implementation. Historical arrays and
 figures remain unchanged until replacement runs have passed their checks.
 
+The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
+(PMMH). MALA and fixed-length HMC runs are retained as development trials.
+See `results/candidate-nuts-4chain-v1/protocol.json` for the current NUTS run.
+
 ## Target and model
 
 The target is the untempered posterior for the Pypomp Gaussian-noise Dhaka
@@ -84,7 +88,7 @@ Example from dmop, with Pypomp/JAX installed:
 
 ```sh
 JAX_ENABLE_X64=true python code/bayesian/corrected/run.py \
-  --method pmmala --particles 5000 --seed 2026101600 \
+  --method nuts --particles 5000 --force-particles 1000 --seed 2026101600 \
   --output code/bayesian/corrected/results/new-chain
 ```
 
@@ -94,7 +98,7 @@ settings and chain seeds before pooling. Never run with an existing output
 folder: overwrite protection preserves failed tuning as well as successful
 runs. Checkpoints retain the random state needed to continue the chain.
 
-The current candidates are NUTS, joint particle MALA and fixed-length HMC powered
-by MOP, together with ordinary particle random-walk MH. The joint MALA
+The current comparison is MOP-driven NUTS against ordinary particle random-walk
+MH. Joint particle MALA and fixed-length HMC remain development trials. The joint MALA
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
