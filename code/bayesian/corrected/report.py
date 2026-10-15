@@ -90,8 +90,12 @@ def main():
     if configs[0]['method']=='nuts':
         audit['nuts']=[dict(divergences=int(x['info'][warm:n,6].sum()),
                             mean_integration_steps=float(x['info'][warm:n,7].mean()),
-                            depth_limit_fraction=float((x['info'][warm:n,8]>=configs[0]['max_depth']).mean()))
+                            max_depth_reached_fraction=float((x['info'][warm:n,8]>=configs[0]['max_depth']).mean()))
                        for x in arrays]
+        for diagnostics,x in zip(audit['nuts'],arrays):
+            if x['info'].shape[1]>9:
+                diagnostics['forced_depth_limit_fraction']=float(((x['info'][warm:n,8]>=configs[0]['max_depth']) &
+                    (x['info'][warm:n,9]==0) & (x['info'][warm:n,6]==0)).mean())
     (a.output/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
     plt.rcParams.update({'font.size':12,'axes.labelsize':13,'savefig.dpi':220})
     fig,axes=plt.subplots(2,2,figsize=(10,6),layout='constrained')

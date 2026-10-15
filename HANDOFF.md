@@ -26,6 +26,26 @@
   and both TeX documents remain unchanged; main/SI revision waits on results.
 
 
+### Latest changes before the next continuation
+
+- Isotropic joint-MALA pilot session70285 completed200 transitions in1812s;
+  report generation log is /tmp/dmop-bayes-pmmala-report.log. Do not relaunch the sampler.
+- Cheaper-force NUTS session86306 was moved from E-core18 to now-free P-core10
+  at21:01:58UTC, host PID2735244. All9 threads moved; chain state unchanged.
+  Its affinity_change.json records the timing discontinuity. Discard timing
+  intervals straddling that change when comparing cost. Other pilots retain
+  their original affinities. No other process was changed or stopped.
+- All four primary chains have entered MCMC warmup. Four matched RW chains
+  are also live. Candidate acceptance settings and prior are unchanged.
+- New NUTS outputs additionally record the turning flag, so reporting can
+  distinguish reaching max depth from being stopped by the depth cap.
+  Earlier pilot snapshots lack this extra field; do not invent it for them.
+- code/README now points to the Pypomp rerun as well as the archive. Neither
+  ms.tex nor si.tex has been edited during these runs. Next actions remain:
+  inspect completed pilots, choose an efficient corrected NUTS/MALA recipe,
+  verify all-coordinate convergence, perform sensitivity and controlled
+  timing checks, regenerate figures and revise/compile the manuscripts.
+
 ### Latest live run map and checks
 
 - All four MALA candidates finished400 optimization updates with finite

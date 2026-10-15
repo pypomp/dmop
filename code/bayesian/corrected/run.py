@@ -71,7 +71,7 @@ def main():
             raise ValueError('This experiment pins BlackJAX 1.3')
         cfg['info_columns']=['position_changed','randomness_accepted','trajectory_acceptance',
                              'energy','randomness_log_acceptance','force_norm','divergent',
-                             'integration_steps','tree_expansions']
+                             'integration_steps','tree_expansions','stopped_by_turning']
     write_json(a.output/'configuration.json',cfg)
     m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles,force_particles=a.force_particles)
     warm_model = setup(a.optimize_particles,a.alpha,a.prior_scale) if a.optimize and a.optimize_particles != a.particles else m

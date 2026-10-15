@@ -46,6 +46,6 @@ def make_nuts_kernel(loglik,logprior,get_force,max_depth=5):
         info=jnp.array([jnp.any(new.z!=state.z),accept_u,diagnostics.acceptance_rate,
                         diagnostics.energy,loga_u,jnp.linalg.norm(new.force),
                         diagnostics.is_divergent,diagnostics.num_integration_steps,
-                        diagnostics.num_trajectory_expansions])
+                        diagnostics.num_trajectory_expansions,diagnostics.is_turning])
         return new,info
     return jax.jit(initialize),jax.jit(step)
