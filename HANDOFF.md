@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: batch continuation implemented and CPU replay verified
+
+- New batch_extend.py imports frozen parent model/kernel/batch code, keeps lane order and cached state, and continues each lane at its own iteration. Supports partial saves with unequal counts; completed lanes remain masked in the original batch shape. Prior/target unchanged.
+- Seven new tests passed: partial checkpoint loading, rejection of changed source/lane/state/terminal record, and unequal-lane exact replay for both NUTS and PMMH. A real two-chain CPU completed-run extension reproduced every numerical checkpoint array exactly (six total iterations; only times differ).
+- Batch force validation retains original cached values; allows float32 fusion rounding at16 ulps of the maximum force entry. Float64 likelihood tolerance remains1e-9. Scalar extender still rejects batch checkpoints. Exactness established by replay, not this tolerance.
+- Next committed check: results/batch-continuation-check-v1/check.py on GPU1, four real Dhaka chains with partial checkpoints at3/2/3/2 during six-step warmup. Output /tmp/dmop-batch-continuation-gpu-v1; copy verification after completion. No GPU recovery test launched yet in this entry.
+- Production GPU processes3052229(NUTS) and3052372(PMMH) verified live; around4 and499 warmup iterations respectively. No restarts or manuscript changes. Goal active.
+
 ## October 15: primary comparison now running on GPUs
 
 - Committed protocol db6e2194b launched both batches via results/gpu-comparison-v1/launch.py. LIVE NUTS PID3052229/create1792107342.38/GPU0; LIVE PMMH PID3052372/create1792107343.84/GPU1. Read their launch JSON and revalidate host identity before any action. Logs /tmp/dmop-bayes-gpu-comparison-v1-{nuts,pmrw}.log.
