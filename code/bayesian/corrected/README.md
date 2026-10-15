@@ -78,8 +78,14 @@ where it remains informative; revise empirical claims only as needed.
   proposal gradients. Per-chain timing fields contain the entire batch's
   wall time; do not sum them across chains to estimate elapsed time.
   A scalar continuation can change float32 force rounding, so `extend.py`
-  rejects these batched checkpoints. Continuation with the original batch
-  shape remains to be implemented before extending or recovering these runs.
+  rejects these batched checkpoints. Use `batch_extend.py` to preserve the
+  original batch size, lane order and cached random states.
+- `batch_extend.py`: continue a completed batch with `--parent BATCH_DIR
+  --output NEW_DIR --draws COUNT`. Explicit `--recover-interrupted` instead
+  requires a batch-level `interruption.json` recording a verified terminal
+  process and retains the original run length. It handles unequal saved
+  iteration counts after a partial write. Every output chain includes its
+  parent trace; never pool parent and continuation as separate chains.
 - `extend.py`: exact continuation into a new directory, preserving the parent,
   tuning and random state. `--recover-interrupted` requires a recorded terminal
   interruption and resumes the original run length and warmup schedule.
