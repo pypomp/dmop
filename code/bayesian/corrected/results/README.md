@@ -14,6 +14,7 @@ four-chain posterior figure. Read each run's `status.json` or
 | `pilot-pmrw-j5000` | Completed particle random-walk MH comparison on the same target and start |
 | `metric-j1000` | Failed Hessian preconditioning attempt; no output matrix used |
 | `score-metric-j1000` | 64 replicated MOP scores, regularized second moment used only for proposal preconditioning |
+| `force-count-check-v1` | 16 replicated forces at each of 1,000/2,500/5,000 particles, at the same optimized point on core8; proposal tuning only |
 | `pilot-pmmala-metric-j5000` | Joint particle MALA with that covariance shape |
 | `pilot-hmc-metric-j5000` | Fixed-length HMC with that covariance shape and MH random-state refresh |
 | `pilot-nuts-metric-j5000` | Conditional NUTS using 5,000 particles for both the target and force |

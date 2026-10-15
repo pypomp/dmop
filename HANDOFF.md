@@ -1,5 +1,24 @@
 # Handoff
 
+## October 15: gradient particle-count comparison
+
+- Previous turn made implementation/reporting progress. This continuation
+  revalidated all twelve live main/pilot session handles (34823,66148,60444,
+  98321,61014,83054,40197,54096,83471,86306,83983,16291). None had stopped.
+  The metric MALA pilot is already complete; do not restart it.
+- Added force_check.py and completed session4900, results/force-count-check-v1.
+  It uses candidate0's saved optimized start, the common score-derived metric,
+  16 independent force replicates per count, sequentially on P-core8. Timings
+  exclude first compilation. J1000/2500/5000 take1.624/3.901/7.931s per force;
+  corresponding whitened-force noise traces are11.588/5.301/2.659.
+  All raw forces are finite. Inputs, arrays, source and environment saved.
+- This confirms a cost/noise tradeoff, not a preferred sampler or convergence.
+  Leave running chains unchanged. Full-force NUTS is at22/60 transitions;
+  smaller-force NUTS has entered retained sampling. Inspect completed pilots
+  before adding further candidates. Main chains still in warmup.
+- Core8 is free again after this check. No new long sampler launched. Current
+  figure templates preserve the main layout; no manuscript replacements yet.
+
 ## October 15: Pypomp continuation and pilot review
 
 - The four MALA candidates are at100/1000 warmup and the four matched RW
