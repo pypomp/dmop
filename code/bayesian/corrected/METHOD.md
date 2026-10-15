@@ -84,3 +84,39 @@ sampling freezes both. Every rejection is retained. Diagnostic gates apply
 to all 18 estimated coordinates and are followed by visual inspection and
 prior/particle sensitivity checks. A numerical pass is evidence of mixing,
 not a proof that every posterior mode has been visited.
+
+## Corrected NUTS (`nuts`)
+
+`nuts.py` uses BlackJAX 1.3's trajectory construction and candidate selection.
+It alternates an MH refresh of u with NUTS conditional on the retained u.
+Every node's energy uses `log Lhat(z,u) + log p(z)` without normalization by
+observation count. Only the force is supplied by MOP. The integrator factory
+implements the same symmetric kick--drift--kick map, now with physical
+momentum covariance C^{-1}. Its drift is h C p and its kicks use h G/2.
+
+The relevant conditions in
+[Hoffman and Gelman (2014), Section 3.1](https://jmlr.org/papers/volume15/hoffman14a/hoffman14a.pdf)
+are volume preservation, inclusion of the current point, correct target
+weights, and symmetry of the admissible trajectory construction. A kick
+translates momentum by a function of position; a drift translates position
+by a function of momentum. These maps preserve volume and invert by changing
+the step's sign, including when the force is nonconservative. The library's
+subtrajectory termination and candidate weighting remain unchanged. This is
+the reason a deterministic surrogate force is admissible here; simply
+inserting a stochastic gradient into NUTS without controlling its randomness
+would not supply the same argument. BlackJAX uses multinomial candidate
+weighting rather than the original paper's slice implementation.
+
+`test_nuts.py` checks the actual supplied integrator's reversal and Jacobian,
+and the complete augmented kernel against a two-dimensional Gaussian target
+with a deliberately nonconservative, biased force and a noisy likelihood.
+120,000 transitions recover the analytic parameter covariance and the
+parameter/auxiliary covariance. This is an implementation check, not evidence
+that a Dhaka chain has converged. We record divergences, integration steps,
+trajectory expansions and conditional acceptance statistics for every draw.
+
+The optional sampler dependencies are pinned in `requirements-nuts.txt`.
+The local test environment installs them under `/tmp/dmop-nuts-deps`, without
+changing Pypomp. The source snapshot and dependency versions are saved with
+each NUTS run. The existing manuscript uses NUTS; this candidate is included
+to preserve that presentation if its corrected runs pass the checks.

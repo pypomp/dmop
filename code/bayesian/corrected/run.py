@@ -30,10 +30,12 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--particles', type=int, default=1000)
     p.add_argument('--sort-particles', action='store_true')
+    p.add_argument('--force-particles', type=int)
     p.add_argument('--alpha', type=float, default=.95)
     p.add_argument('--prior-scale', type=float, default=1.)
-    p.add_argument('--method', choices=['mala', 'hmc', 'pmrw', 'pmmala'], default='mala')
+    p.add_argument('--method', choices=['mala', 'hmc', 'pmrw', 'pmmala', 'nuts'], default='mala')
     p.add_argument('--steps', type=int, default=4)
+    p.add_argument('--max-depth', type=int, default=5)
     p.add_argument('--seed', type=int, default=2026101600)
     p.add_argument('--jitter', type=float, default=.04)
     p.add_argument('--optimize', type=int, default=100)
@@ -62,8 +64,16 @@ def main():
                pypomp_dirty=bool(subprocess.check_output(['git','-C',str(repo),'status','--porcelain'],text=True)),
                source_sha256={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in source.glob('*.py')},
                names=NAMES, prior_center=CENTER.tolist(), prior_sd=(SCALE*a.prior_scale).tolist())
+    if a.method == 'nuts':
+        import importlib.metadata
+        cfg['nuts_dependencies']={n:importlib.metadata.version(n) for n in ['blackjax','jaxopt','fastprogress']}
+        if cfg['nuts_dependencies']['blackjax'] != '1.3':
+            raise ValueError('This experiment pins BlackJAX 1.3')
+        cfg['info_columns']=['position_changed','randomness_accepted','trajectory_acceptance',
+                             'energy','randomness_log_acceptance','force_norm','divergent',
+                             'integration_steps','tree_expansions']
     write_json(a.output/'configuration.json',cfg)
-    m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles)
+    m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles,force_particles=a.force_particles)
     warm_model = setup(a.optimize_particles,a.alpha,a.prior_scale) if a.optimize and a.optimize_particles != a.particles else m
     key = jax.random.key(a.seed)
     key, initkey = jax.random.split(key)
@@ -90,7 +100,7 @@ def main():
     np.save(a.output/'optimization.npy',np.asarray(opt))
     np.save(a.output/'warm_start.npy',np.asarray(z))
     get_force = lambda z,u: m['value_force'](z,u)[1]
-    initialize, kernel = make_kernel(m['loglik'],m['logprior'],get_force,a.method,a.steps)
+    initialize, kernel = make_kernel(m['loglik'],m['logprior'],get_force,a.method,a.steps,a.max_depth)
     key, u = jax.random.split(key)
     state=initialize(z,u)
     if not np.isfinite(float(state.loglik)):
@@ -103,7 +113,7 @@ def main():
     np.save(a.output/'initial_chol.npy',np.asarray(chol))
     eps=a.step_size
     trace, info, eps_trace, metrics, iteration_seconds = [],[],[],[],[]
-    target_accept={'mala': .57, 'hmc': .65, 'pmrw': .234, 'pmmala': .4}[a.method]
+    target_accept={'mala': .57, 'hmc': .65, 'pmrw': .234, 'pmmala': .4, 'nuts': .65}[a.method]
     total=a.warmup+a.draws
     for i in range(total):
         iteration_start=time.monotonic()

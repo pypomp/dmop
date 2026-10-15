@@ -1,5 +1,31 @@
 # Handoff
 
+## October 15: independent posterior candidates launched
+
+- Committed protocol550e5e614 before launch: four independent chains under
+  results/candidate-pmmala-4chain-v1. Pypomp, common proper prior, J5000,
+  alpha .95; seeds2026102300--03; independent .12-standardized-coordinate
+  initial jitter,400 optimization updates atJ1000,1000warmup,3000retained.
+  Score-metric initialization, step cap2, adaptation frozen after warmup.
+- Live handles: chain0 session34823 core0; chain1 session66148 core2;
+  chain2 session60444 core4; chain3 session98321 core6. Logs
+  /tmp/dmop-bayes-candidate-chain{0,1,2,3}.log. At175optimization updates
+  all four were improving with finite objectives. No candidate is yet final.
+- Also implementing NUTS to preserve the manuscript's original sampler if
+  corrected runs converge. Isolated dependencies /tmp/dmop-nuts-deps:
+  BlackJAX1.3, jaxopt.8.5, fastprogress1.0.3. Pypomp itself unchanged.
+  `nuts.py` supplies deterministic MOP forces to a symmetric integrator,
+  retains true unscaled PF energies/weights and MH-updates the explicit
+  particle seed. METHOD.md discusses the volume/reversal and admissible-tree
+  argument, with Hoffman--Gelman primary source. Known Gaussian extended
+  target with a nonconservative force passes120k transitions; integrator
+  reversal/Jacobian also pass (2 tests,6.34s). This is not a Dhaka mixing claim.
+- NUTS pilot session83471 core14, log /tmp/dmop-bayes-pilot-nuts-metric.log;
+  J5000,maxdepth3,30warm+30draws, common start/score metric, step .3.
+  Same-target MALA/HMC/RW pilots continue as described below. Old figures
+  and both TeX documents remain unchanged; main/SI revision waits on results.
+
+
 ## October 15: corrected Bayesian rerun in progress
 
 - User authorized rerunning the untempered target, replacing the empirical
