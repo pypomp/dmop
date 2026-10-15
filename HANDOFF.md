@@ -1,5 +1,26 @@
 # Handoff
 
+## October 15: proposed response to review points 6 and 7 (chat only)
+
+- Read the attached `report.pdf` points 6/7 against the Bayesian section,
+  introduction, SI S8, and the manuscript's cholera/discussion prose.
+  User requested critique and minimal proposed additions in chat, with
+  details deferred to SI; do not insert these proposals without approval.
+- Proposed dropping the 700,000-to-500 speedup and unverified convergence
+  claims, defining the intended empirical-prior target and actual sampler
+  in SI, and adding all-parameter diagnostics and prior/sample overlays.
+  A broad matched-target efficiency study is unnecessary if the example
+  is explicitly exploratory. Diagnostics do not prove target correctness.
+- Verified Fasiolo arXiv:1411.4564v2: 1.4 million iterations, half discarded;
+  different transition scheme, gamma process noise and negative-binomial
+  observations. Neal arXiv:1206.1901 explains why an approximate force need
+  not bias an appropriately corrected Hamiltonian sampler. Neither source
+  validates the existing NUTS kernel. The generating sampler and raw chains
+  were not located in current dmop/quant Python/notebook sources. Do not
+  invent its potential, randomness treatment, bandwidth or diagnostics.
+- No Bayesian manuscript edits or new Bayesian experiments were made.
+  The already-running SPX retuning remains active below.
+
 ## October 15, 2026: acting on Ed's benchmark comments (in progress)
 
 - Tasks: retune SPX IFAD on separate starts and refit all 20 final starts;
@@ -41,6 +62,9 @@
   winners. Nine report tests pass, including retaining a worse replacement
   fit. Local SI build passes with no errors, undefined references or
   overfull boxes. Final SPX integration and final compile/visual check remain.
+- Visually reviewed SI pages 67, 68 and 79 after the density additions.
+  Native compilation was attempted and cannot access project `macros.tex`;
+  the successful local build is the compilation check for this project.
 
 ## October 9, 2026: add DS19 implementation table for panels A--E
 
