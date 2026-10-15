@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-15T21:01:58.027831+00:00",
+  "pid": 2735244,
+  "command": "/home/kevin/anaconda3/envs/pypomp/bin/python -u dmop/code/bayesian/corrected/run.py --method nuts --max-depth 3 --particles 5000 --force-particles 1000 --optimize 0 --warmup 30 --draws 30 --step-size .3 --checkpoint 1 --metric dmop/code/bayesian/corrected/results/score-metric-j1000/chol.npy --initial dmop/code/bayesian/corrected/results/pilot-mala-j1000/warm_start.npy --output dmop/code/bayesian/corrected/results/pilot-nuts-g1000-j5000",
+  "previous_affinity": [
+    18
+  ],
+  "new_affinity": [
+    10
+  ],
+  "threads_updated": 9,
+  "reason": "The earlier pilot finished on performance core10. Move this pilot from efficiency core18 to that now-free core; preserve sampler state and record timing discontinuity."
+}

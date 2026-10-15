@@ -14,7 +14,7 @@ the small script here combines their saved results into SI tables.
 | [daphnia/](daphnia/README.md) | Daphnia model, searches, evaluation, and report | SI Section S10 |
 | [r_benchmark/](r_benchmark/) | R-side performance comparison | Main-text computational efficiency experiment |
 | [dacca.ipynb](dacca.ipynb), [dacca_analysis.ipynb](dacca_analysis.ipynb) | Earlier Dhaka notebook analyses | Historical material; use the experiment guides above for the revision |
-| [bayesian/](bayesian/README.md) | Original empirical-prior NUTS source, saved chains and diagnostic table | Main Bayesian figure and SI S8 |
+| [bayesian/](bayesian/README.md) | Pypomp Bayesian rerun (in progress), archived original NUTS runs and diagnostics | Main Bayesian figure and SI S8 |
 
 The loose `mif*.csv`, `pre*.csv`, `runs*.csv`, and
 `cholera-mif1-mif2.rda` belong to the earlier analyses. `matplotlibrc` supplies
