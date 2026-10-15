@@ -1,0 +1,129 @@
+{
+  "chains": [
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain0",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain1",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain2",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain3"
+  ],
+  "warmup": 500,
+  "retained": 371,
+  "method": "pmrw",
+  "target": {
+    "particles": 5000,
+    "prior_scale": 1.0,
+    "names": [
+      "gamma",
+      "m",
+      "epsilon",
+      "beta_trend",
+      "sigma",
+      "tau",
+      "bs1",
+      "bs2",
+      "bs3",
+      "bs4",
+      "bs5",
+      "bs6",
+      "omegas1",
+      "omegas2",
+      "omegas3",
+      "omegas4",
+      "omegas5",
+      "omegas6"
+    ],
+    "prior_center": [
+      2.9957322735539913,
+      -2.008691760542986,
+      0.8958797346140276,
+      -0.5,
+      0.8047189562170501,
+      -1.4978661367769954,
+      0.0,
+      4.0,
+      0.0,
+      4.0,
+      4.0,
+      4.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0
+    ],
+    "prior_sd": [
+      0.6931471805599452,
+      1.4978661367769956,
+      2.5053176470481278,
+      0.5,
+      0.8047189562170501,
+      0.80471895621705,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0
+    ],
+    "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+  },
+  "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+  "draws_sha256": "df8843d6d74f30b39b98f599dbd186441d83653ccd5f71a65ecd0b97cc688ab1",
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
+  "available_iterations": [
+    871,
+    871,
+    871,
+    871
+  ],
+  "truncated_iterations": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "gates": {
+    "four_chains": true,
+    "complete": false,
+    "equal_lengths": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain0/checkpoint.npz": "33adffbd85b097312cb1de1b16dc5ecfe11eff8e140ca86b7b3f573dc0f80c3d",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain1/checkpoint.npz": "4959289b654a867c0a0cacc1b33093ecd0f5568dc310ab826035871daa452013",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain2/checkpoint.npz": "488b41412a59e0fceff651712b30c7450e7b6aa6a4012ae82bb405f3a9b1f1f9",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw/chain3/checkpoint.npz": "8f984f3a7ab18b3fd50a89690153a88cb8c43a1989588dfdc0bc61b9a6fe863b"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.0889487870619946,
+      "randomness": 0.0889487870619946
+    },
+    {
+      "parameter": 0.215633423180593,
+      "randomness": 0.215633423180593
+    },
+    {
+      "parameter": 0.2398921832884097,
+      "randomness": 0.2398921832884097
+    },
+    {
+      "parameter": 0.2587601078167116,
+      "randomness": 0.2587601078167116
+    }
+  ]
+}

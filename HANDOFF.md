@@ -1,5 +1,15 @@
 # Handoff
 
+## October 15: GPU replay exposes force nondeterminism
+
+- GPU partial-save replay completed after widening only the batch force-cache allowance from16 to64 eps32 times maximum force magnitude. Float64 likelihood tolerance remains1e-9; cached values are never replaced.
+- GPU replay is NOT bitwise exact: keys, particle keys, acceptance/divergence/trajectory decisions and covariance match exactly; z differences up to1.03e-11, loglik differences up to2.97e-10, force differences up to.00195. Details in gpu-replay-differences.json. Do not report an exact GPU pass. CPU replay remains exact.
+- Repeat identical GPU force calls five times: force ranges .00208/.00242/.00269/.00354 across chains, while likelihoods match bitwise. This occurs without continuation. Installed libjax_common.so exposes xla_gpu_deterministic_ops.
+- LIVE verification session37490 tests same force with XLA_FLAGS=--xla_gpu_deterministic_ops=true onGPU1; output /tmp/dmop-batch-continuation-gpu-v1/force-repeatability-deterministic.json. Three evaluations seen (~5s postcompile); resume handle, do not duplicate. Earlier GPU recovery session92016 completed. Initial test harness3074902 is terminal.
+- Production3052229/3052372 still running unchanged, both verified XLA_FLAGS empty. Next: inspect deterministic check; if it works, benchmark actual J5000/G1000 batch before deciding how to use it. Record execution flags in future configurations/continuations. No existing production state changed.
+- First GPU PMMH report review-pmrw-early freezes371 retained draws/chain. All18 traces and trend panels visually inspected; slow mixing persists (Rhat1.14--1.63). Chain0 retained acceptance~.09 initially/~.115 over later200; others~.23--.33. A local PF-noise check at its sticky state may distinguish likelihood noise from proposal scale. No such check launched yet.
+- Goal active; NUTS still warmup (~9), PMMH~1100total. No manuscript change or convergence claim.
+
 ## October 15: batch continuation implemented and CPU replay verified
 
 - New batch_extend.py imports frozen parent model/kernel/batch code, keeps lane order and cached state, and continues each lane at its own iteration. Supports partial saves with unequal counts; completed lanes remain masked in the original batch shape. Prior/target unchanged.
