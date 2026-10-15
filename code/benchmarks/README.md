@@ -1,8 +1,8 @@
 # Comparisons across models
 
-This directory is the working source for the requested cross-model comparison.
-Experiments are under development; no results or claim of saturation have yet
-been added to the manuscript. Existing Daphnia and Dhaka results remain in
+This directory contains the cross-model comparison in SI S12. Completed
+experiments, figures and the central table are linked below. The original
+Daphnia and Dhaka results remain in
 [../daphnia/](../daphnia/README.md) and
 [../../imgs/competitors/](../../imgs/competitors/README.md).
 
@@ -82,7 +82,9 @@ Compare IFAD, IF2 (MPIF for the panel), DS19, and CTDD21 on:
   `optimization.pdf` retains the full range of the median trajectories;
   `optimization_detail.pdf` shows the same curves near the final estimates,
   also on linear axes. `plot_ranges.json` records the limits and their rule.
-  All final estimates, including outliers, appear in `final_likelihoods.pdf`.
+  The Dhaka panel in `final_likelihoods.pdf` uses [-3840,-3740] and states
+  the number of estimates below the axis. `final_likelihoods_full.pdf`
+  preserves the uncropped view; all estimates remain in every summary.
 - Measure synchronized wall time, separate compilation and evaluation, and
   record hardware and concurrency. The final new experiments run on CPU;
   the archived Dhaka study has its own hardware and timing convention.

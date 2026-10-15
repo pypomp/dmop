@@ -1,0 +1,25 @@
+{
+  "arviz": "0.22.0",
+  "numpy": "2.4.2",
+  "draws": [
+    4,
+    1000,
+    21
+  ],
+  "diagnosed_coordinates": 19,
+  "rhat_range": [
+    1.0289549526311446,
+    2.4541682593873397
+  ],
+  "common_target": false,
+  "rhat_interpretation": "descriptive between-run disagreement; priors differ by chain",
+  "ess_mcse_interpretation": "within-chain estimates, requiring stationarity; no pooling",
+  "unavailable": [
+    "prior clouds and their covariance matrices",
+    "divergences",
+    "tree-depth saturation",
+    "timings and ESS per second",
+    "original tracing-time random seeds"
+  ],
+  "source_sha256": "98d61585a87c6d4046a51e36b2595ce501cdd925b3787f10cd2e343ed8cf2e01"
+}

@@ -1,5 +1,38 @@
 # Handoff
 
+## October 15: Bayesian implementation recovered and documented
+
+- User authorized a short SI implementation/prior subsection and diagnostic
+  table, asked to preserve the preliminary promise in main text, and later
+  said not to spend much effort on chain diagnostics. Main edits are local:
+  retain promising preliminary faster exploration, qualify the historical
+  iteration comparison, remove the incorrect 6.3%-of-MLE claim, and refer
+  technical details to SI. No new sampler runs or broad validation study.
+- Recovered exact original Figure 6 chains from hetankevin/diffPomp
+  revision 65e64d3e24d7d82839b413067c30b4224dee43c9. Current diffPomp's figure
+  hash matches the manuscript. `code/bayesian` preserves source, four arrays,
+  provenance and ArviZ 0.22.0 diagnostics with a regenerable SI table.
+- Material findings: 19 finite sampled coordinates; rho/c fixed, constant
+  omega unused by the seasonal simulator. Separate joint KDE prior per
+  chain; Scott factor 10000^(-1/23); both log prior and particle log objective
+  divided by N=600. Historical source alpha=.95 (later notebook says .97),
+  J=1000, fixed NUTS step .05, depth 5, 1500 draws, 500 discarded. NumPy
+  randomness is captured at JAX tracing; no augmented pseudo-marginal state.
+- R-hat across these different-prior runs is descriptive only (1.03–2.45).
+  ESS/MCSE computed per chain, without pooling distinct targets. Diagnostics
+  do not establish stationarity or exact posterior sampling. The 6.3% value
+  is .02*.95^40*sqrt(600) on the transformed perturbation scale, not a
+  measured KDE width. Removed it from the caption.
+- Prior clouds, tracing-time seeds, kernel results and timings were not
+  archived. Do not fabricate overlays, divergences, depth counts or ESS/s.
+  Original sampler code is preserved for inspection, not executed by the
+  diagnostic script. User says clouds are in diffpomp, but the inspected
+  tracked archive does not save them; no further question is pending.
+- SI build and visual review of new pages 59–61 pass. Native compiler cannot
+  access macros.tex. Main build passes, with an existing unrelated overfull
+  theorem-table line; final rebuild/visual check pending caption changes.
+  SPX retuning below is still running and must be integrated when complete.
+
 ## October 15: proposed response to review points 6 and 7 (chat only)
 
 - Read the attached `report.pdf` points 6/7 against the Bayesian section,

@@ -12407,9 +12407,96 @@ uniform-in-parameter versions of the additional finite-particle estimates
 identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
 \fi
 
-\section{Figures for Bayesian Inference}
+\section{Implementation and Figures for Bayesian Inference}
 \label{appendix:bayes}
 
+\subsection{Sampling calculation and empirical priors}
+
+The code and four saved chains underlying Figure~\refFigNutsEb\ are
+available in \texttt{code/bayesian}, together with the script producing
+Table~\ref{tab:bayesian-diagnostics} and their original \texttt{diffPomp}
+source revision.
+This earlier calculation fixes the initial state proportions and uses
+19 finite transformed parameter coordinates, denoted by $z$.
+Positive rates and noise scales are represented by their logarithms,
+the trend coordinate is $100\beta_{\mathrm{trend}}$, and the seasonal
+coefficients are unchanged. The two remaining stored coordinates fix
+$\rho=0$ and $c=1$. An additional coordinate $\log\omega$ is retained
+in the fitted prior although the seasonal environmental force of infection
+replaces this constant in the simulator.
+
+For each chain $c$, we ran 40 IF2 iterations with 10,000 particles from
+a random starting point. The perturbation standard deviation was initially
+0.02 on the transformed scale and decreased by a factor of 0.95 per iteration.
+We selected the swarm with the highest monitored likelihood and initialized
+NUTS at its mean. If its particles are $z_{c,1},\ldots,z_{c,K}$, with
+$K=10,000$, the empirical prior was the joint Gaussian kernel estimate
+\[
+ \widehat\pi_c(z)=\frac{1}{K}\sum_{k=1}^K
+ \phi_{19}(z;z_{c,k},h^2 S_c),\qquad
+ h=K^{-1/(19+4)}\simeq0.670,
+\]
+where $S_c$ is the sample covariance of the swarm. This is the default
+Scott bandwidth used by \texttt{jax.scipy.stats.gaussian\_kde}.
+The prior is defined on the transformed coordinates, so no additional
+change-of-variables factor enters the calculation in $z$.
+Each chain has its own fitted prior. The observations are therefore used
+both to construct that prior and to evaluate the likelihood, with the
+fitted density subsequently held fixed.
+
+The numerical log potential supplied to NUTS was
+\begin{equation}
+ a_c(z;u)=\frac{\widehat\ell_J(z;u)+\log\widehat\pi_c(z)}{N},
+ \qquad N=600,\quad J=1,000,
+ \label{eq:bayes-numerical-potential}
+\end{equation}
+where $\widehat\ell_J$ is the forward particle-filter log objective
+returned by the MOP routine, including its measurement-density stabilization,
+and $u$ denotes the simulation random numbers.
+The archived sampling code uses $\alpha=0.95$ for its DMOP derivative.
+Thus the supplied potential corresponds numerically to a tempered density
+proportional to $\{\exp(\widehat\ell_J)\widehat\pi_c\}^{1/N}$,
+rather than the untempered empirical-prior posterior.
+The resampling genealogy is recalculated at each candidate parameter;
+the stop-gradient operations freeze the resampling measurements only
+for differentiation. The code draws its simulation seed and systematic
+resampling offsets using NumPy during JAX tracing, so these random
+numbers are reused by the compiled computation. They are not part of
+an augmented Markov-chain state, and no separate pseudo-marginal update
+is applied. This construction does not establish exact posterior sampling.
+
+We used TensorFlow Probability's JAX \texttt{NoUTurnSampler}, with step
+size 0.05, maximum tree depth 5, and maximum energy difference 1,000.
+There was no step-size adaptation. Each run saved 1,500 draws; the figures
+discard the first 500. The library's NUTS transition uses the supplied
+potential and its AD force, without an additional likelihood correction.
+Only the parameter draws were saved. The fitted prior clouds, kernel
+diagnostic traces and computation times were not archived, so prior
+overlays, divergence counts, tree-depth saturation and ESS per second
+cannot be recovered from these files.
+
+Table~\ref{tab:bayesian-diagnostics} summarizes the retained draws.
+The between-chain differences include differences in fitted priors, so
+$\widehat R$ here describes disagreement between runs and cannot establish
+convergence to a common posterior. We calculate ESS and MCSE separately
+within each chain; these estimates also require approximate stationarity.
+
+\begin{table}[htbp]
+\centering
+\input{code/bayesian/results/diagnostics}
+\caption{Diagnostics for the four archived empirical-prior NUTS runs,
+using 1,000 retained draws per run. The rank-normalized split
+$\widehat R$ compares all four runs, whose fitted priors differ.
+Bulk and tail ESS are the smallest within-chain values, and MCSE is
+the largest within-chain Monte~Carlo standard error of the mean.
+All quantities use the displayed transformed coordinates. The fixed
+coordinates $\rho=0$ and $c=1$ are excluded. Divergences and tree-depth
+diagnostics were not saved.}
+\label{tab:bayesian-diagnostics}
+\end{table}
+\FloatBarrier
+
+\subsection{Additional sampling figures}
 
 \begin{figure}[H]
 \centering
@@ -12428,7 +12515,7 @@ identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
     \centering
     \includegraphics[width=\textwidth/\real{1.3}]{imgs/pmcmc/nuts.png}
     \caption{Convergence diagnostics for a No-U-Turn Sampler (NUTS) with uniform priors on a compact set, on the trend parameter in the Dhaka cholera model of \cite{king08}. The NUTS sampler explores more of the posterior than the Metropolis-Hastings sampler, but fails to converge quickly.
-      This poor convergence, compared with Fig.~{\refFigNutsEb} in the main text, demonstrates the value of the empirical prior for obtaining successful convergence.
+      Comparison with Fig.~{\refFigNutsEb} in the main text suggests that the empirical prior assists exploration, though it also changes the sampling target.
 }
     \label{fig:nuts}
 \end{figure}
@@ -12443,7 +12530,7 @@ identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Trend_in_Force_of_Infection.png}
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Noise_in_Force_of_Infection.png}
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Measurement_Noise.png}
-    \caption{Posterior estimates from NUTS powered by MOP-$\alpha$ with the informative nonparametric empirical prior obtained from a kernel density estimator on the IF2 parameter cloud. The posterior estimates from each chain are largely in agreement.}
+    \caption{Marginal sample distributions from NUTS powered by MOP-$\alpha$, with a separate empirical prior fitted to each chain's IF2 parameter cloud. The calculation and diagnostics are given above.}
     \label{fig:posteriors}
 \end{figure}
 
