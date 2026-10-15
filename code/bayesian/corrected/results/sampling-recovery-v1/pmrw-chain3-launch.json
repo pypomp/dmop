@@ -1,0 +1,21 @@
+{
+  "pid": 2932371,
+  "create_time": 1792103772.65,
+  "utc": "2026-10-15T22:36:13.605047+00:00",
+  "command": [
+    "taskset",
+    "-c",
+    "28",
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/extend.py",
+    "--parent",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain3",
+    "--output",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain3",
+    "--recover-interrupted",
+    "--checkpoint",
+    "25"
+  ],
+  "log": "/tmp/dmop-bayes-recovery-pmrw-chain3.log",
+  "protocol_commit": "b5a5f032a"
+}

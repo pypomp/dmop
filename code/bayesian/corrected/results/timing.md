@@ -1,7 +1,7 @@
 # Timing interpretation
 
 The concurrent candidate chains run on separate cores of a hybrid Intel
-13900K. The MALA candidates currently use performance cores; the random-walk
+13900K. The NUTS candidates use performance cores; the random-walk
 candidates use efficiency cores. Each configuration records its CPU affinity.
 Their elapsed wall times are therefore not a matched hardware speed comparison.
 
@@ -21,7 +21,7 @@ particles and3.437s for1,000 force particles. This measures kernel cost;
 it does not establish a posterior ESS-per-second speedup. The continuations
 copy their parent traces and cannot be counted as independent chains.
 
-The cheaper-force four-chain candidates start from saved iteration250 states
+The stopped cheaper-force MALA development candidates started from saved iteration250 states
 of the original full-force warmup runs, with new seeds and a fresh1,000-step
 warmup. Original optimization and warmup cost3262.72s elapsed per chain and
 remain part of preparation. The newer run clocks do not include that cost.

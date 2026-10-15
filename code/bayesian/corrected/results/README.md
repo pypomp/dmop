@@ -27,7 +27,8 @@ four-chain posterior figure. Read each run's `status.json` or
 | `candidate-pmmala-g1000-4chain-v2` | Stopped development MALA candidates after the user clarified NUTS versus PMMH; exact saved v1 warmup states, 1,000 force/5,000 target particles, fresh warmup and seeds; protocol committed before launch |
 | `candidate-nuts-4chain-v1` | Primary four-chain NUTS comparison, matched to the PMMH starts and initial metrics; read protocol and status for progress |
 | `prior-sd2-recovery-v1` | Exact recovery of two interrupted MALA warmups; subsequently stopped with the other MALA development runs |
-| `candidate-pmrw-4chain-v1` | Four matching random-walk chains, using the same optimized starts and initial proposal scales |
+| `candidate-pmrw-4chain-v1` | Four matching random-walk chains interrupted at iteration1,075; immutable parents of the recoveries below |
+| `sampling-recovery-v1` | Exact detached continuations of the four PMMH chains and depth4 NUTS pilot; launch records identify live processes. Development reports also test the method-comparison display |
 | `prior-sd2-pmmala-4chain-v1` | Stopped MALA development sensitivity chains with twice the reference-prior SD; sensitivity remains to be checked for the final NUTS result |
 
 See [timing.md](timing.md) before comparing elapsed times. The concurrent

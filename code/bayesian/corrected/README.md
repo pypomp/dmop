@@ -71,8 +71,9 @@ where it remains informative; revise empirical claims only as needed.
 - `nuts.py`: BlackJAX NUTS with deterministic MOP forces, unscaled PF
   energies, and an explicit MH update of particle randomness.
 - `run.py`: one chain, complete checkpoint and warmup history, frozen source.
-- `extend.py`: exact continuation from a completed checkpoint into a new
-  directory, preserving the parent, frozen tuning and random state.
+- `extend.py`: exact continuation into a new directory, preserving the parent,
+  tuning and random state. `--recover-interrupted` requires a recorded terminal
+  interruption and resumes the original run length and warmup schedule.
 - `metric.py`: proposal scaling from replicated scores; affects efficiency
   only, and is not a posterior covariance estimate.
 - `force_check.py`: force variability and serial cost at the same fixed point
@@ -81,6 +82,9 @@ where it remains informative; revise empirical claims only as needed.
   effect of crossing resampling discontinuities.
 - `report.py`: all-coordinate diagnostics and the original four-panel trend
   layout, plus full trace/marginal grids with common-prior overlays.
+- `compare.py`: compare frozen NUTS/PMMH reports on the same target, showing
+  all-coordinate marginal agreement and differences relative to Monte Carlo
+  error. Unconverged reports remain explicitly marked as development samples.
 - `results/`: all pilots, including unsuccessful settings. No pilot is a
   final posterior sample. The historical files one level up stay unchanged.
 
@@ -102,3 +106,21 @@ The current comparison is MOP-driven NUTS against ordinary particle random-walk
 MH. Joint particle MALA and fixed-length HMC remain development trials. The joint MALA
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
+
+For the current comparison, the four NUTS processes are in
+`results/candidate-nuts-4chain-v1/chain{0,1,2,3}`. The original PMMH processes
+were interrupted after iteration 1,075; their exact continuations are in
+`results/sampling-recovery-v1/pmrw-chain{0,1,2,3}`. Each continuation includes
+its complete parent trace. Use only the continuation in a diagnostic report,
+never both parent and continuation as independent chains.
+
+Generate each method report with `report.py`, then run:
+
+```sh
+python code/bayesian/corrected/compare.py --nuts PATH_TO_NUTS_REPORT \
+  --pmmh PATH_TO_PMMH_REPORT --output PATH_TO_COMPARISON
+```
+
+The comparison uses the exact arrays frozen with each report. Different
+warmup lengths are handled within each method report. Its MCSE ratios are
+descriptive and do not establish equivalence or convergence.

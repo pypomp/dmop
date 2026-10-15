@@ -1,0 +1,17 @@
+{
+  "nuts_report": "code/bayesian/corrected/results/sampling-recovery-v1/development-nuts-report",
+  "pmmh_report": "code/bayesian/corrected/results/sampling-recovery-v1/development-pmmh-report",
+  "report_hashes": {
+    "code/bayesian/corrected/results/sampling-recovery-v1/development-nuts-report/audit.json": "e2c6ba2bab7fb6096c6742fcb9e648df121c48263fd5e994949077c522761e9f",
+    "code/bayesian/corrected/results/sampling-recovery-v1/development-pmmh-report/audit.json": "592827d7575e5ed5480233283afcc43c87a9faf3b9ce8f3526218d94b792540e"
+  },
+  "same_target": true,
+  "both_pass_numerical_checks": false,
+  "interpretation": "Mean differences divided by combined MCSE are descriptive. Unconverged-chain MCSE can be misleading. No equivalence or speedup is inferred.",
+  "remaining_checks": [
+    "visual review",
+    "prior sensitivity",
+    "particle sensitivity",
+    "same-hardware timing"
+  ]
+}
