@@ -6,9 +6,26 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from kernels import State,make_kernel
-from extend import adapt_tuning,warmup_recipe
+from extend import adapt_tuning,warmup_recipe,check_saved_state
 
 jax.config.update('jax_enable_x64',True)
+
+
+def test_random_walk_recovery_checks_cached_zero_force():
+    import pytest
+    ll=lambda z,u:-.5*z@z
+    prior=lambda z:-.5*z@z
+    def forbidden_force(*args):
+        raise AssertionError('PMMH recovery must not evaluate a force')
+    initialize,_=make_kernel(ll,prior,forbidden_force,method='pmrw')
+    state=initialize(jnp.array([.3,-.2]),jax.random.key(9))
+    model={'loglik':ll,'value_force':forbidden_force}
+    assert check_saved_state(model,state,'pmrw')=={
+        'likelihood_difference':0.,'maximum_force_difference':0.}
+    with pytest.raises(AssertionError):
+        check_saved_state(model,state._replace(loglik=state.loglik+1.),'pmrw')
+    with pytest.raises(AssertionError):
+        check_saved_state(model,state._replace(force=jnp.ones_like(state.z)),'pmrw')
 
 
 def test_warmup_and_sampling_recovery(tmp_path):

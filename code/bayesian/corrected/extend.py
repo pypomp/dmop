@@ -20,6 +20,20 @@ import time
 WARMUP_RECIPE_SHA256='babfc71a989e5164e1ef5f64901df1d31e6169ca9fc7f363b53ccdec8f128f7a'
 
 
+def check_saved_state(model, state, method):
+    """Reproduce the cached quantities using the parent's kernel convention."""
+    import numpy as np
+    from kernels import finite_force
+    checked_loglik=float(model['loglik'](state.z,state.u))
+    # Random-walk MH stores a zero force and never evaluates a gradient.
+    checked_force=(np.zeros_like(state.z) if method=='pmrw' else
+                   np.asarray(finite_force(model['value_force'](state.z,state.u)[1])))
+    np.testing.assert_allclose(checked_loglik,float(state.loglik),rtol=0,atol=1e-9)
+    np.testing.assert_allclose(checked_force,np.asarray(state.force),rtol=1e-10,atol=1e-8)
+    return dict(likelihood_difference=checked_loglik-float(state.loglik),
+                maximum_force_difference=float(np.max(np.abs(checked_force-np.asarray(state.force)))))
+
+
 def warmup_recipe(source):
     start=source.index('        if i<a.warmup:')
     end=source.index('        if (i+1)%a.checkpoint',start)
@@ -133,13 +147,8 @@ def main():
     extra={'max_depth':cfg['max_depth']} if cfg['method']=='nuts' else {}
     _,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],cfg['method'],cfg['steps'],**extra)
     if a.recover_interrupted:
-        checked_loglik=float(m['loglik'](state.z,state.u))
-        checked_force=np.asarray(finite_force(m['value_force'](state.z,state.u)[1]))
-        np.testing.assert_allclose(checked_loglik,float(state.loglik),rtol=0,atol=1e-9)
-        np.testing.assert_allclose(checked_force,np.asarray(state.force),rtol=1e-10,atol=1e-8)
         write_json(a.output/'recovery_state_check.json',dict(
-            likelihood_difference=checked_loglik-float(state.loglik),
-            maximum_force_difference=float(np.max(np.abs(checked_force-np.asarray(state.force)))),
+            **check_saved_state(m,state,cfg['method']),
             parent_iteration=old,original_total=total))
     start=time.monotonic()
     parent_seconds=json.loads((a.parent/'status.json').read_text())['seconds']
