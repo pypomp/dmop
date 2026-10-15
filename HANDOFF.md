@@ -9,7 +9,11 @@
 - candidate-nuts-4chain-v1/protocol.json specifies four independent NUTS chains,
   J5000/G1000, alpha .95, common proper prior, depth4, 500 warmup/1000 retained
   initially. They use PMMH initial positions and metrics, not MALA checkpoints.
-  Commit this protocol before launching; record PIDs/create times and logs.
+  Protocol committed as a2a6a8282 before launch. Detached live PIDs
+  2917966/2917968/2917970/2917972 on cores0/2/4/6; each chainN-launch.json
+  records create time and command. Logs /tmp/dmop-bayes-nuts-candidate-chainN.log.
+  Verified all four processes/configurations; first checkpoints pending.
+  All four PMMH chains have entered retained sampling (1025/4000).
 - Prior MALA chains0/2 unexpectedly exited143; exact warmup recovery passed
   saved-state and replay tests before those recovery jobs were also stopped
   for this scope correction. No scientific failure or cause of exit established.
