@@ -1,5 +1,8 @@
 # Archived Bayesian calculation
 
+The corrected, untempered Pypomp rerun is under [corrected/](corrected/README.md).
+It is in progress; the original files below remain an unchanged archive.
+
 This directory documents the original empirical-prior NUTS calculation in
 main-text Figure 6 and SI S8. It preserves the saved draws and the sampling
 source from [diffPomp revision 65e64d3](https://github.com/hetankevin/diffPomp/tree/65e64d3e24d7d82839b413067c30b4224dee43c9).

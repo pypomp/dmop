@@ -1,5 +1,43 @@
 # Handoff
 
+## October 15: corrected Bayesian rerun in progress
+
+- User authorized rerunning the untempered target, replacing the empirical
+  prior if feasible, and subsequently requested current Pypomp rather than
+  diffPomp. Qualitative continuity of the figures is preferred, but new
+  results need not be identical. Convergence is determined numerically and
+  visually, never by matching old marginals.
+- New `code/bayesian/corrected/` uses Pypomp's Dhaka simulator and functional
+  PF/MOP APIs, with 18 active parameters and one common proper Normal prior
+  on estimation coordinates (explicit old-search-range center/scale).
+  The empirical KDE is absent. No archived source or original draw changed.
+- Added explicit pseudo-marginal random state and corrected MALA/fixed-length
+  HMC proposals. Independent random-state refresh uses a likelihood MH ratio;
+  rejection retains that state. No NUTS validity claim. Numerical force uses
+  stabilized library MOP; endpoint acceptance uses a normalized Gaussian
+  observation model, dropping the additive floor and killing invalid paths.
+  This small model change and Pypomp initial normalization are documented.
+- Preflight J1000 in float32 completed (initial log-likelihood variance 2.21,
+  density-floor effect zero in 16 evaluations). MOP and PF numerical values
+  diverge through floating-point genealogy; endpoint correction deliberately
+  uses PF. Explicit x64 preflight now runs in session 64724; log
+  /tmp/dmop-bayes-preflight-x64.log. Do not duplicate a live process.
+- Kernel tests check a nonconservative force's reversible, volume-preserving
+  leapfrog and an analytically known extended Gaussian target. Initial HMC
+  test tuning was near a half-period resonance and mixed poorly; reduced
+  integration length. Retest session 25283. Runner now saves full checkpoints,
+  source snapshots, target/configuration, warmup adaptation and diagnostics.
+- X64 preflight is complete: log-likelihood variance 3.28, maximum MOP/PF
+  discrepancy 9.1e-12, density-floor effect 6.4e-12 across 16 seeds.
+  Pilot MALA J1000 is live in session 10897; log
+  /tmp/dmop-bayes-pilot-mala.log. It runs 50 optimization updates, 100 warmup
+  and 100 sampling transitions; these are tuning draws, not final inference.
+- Next: inspect pilot, then independent
+  final chains and prior/particle sensitivity. Regenerate existing figure
+  layouts, update main/SI minimally, compile and inspect. Goal NOT complete.
+  No manuscript changes or final replacement figures yet.
+
+
 ## October 15: benchmark follow-up completed
 
 - All 28 SPX tuning fits completed. Alpha .97, rate .001 with cosine decay,

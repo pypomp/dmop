@@ -1,0 +1,58 @@
+# Corrected Bayesian experiment (in progress)
+
+The archived NUTS calculation divided both log likelihood and log prior by
+600. These new experiments remove that division and use current Pypomp,
+without importing the archived diffPomp implementation. Historical arrays and
+figures remain unchanged until replacement runs have passed their checks.
+
+## Target and model
+
+The target is the untempered posterior for the Pypomp Gaussian-noise Dhaka
+Euler model, with 20 steps per monthly observation and the library's fixed
+initial proportions. There are 18 estimated parameters. The obsolete constant
+omega coordinate is absent; rho=0, c=1, alpha=1, delta=.02 and initial
+proportions are fixed. Pypomp normalizes those initial proportions and
+interpolates the covariates; these conventions differ slightly from the old
+notebook.
+
+The experiment uses Pypomp's simulator and particle filters. The sole
+measurement change removes its additive 1e-18 density floor. The observation
+model is Gaussian with mean cumulative monthly deaths and SD tau times that
+mean. Euler paths that have crossed a negative state are sent to an absorbing
+failure state, whose observation is outside the real-valued observed series.
+Their likelihood is zero. This defines a normalized observation model, unlike
+adding a constant to a density over the whole real line. Pilot checks compare
+the modified likelihood to the library's original objective.
+
+A common proper reference prior replaces the chain-specific empirical KDEs.
+The 18 estimation coordinates have independent Normal priors, with mean at
+the midpoint of the old search ranges and SD half their width. These ranges
+and the coordinate transformations are explicit in `model.py`. They are a
+reference choice, not claimed scientific prior knowledge. A doubled-SD
+sensitivity run will assess the dependence on that choice. IF2 or optimization
+may supply starting points and proposal scales; neither changes the prior.
+
+## Sampler and checks
+
+The extended target is proportional to `Lhat(theta,u) prior(theta) m(u)`,
+where u is an explicit particle-filter PRNG state. The unscaled bootstrap
+particle-filter estimate enters every Metropolis ratio. MOP supplies only a
+proposal force. Parameter updates condition on u; random-number updates have
+an independent proposal from m, accepted with the likelihood ratio. Retaining
+u on rejection is essential. The force is deterministic conditional on u.
+A fixed-length reversible leapfrog proposal with an endpoint energy correction
+is valid even if this force is not an exact gradient. We do not infer validity
+of an adaptive NUTS stopping rule from that argument.
+
+Before full runs: test reversibility and known-target moments, check agreement
+of MOP's forward value with the independent PF API at identical keys, estimate
+PF variability and timing, and check the effect of removing the density floor.
+Adaptation is restricted to warmup. Save every retained draw and rejection,
+seeds, settings, source hashes, runtime and acceptance/energy diagnostics.
+
+Four independent chains must agree (rank split R-hat <=1.01, bulk and tail
+ESS >=400 for every estimated parameter) and traces must be visually checked.
+Prior sensitivity and doubled-particle checks follow. If these checks fail,
+retain the failed runs and tune/extend sampling. Aesthetic similarity to the
+old plots is not a convergence criterion. Keep the existing figure layout
+where it remains informative; revise empirical claims only as needed.
