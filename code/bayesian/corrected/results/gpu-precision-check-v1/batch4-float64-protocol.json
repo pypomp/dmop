@@ -1,0 +1,12 @@
+{
+  "purpose": "Check float64 GPU batching to retain the existing numerical target after one float32-versus-float64 precision difference exceeded its local Monte Carlo interval.",
+  "precision": "float64",
+  "batch_size": 4,
+  "particles": 5000,
+  "force_particles": 1000,
+  "kernel_postcompile_reps": 3,
+  "likelihood_reps": 1,
+  "inputs": "inputs.npz",
+  "gpu": 0,
+  "production_change": false
+}
