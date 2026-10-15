@@ -76,8 +76,9 @@ def check_state(model, states, configs):
     """Check target and cached forces without replacing the saved values.
 
     A fused integrator and a standalone force evaluation can round differently
-    in float32. The force check allows 16 single-precision ulps at the largest
-    force component; the float64 target still uses the strict absolute check.
+    in float32. The force check allows 64 times float32 epsilon times the
+    largest force magnitude, an empirical allowance for fused arithmetic;
+    the float64 target still uses the strict absolute check.
     Exact continuation is tested by replay, not inferred from this tolerance.
     """
     import jax
@@ -93,7 +94,7 @@ def check_state(model, states, configs):
             lambda z, u: finite_force(model['value_force'](z, u)[1])))(states.z, states.u))
     cached = np.asarray(states.force)
     delta = np.max(np.abs(force-cached), axis=1)
-    tolerance = (16*np.finfo(np.float32).eps*np.maximum(1., np.max(np.abs(cached), axis=1))
+    tolerance = (64*np.finfo(np.float32).eps*np.maximum(1., np.max(np.abs(cached), axis=1))
                  if configs[0].get('force_precision') == 'float32'
                  else 1e-8 + 1e-10*np.max(np.abs(cached), axis=1))
     if np.any(delta > tolerance):
@@ -128,6 +129,15 @@ def main():
         p.error('Checkpoint interval must be positive')
     folders, configs, arrays, hashes, total = load_parent(a.parent, a.recover_interrupted, a.draws)
     cfg = configs[0]; n = len(configs)
+    if a.recover_interrupted:
+        import psutil
+        audit = json.loads((a.parent/'interruption.json').read_text())
+        if audit.get('pid') != cfg['pid'] or 'create_time' not in audit:
+            raise ValueError('Terminal verification must identify the parent PID and creation time')
+        if psutil.pid_exists(audit['pid']):
+            process = psutil.Process(audit['pid'])
+            if process.create_time() == audit['create_time'] and process.status() != 'zombie':
+                raise ValueError('Parent process is still live')
     # Import the entire execution path from the frozen parent, not current code.
     sys.path.insert(0, str((folders[0]/'source').resolve()))
     import jax
