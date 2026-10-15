@@ -128,3 +128,14 @@ its reverse proposal density or trajectory energy correction is retained.
 `test_model.py` verifies that changing the force count leaves the Pypomp
 acceptance likelihood and prior exactly unchanged at the same input and key.
 The smaller-force-count pilots have not yet established adequate mixing.
+
+## Local derivative check
+
+`conditional_force_check.py` compares directional finite differences of the
+fixed-seed PF target with the MOP forces at alpha0 and alpha.95. In the saved
+J1000 check, alpha0 agrees with finite differences at steps of1e-8--1e-9,
+whereas alpha.95 differs. At larger steps, changes in resampling produce
+large finite-difference jumps. Thus local pathwise differentiation does not
+make the fixed-seed target globally smooth. This check does not establish
+which force gives better posterior mixing; all proposed kernels retain their
+target-density correction.

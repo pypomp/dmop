@@ -15,9 +15,10 @@ four-chain posterior figure. Read each run's `status.json` or
 | `metric-j1000` | Failed Hessian preconditioning attempt; no output matrix used |
 | `score-metric-j1000` | 64 replicated MOP scores, regularized second moment used only for proposal preconditioning |
 | `force-count-check-v1` | 16 replicated forces at each of 1,000/2,500/5,000 particles, at the same optimized point on core8; proposal tuning only |
+| `conditional-force-check-v1` | Local fixed-seed derivative check: alpha0 matches within very small resampling regions, while larger perturbations cross discontinuities |
 | `pilot-pmmala-metric-j5000` | Joint particle MALA with that covariance shape |
 | `pilot-hmc-metric-j5000` | Completed fixed-length HMC pilot; substantial drift, not selected for extension |
-| `pilot-nuts-metric-j5000` | Conditional NUTS using 5,000 particles for both the target and force |
+| `pilot-nuts-metric-j5000` | Completed conditional NUTS pilot using 5,000 particles for both target and force; no divergences, but all-coordinate traces still drift |
 | `pilot-nuts-g1000-j5000` | Completed conditional NUTS pilot with 1,000 force particles and 5,000 target particles; 30 retained draws, no divergences, all trajectories reach depth3; records a CPU-affinity change |
 | `pilot-pmmala-g1000-j5000` | Completed joint particle MALA pilot with 1,000 force particles and 5,000 target particles; substantial drift remains |
 | `pilot-nuts-depth4-g1000-j5000` | Follow-up with maximum depth4, under the committed `nuts-depth4-protocol.json` |

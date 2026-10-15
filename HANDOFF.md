@@ -1,5 +1,34 @@
 # Handoff
 
+## October 15: full-force NUTS complete; fixed-seed force check
+
+- This continuation included a verified wait on live session83471 (monitor
+  cell252 ended normally when that session exited0). Full-force NUTS pilot
+  completed60 transitions with30 retained. Its report is generated and the
+  complete18-coordinate trace was visually inspected: substantial drift,
+  trend bulk ESS2.57, no posterior-convergence claim. Retained position changes
+  .933, mean trajectory acceptance .550, zero divergences,7 steps per draw.
+  Depth3 reached every time. Do not extend this short configuration by default;
+  the already-running depth4 pilot59154 is the next NUTS evidence.
+- Moved wider-prior chain2, actual host PID2832635, from E-core16 to released
+  P-core14 at22:04:18UTC, all9 threads. affinity_change.json records it; no
+  target/state/tuning change. Chain3 remains on E-core18, a candidate for
+  moving to core10 after depth4 NUTS finishes. No other process touched.
+- Primary MALA chains passed iteration400 covariance adaptation; metrics are
+  finite/positive and recent acceptance .12--.72. Their step adaptation remains
+  active until1000. The current12 long chains are still in warmup.
+- Added/completed conditional_force_check.py, session45243 terminal, output
+  conditional-force-check-v1. AtJ1000, two directional derivatives match
+  alpha0 within1e-8--1e-9 steps (-68.8037,9.5360); alpha.95 gives22.5336,
+  -48.8375. At1e-7 and larger, resampling creates huge finite-difference jumps.
+  This confirms local pathwise behavior but NOT global smoothness or better
+  alpha0 mixing. No extra alpha0 sampler branch launched; do not infer that
+  a local derivative match resolves the conditional target's roughness.
+- Active handles unchanged: MALA56838/62806/75156/55847; RW61014/83054/
+  40197/54096; wider prior99174/32188/35673/41249; depth4 NUTS59154.
+  Full-force NUTS83471 and HMC16291 are terminal. Goal still active; final
+  posterior/prior comparison, particle checks and manuscript edits remain.
+
 ## October 15: HMC review complete; prior sensitivity underway
 
 - Prior turn made substantive tuning/protocol progress. This continuation
