@@ -33,6 +33,11 @@ def new_results(root, model, expected=20, gaussian_particles=None):
         # row with the declared equal-particle comparison, never pool counts.
         folders = [p for p in folders if not p.name.endswith("-saem")]
         folders += [root / f"matched-{model}-j{gaussian_particles}-{group}" for group in ("if", "ds")]
+    retuned = model == "spx" and (root / "spx-retuning/status.json").exists()
+    if retuned:
+        if not json.loads((root / "spx-retuning/status.json").read_text())["complete"]:
+            raise ValueError("SPX replacement has not completed")
+        folders += sorted((root / "spx-retuning").glob("final-*"))
     if not folders:
         raise ValueError(f"No final results for {model}")
     frames, timings, sources, reference = [], [], [], None
@@ -62,6 +67,16 @@ def new_results(root, model, expected=20, gaussian_particles=None):
             shared_starts[start] = vector
         if not set(frame.start).issubset(set(starts.start)):
             raise ValueError(f"Evaluation has no recorded starting vector: {folder}")
+        if retuned:
+            replacement = folder.parent.name == "spx-retuning"
+            keep = ["IFAD"] if replacement else ["IF2", "DS19", "CTDD21"]
+            if replacement:
+                chosen = json.loads((root / "spx-retuning/selection.json").read_text())["chosen"]
+                for key in ("alpha", "warm", "ifad_learning_rate"):
+                    if config[key] != chosen[key]:
+                        raise ValueError(f"SPX final recipe disagrees with tuning: {key}")
+            frame = frame.loc[frame.method.isin(keep)]
+            timing = timing.loc[timing.method.isin(keep)]
         if model in ("linear", "oscillator"):
             if matched:
                 role = folder.name.rsplit("-", 1)[-1] if folder.name.startswith("matched-") else "ct"
@@ -105,6 +120,9 @@ def new_results(root, model, expected=20, gaussian_particles=None):
     selection_path = root / "matched-particle-tuning" / "selection.json"
     if matched and selection_path.exists():
         sources.append(selection_path)
+    if retuned:
+        sources.extend(root / "spx-retuning" / n for n in
+                       ("protocol.json", "selection.json", "status.json"))
     trace = pd.concat(frames, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     timing = pd.concat(timings, ignore_index=True).replace({"method": {"MPIF": "IF2"}})
     final = trace.loc[trace.final].copy()
@@ -203,11 +221,12 @@ def axes_for(models):
     return fig, axes
 
 
-def save(fig, output, name):
+def save(fig, output, name, *, close=True):
     for extension in ("pdf", "png"):
         fig.savefig(output/f"{name}.{extension}", dpi=220,
                     metadata={"CreationDate": None} if extension == "pdf" else None)
-    plt.close(fig)
+    if close:
+        plt.close(fig)
 
 
 def generate(results, output, models, expected, gaussian_particles=500):
@@ -259,6 +278,16 @@ def generate(results, output, models, expected, gaussian_particles=500):
         ax.set_ylabel("Log-likelihood")
         ax.set_title(f"({chr(65+i)}) {TITLES[model]}", loc="left")
         ax.grid(axis="y", color=".92", zorder=0)
+    save(fig, output, "final_likelihoods_full", close=False)
+    cropped_counts = {}
+    if "dhaka" in models:
+        ax = axes[models.index("dhaka")]
+        ax.set_ylim(-3840, -3740)
+        subset = final.loc[final.model.eq("dhaka")]
+        cropped_counts = {method: int(((subset.method == method) & (subset.loglik < -3840)).sum())
+                          for method in METHODS}
+        ax.text(.02, .025, f"{sum(cropped_counts.values())} estimates below axis", transform=ax.transAxes,
+                fontsize=6, bbox={"facecolor": "white", "edgecolor": "none", "alpha": .85})
     save(fig, output, "final_likelihoods")
 
     # Two ordinary linear views retain the full trajectory while making
@@ -281,6 +310,8 @@ def generate(results, output, models, expected, gaussian_particles=500):
                 low, high = float(lower_quantiles.min()), references[model]
                 span = max(high-low, .1)
                 detail_ranges[model] = [low-.15*span, high+.1*span]
+                if model == "dhaka":
+                    detail_ranges[model] = [-3840, -3740]
                 ax.set_ylim(*detail_ranges[model])
             ax.set_xlabel("Fitting time (s)")
             ax.set_ylabel("Log-likelihood")
@@ -298,9 +329,11 @@ def generate(results, output, models, expected, gaussian_particles=500):
     (output/"plot_ranges.json").write_text(json.dumps({
         "scale": "linear for every axis",
         "optimization_detail": detail_ranges,
-        "detail_rule": "minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
+        "detail_rule": "Dhaka fixed [-3840,-3740]; other models: minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
         "full_range_companion": "optimization.pdf",
-        "final_distributions": "all final estimates included without cropping"}, indent=2)+"\n")
+        "final_distributions": "Dhaka cropped to [-3840,-3740]; all estimates retained in summaries",
+        "final_full_range_companion": "final_likelihoods_full.pdf",
+        "dhaka_below_final_axis": cropped_counts}, indent=2)+"\n")
 
     summary = []
     table = [r"\begin{tabular}{lrrrrrr}", r"\toprule",

@@ -193,6 +193,21 @@ experiment. Use `--dhaka-ab-root ditlevsen/results/saem_ab` to inspect the
 superseded unscaled run. Fixed-path diagnostics under `results/saem-scaling-*`
 show why it was superseded; they are not fitted benchmark results.
 
+## SPX tuning and covariance checks
+
+The October 15 follow-up to the benchmark discussion is reproducible with
+`retune_spx.py`. It tunes IFAD's discount and initial step size on four
+independent starts, checks a longer warm start, and refits all 20 publication
+starts using the chosen recipe. The original runs remain in `final-spx-*`;
+`results/spx-retuning/` contains the protocol, candidates, selection and
+replacement fits. `report.py` uses the replacement only once all fits finish.
+
+For the local covariance question, see [covariance_support.md](covariance_support.md)
+and run `covariance_support.py`. These checks distinguish Dhaka's
+parameter-dependent rank-two local support from Daphnia's full-rank positive
+interior and rank-deficient initial state. They also explain where covariance
+regularization is applied and the separate fine-grid path-sampling issue.
+
 ## Gaussian SAEM
 
 For the oscillator, we use 80 SAEM iterations, a gain of one

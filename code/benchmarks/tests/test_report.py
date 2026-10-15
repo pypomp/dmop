@@ -28,6 +28,33 @@ def test_report_keeps_failed_fits(tmp_path):
     assert final.status.ne("complete").sum() == 2
 
 
+def test_spx_replacement_uses_all_starts_even_when_worse(tmp_path):
+    import shutil
+    folder, frame = make_result(tmp_path)
+    retuned = tmp_path / "spx-retuning"
+    retuned.mkdir()
+    replacement = retuned / "final-00"
+    shutil.copytree(folder, replacement)
+    chosen = {"alpha": .995, "warm": 100, "ifad_learning_rate": .01}
+    (retuned / "selection.json").write_text(json.dumps({"chosen": chosen}))
+    (retuned / "protocol.json").write_text("{}")
+    (retuned / "status.json").write_text(json.dumps({"complete": True}))
+    (replacement / "configuration.json").write_text(json.dumps({"purpose": "final", **chosen}))
+    revised = frame.loc[frame.method.eq("IFAD")].copy()
+    revised.loc[revised.start.eq(0), "loglik"] -= 20
+    revised.loc[revised.start.eq(1), "loglik"] += 5
+    revised.to_csv(replacement / "checkpoints.csv", index=False)
+    revised[["start", "method", "seconds"]].to_csv(replacement / "timings.csv", index=False)
+    final, _, _, _ = new_results(tmp_path, "spx", expected=2)
+    assert final.loc[final.method.eq("IFAD")].sort_values("start").loglik.tolist() == [80.,106.]
+    assert len(final) == 8
+    starts = pd.read_csv(replacement / "starts.csv")
+    starts.loc[0,"theta"] += .01
+    starts.to_csv(replacement / "starts.csv", index=False)
+    with pytest.raises(ValueError, match="Starting vectors disagree"):
+        new_results(tmp_path, "spx", expected=2)
+
+
 def test_gaussian_report_uses_one_common_particle_count(tmp_path):
     for name, keep, count in (("final-linear", METHODS, 500),
                                ("matched-linear-j500-if", ["IF2", "IFAD"], 500),

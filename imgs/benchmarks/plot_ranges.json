@@ -18,11 +18,18 @@
       -855.4051512974831
     ],
     "dhaka": [
-      -3814.850646432559,
-      -3737.494033338276
+      -3840,
+      -3740
     ]
   },
-  "detail_rule": "minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
+  "detail_rule": "Dhaka fixed [-3840,-3740]; other models: minimum method final 10th percentile to reference, padded by 15% below and 10% above; minimum span 0.1",
   "full_range_companion": "optimization.pdf",
-  "final_distributions": "all final estimates included without cropping"
+  "final_distributions": "Dhaka cropped to [-3840,-3740]; all estimates retained in summaries",
+  "final_full_range_companion": "final_likelihoods_full.pdf",
+  "dhaka_below_final_axis": {
+    "IFAD": 0,
+    "IF2": 1,
+    "DS19": 3,
+    "CTDD21": 3
+  }
 }
