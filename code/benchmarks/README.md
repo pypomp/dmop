@@ -203,7 +203,11 @@ The October 15 follow-up to the benchmark discussion is reproducible with
 independent starts, checks a longer warm start, and refits all 20 publication
 starts using the chosen recipe. The original runs remain in `final-spx-*`;
 `results/spx-retuning/` contains the protocol, candidates, selection and
-replacement fits. `report.py` uses the replacement only once all fits finish.
+replacement fits when the selected recipe changes. The completed October 15
+study selected the existing recipe, so all 20 original fits are retained
+after the source and evaluation audit. See
+[results/spx-retuning/README.md](results/spx-retuning/README.md) for the
+selection, reuse record and preserved partial redundant repeats.
 
 For the local covariance question, see [covariance_support.md](covariance_support.md)
 and run `covariance_support.py`. These checks distinguish Dhaka's

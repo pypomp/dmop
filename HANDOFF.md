@@ -23,7 +23,13 @@
   new SI pages 59–61 and main pages 13–14 were visually inspected. The native
   compiler was attempted for both but cannot access project macros.tex.
   Main has one unrelated pre-existing overfull theorem-table line.
-  Final SI build/check after the alpha wording and final push remain.
+  Final SI/main build after the alpha wording passes. Regenerated final and
+  progress-detail figures were visually checked; the SI has no overfull
+  boxes or undefined references. Host process inspection confirms no
+  task-owned SPX worker remains. All authorized work is complete except
+  original prior overlays/kernel diagnostics that cannot be recovered from
+  the saved archive; these limitations are explicit, and no new Bayesian
+  runs were requested. Changes are committed and pushed on main.
 
 ## October 15: Bayesian implementation recovered and documented
 
