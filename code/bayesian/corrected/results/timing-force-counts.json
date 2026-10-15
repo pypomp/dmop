@@ -1,0 +1,32 @@
+{
+  "runs": [
+    {
+      "run": "timing-pmmala-j5000-core8",
+      "appended_iterations": 20,
+      "excluded_first_compilation_iteration": true,
+      "timed_iterations": 19,
+      "median_seconds": 9.382703163981205,
+      "min_seconds": 9.043291711015627,
+      "max_seconds": 10.112088188994676,
+      "affinity": [
+        8
+      ],
+      "checkpoint_sha256": "b01c4e51361505e9623573a4241df6f1cefe2f631c3b854e330c490f9cfe1425"
+    },
+    {
+      "run": "timing-pmmala-g1000-j5000-core8",
+      "appended_iterations": 20,
+      "excluded_first_compilation_iteration": true,
+      "timed_iterations": 19,
+      "median_seconds": 3.437196903018048,
+      "min_seconds": 3.0629501680086832,
+      "max_seconds": 3.7018300750060007,
+      "affinity": [
+        8
+      ],
+      "checkpoint_sha256": "b92514450b1ce6718139b9e39b60e8b77efa4d76a0539f23dea97e80ca9b14a4"
+    }
+  ],
+  "full_over_small_force_kernel_time": 2.7297543401551057,
+  "interpretation": "Serial same-core kernel cost only. This ratio is not an ESS-per-second or converged-posterior speedup. Parents differ in tuning and final state. Parent prefixes must not be counted as independent samples."
+}

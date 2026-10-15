@@ -1,0 +1,44 @@
+{
+  "chains": [
+    "code/bayesian/corrected/results/pilot-nuts-g1000-j5000"
+  ],
+  "warmup": 30,
+  "retained": 30,
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
+  "available_iterations": [
+    60
+  ],
+  "truncated_iterations": [
+    0
+  ],
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "equal_lengths": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "code/bayesian/corrected/results/pilot-nuts-g1000-j5000/checkpoint.npz": "9f38985ec9fcf8cf3adf7ebd45cdcc4132a287753b022af6caafa259c503e957"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.9333333333333333,
+      "randomness": 0.5666666666666667
+    }
+  ],
+  "nuts": [
+    {
+      "divergences": 0,
+      "mean_integration_steps": 7.0,
+      "max_depth_reached_fraction": 1.0
+    }
+  ]
+}

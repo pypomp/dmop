@@ -4,6 +4,8 @@
   ],
   "warmup": 100,
   "retained": 100,
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
   "available_iterations": [
     200
   ],
