@@ -1,0 +1,38 @@
+{
+  "repository": "https://github.com/hetankevin/diffPomp",
+  "revision": "65e64d3e24d7d82839b413067c30b4224dee43c9",
+  "notebook": "cholera.ipynb",
+  "notebook_sha256": "b7b6baadb1c614f2f4a8997ca9b44c0afa7d8db98aed44aa2bc2140916f78a4d",
+  "notebook_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "observations": 600,
+  "figure_sha256": "0a5f81d919de66078ac6c6cf44b8a0633a4ea0d60c80c40e0f2efe56923288fc",
+  "burnin": 500,
+  "draws_per_chain": 1500,
+  "fixed_columns": [
+    2,
+    5
+  ],
+  "fitted_prior_clouds_saved": false,
+  "kernel_results_saved": false,
+  "elapsed_times_saved": false,
+  "files": {
+    "data/theta_0.npy": "48be428256e45582b33128f7ace3640ecfd2064de7e2d1be2e00567aeeee5eb3",
+    "data/theta_1.npy": "8f3fc2647ce4b9f959de602da4f04e2704448648e1481adf3100482b1ab3f2c7",
+    "data/theta_2.npy": "1c71e50032011cfe6bd2a640d965dbd17fb05c8d7e979ab144144933a8015bf2",
+    "data/theta_3.npy": "3447dda6e117e51d6c6c4a6d45842808faf1446383653227227a30f7d7dda92e",
+    "source/filtering.py": "207f648f278d782952f2249573d01b797f345d4a6c7c823177fad5738f4b8255",
+    "source/optim.py": "81e0331d6e2ed666c93e2120d821a341532b3399f1eb3dd878d7b0549b0c008b",
+    "source/pomps.py": "e6224cb19e45f301cbbe1d4e7e9fd0bbe4dbf3a62fa50f4836914b46909c0903",
+    "source/resampling.py": "0a24e01f3c8d2788a2e64133deb8f42535935d9f77f7185ce36f65fc0ac69b74",
+    "source/sampling_cells.py": "3e4d11cccfa0aefe452253aea730edbc23e45b5061a9ed2ce6c74c400e4a979c"
+  }
+}
