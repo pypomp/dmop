@@ -1,0 +1,28 @@
+{
+  "chains": [
+    "dmop/code/bayesian/corrected/results/pilot-mala-j1000"
+  ],
+  "warmup": 100,
+  "retained": 100,
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "dmop/code/bayesian/corrected/results/pilot-mala-j1000/checkpoint.npz": "24d6d179b9fcb4e90aa5c6b51081942f69246919e0a5dd0b53b1108497640782"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.38,
+      "randomness": 0.04
+    }
+  ]
+}

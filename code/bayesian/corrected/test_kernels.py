@@ -30,7 +30,7 @@ def test_extended_gaussian_target():
     loglik = lambda z, u: -.5*z@z + a*z[0]*jax.random.normal(u) - .5*a*a*z@z
     prior = lambda z: -.5*z@z
     force = lambda z, u: -.6*z  # deliberately inaccurate, omits the noise term
-    for method in ['mala', 'hmc']:
+    for method in ['mala', 'hmc', 'pmrw', 'pmmala']:
         init, step = make_kernel(loglik, prior, force, method=method, steps=5)
         state = init(jnp.array([0.]), jax.random.key(41))
         def one(s, k):

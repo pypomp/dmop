@@ -37,10 +37,42 @@ def leapfrog(z, p, u, force, get_force, chol, step_size, steps):
 
 def make_kernel(loglik, logprior, get_force, method='mala', steps=4):
     def init(z, u):
-        return State(z, u, loglik(z, u), finite_force(get_force(z, u)))
+        force = jnp.zeros_like(z) if method == "pmrw" else finite_force(get_force(z, u))
+        return State(z, u, loglik(z, u), force)
 
     def step(state, key, step_size, chol):
         ku, ka, kp, kb = jax.random.split(key, 4)
+        if method == 'pmmala':
+            # Joint pseudo-marginal MALA: reverse proposal uses the force at
+            # the candidate parameters AND candidate particle random state.
+            # There is no separate random-state refresh in this kernel.
+            noise = jax.random.normal(kp, state.z.shape)
+            drift = .5*step_size**2*(chol@(chol.T@state.force))
+            z = state.z + drift + step_size*(chol@noise)
+            force = finite_force(get_force(z, ku))
+            reverse_drift = .5*step_size**2*(chol@(chol.T@force))
+            reverse_noise = jax.scipy.linalg.solve_triangular(
+                chol, (state.z-z-reverse_drift)/step_size, lower=True)
+            ll = loglik(z, ku)
+            loga = ll-state.loglik + logprior(z)-logprior(state.z) + .5*(noise@noise-reverse_noise@reverse_noise)
+            accept = jnp.isfinite(loga) & (jnp.log(jax.random.uniform(kb)) < loga)
+            new = jax.lax.cond(accept, lambda: State(z, ku, ll, force), lambda: state)
+            return new, jnp.array([accept, accept,
+                jnp.exp(jnp.minimum(0., jnp.nan_to_num(loga, nan=-jnp.inf))),
+                loga, loga, jnp.linalg.norm(new.force)])
+        if method == 'pmrw':
+            # Conventional particle random-walk MH: jointly propose theta and
+            # independent filter randomness. This supplies a matched target
+            # baseline for the gradient proposals.
+            z = state.z + step_size*(chol@jax.random.normal(kp, state.z.shape))
+            ll = loglik(z, ku)
+            loga = ll-state.loglik + logprior(z)-logprior(state.z)
+            accept = jnp.isfinite(loga) & (jnp.log(jax.random.uniform(kb)) < loga)
+            new = jax.lax.cond(accept,
+                lambda: State(z, ku, ll, jnp.zeros_like(z)), lambda: state)
+            return new, jnp.array([accept, accept,
+                jnp.exp(jnp.minimum(0., jnp.nan_to_num(loga, nan=-jnp.inf))),
+                loga, loga, 0.])
         # Independent draw from the base law of the PF randomness. Keep the
         # current random state and likelihood on rejection (no noisy-MH reset).
         proposed_ll = loglik(state.z, ku)

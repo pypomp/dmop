@@ -29,9 +29,10 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--particles', type=int, default=1000)
+    p.add_argument('--sort-particles', action='store_true')
     p.add_argument('--alpha', type=float, default=.95)
     p.add_argument('--prior-scale', type=float, default=1.)
-    p.add_argument('--method', choices=['mala', 'hmc'], default='mala')
+    p.add_argument('--method', choices=['mala', 'hmc', 'pmrw', 'pmmala'], default='mala')
     p.add_argument('--steps', type=int, default=4)
     p.add_argument('--seed', type=int, default=2026101600)
     p.add_argument('--jitter', type=float, default=.04)
@@ -40,6 +41,7 @@ def main():
     p.add_argument('--draws', type=int, default=2000)
     p.add_argument('--step-size', type=float, default=.01)
     p.add_argument('--checkpoint', type=int, default=25)
+    p.add_argument('--metric', type=Path, help='NPY lower-triangular proposal factor')
     p.add_argument('--initial', type=Path, help='NPY vector in the standardized coordinates')
     a = p.parse_args()
     if min(a.particles,a.steps,a.draws,a.checkpoint,a.step_size,a.prior_scale) <= 0:
@@ -59,7 +61,7 @@ def main():
                source_sha256={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in source.glob('*.py')},
                names=NAMES, prior_center=CENTER.tolist(), prior_sd=(SCALE*a.prior_scale).tolist())
     write_json(a.output/'configuration.json',cfg)
-    m = setup(a.particles,a.alpha,a.prior_scale)
+    m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles)
     key = jax.random.key(a.seed)
     key, initkey = jax.random.split(key)
     z = (jnp.asarray(np.load(a.initial)) if a.initial else
@@ -90,10 +92,15 @@ def main():
     state=initialize(z,u)
     if not np.isfinite(float(state.loglik)):
         raise RuntimeError('Initial particle filter collapsed; saved start needs revision')
-    chol=jnp.eye(len(NAMES))
+    chol=jnp.eye(len(NAMES)) if a.metric is None else jnp.asarray(np.load(a.metric))
+    if chol.shape != (len(NAMES),len(NAMES)) or not np.isfinite(chol).all() or np.any(np.diag(chol)<=0):
+        raise ValueError('Invalid proposal metric')
+    np.testing.assert_allclose(chol,np.tril(chol),atol=1e-12)
+    metric_trace=float(jnp.sum(chol**2))
+    np.save(a.output/'initial_chol.npy',np.asarray(chol))
     eps=a.step_size
     trace, info, eps_trace, metrics = [],[],[],[]
-    target_accept=.57 if a.method=='mala' else .75
+    target_accept={'mala': .57, 'hmc': .65, 'pmrw': .234, 'pmmala': .4}[a.method]
     total=a.warmup+a.draws
     for i in range(total):
         key,k=jax.random.split(key)
@@ -111,7 +118,7 @@ def main():
                 recent=np.array(trace)[max(0,i//2):,2:]
                 covariance=np.cov(recent.T)
                 covariance=.9*covariance+.1*np.diag(np.diag(covariance))+1e-5*np.eye(len(NAMES))
-                covariance/=np.trace(covariance)/len(NAMES)
+                covariance*=metric_trace/np.trace(covariance)
                 chol=jnp.asarray(np.linalg.cholesky(covariance))
                 metrics.append({'iteration':i+1,'chol':np.asarray(chol).tolist()})
         if (i+1)%a.checkpoint==0 or i+1==total:
