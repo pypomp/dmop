@@ -1,0 +1,129 @@
+{
+  "chains": [
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain0",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain1",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain2",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain3"
+  ],
+  "warmup": 1000,
+  "retained": 950,
+  "method": "pmrw",
+  "target": {
+    "particles": 5000,
+    "prior_scale": 1.0,
+    "names": [
+      "gamma",
+      "m",
+      "epsilon",
+      "beta_trend",
+      "sigma",
+      "tau",
+      "bs1",
+      "bs2",
+      "bs3",
+      "bs4",
+      "bs5",
+      "bs6",
+      "omegas1",
+      "omegas2",
+      "omegas3",
+      "omegas4",
+      "omegas5",
+      "omegas6"
+    ],
+    "prior_center": [
+      2.9957322735539913,
+      -2.008691760542986,
+      0.8958797346140276,
+      -0.5,
+      0.8047189562170501,
+      -1.4978661367769954,
+      0.0,
+      4.0,
+      0.0,
+      4.0,
+      4.0,
+      4.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0
+    ],
+    "prior_sd": [
+      0.6931471805599452,
+      1.4978661367769956,
+      2.5053176470481278,
+      0.5,
+      0.8047189562170501,
+      0.80471895621705,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0
+    ],
+    "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+  },
+  "model_sha256": "76c67bc5dc2608b555838efe7b6b70e47a7ee2ab8afcc0fffe2b2671bdd9e5e5",
+  "draws_sha256": "8ed2afb79aafb455690d8b2a8c1d8a683066fa01e6a9d610be663ac6e0698afb",
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
+  "available_iterations": [
+    2700,
+    2700,
+    2700,
+    1950
+  ],
+  "truncated_iterations": [
+    750,
+    750,
+    750,
+    0
+  ],
+  "gates": {
+    "four_chains": true,
+    "complete": false,
+    "equal_lengths": false,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain0/checkpoint.npz": "776dcb92edebb461b277e448ad6c7dee1547a0a57f2f0ca4fcf6e32745686cb7",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain1/checkpoint.npz": "82de5f9b9f48300b4fac485916d8eddc85a3ef14febb02b3d8d591ab907305df",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain2/checkpoint.npz": "2c65f4d95c9320511c9b3be03727e2881c7db51caec14ae9ad60cc029d44cf5a",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain3/checkpoint.npz": "3d6b8a3fbc66eb9169a6b831376944fd5002a13f400a0faca7c33c3905be615f"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.2631578947368421,
+      "randomness": 0.2631578947368421
+    },
+    {
+      "parameter": 0.23894736842105263,
+      "randomness": 0.23894736842105263
+    },
+    {
+      "parameter": 0.19052631578947368,
+      "randomness": 0.19052631578947368
+    },
+    {
+      "parameter": 0.20210526315789473,
+      "randomness": 0.20210526315789473
+    }
+  ]
+}

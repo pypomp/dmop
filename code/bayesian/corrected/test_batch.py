@@ -5,6 +5,20 @@ import numpy as np
 import pytest
 from batch import batched_transition
 from kernels import make_kernel
+from extend import adapt_tuning
+
+
+def test_supplied_metric_stays_fixed_during_step_adaptation():
+    chol = np.array([[1., 0.], [.2, .7]])
+    info = np.array([1., 1., .8])
+    # No covariance data are needed when a shared preparation metric is fixed.
+    new, eps, record = adapt_tuning(399, info, [], chol, .03,
+                                   np.sum(chol**2), 500, 2., 'nuts', adapt_metric=False)
+    np.testing.assert_array_equal(new, chol)
+    assert record is None and eps > .03
+    new, eps2, record = adapt_tuning(500, info, [], chol, eps,
+                                    np.sum(chol**2), 500, 2., 'nuts', adapt_metric=False)
+    assert eps2 == eps and record is None
 
 
 @pytest.mark.parametrize('method', ['nuts', 'pmrw'])

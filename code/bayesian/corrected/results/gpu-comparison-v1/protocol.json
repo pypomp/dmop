@@ -1,0 +1,41 @@
+{
+  "purpose": "Primary GPU NUTS versus PMMH comparison on the untempered Pypomp target with a common non-empirical prior.",
+  "particles": 5000,
+  "force_particles": 1000,
+  "precision": "float64",
+  "force_precision": "float32",
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "batch_size": 4,
+  "warmup": 500,
+  "fixed_metric": true,
+  "initialization": "Identical starts from iteration1950 of each previous PMMH chain. Shared regularized covariance uses only iterations501:1000 of those chains. See inputs/manifest.json and prepare.py. None of these development draws is pooled with the new runs.",
+  "nuts": {
+    "gpu": 0,
+    "seeds": [
+      2026110100,
+      2026110101,
+      2026110102,
+      2026110103
+    ],
+    "draws": 2000,
+    "step_size": 0.03,
+    "max_depth": 5
+  },
+  "pmrw": {
+    "gpu": 1,
+    "seeds": [
+      2026110200,
+      2026110201,
+      2026110202,
+      2026110203
+    ],
+    "draws": 10000,
+    "step_size": 0.5,
+    "max_depth": 5
+  },
+  "rationale": "Previous depth4 NUTS always hit its cap; depth5 permits longer trajectories. PMMH traces show slow mixing despite plausible acceptance. Use shared covariance from all four old warmups instead of an early single-chain covariance. Adapt step size only for500 iterations, then freeze.",
+  "checks": "All18 parameters: rank Rhat<=1.01 and bulk/tail ESS>=400, zero NUTS divergences, visual trace inspection, prior-SD and particle sensitivity. Run completion alone is insufficient. Extend/tune as necessary.",
+  "timing": "Both devices are RTX3090s shared with unrelated work. Batch elapsed times are not summed across lanes. Preparation includes old optimization/score metric and four PMMH prefixes. A controlled timing comparison remains needed before any speedup claim.",
+  "retirement": "Keep CPU chains until new GPU runs have finite saved checkpoints; preserve CPU traces and record verified process termination before retiring them."
+}

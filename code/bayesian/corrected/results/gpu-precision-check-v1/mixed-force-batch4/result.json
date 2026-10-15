@@ -1,0 +1,175 @@
+{
+  "utc": "2026-10-15T23:31:05.571565+00:00",
+  "precision": "float64",
+  "devices": [
+    "cuda:0"
+  ],
+  "jax": "0.9.0.1",
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "settings": {
+    "inputs": "code/bayesian/corrected/results/gpu-precision-check-v1/inputs.npz",
+    "output": "code/bayesian/corrected/results/gpu-precision-check-v1/mixed-force-batch4",
+    "precision": "float64",
+    "particles": 5000,
+    "force_particles": 1000,
+    "force_precision": "float32",
+    "reps": 1,
+    "kernel_reps": 3,
+    "batch_size": 4
+  },
+  "inputs_sha256": "ff0643fb5c864ff92ef4d2fc2c4e34b80388b2cd21b093ca601096912e1a681c",
+  "source_sha256": {
+    "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "extend.py": "e06647354db7e11a38e3630c9c031ac9eb0718fbc52a0b7e7f4f3c4fc77803fd",
+    "test_model.py": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "batch.py": "39225cb53b9f8190cf2f54a6d0c61b284f97dd05803c579b6abd6342b25546a4",
+    "report.py": "946c958a07c6d2c0684c6ed0757621d27159c1462a1fe2b90f36faffcaa4d9cc",
+    "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+    "run.py": "bff74f03c9d219ea0f4b97b31eaa9bbebe224999d012b2d97ba42d66c0d0fff5",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "test_recovery.py": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
+    "compare.py": "dfac7a38daa353093bb5b0d0aab4aac125f89667f36e79d7fa7e9a006a1fe981",
+    "test_batch.py": "908c88d0bcf61578808c8ff800a089bbf476ff64aaa1ecde2e16b5ed7b46f670",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+    "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
+    "device_check.py": "d548ed283284e9f5c501c006eff0e75972a093edbc8cfe050818d66ecda2269c"
+  },
+  "likelihoods": [
+    [
+      {
+        "seed": 2026103100,
+        "loglik": -3749.3395674068756,
+        "seconds": 4.208797923987731,
+        "compile_included": true
+      }
+    ],
+    [
+      {
+        "seed": 2026103200,
+        "loglik": -3757.343007315814,
+        "seconds": 0.5011483400012366,
+        "compile_included": false
+      }
+    ],
+    [
+      {
+        "seed": 2026103300,
+        "loglik": -3753.5091648611365,
+        "seconds": 0.486568463005824,
+        "compile_included": false
+      }
+    ],
+    [
+      {
+        "seed": 2026103400,
+        "loglik": -3758.9347213880187,
+        "seconds": 0.5574919590144418,
+        "compile_included": false
+      }
+    ]
+  ],
+  "kernel_timings": [
+    {
+      "seconds": 62.687787956005195,
+      "compile_included": true,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.2829116905203268,
+        0.8052604413271642,
+        0.5632325631745514,
+        0.6424587347603482
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 43.447236926993355,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.8249184511624628,
+        0.35915002816320596,
+        0.9742094974303973,
+        0.3870683687226953
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 43.76975891800248,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.30459276499759586,
+        0.39942854558180385,
+        0.7858123769298614,
+        0.6702331242636956
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 43.64391037399764,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.6642564651855474,
+        0.3501373107823006,
+        0.7731791209990997,
+        0.6600191278237161
+      ],
+      "finite": true
+    }
+  ],
+  "complete": true
+}

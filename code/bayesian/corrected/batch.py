@@ -55,6 +55,8 @@ def main():
     p.add_argument('--step-size', type=float, required=True)
     p.add_argument('--max-step-size', type=float, default=2.)
     p.add_argument('--checkpoint', type=int, default=5)
+    p.add_argument('--fixed-metric', action='store_true',
+                   help='Keep the supplied proposal factor; adapt only step size during warmup')
     a = p.parse_args()
     n = len(a.seeds)
     if n != len(a.initials) or n != len(a.metrics) or len(set(a.seeds)) != n:
@@ -134,7 +136,8 @@ def main():
         trace_array = np.asarray(traces)
         for c in range(n):
             chol, eps[c], record = adapt_tuning(i, infos[-1][c], trace_array[:, c], chols[c],
-                                               eps[c], metric_traces[c], a.warmup, a.max_step_size, a.method)
+                                               eps[c], metric_traces[c], a.warmup, a.max_step_size, a.method,
+                                               adapt_metric=not a.fixed_metric)
             chols[c] = np.asarray(chol)
             if record is not None:
                 metrics[c].append(record)
