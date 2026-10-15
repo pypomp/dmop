@@ -1,5 +1,22 @@
 # Handoff
 
+## October 15: verified sampling wait and PMMH affinity change
+
+- Previous turn made progress: exact PMMH/pilot recovery and comparison tools.
+  Revalidated all nine detached processes by PID/create time; no duplicate run.
+- Moved PMMH recovery chains0/1/2 from E-cores22/24/26 to released P-cores8/12/14,
+  changing all threads and recording affinity_change.json. State and tuning
+  unchanged. Chain3 remains on core28. When the pilot finishes, its core10 can
+  be used for chain3 after verifying process completion. Mixed-core wall times
+  still cannot establish a NUTS/PMMH speedup.
+- Main NUTS passed15 warmup iterations per chain, zero divergences; the depth4
+  pilot passed80 total/20 retained, also zero divergences. All saved trajectories
+  still hit the depth limit before turning. Await the pilot and later warmup
+  evidence before selecting further depth changes; do not restart live runs.
+- PMMH chains0/1/2 passed1250 total and chain3 passed1150. Reports and manuscript
+  remain provisional/unchanged respectively; no convergence or prior-insensitivity
+  claim. Current live process IDs and output paths are in the entry below.
+
 ## October 15: recover interrupted PMMH and NUTS pilot
 
 - Previous turn made progress: verified four NUTS startups and matching inputs.
