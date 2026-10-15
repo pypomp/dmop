@@ -9,7 +9,9 @@ os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE', 'false')
 
 from pathlib import Path
 import jax
-jax.config.update("jax_enable_x64", True)
+# Default to float64, while allowing an explicit precision experiment before
+# importing the library's data. Existing runs use their frozen source copies.
+jax.config.update("jax_enable_x64", os.environ['JAX_ENABLE_X64'].lower() in ('true','1'))
 import jax.numpy as jnp
 import numpy as np
 import pypomp as pp
