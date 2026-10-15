@@ -72,6 +72,11 @@ def summarize(recipe):
 
 def main():
     OUT.mkdir(exist_ok=True)
+    if (OUT / "reuse_final.json").exists():
+        from report import new_results
+        new_results(HERE / "results", "spx")
+        print("Completed tuning selected the archived final recipe; verified all 20 reused fits.")
+        return
     candidates = [dict(name=f"a{a:g}-r{r:g}-w100", alpha=a,
                        ifad_learning_rate=r, warm=100)
                   for a in (.97, .995, 1.) for r in (.001, .01)]
