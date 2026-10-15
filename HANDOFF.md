@@ -12,7 +12,10 @@
   Protocol committed as a2a6a8282 before launch. Detached live PIDs
   2917966/2917968/2917970/2917972 on cores0/2/4/6; each chainN-launch.json
   records create time and command. Logs /tmp/dmop-bayes-nuts-candidate-chainN.log.
-  Verified all four processes/configurations; first checkpoints pending.
+  Verified all four processes/configurations and their first5 warmup iterations.
+  startup-verification.json confirms finite traces/forces, exact matched inputs
+  and common target/prior with PMMH. Monitor session19324 finished normally;
+  detached sampler processes remain live. No convergence claim.
   All four PMMH chains have entered retained sampling (1025/4000).
 - Prior MALA chains0/2 unexpectedly exited143; exact warmup recovery passed
   saved-state and replay tests before those recovery jobs were also stopped
