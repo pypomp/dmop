@@ -1,5 +1,29 @@
 # Handoff
 
+## October 15, 2026: acting on Ed's benchmark comments (in progress)
+
+- Tasks: retune SPX IFAD on separate starts and refit all 20 final starts;
+  retain panel E with [-3840,-3740] detail limits and a full-range companion;
+  clarify warm starts and spx naming; document local covariance ranks and
+  parameter-dependent support; distinguish fine-grid backward-sampling
+  issues from singular densities; add restrained benchmarking discussion.
+  Do not expand into a general complexity/extension study or send email.
+- `retune_spx.py` runs four disjoint CPU workers. Protocol: fresh tuning
+  seed 2026101501, four starts, alpha {.97,.995,1}, initial rate {.001,.01},
+  existing cosine decay; compare the winning recipe at warm=100 vs 300,
+  then refit 20 original final starts with 24x5000 independent evaluations.
+  Output `results/spx-retuning/`; live log `/tmp/dmop-spx-retuning.log`.
+  Existing SPX config already used cosine decay and alpha .97. Its Fisher
+  score uses AD of the fixed-path objective, not hand-coded derivatives.
+- `covariance_support.py` and its note establish a crucial distinction:
+  Dhaka's local covariance range is span(e,v), where
+  v=(0,-gamma-m,gamma,0,0,m), and changes with m/gamma. Daphnia's implemented
+  order-1.5 covariance has rank eight in the strictly positive interior,
+  but rank three at its specified initial state. Do not call both uniformly
+  rank-deficient/"irregular". Saved numerical checks confirm the algebra.
+- Still to do: finish tuning/final fits, select all-20 replacement in report,
+  adjust E and captions, SI prose/rank explanation, tests/build/visual review.
+
 ## October 9, 2026: add DS19 implementation table for panels A--E
 
 - Added Table S-6 near the start of S12, mapping each model to its DS19

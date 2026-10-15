@@ -1,0 +1,618 @@
+{
+  "daphnia": [
+    {
+      "state": "interior",
+      "values": [
+        2.4,
+        0.1,
+        0.5,
+        0.8,
+        0.1,
+        0.3,
+        16.0,
+        25.0
+      ],
+      "rank": 8,
+      "factor_singular_values": [
+        2.4276485632513416,
+        2.2773342061058695,
+        1.9998995645965076,
+        1.7504728800078515,
+        1.7406469477008286,
+        1.6778087616945832,
+        0.10612426670502771,
+        0.019010459872439288
+      ],
+      "perturbations": [
+        {
+          "parameter": "ri",
+          "rank": 8,
+          "projector_distance": 2.836478002134693e-15
+        },
+        {
+          "parameter": "rn",
+          "rank": 8,
+          "projector_distance": 2.423389849571156e-15
+        },
+        {
+          "parameter": "f_Si",
+          "rank": 8,
+          "projector_distance": 2.795958198161678e-15
+        },
+        {
+          "parameter": "f_Sn",
+          "rank": 8,
+          "projector_distance": 3.1141273328702e-15
+        },
+        {
+          "parameter": "probi",
+          "rank": 8,
+          "projector_distance": 3.909193811693864e-15
+        },
+        {
+          "parameter": "probn",
+          "rank": 8,
+          "projector_distance": 1.8367031053369066e-15
+        },
+        {
+          "parameter": "xi",
+          "rank": 8,
+          "projector_distance": 1.8045510090917284e-15
+        },
+        {
+          "parameter": "theta_Sn",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Si",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_P",
+          "rank": 8,
+          "projector_distance": 2.523092546890091e-15
+        },
+        {
+          "parameter": "theta_Ji",
+          "rank": 8,
+          "projector_distance": 2.151991088215155e-15
+        },
+        {
+          "parameter": "theta_Jn",
+          "rank": 8,
+          "projector_distance": 2.768101498844228e-15
+        },
+        {
+          "parameter": "sigIn",
+          "rank": 8,
+          "projector_distance": 2.7558985054262456e-15
+        },
+        {
+          "parameter": "sigIi",
+          "rank": 8,
+          "projector_distance": 2.438707802400854e-15
+        },
+        {
+          "parameter": "sigJi",
+          "rank": 8,
+          "projector_distance": 2.589313589043771e-15
+        },
+        {
+          "parameter": "sigJn",
+          "rank": 8,
+          "projector_distance": 1.9210090849561876e-15
+        },
+        {
+          "parameter": "sigF",
+          "rank": 8,
+          "projector_distance": 1.6369867565978224e-15
+        },
+        {
+          "parameter": "sigP",
+          "rank": 8,
+          "projector_distance": 2.071823119469705e-15
+        },
+        {
+          "parameter": "k_Ii",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_In",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_Si",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_Sn",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_K",
+          "rank": 8,
+          "projector_distance": 2.557101148679955e-15
+        },
+        {
+          "parameter": "theta_In_L",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_M",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_N",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_O",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_P",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_Q",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_S",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_K",
+          "rank": 8,
+          "projector_distance": 2.6576631227692466e-15
+        },
+        {
+          "parameter": "theta_Ii_L",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_M",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_N",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_O",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_P",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_Q",
+          "rank": 8,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_S",
+          "rank": 8,
+          "projector_distance": 0.0
+        }
+      ]
+    },
+    {
+      "state": "initial",
+      "values": [
+        2.333,
+        0.0,
+        0.0,
+        0.667,
+        0.0,
+        0.0,
+        16.667,
+        0.0
+      ],
+      "rank": 3,
+      "factor_singular_values": [
+        1.8196952609338664,
+        1.6397283791332118,
+        1.4142135623730954,
+        2.0739631769799615e-16,
+        6.925162136335519e-17,
+        1.1057047112047826e-32,
+        4.723001813639124e-49,
+        0.0
+      ],
+      "perturbations": [
+        {
+          "parameter": "ri",
+          "rank": 3,
+          "projector_distance": 9.734194134435451e-16
+        },
+        {
+          "parameter": "rn",
+          "rank": 3,
+          "projector_distance": 6.921192250933472e-16
+        },
+        {
+          "parameter": "f_Si",
+          "rank": 3,
+          "projector_distance": 9.43147155781278e-16
+        },
+        {
+          "parameter": "f_Sn",
+          "rank": 3,
+          "projector_distance": 8.575842973778264e-16
+        },
+        {
+          "parameter": "probi",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "probn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "xi",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Sn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Si",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_P",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ji",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Jn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "sigIn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "sigIi",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "sigJi",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "sigJn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "sigF",
+          "rank": 3,
+          "projector_distance": 3.665091825005615e-16
+        },
+        {
+          "parameter": "sigP",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_Ii",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_In",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_Si",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "k_Sn",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_K",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_L",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_M",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_N",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_O",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_P",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_Q",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_In_S",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_K",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_L",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_M",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_N",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_O",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_P",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_Q",
+          "rank": 3,
+          "projector_distance": 0.0
+        },
+        {
+          "parameter": "theta_Ii_S",
+          "rank": 3,
+          "projector_distance": 0.0
+        }
+      ]
+    }
+  ],
+  "daphnia_random_interior_ranks": [
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8
+  ],
+  "dhaka": {
+    "state": [
+      0.6204942252291081,
+      0.3776921370959789,
+      0.0008423134168569054,
+      0.0009712083525325173,
+      1.1590552355326328e-07,
+      0.0
+    ],
+    "rank": 2,
+    "factor_singular_values": [
+      1.151950490151149,
+      0.820371908490611
+    ],
+    "perturbations": [
+      {
+        "parameter": "gamma",
+        "rank": 2,
+        "projector_distance": 0.00025833299415590127,
+        "covariance_outside_plane_relative_norm": 7.275809163392325e-16
+      },
+      {
+        "parameter": "m",
+        "rank": 2,
+        "projector_distance": 0.0002854467510530132,
+        "covariance_outside_plane_relative_norm": 7.330097882207672e-16
+      },
+      {
+        "parameter": "epsilon",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.634521105364853e-16
+      },
+      {
+        "parameter": "beta_trend",
+        "rank": 2,
+        "projector_distance": 3.4441981669478085e-16,
+        "covariance_outside_plane_relative_norm": 5.056228552087951e-16
+      },
+      {
+        "parameter": "sigma",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.713350748971336e-16
+      },
+      {
+        "parameter": "tau",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "bs1",
+        "rank": 2,
+        "projector_distance": 3.7211048382565197e-16,
+        "covariance_outside_plane_relative_norm": 1.95439395412069e-16
+      },
+      {
+        "parameter": "bs2",
+        "rank": 2,
+        "projector_distance": 2.275936462591822e-16,
+        "covariance_outside_plane_relative_norm": 2.7692543450344537e-16
+      },
+      {
+        "parameter": "bs3",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "bs4",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "bs5",
+        "rank": 2,
+        "projector_distance": 3.0250792265431504e-16,
+        "covariance_outside_plane_relative_norm": 2.2328680997259567e-16
+      },
+      {
+        "parameter": "bs6",
+        "rank": 2,
+        "projector_distance": 4.983620028228101e-16,
+        "covariance_outside_plane_relative_norm": 4.3314374289218983e-16
+      },
+      {
+        "parameter": "omegas1",
+        "rank": 2,
+        "projector_distance": 3.0434809757334883e-16,
+        "covariance_outside_plane_relative_norm": 2.2948863702767097e-16
+      },
+      {
+        "parameter": "omegas2",
+        "rank": 2,
+        "projector_distance": 6.303316259498061e-16,
+        "covariance_outside_plane_relative_norm": 1.1127026383684514e-16
+      },
+      {
+        "parameter": "omegas3",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "omegas4",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "omegas5",
+        "rank": 2,
+        "projector_distance": 6.303316259498061e-16,
+        "covariance_outside_plane_relative_norm": 1.1127026383684514e-16
+      },
+      {
+        "parameter": "omegas6",
+        "rank": 2,
+        "projector_distance": 7.370787640499376e-16,
+        "covariance_outside_plane_relative_norm": 9.888006363558552e-17
+      },
+      {
+        "parameter": "S_0",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "I_0",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "R1_0",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "R2_0",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      },
+      {
+        "parameter": "R3_0",
+        "rank": 2,
+        "projector_distance": 0.0,
+        "covariance_outside_plane_relative_norm": 4.676241692621677e-16
+      }
+    ]
+  },
+  "source_sha256": {
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/covariance_support.py": "c8f14207dfbc8e5eb5fea60fe854a4aa249cd80045cad29217175f562e3b526b",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/benchmarks/daphnia.py": "13561728a7f776f9bdffb65316b8577b6a766eed79075bd943456c256d34b3e5",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/ditlevsen/ditlevsen/transition.py": "c241723d888e8680ab518e572ef70a47cbb1f53d8643c23bd764d9da9e014225"
+  }
+}

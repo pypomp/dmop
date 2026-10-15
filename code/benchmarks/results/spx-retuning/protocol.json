@@ -1,0 +1,47 @@
+{
+  "seed": 2026101501,
+  "starts": 4,
+  "candidates": [
+    {
+      "name": "a0.97-r0.001-w100",
+      "alpha": 0.97,
+      "ifad_learning_rate": 0.001,
+      "warm": 100
+    },
+    {
+      "name": "a0.97-r0.01-w100",
+      "alpha": 0.97,
+      "ifad_learning_rate": 0.01,
+      "warm": 100
+    },
+    {
+      "name": "a0.995-r0.001-w100",
+      "alpha": 0.995,
+      "ifad_learning_rate": 0.001,
+      "warm": 100
+    },
+    {
+      "name": "a0.995-r0.01-w100",
+      "alpha": 0.995,
+      "ifad_learning_rate": 0.01,
+      "warm": 100
+    },
+    {
+      "name": "a1-r0.001-w100",
+      "alpha": 1.0,
+      "ifad_learning_rate": 0.001,
+      "warm": 100
+    },
+    {
+      "name": "a1-r0.01-w100",
+      "alpha": 1.0,
+      "ifad_learning_rate": 0.01,
+      "warm": 100
+    }
+  ],
+  "second_stage": "compare winning alpha/rate at warm=100 and warm=300",
+  "selection": "fewest failures, then highest median independent final likelihood, then shortest median time",
+  "final": "20 original starts, all retained; 24 independent PF evaluations with J=5000",
+  "learning_rate_schedule": "existing cosine decay to 0.1 times initial rate",
+  "run_sha256": "013dc761a0bf2b6e9cade5174afbd1f6c9bfe61e337d5d349adff4f1f09611d7"
+}
