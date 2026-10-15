@@ -52,3 +52,31 @@ def test_force_regularization_is_finite():
     f = finite_force(jnp.array([jnp.inf, jnp.nan, 1e10]))
     assert np.isfinite(f).all()
     assert np.linalg.norm(f) <= 10000.00001
+
+
+def test_checkpoint_replay(tmp_path):
+    from kernels import State
+    ll=lambda z,u:-.5*z@z+.3*z[0]*jax.random.normal(u)-.045*z@z
+    prior=lambda z:-.5*z@z
+    init,step=make_kernel(ll,prior,lambda z,u:-z,method='pmmala')
+    initial=init(jnp.array([.2]),jax.random.key(17))
+    key=jax.random.key(19)
+    state=initial
+    for _ in range(8):
+        key,k=jax.random.split(key)
+        state,_=step(state,k,.5,jnp.eye(1))
+    path=tmp_path/'checkpoint.npz'
+    np.savez(path,z=np.asarray(state.z),u=np.asarray(jax.random.key_data(state.u)),
+             force=np.asarray(state.force),loglik=np.asarray(state.loglik),
+             key=np.asarray(jax.random.key_data(key)))
+    saved=np.load(path)
+    restored=State(jnp.asarray(saved['z']),jax.random.wrap_key_data(jnp.asarray(saved['u'])),
+                   jnp.asarray(saved['loglik']),jnp.asarray(saved['force']))
+    key2=jax.random.wrap_key_data(jnp.asarray(saved['key']))
+    for _ in range(8):
+        key,k=jax.random.split(key);key2,k2=jax.random.split(key2)
+        state,info=step(state,k,.5,jnp.eye(1))
+        restored,info2=step(restored,k2,.5,jnp.eye(1))
+        np.testing.assert_array_equal(state.z,restored.z)
+        np.testing.assert_array_equal(info,info2)
+        np.testing.assert_array_equal(jax.random.key_data(state.u),jax.random.key_data(restored.u))

@@ -8,6 +8,7 @@ import arviz as az
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 import pandas as pd
 from scipy.stats import gaussian_kde, norm
@@ -31,6 +32,9 @@ def style(ax):
     ax.spines[['top','right']].set_visible(False)
     ax.grid(alpha=.25,ls='--')
     ax.set_axisbelow(True)
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.ticklabel_format(style="sci", scilimits=(-3,4), useOffset=True)
 
 
 def main():

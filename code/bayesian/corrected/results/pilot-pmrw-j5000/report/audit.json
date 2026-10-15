@@ -1,0 +1,28 @@
+{
+  "chains": [
+    "dmop/code/bayesian/corrected/results/pilot-pmrw-j5000"
+  ],
+  "warmup": 100,
+  "retained": 100,
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "dmop/code/bayesian/corrected/results/pilot-pmrw-j5000/checkpoint.npz": "01f488e17466a35b6b88b7fb7d1b3c245e361422a65a5211539fc386ac5d4b07"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.2,
+      "randomness": 0.2
+    }
+  ]
+}
