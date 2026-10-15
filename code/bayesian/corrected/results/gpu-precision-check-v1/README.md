@@ -19,6 +19,7 @@ existing sampler states or frozen source snapshots.
 | `float32-batch2`, `float32-batch4` | Vectorized independent NUTS updates, testing GPU throughput |
 | `float64-batch4` | Full-precision GPU throughput; check completion before interpreting |
 | `mixed-force-batch4` | Float64 likelihood/acceptance with float32 proposal force; see `mixed-force-protocol.json` |
+| `deterministic-mixed-batch4` | Same sizes with `--xla_gpu_deterministic_ops=true`; check completion before using timings |
 
 Three postcompilation float32 timings give median wall times of 34.50 seconds
 for one chain, 33.53 seconds for two chains together, and 39.11 seconds for
