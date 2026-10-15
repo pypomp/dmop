@@ -76,6 +76,9 @@ where it remains informative; revise empirical claims only as needed.
   interruption and resumes the original run length and warmup schedule.
 - `metric.py`: proposal scaling from replicated scores; affects efficiency
   only, and is not a posterior covariance estimate.
+- `device_check.py`: GPU precision and batch-throughput measurements at fixed
+  saved points; separate from posterior sampling. Default model precision is
+  float64; an explicit `JAX_ENABLE_X64=false` selects float32 before data import.
 - `force_check.py`: force variability and serial cost at the same fixed point
   and CPU affinity, for selecting a gradient particle count.
 - `conditional_force_check.py`: local fixed-seed finite differences and the
