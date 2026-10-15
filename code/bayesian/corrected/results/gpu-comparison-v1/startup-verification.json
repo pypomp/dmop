@@ -1,0 +1,69 @@
+{
+  "utc": "2026-10-15T23:38:28.798590+00:00",
+  "checks": [
+    {
+      "method": "nuts",
+      "chain": 0,
+      "iteration": 1,
+      "loglik": -3760.338838181468,
+      "checkpoint_sha256": "18c06ee873ace75ed6a9f58b09452ece7d04c883f64f7337693258548a90203a",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "nuts",
+      "chain": 1,
+      "iteration": 1,
+      "loglik": -3751.2008579164544,
+      "checkpoint_sha256": "07c4109c49d1abf3f9353c76932b82b631b8f565c85e0a311523683ef7cc4e24",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "nuts",
+      "chain": 2,
+      "iteration": 1,
+      "loglik": -3759.9348196792553,
+      "checkpoint_sha256": "74ef29c5c5ad7b3bce644c48ab5134e515857c63e8a5d3ccd74ad745cecdaee0",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "nuts",
+      "chain": 3,
+      "iteration": 1,
+      "loglik": -3749.624254937399,
+      "checkpoint_sha256": "42d8ce7b1c08ce45e4a4cbb62a740f11bdc13a6b58b4722c7f00d5de92e3063e",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "pmrw",
+      "chain": 0,
+      "iteration": 179,
+      "loglik": -3750.6846358095167,
+      "checkpoint_sha256": "b6677beb84c5f0ed8df5834e106d027b9ef4cf51e09ff3d580e70f5f9d2ab926",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "pmrw",
+      "chain": 1,
+      "iteration": 179,
+      "loglik": -3756.706071413265,
+      "checkpoint_sha256": "946b230a997f57557bf5d3858246819f63b903bc9f0de1655545af21e58c8075",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "pmrw",
+      "chain": 2,
+      "iteration": 178,
+      "loglik": -3758.811303470149,
+      "checkpoint_sha256": "6676be44ba1f1ffa77ae38f6fd3b33e5427ef8915a518f020062188132cefc0f",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    },
+    {
+      "method": "pmrw",
+      "chain": 3,
+      "iteration": 178,
+      "loglik": -3753.7347751038164,
+      "checkpoint_sha256": "63a2db9ee8185481bcfddd79d61d64f94aa17f9e1d8a52f16009d1ce404b2dad",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664"
+    }
+  ]
+}

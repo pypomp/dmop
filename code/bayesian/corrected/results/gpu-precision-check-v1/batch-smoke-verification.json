@@ -44,5 +44,11 @@
     "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
     "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
     "device_check.py": "d548ed283284e9f5c501c006eff0e75972a093edbc8cfe050818d66ecda2269c"
+  },
+  "scalar_recovery_check": {
+    "passed": false,
+    "likelihood_check_passed": true,
+    "maximum_force_difference": 6.103515625e-05,
+    "reason": "Float32 batched versus scalar force rounding; preserve batch execution shape for continuation. Scalar extender now rejects batched runs."
   }
 }

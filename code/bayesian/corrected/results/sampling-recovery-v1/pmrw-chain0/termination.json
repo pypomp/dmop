@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-15T23:38:29.207528+00:00",
+  "pid": 2932368,
+  "create_time": 1792103772.65,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/extend.py",
+    "--parent",
+    "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain0",
+    "--output",
+    "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain0",
+    "--recover-interrupted",
+    "--checkpoint",
+    "25"
+  ],
+  "reason": "Replaced by validated GPU batch comparison; preserve as development run",
+  "replacement": "code/bayesian/corrected/results/gpu-comparison-v1",
+  "signal": "SIGTERM",
+  "verified_terminal": true,
+  "checkpoint_sha256": "453f3ef72256dcbb97b00c5a3c0249a9445e4c6c51447d7ec507d71f14803501",
+  "saved_iteration": 2925
+}

@@ -7,7 +7,7 @@ figures remain unchanged until replacement runs have passed their checks.
 
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
-See `results/candidate-nuts-4chain-v1/protocol.json` for the current NUTS run.
+See `results/gpu-comparison-v1/protocol.json` for the current GPU comparison.
 
 ## Target and model
 
@@ -77,6 +77,9 @@ where it remains informative; revise empirical claims only as needed.
   likelihoods use float64. Optional `--force-precision float32` affects only
   proposal gradients. Per-chain timing fields contain the entire batch's
   wall time; do not sum them across chains to estimate elapsed time.
+  A scalar continuation can change float32 force rounding, so `extend.py`
+  rejects these batched checkpoints. Continuation with the original batch
+  shape remains to be implemented before extending or recovering these runs.
 - `extend.py`: exact continuation into a new directory, preserving the parent,
   tuning and random state. `--recover-interrupted` requires a recorded terminal
   interruption and resumes the original run length and warmup schedule.
@@ -119,12 +122,18 @@ MH. Joint particle MALA and fixed-length HMC remain development trials. The join
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
 
-For the current comparison, the four NUTS processes are in
-`results/candidate-nuts-4chain-v1/chain{0,1,2,3}`. The original PMMH processes
-were interrupted after iteration 1,075; their exact continuations are in
-`results/sampling-recovery-v1/pmrw-chain{0,1,2,3}`. Each continuation includes
-its complete parent trace. Use only the continuation in a diagnostic report,
-never both parent and continuation as independent chains.
+The current batches are in `results/gpu-comparison-v1/nuts/chain{0,1,2,3}`
+and `results/gpu-comparison-v1/pmrw/chain{0,1,2,3}`. They use the same starts,
+proposal covariance and prior. Their directories contain the preparation and
+cost records. Both batches have saved finite initial checkpoints; convergence
+is still unverified.
+
+The CPU runs in `results/candidate-nuts-4chain-v1` and
+`results/sampling-recovery-v1` were retired after validating the GPU starts;
+their `termination.json` files record the verified processes and checkpoints.
+These remain development results. Each PMMH recovery includes its complete
+parent trace; do not count the parent as another chain or pool these old
+chains with the new GPU runs.
 
 Generate each method report with `report.py`, then run:
 
