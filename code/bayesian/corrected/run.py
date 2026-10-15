@@ -37,9 +37,11 @@ def main():
     p.add_argument('--seed', type=int, default=2026101600)
     p.add_argument('--jitter', type=float, default=.04)
     p.add_argument('--optimize', type=int, default=100)
+    p.add_argument('--optimize-particles', type=int, default=1000)
     p.add_argument('--warmup', type=int, default=1000)
     p.add_argument('--draws', type=int, default=2000)
     p.add_argument('--step-size', type=float, default=.01)
+    p.add_argument('--max-step-size', type=float, default=2.)
     p.add_argument('--checkpoint', type=int, default=25)
     p.add_argument('--metric', type=Path, help='NPY lower-triangular proposal factor')
     p.add_argument('--initial', type=Path, help='NPY vector in the standardized coordinates')
@@ -62,6 +64,7 @@ def main():
                names=NAMES, prior_center=CENTER.tolist(), prior_sd=(SCALE*a.prior_scale).tolist())
     write_json(a.output/'configuration.json',cfg)
     m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles)
+    warm_model = setup(a.optimize_particles,a.alpha,a.prior_scale) if a.optimize and a.optimize_particles != a.particles else m
     key = jax.random.key(a.seed)
     key, initkey = jax.random.split(key)
     z = (jnp.asarray(np.load(a.initial)) if a.initial else
@@ -73,7 +76,7 @@ def main():
     opt = []
     for i in range(a.optimize):
         key, k = jax.random.split(key)
-        val, force = m['value_force'](z,k)
+        val, force = warm_model['value_force'](z,k)
         force = finite_force(force)
         moment=.9*moment+.1*force
         second=.999*second+.001*force**2
@@ -99,19 +102,21 @@ def main():
     metric_trace=float(jnp.sum(chol**2))
     np.save(a.output/'initial_chol.npy',np.asarray(chol))
     eps=a.step_size
-    trace, info, eps_trace, metrics = [],[],[],[]
+    trace, info, eps_trace, metrics, iteration_seconds = [],[],[],[],[]
     target_accept={'mala': .57, 'hmc': .65, 'pmrw': .234, 'pmmala': .4}[a.method]
     total=a.warmup+a.draws
     for i in range(total):
+        iteration_start=time.monotonic()
         key,k=jax.random.split(key)
         state, diagnostics=kernel(state,k,eps,chol)
         diagnostics=np.asarray(diagnostics)
+        iteration_seconds.append(time.monotonic()-iteration_start)
         trace.append(np.r_[float(state.loglik),float(m['logprior'](state.z)),np.asarray(state.z)])
         info.append(diagnostics)
         eps_trace.append(eps)
         if i<a.warmup:
             # Diminishing step adaptation, then freeze all tuning at warmup end.
-            eps=float(np.clip(np.exp(np.log(eps)+.3/(1+i/25)**.6*(diagnostics[2]-target_accept)),1e-5,.5))
+            eps=float(np.clip(np.exp(np.log(eps)+.3/(1+i/25)**.6*(diagnostics[2]-target_accept)),1e-5,a.max_step_size))
             # Full covariance estimated from warmup, with a diagonal ridge.
             # Scale to unit mean variance so step adaptation stays continuous.
             if (i+1)%200==0 and i+1<a.warmup and i>=399:
@@ -124,6 +129,7 @@ def main():
         if (i+1)%a.checkpoint==0 or i+1==total:
             tmp=a.output/'checkpoint.tmp.npz'
             np.savez_compressed(tmp,trace=np.array(trace),info=np.array(info),step_size=np.array(eps_trace),
+                                iteration_seconds=np.asarray(iteration_seconds),
                                 z=np.asarray(state.z),u=np.asarray(jax.random.key_data(state.u)),
                                 force=np.asarray(state.force),loglik=np.asarray(state.loglik),
                                 key=np.asarray(jax.random.key_data(key)),chol=np.asarray(chol),next_step_size=eps)
