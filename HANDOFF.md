@@ -1,5 +1,14 @@
 # Handoff
 
+## October 15: primary comparison now running on GPUs
+
+- Committed protocol db6e2194b launched both batches via results/gpu-comparison-v1/launch.py. LIVE NUTS PID3052229/create1792107342.38/GPU0; LIVE PMMH PID3052372/create1792107343.84/GPU1. Read their launch JSON and revalidate host identity before any action. Logs /tmp/dmop-bayes-gpu-comparison-v1-{nuts,pmrw}.log.
+- Both batches saved finite float64 target checkpoints; NUTS initial update zero divergences,31 integration steps/depth5; PMMH around0.8s per four-chain update. startup-verification.json records exact checked checkpoints. Still warmup; no convergence claim.
+- Verified and deliberately terminated old CPU NUTS PIDs2917966/68/70/72 at75 iterations and PMMH PIDs2932368/69/70/71 at2925/2900/2900/2175. Each termination.json records command, create time, checkpoint hash and verified terminal. Do not restart or count as independent production evidence.
+- Current configuration: J5000 float64 target, NUTS G1000 float32 force/alpha.95/depth5; common proper prior scale1; identical four starts and fixed pooled-old-warmup covariance;500 step-adaptation iterations then2000 NUTS /10000 PMMH draws. All old preparation costs retained. Original ms/SI/figures unchanged.
+- IMPORTANT continuation limitation: scalar re-evaluation of a mixed-force batched checkpoint differs by ~6e-5 in four force entries due to rounding (likelihood check passes). extend.py now explicitly rejects batch_size>1 rather than claiming exact scalar recovery. Implement a continuation with the original batch shape and frozen source before extending/recovering these new runs. Do not relax old scalar validation tolerances. No such batch continuation exists yet.
+- Next: monitor GPU adaptation/mixing; implement/test batch continuation; run report.py after enough retained draws. Convergence, prior/particle sensitivity, controlled cost comparison and final manuscript figures remain outstanding. Goal active.
+
 ## October 15: GPU production comparison ready
 
 - Mixed-force GPU benchmark completed: median43.64s per four-chain 15-step batch versus85.94s full64. Float64 likelihoods at all four inputs match exactly. Finite, zero divergences; no posterior samples.

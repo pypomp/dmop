@@ -81,6 +81,8 @@ def main():
     elif a.draws is None or not (a.parent/'completion.json').exists():
         p.error('Parent must be completed, with adaptation frozen')
     cfg=json.loads((a.parent/'configuration.json').read_text())
+    if cfg.get('batch_size', 1) > 1:
+        raise ValueError('Continue batched runs with the same batch shape; scalar continuation can change float32 force rounding')
     source=a.parent/'source'
     for name,digest in cfg['source_sha256'].items():
         if hashlib.sha256((source/name).read_bytes()).hexdigest()!=digest:
