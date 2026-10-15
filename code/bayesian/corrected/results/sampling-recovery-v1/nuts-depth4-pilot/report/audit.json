@@ -1,0 +1,114 @@
+{
+  "chains": [
+    "code/bayesian/corrected/results/sampling-recovery-v1/nuts-depth4-pilot"
+  ],
+  "warmup": 60,
+  "retained": 60,
+  "method": "nuts",
+  "target": {
+    "particles": 5000,
+    "prior_scale": 1.0,
+    "names": [
+      "gamma",
+      "m",
+      "epsilon",
+      "beta_trend",
+      "sigma",
+      "tau",
+      "bs1",
+      "bs2",
+      "bs3",
+      "bs4",
+      "bs5",
+      "bs6",
+      "omegas1",
+      "omegas2",
+      "omegas3",
+      "omegas4",
+      "omegas5",
+      "omegas6"
+    ],
+    "prior_center": [
+      2.9957322735539913,
+      -2.008691760542986,
+      0.8958797346140276,
+      -0.5,
+      0.8047189562170501,
+      -1.4978661367769954,
+      0.0,
+      4.0,
+      0.0,
+      4.0,
+      4.0,
+      4.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0,
+      -5.0
+    ],
+    "prior_sd": [
+      0.6931471805599452,
+      1.4978661367769956,
+      2.5053176470481278,
+      0.5,
+      0.8047189562170501,
+      0.80471895621705,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      5.0
+    ],
+    "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3"
+  },
+  "model_sha256": "76c67bc5dc2608b555838efe7b6b70e47a7ee2ab8afcc0fffe2b2671bdd9e5e5",
+  "draws_sha256": "847c91d97389af6429a59e11d6e87d131cd4268657360fbd3ae2438e0f4d3ed6",
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
+  "available_iterations": [
+    120
+  ],
+  "truncated_iterations": [
+    0
+  ],
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "equal_lengths": true,
+    "rhat": false,
+    "ess": false,
+    "no_divergences": true
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "code/bayesian/corrected/results/sampling-recovery-v1/nuts-depth4-pilot/checkpoint.npz": "c3172d0fc74dfb8f7619472b460c57e909d171a9bb512a6663e2ff52f1682cc7"
+  },
+  "acceptance": [
+    {
+      "parameter": 1.0,
+      "randomness": 0.55
+    }
+  ],
+  "nuts": [
+    {
+      "divergences": 0,
+      "mean_integration_steps": 15.0,
+      "max_depth_reached_fraction": 1.0,
+      "forced_depth_limit_fraction": 1.0
+    }
+  ]
+}

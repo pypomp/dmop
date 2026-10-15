@@ -1,0 +1,62 @@
+{
+  "input_sha256": "ff0643fb5c864ff92ef4d2fc2c4e34b80388b2cd21b093ca601096912e1a681c",
+  "result_hashes": {
+    "float32-reps128/result.json": "4d16f2961a2127c8c862462b1201dd5a99e4f853ec522f408c712ec16f2463f5",
+    "float64-reps128/result.json": "5572a65476e64b3e361006f1ab314b3fe5f134e55e592f68d1a35158bd20599b"
+  },
+  "points": [
+    {
+      "point": 0,
+      "replicates": 128,
+      "mean_loglik_float32": -3749.7620601654053,
+      "mean_loglik_float64": -3749.9069495052463,
+      "loglik_sd_float32": 0.8331780025476132,
+      "loglik_sd_float64": 0.9478832191875713,
+      "log_mean_likelihood_difference": 0.0495484223471232,
+      "bootstrap_95_interval": [
+        -0.2435301942394652,
+        0.3373085999812606
+      ]
+    },
+    {
+      "point": 1,
+      "replicates": 128,
+      "mean_loglik_float32": -3757.397861480713,
+      "mean_loglik_float64": -3757.440154162719,
+      "loglik_sd_float32": 0.9046012131500173,
+      "loglik_sd_float64": 0.9835078046148168,
+      "log_mean_likelihood_difference": 0.06244961112549374,
+      "bootstrap_95_interval": [
+        -0.17215502553448622,
+        0.3083353512760657
+      ]
+    },
+    {
+      "point": 2,
+      "replicates": 128,
+      "mean_loglik_float32": -3753.7477264404297,
+      "mean_loglik_float64": -3753.938517428992,
+      "loglik_sd_float32": 1.0600586193181023,
+      "loglik_sd_float64": 0.8547495091562884,
+      "log_mean_likelihood_difference": 0.3321546615619013,
+      "bootstrap_95_interval": [
+        0.07149501282834567,
+        0.5816853804172605
+      ]
+    },
+    {
+      "point": 3,
+      "replicates": 128,
+      "mean_loglik_float32": -3757.062379837036,
+      "mean_loglik_float64": -3757.2983326920184,
+      "loglik_sd_float32": 1.1949713701508171,
+      "loglik_sd_float64": 1.1829994461816533,
+      "log_mean_likelihood_difference": 0.108376762136702,
+      "bootstrap_95_interval": [
+        -0.36865293334842936,
+        0.5736178637155888
+      ]
+    }
+  ],
+  "interpretation": "Float32 minus float64 log average likelihood estimates. Paired bootstrap resamples seed-index pairs; it does not presume equal random variates or genealogies across precision. Four local points and Monte Carlo intervals do not establish global posterior equivalence."
+}
