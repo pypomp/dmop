@@ -63,6 +63,10 @@ where it remains informative; revise empirical claims only as needed.
 - `coupling.py`: paired likelihood estimates with optional endpoint sorting.
 - `kernels.py`: corrected proposal kernels; see [METHOD.md](METHOD.md).
 - `run.py`: one chain, complete checkpoint and warmup history, frozen source.
+- `extend.py`: exact continuation from a completed checkpoint into a new
+  directory, preserving the parent, frozen tuning and random state.
+- `metric.py`: proposal scaling from replicated scores; affects efficiency
+  only, and is not a posterior covariance estimate.
 - `report.py`: all-coordinate diagnostics and the original four-panel trend
   layout, plus full trace/marginal grids with common-prior overlays.
 - `results/`: all pilots, including unsuccessful settings. No pilot is a

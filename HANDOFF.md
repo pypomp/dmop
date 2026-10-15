@@ -74,6 +74,29 @@
   Still no independent four-chain final run, sensitivity analysis, replacement
   figures, or manuscript integration. Goal remains active.
 
+### Latest continuation handles
+
+- Joint MALA without a metric remains session70285 (about60/200 at last
+  update). Matched RW session85177 completed all200 transitions in354s;
+  report generated and visually checked. These are not converged final runs.
+- Score preconditioning completed64 replicates, saved as
+  results/score-metric-j1000/chol.npy. New pilots use this fixed factor:
+  session52196 joint MALA, /tmp/dmop-bayes-pilot-pmmala-metric.log;
+  session16291 four-step HMC, /tmp/dmop-bayes-pilot-hmc-metric.log.
+  MALA accepted7/10 early moves and reached the current step cap .5;
+  inspect whether a higher cap or longer trajectories are needed before
+  freezing final settings. HMC is slower and may still be compiling or
+  computing its first5 transitions; poll its handle, do not duplicate it.
+- Added extend.py to continue completed chains exactly into new directories,
+  using saved source, RNG, particle state, covariance and step size. A new
+  save/restore replay test passes bit-for-bit. Four tests pass in11.80s.
+- Figures from the completed pilots have been inspected. Fixed crowded tick
+  labels for tiny ranges. Neither pilot provides final posterior inference.
+  No TeX change this turn, so there is no new compilation obligation yet.
+  Finish pilot comparisons, select settings, run four independent chains,
+  continue to the stated numerical/visual gates, then prior and particle
+  sensitivity, matched-target comparison, main/SI edits and visual compilation.
+
 ## October 15: benchmark follow-up completed
 
 - All 28 SPX tuning fits completed. Alpha .97, rate .001 with cosine decay,
