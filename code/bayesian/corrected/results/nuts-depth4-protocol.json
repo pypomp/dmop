@@ -1,0 +1,17 @@
+{
+  "purpose": "Assess longer conditional NUTS trajectories after every trajectory in the completed depth3 pilot reached its depth limit; no convergence claim from the pilot",
+  "method": "nuts",
+  "particles": 5000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 1,
+  "max_depth": 4,
+  "warmup": 60,
+  "draws": 60,
+  "seed": 2026102600,
+  "step_size": 0.11225792709320717,
+  "initial": "pilot-nuts-g1000-j5000/warm_start.npy",
+  "metric": "score-metric-j1000/chol.npy",
+  "cpu": 10,
+  "selection": "Compare all-coordinate traces, retained movement, trajectory acceptance, divergences, depth truncation and cost; retain all outputs"
+}
