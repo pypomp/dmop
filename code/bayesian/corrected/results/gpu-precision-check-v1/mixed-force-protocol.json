@@ -1,0 +1,16 @@
+{
+  "purpose": "Time float64 target with float32 proposal force, four independent NUTS lanes. Fixed-point timing only; no posterior draws.",
+  "inputs": "inputs.npz",
+  "particles": 5000,
+  "force_particles": 1000,
+  "precision": "float64",
+  "force_precision": "float32",
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "max_depth": 4,
+  "batch_size": 4,
+  "likelihood_replicates_per_point": 1,
+  "postcompile_kernel_reps": 3,
+  "gpu": 0,
+  "checks": "CPU mixed force: likelihood/prior identical to baseline64 at two points, finite deterministic forces; model tests 2 passed. Batch-kernel tests pending; no production launch until passed."
+}

@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: mixed proposal precision and GPU batch runner
+
+- Full64 GPU batch4 finished: postcompile median85.94s for four 15-step updates, finite and zero divergences. PID3025464 verified terminal.
+- Added optional float32 proposal force while retaining float64 PF target/prior. Two model tests passed, including target identity, deterministic forces and batched force execution. Production configurations unchanged.
+- Added batch.py for independent NUTS/PMMH chains with separate RNGs, adaptation and ordinary per-chain checkpoints. Scalar-vs-batched known-target tests pending; no production batch run yet.
+- Next GPU check is mixed-force-protocol.json, same fixed inputs/J5000/G1000/depth4, three postcompile batches. Launch after committing this protocol.
+- All four CPU NUTS and four recovered PMMH processes verified live on host; keep until a validated replacement. No convergence or manuscript change.
+
 ## October 15: GPU batching evidence and completed depth4 pilot
 
 - Main precision checks complete: float32/float64 each128 PF evaluations at

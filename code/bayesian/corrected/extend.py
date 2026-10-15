@@ -143,6 +143,8 @@ def main():
     shutil.copy2(Path(__file__),a.output/'continuation_driver.py')
     write_json(a.output/'configuration.json',cfg)
     model_extra={'force_particles':cfg['force_particles']} if cfg.get('force_particles') is not None else {}
+    if cfg.get('force_precision') is not None:
+        model_extra['force_precision'] = cfg['force_precision']
     m=setup(cfg['particles'],cfg['alpha'],cfg['prior_scale'],sort_particles=cfg.get('sort_particles',False),**model_extra)
     extra={'max_depth':cfg['max_depth']} if cfg['method']=='nuts' else {}
     _,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],cfg['method'],cfg['steps'],**extra)

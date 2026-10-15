@@ -70,6 +70,103 @@
       }
     ]
   ],
-  "kernel_timings": [],
-  "complete": false
+  "kernel_timings": [
+    {
+      "seconds": 104.05613027300569,
+      "compile_included": true,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.31055806117423007,
+        0.8659472788450079,
+        0.6660052037015565,
+        0.5879494016957959
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 85.93644555399078,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.6725314003035037,
+        0.40072893925678166,
+        0.9999999999999996,
+        0.520291036346273
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 85.71858482799144,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.48535089820121763,
+        0.3952343278174709,
+        0.8800069576310707,
+        0.4926441068440737
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 86.3250753369939,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.9041265836128657,
+        0.5250866716381454,
+        0.8574512598423627,
+        0.8682630443265303
+      ],
+      "finite": true
+    }
+  ],
+  "complete": true
 }

@@ -69,7 +69,10 @@ def sorted_rproc(X_: StateDict, theta_: ParamDict, key: RNGKey,
                         ordered, lambda x: x, states)
 
 
-def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sort_particles=False, force_particles=None):
+def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sort_particles=False, force_particles=None,
+          force_precision=None):
+    if force_precision not in (None, 'float32'):
+        raise ValueError('force_precision must be None or float32')
     force_particles = particles if force_particles is None else force_particles
     # Construct via the same library components as d.dhaka; change only the
     # explicitly documented measurement floor. Keep Gaussian process noise.
@@ -111,7 +114,32 @@ def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sor
     def mop_target(z, key):
         return -mop(force_struct, full_est(z)[None], force_particles, alpha, key[None])[0] + logprior(z)
 
+    value_force = jax.jit(jax.value_and_grad(mop_target))
+    if force_precision == 'float32':
+        # Only the proposal force uses reduced precision. The likelihood,
+        # prior and acceptance energy above retain the process precision.
+        # In particular, the library's default-dtype Gaussian random draws
+        # must also be traced in float32, not merely cast after simulation.
+        with jax.enable_x64(False):
+            force32_struct = jax.tree.map(
+                lambda x: x.astype(jnp.float32) if hasattr(x, 'dtype')
+                and jnp.issubdtype(x.dtype, jnp.floating) else x, force_struct)
+            baseline32 = baseline.astype(jnp.float32)
+            index32 = index.astype(jnp.int32)
+            center32, scale32 = jnp.asarray(CENTER, dtype=jnp.float32), jnp.asarray(SCALE, dtype=jnp.float32)
+
+        def target32(z, key):
+            theta = baseline32.at[index32].set(center32 + scale32*z)
+            prior = -.5*jnp.sum((z/prior_scale)**2) - len(NAMES)*jnp.log(prior_scale)
+            return -mop(force32_struct, theta[None], force_particles, alpha, key[None])[0] + prior
+
+        def mixed_value_force(z, key):
+            with jax.enable_x64(False):
+                value, force = jax.value_and_grad(target32)(z.astype(jnp.float32), key)
+            return value.astype(z.dtype), force.astype(z.dtype)
+        value_force = jax.jit(mixed_value_force)
+
     return dict(model=model, struct=struct, full_est=full_est, full_nat=full_nat,
                 logprior=jax.jit(logprior), loglik=jax.jit(loglik),
-                value_force=jax.jit(jax.value_and_grad(mop_target)),
+                value_force=value_force,
                 initial=(np.array([d._to_est(d.theta)[n] for n in NAMES])-CENTER)/SCALE)
