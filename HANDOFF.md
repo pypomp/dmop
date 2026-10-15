@@ -1,5 +1,29 @@
 # Handoff
 
+## October 15: float32 GPU and precision checks underway
+
+- Previous goal turn completed actual float64 GPU timing and verified original
+  float32 settings. Current new device_check.py supports precision, particle
+  count and batch size explicitly. model.py still defaults64 but honors an
+  explicit JAX_ENABLE_X64=false before importing data. Existing sampler source
+  snapshots unchanged. test_model.py passes (1 test,13.56s).
+- Protocol62fb55242: results/gpu-precision-check-v1/inputs.npz freezes four CPU
+  warmup positions/metrics. Float32 GPU0 PID2992754 and float64 GPU1 PID2992755
+  are BOTH complete/terminal. Each has16 PF replicates per point. All finite;
+  precision differences are within broad Monte Carlo uncertainty, not enough
+  to claim equivalence. Float32 single-chain15-step NUTS postcompile timings
+  32.85/34.50/35.02s, zero divergences, versus prior shared-GPU64 median60.46s.
+- Followup protocol397aa89c9 committed before launch:128 replicates/point in
+  each precision (use128 alone, because first16 seeds repeat), plus batch2
+  float32 NUTS timing. LIVE detached float64-reps128 PID3001017 on GPU1;
+  LIVE float32-batch2 PID3003176 on GPU0 (read its launch JSON).
+  Once batch2 finishes, launch float32-reps128 on GPU0 with --reps128 and
+  --kernel-reps0, same inputs and precision32. This launch remains TODO.
+- GPU benchmarks coexist with unrelated work; no outside processes touched.
+  Production remains four CPU NUTS chains plus recovered PMMH and pilot.
+  Monitor43525 continues; revalidate handles rather than restarting anything.
+  Goal active: convergence, prior/particle checks, final figures and edits remain.
+
 ## October 15: user asked about GPU and original configuration
 
 - User objected to CPU use, then asked for the original experiment settings.

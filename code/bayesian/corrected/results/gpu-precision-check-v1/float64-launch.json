@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-15T23:07:22.909401+00:00",
+  "pid": 2992755,
+  "create_time": 1792105641.96,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/device_check.py",
+    "--inputs",
+    "code/bayesian/corrected/results/gpu-precision-check-v1/inputs.npz",
+    "--output",
+    "code/bayesian/corrected/results/gpu-precision-check-v1/float64",
+    "--precision",
+    "float64",
+    "--reps",
+    "16",
+    "--kernel-reps",
+    "0"
+  ],
+  "log": "/tmp/dmop-bayes-gpu-precision-float64.log",
+  "gpu": 1,
+  "protocol_commit": "62fb55242"
+}
