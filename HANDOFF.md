@@ -1,5 +1,32 @@
 # Handoff
 
+## October 15: HMC review complete; prior sensitivity underway
+
+- Prior turn made substantive tuning/protocol progress. This continuation
+  revalidated the new four-chain handles and observed advancing checkpoints.
+  Primary MALA chains have reached25--50 warmup updates; all finite and moving.
+  RW candidates passed475 warmup. No retained primary posterior draws yet.
+- HMC session16291 completed normally:100 transitions in3899.68s,50 retained,
+  parameter acceptance .64, particle-seed acceptance .48. Generated its report
+  and inspected the complete18-coordinate trace: substantial drift remains,
+  trend bulk ESS2.07/50. Do not extend this configuration. It is preserved
+  as a completed tuning trial, not promoted to manuscript evidence.
+- Started proper-prior sensitivity in parallel under protocol b42f948a3,
+  committed before launch. results/prior-sd2-pmmala-4chain-v1 doubles every
+  prior SD (prior_scale2), keeping Pypomp, normalized measurement, J5000/G1000,
+  alpha.95 unchanged. Four saved independent initial states/metrics from v2
+  inputs; fresh seeds2026102800--03;1000warm+3000draws,step.475,cap2.
+- Sensitivity handles: chain0 session99174(core8), chain1 32188(core12),
+  chain2 35673(core16), chain3 41249(core18). Logs
+  /tmp/dmop-bayes-prior-sd2-chain{0,1,2,3}.log. Do not duplicate. Their mixed
+  P/E cores prohibit using elapsed times for method speedup comparisons.
+  When NUTS pilots release cores14/10, moving the two E-core sensitivity
+  processes there with a recorded affinity change could shorten completion.
+- Main MALA handles56838/62806/75156/55847 and RW61014/83054/40197/54096
+  continue unchanged. NUTS pilots83471 and59154 remain live. No other sampler
+  branches are planned before inspecting these results. Still need independent
+  convergence, prior comparison, particle checks and final manuscript figures.
+
 ## October 15: faster four-chain candidates now running
 
 - Same-core timings completed: sessions49664 and4577 terminal. Median full

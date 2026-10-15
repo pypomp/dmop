@@ -1,0 +1,37 @@
+{
+  "chains": [
+    "code/bayesian/corrected/results/pilot-hmc-metric-j5000"
+  ],
+  "warmup": 50,
+  "retained": 50,
+  "diagnostic_convention": "Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates",
+  "marginal_density_estimator": "Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain",
+  "available_iterations": [
+    100
+  ],
+  "truncated_iterations": [
+    0
+  ],
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "equal_lengths": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "code/bayesian/corrected/results/pilot-hmc-metric-j5000/checkpoint.npz": "8a206f6f7b6a45191a7236588da6aeac39db27649170fe3b2041cdf2e7aa0ef6"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.64,
+      "randomness": 0.48
+    }
+  ]
+}
