@@ -43,7 +43,7 @@ def warmup_recipe(source):
     return block
 
 
-def adapt_tuning(i, info, trace, chol, eps, metric_trace, warmup, max_step, method):
+def adapt_tuning(i, info, trace, chol, eps, metric_trace, warmup, max_step, method, adapt_metric=True):
     """The saved run.py warmup rule, applied at its original iteration index."""
     import numpy as np
     import jax.numpy as jnp
@@ -51,7 +51,7 @@ def adapt_tuning(i, info, trace, chol, eps, metric_trace, warmup, max_step, meth
     if i<warmup:
         target={'mala':.57,'hmc':.65,'pmrw':.234,'pmmala':.4,'nuts':.65}[method]
         eps=float(np.clip(np.exp(np.log(eps)+.3/(1+i/25)**.6*(info[2]-target)),1e-5,max_step))
-        if (i+1)%200==0 and i+1<warmup and i>=399:
+        if adapt_metric and (i+1)%200==0 and i+1<warmup and i>=399:
             recent=np.array(trace)[max(0,i//2):,2:]
             covariance=np.cov(recent.T)
             covariance=.9*covariance+.1*np.diag(np.diag(covariance))+1e-5*np.eye(chol.shape[0])
@@ -164,7 +164,8 @@ def main():
         eps_trace.append(eps)
         if i<cfg['warmup']:
             chol,eps,metric=adapt_tuning(i,infos[-1],traces,chol,eps,metric_trace,
-                                       cfg['warmup'],cfg['max_step_size'],cfg['method'])
+                                       cfg['warmup'],cfg['max_step_size'],cfg['method'],
+                                       adapt_metric=not cfg.get('fixed_metric',False))
             if metric is not None:
                 metrics.append(metric)
         if (i+1)%a.checkpoint==0 or i+1==total:

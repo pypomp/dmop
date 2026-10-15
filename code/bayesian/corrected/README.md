@@ -71,6 +71,12 @@ where it remains informative; revise empirical claims only as needed.
 - `nuts.py`: BlackJAX NUTS with deterministic MOP forces, unscaled PF
   energies, and an explicit MH update of particle randomness.
 - `run.py`: one chain, complete checkpoint and warmup history, frozen source.
+- `batch.py`: independent NUTS or PMMH chains executed together, with separate
+  seeds, tuning histories and per-chain files compatible with `report.py`.
+  Supply equally sized `--initials`, `--metrics` and `--seeds` lists. All
+  likelihoods use float64. Optional `--force-precision float32` affects only
+  proposal gradients. Per-chain timing fields contain the entire batch's
+  wall time; do not sum them across chains to estimate elapsed time.
 - `extend.py`: exact continuation into a new directory, preserving the parent,
   tuning and random state. `--recover-interrupted` requires a recorded terminal
   interruption and resumes the original run length and warmup schedule.
@@ -79,6 +85,9 @@ where it remains informative; revise empirical claims only as needed.
 - `device_check.py`: GPU precision and batch-throughput measurements at fixed
   saved points; separate from posterior sampling. Default model precision is
   float64; an explicit `JAX_ENABLE_X64=false` selects float32 before data import.
+  `--force-precision float32 --precision float64` instead retains the full
+  precision likelihood and measures a cheaper proposal force. This option
+  does not temper the target or change its particle count.
 - `force_check.py`: force variability and serial cost at the same fixed point
   and CPU affinity, for selecting a gradient particle count.
 - `conditional_force_check.py`: local fixed-seed finite differences and the

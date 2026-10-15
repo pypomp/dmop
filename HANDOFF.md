@@ -1,5 +1,14 @@
 # Handoff
 
+## October 15: GPU production comparison ready
+
+- Mixed-force GPU benchmark completed: median43.64s per four-chain 15-step batch versus85.94s full64. Float64 likelihoods at all four inputs match exactly. Finite, zero divergences; no posterior samples.
+- batch.py validated: scalar-vs-batched NUTS/PMMH RNG/state/diagnostics agreement, fixed-metric adaptation, two model precision tests and two recovery tests (7 total). A real Dhaka two-chain smoke completed and saved valid checkpoints; inputs/results in /tmp/dmop-bayes-batch-smoke-v1, verification JSON committed.
+- PMMH report review-pmrw-20261015-b freezes950 retained per chain; all18 traces visually inspected. Still slow mixing: Rhat1.10--1.58, minimum bulkESS6.90. No convergence.
+- New GPU production protocol at results/gpu-comparison-v1: shared starts at old PMMH iteration1950, fixed pooled-warmup covariance (not a prior fit),500 step-adaptation iterations; NUTS depth5/2000 draws on GPU0 and PMMH10000 draws on GPU1. Prior/target unchanged; NUTS force32 only. Initialization cost explicitly retained.
+- Launch after this commit with launch.py nuts / launch.py pmrw, then verify finite checkpoints before retiring verified old CPU processes. Old results remain development archives. No production GPU launch yet at this entry.
+- Goal active: convergence, prior/particle checks, controlled cost comparison, final plots and minimal manuscript edits remain.
+
 ## October 15: mixed proposal precision and GPU batch runner
 
 - Full64 GPU batch4 finished: postcompile median85.94s for four 15-step updates, finite and zero divergences. PID3025464 verified terminal.
