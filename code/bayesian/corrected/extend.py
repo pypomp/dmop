@@ -65,8 +65,10 @@ def main():
                continuation_driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     shutil.copy2(Path(__file__),a.output/'continuation_driver.py')
     write_json(a.output/'configuration.json',cfg)
-    m=setup(cfg['particles'],cfg['alpha'],cfg['prior_scale'],sort_particles=cfg.get('sort_particles',False))
-    _,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],cfg['method'],cfg['steps'])
+    model_extra={'force_particles':cfg['force_particles']} if cfg.get('force_particles') is not None else {}
+    m=setup(cfg['particles'],cfg['alpha'],cfg['prior_scale'],sort_particles=cfg.get('sort_particles',False),**model_extra)
+    extra={'max_depth':cfg['max_depth']} if cfg['method']=='nuts' else {}
+    _,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],cfg['method'],cfg['steps'],**extra)
     start=time.monotonic()
     parent_seconds=json.loads((a.parent/'status.json').read_text())['seconds']
     for i in range(old,total):

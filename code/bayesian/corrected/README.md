@@ -62,6 +62,8 @@ where it remains informative; revise empirical claims only as needed.
 - `preflight.py`: PF/MOP agreement, observation-floor effect, noise and timing.
 - `coupling.py`: paired likelihood estimates with optional endpoint sorting.
 - `kernels.py`: corrected proposal kernels; see [METHOD.md](METHOD.md).
+- `nuts.py`: BlackJAX NUTS with deterministic MOP forces, unscaled PF
+  energies, and an explicit MH update of particle randomness.
 - `run.py`: one chain, complete checkpoint and warmup history, frozen source.
 - `extend.py`: exact continuation from a completed checkpoint into a new
   directory, preserving the parent, frozen tuning and random state.
@@ -86,7 +88,7 @@ settings and chain seeds before pooling. Never run with an existing output
 folder: overwrite protection preserves failed tuning as well as successful
 runs. Checkpoints retain the random state needed to continue the chain.
 
-The current candidates are joint particle MALA and fixed-length HMC powered
+The current candidates are NUTS, joint particle MALA and fixed-length HMC powered
 by MOP, together with ordinary particle random-walk MH. The joint MALA
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.

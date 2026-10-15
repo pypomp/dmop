@@ -67,7 +67,8 @@ def sorted_rproc(X_: StateDict, theta_: ParamDict, key: RNGKey,
                         ordered, lambda x: x, states)
 
 
-def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sort_particles=False):
+def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sort_particles=False, force_particles=None):
+    force_particles = particles if force_particles is None else force_particles
     # Construct via the same library components as d.dhaka; change only the
     # explicitly documented measurement floor. Keep Gaussian process noise.
     model = pp.Pomp(rinit=d._rinit, rproc=sorted_rproc if sort_particles else d._rproc,
@@ -106,7 +107,7 @@ def setup(particles=1000, alpha=.95, prior_scale=1., measurement='gaussian', sor
                        key[None, None], thresh=0.)['logLik'][0, 0]
 
     def mop_target(z, key):
-        return -mop(force_struct, full_est(z)[None], particles, alpha, key[None])[0] + logprior(z)
+        return -mop(force_struct, full_est(z)[None], force_particles, alpha, key[None])[0] + logprior(z)
 
     return dict(model=model, struct=struct, full_est=full_est, full_nat=full_nat,
                 logprior=jax.jit(logprior), loglik=jax.jit(loglik),

@@ -1,0 +1,38 @@
+{
+  "purpose": "Same-target particle random-walk comparison with matched four optimized starts and initial covariance; no derivative in sampling proposal",
+  "method": "pmrw",
+  "particles": 5000,
+  "prior_scale": 1.0,
+  "seeds": [
+    2026102400,
+    2026102401,
+    2026102402,
+    2026102403
+  ],
+  "warmup": 1000,
+  "draws": 3000,
+  "step_size": 0.5,
+  "max_step_size": 2.0,
+  "initial_metric": "../score-metric-j1000/chol.npy",
+  "initialization_note": "Shares the gradient-optimized starts and score-derived initial proposal covariance with the MOP-driven candidates. This is a tuned random-walk comparison, not a claim of derivative-free preparation.",
+  "starts": {
+    "dmop/code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain0/warm_start.npy": "b8bf97d124144c5ff4334092d471d0b4908e5d830679a5d10805e44f9990e122",
+    "dmop/code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain1/warm_start.npy": "fd72f8e223d9a42a2f9ccfe35f3367d2996a66e80d5813d1e55d8a3715794e29",
+    "dmop/code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain2/warm_start.npy": "d61911be2b9eefe7248a9ba8b99124b9afa3b61e0e25dfe36eda678759f56bd7",
+    "dmop/code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain3/warm_start.npy": "e982981da813b28c49d9c084e251b7bea9bff12aea577bb95e8dac3e1d9f9169"
+  },
+  "source_sha256": {
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "extend.py": "5480cf6e8d0e4eac92f15ac7cccef4613db234bfe10989a0841074c66a298b9a",
+    "test_model.py": "a3d053125563f847d8765be186c1d3371a289d2dc6789c4e5c0f02404a000b8d",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "76c67bc5dc2608b555838efe7b6b70e47a7ee2ab8afcc0fffe2b2671bdd9e5e5",
+    "report.py": "fb26329f1a98994641e2de1a87e606b4bad5e9116ed3899ab399eedc865a0368",
+    "nuts.py": "9eac760a6ac3b088ca844fb569f1c2575ea90d118aa9226b844aff8bd7c31425",
+    "run.py": "8a7578c5d92d109a90cb244e7259e87d324e58cd1409116292c11e0eb4f1267b",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26"
+  }
+}

@@ -35,7 +35,10 @@ def leapfrog(z, p, u, force, get_force, chol, step_size, steps):
     return z, -p, force
 
 
-def make_kernel(loglik, logprior, get_force, method='mala', steps=4):
+def make_kernel(loglik, logprior, get_force, method='mala', steps=4, max_depth=5):
+    if method == 'nuts':
+        from nuts import make_nuts_kernel
+        return make_nuts_kernel(loglik, logprior, get_force, max_depth)
     def init(z, u):
         force = jnp.zeros_like(z) if method == "pmrw" else finite_force(get_force(z, u))
         return State(z, u, loglik(z, u), force)

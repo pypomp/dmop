@@ -1,6 +1,7 @@
 """Diagnose independent corrected chains and redraw the existing panel layout."""
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
 
@@ -48,7 +49,10 @@ def main():
             raise ValueError(f'Incompatible chains: {field}')
     if len(set(c['seed'] for c in configs)) != len(configs):
         raise ValueError('Repeated chain seeds')
-    arrays=[np.load(d/'checkpoint.npz') for d in a.chains]
+    if len({c['source_sha256']['model.py'] for c in configs}) != 1:
+        raise ValueError('Model source differs between chains')
+    payloads=[(d/'checkpoint.npz').read_bytes() for d in a.chains]
+    arrays=[np.load(io.BytesIO(data)) for data in payloads]
     warm=configs[0]['warmup']
     n=min(len(x['trace']) for x in arrays)
     if n-warm<20:
@@ -69,17 +73,25 @@ def main():
             mcse_mean=float(az.mcse(x,method='mean'))))
     table=pd.DataFrame(rows)
     table.to_csv(a.output/'diagnostics.csv',index=False)
-    complete=all((d/'completion.json').exists() for d in a.chains)
-    gates=dict(four_chains=len(arrays)>=4,complete=complete,
+    lengths=[len(x['trace']) for x in arrays]
+    complete=all((d/'completion.json').exists() and length==c['warmup']+c['draws']
+                 for d,c,length in zip(a.chains,configs,lengths))
+    gates=dict(four_chains=len(arrays)>=4,complete=complete,equal_lengths=len(set(lengths))==1,
                rhat=bool(np.isfinite(table.rhat).all() and (table.rhat<=1.01).all()),
                ess=bool((table[['ess_bulk','ess_tail']]>=400).all().all()))
-    audit=dict(chains=[str(d) for d in a.chains],warmup=warm,retained=n-warm,gates=gates,
+    audit=dict(chains=[str(d) for d in a.chains],warmup=warm,retained=n-warm,
+               available_iterations=lengths,truncated_iterations=[length-n for length in lengths],gates=gates,
                numerical_convergence=all(gates.values()),
                remaining_checks=['visual inspection','prior sensitivity','particle sensitivity'],
-               source_sha256={str(d/'checkpoint.npz'):hashlib.sha256((d/'checkpoint.npz').read_bytes()).hexdigest()
-                              for d in a.chains},
+               source_sha256={str(d/'checkpoint.npz'):hashlib.sha256(data).hexdigest()
+                              for d,data in zip(a.chains,payloads)},
                acceptance=[dict(parameter=float(x['info'][warm:n,0].mean()),
                                 randomness=float(x['info'][warm:n,1].mean())) for x in arrays])
+    if configs[0]['method']=='nuts':
+        audit['nuts']=[dict(divergences=int(x['info'][warm:n,6].sum()),
+                            mean_integration_steps=float(x['info'][warm:n,7].mean()),
+                            depth_limit_fraction=float((x['info'][warm:n,8]>=configs[0]['max_depth']).mean()))
+                       for x in arrays]
     (a.output/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
     plt.rcParams.update({'font.size':12,'axes.labelsize':13,'savefig.dpi':220})
     fig,axes=plt.subplots(2,2,figsize=(10,6),layout='constrained')
