@@ -1,0 +1,77 @@
+{
+  "purpose": "Exact continuation of five verified interrupted runs; preserve target, state, frozen tuning, seeds and total lengths.",
+  "parents": [
+    {
+      "verified_terminal": true,
+      "exit_code": null,
+      "session_id": 61014,
+      "former_host_pid": 2738591,
+      "observed_terminal_utc": "2026-10-15T22:35:54.603642+00:00",
+      "host_process_absent": true,
+      "session_handle": "Unknown process id",
+      "cause": "Unknown; saved logs end at ordinary checkpoint without Python error.",
+      "checkpoint_sha256": "789d917af9f4d9af6efe70435b92cdd517390af30e407bff9426473fbda02881",
+      "recovery": "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain0",
+      "parent": "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain0",
+      "core": 22
+    },
+    {
+      "verified_terminal": true,
+      "exit_code": null,
+      "session_id": 83054,
+      "former_host_pid": 2738593,
+      "observed_terminal_utc": "2026-10-15T22:35:54.603893+00:00",
+      "host_process_absent": true,
+      "session_handle": "Unknown process id",
+      "cause": "Unknown; saved logs end at ordinary checkpoint without Python error.",
+      "checkpoint_sha256": "7b45e2ac87f284deb4a056ec1612612c5a9e69999de019ae29e780531d1d9294",
+      "recovery": "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain1",
+      "parent": "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain1",
+      "core": 24
+    },
+    {
+      "verified_terminal": true,
+      "exit_code": null,
+      "session_id": 40197,
+      "former_host_pid": 2738590,
+      "observed_terminal_utc": "2026-10-15T22:35:54.604041+00:00",
+      "host_process_absent": true,
+      "session_handle": "Unknown process id",
+      "cause": "Unknown; saved logs end at ordinary checkpoint without Python error.",
+      "checkpoint_sha256": "1b20f4508c3c412b9a15b6f3831cd1d2aee5a7f078c66596cc00e9addf708d4e",
+      "recovery": "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain2",
+      "parent": "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain2",
+      "core": 26
+    },
+    {
+      "verified_terminal": true,
+      "exit_code": null,
+      "session_id": 54096,
+      "former_host_pid": 2738592,
+      "observed_terminal_utc": "2026-10-15T22:35:54.604171+00:00",
+      "host_process_absent": true,
+      "session_handle": "Unknown process id",
+      "cause": "Unknown; saved logs end at ordinary checkpoint without Python error.",
+      "checkpoint_sha256": "c72e17ef4ec138b616a7cc5a9b63ff90cdf20efecf1c70489286824f3db4e3be",
+      "recovery": "code/bayesian/corrected/results/sampling-recovery-v1/pmrw-chain3",
+      "parent": "code/bayesian/corrected/results/candidate-pmrw-4chain-v1/chain3",
+      "core": 28
+    },
+    {
+      "verified_terminal": true,
+      "exit_code": null,
+      "session_id": 59154,
+      "former_host_pid": 2808159,
+      "observed_terminal_utc": "2026-10-15T22:35:54.604294+00:00",
+      "host_process_absent": true,
+      "session_handle": "Unknown process id",
+      "cause": "Unknown; saved logs end at ordinary checkpoint without Python error.",
+      "checkpoint_sha256": "046de2490e0e9831f9e19567063f529149a0d291114ae26ee61c4bcd014fe3bd",
+      "recovery": "code/bayesian/corrected/results/sampling-recovery-v1/nuts-depth4-pilot",
+      "parent": "code/bayesian/corrected/results/pilot-nuts-depth4-g1000-j5000",
+      "core": 10
+    }
+  ],
+  "driver_sha256": "8c8a405650a6c87db5902064807a94bfb9687faed24f4a83021e8885591899ea",
+  "process_mode": "Detached children with PID/create-time records; original source snapshots and same CPU affinity"
+}
