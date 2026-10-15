@@ -1,0 +1,56 @@
+{
+  "purpose": "Prior sensitivity: double every reference-prior SD, keeping likelihood and observation/process model unchanged",
+  "method": "pmmala",
+  "particles": 5000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 2,
+  "warmup": 1000,
+  "draws": 3000,
+  "step_size": 0.475,
+  "max_step_size": 2,
+  "optimize": 0,
+  "seeds": [
+    2026102800,
+    2026102801,
+    2026102802,
+    2026102803
+  ],
+  "cpu_cores": [
+    8,
+    12,
+    16,
+    18
+  ],
+  "initial_positions": [
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain0-initial.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain1-initial.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain2-initial.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain3-initial.npy"
+  ],
+  "initial_metrics": [
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain0-chol.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain1-chol.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain2-chol.npy",
+    "code/bayesian/corrected/results/candidate-pmmala-g1000-4chain-v2/inputs/chain3-chol.npy"
+  ],
+  "input_sha256": {
+    "chain2-initial.npy": "8f6faccf71f9177fc5926822902cb0288b8196dc3907113567b4ac205acff5af",
+    "chain3-initial.npy": "feef952dca2cffd054ea7bb2a9caffb4e82a007a0da4dd656e25ca09aa11da3c",
+    "chain3-chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "chain1-chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "chain2-chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "chain0-chol.npy": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+    "chain0-initial.npy": "34d4c5bcef2068789398ec12c0d8150e3c551d4f35891bad14eb3de9223bcce4",
+    "chain1-initial.npy": "8349df53f85584723251784c4501a2c1b0be272a583f4f6b46187cf501396860"
+  },
+  "adaptation": "Step and covariance during warmup only; frozen for retained sampling",
+  "gates": {
+    "rank_split_rhat_max": 1.01,
+    "bulk_ess_min": 400,
+    "tail_ess_min": 400,
+    "coordinates": 18,
+    "independent_chains": 4
+  },
+  "interpretation": "Compare all-coordinate posterior summaries only after independent-chain checks; larger posterior concentration alone does not justify removing a prior. Different core types exclude using these elapsed times for a method speed comparison."
+}
