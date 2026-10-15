@@ -1,0 +1,13 @@
+{
+  "purpose": "Check four-chain batching after batch2 showed almost the same walltime as batch1.",
+  "precision": "float32",
+  "batch_size": 4,
+  "particles": 5000,
+  "force_particles": 1000,
+  "kernel_postcompile_reps": 3,
+  "likelihood_reps": 1,
+  "inputs": "inputs.npz",
+  "gpu": 1,
+  "start_condition": "Only after float64-reps128 process completes; do not overlap our own measurements on the same GPU.",
+  "production_change": false
+}
