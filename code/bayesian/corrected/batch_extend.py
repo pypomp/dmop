@@ -42,7 +42,7 @@ def load_parent(parent, recover, draws):
         for field in ['batch_size', 'method', 'particles', 'force_particles', 'force_precision',
                       'alpha', 'prior_scale', 'warmup', 'draws', 'max_depth', 'max_step_size',
                       'fixed_metric', 'source_sha256', 'jax', 'x64', 'devices', 'pypomp_revision',
-                      'names', 'prior_center', 'prior_sd', 'sort_particles', 'steps', 'nuts_dependencies']:
+                      'names', 'prior_center', 'prior_sd', 'sort_particles', 'steps', 'nuts_dependencies', 'xla_flags']:
             if cfg.get(field) != first.get(field):
                 raise ValueError(f'Inconsistent batch configuration: {field}')
         for name, digest in cfg['source_sha256'].items():
@@ -156,6 +156,8 @@ def main():
         raise ValueError('Pypomp source differs from parent')
     if jax.__version__ != cfg['jax'] or bool(jax.config.jax_enable_x64) != cfg['x64']:
         raise ValueError('JAX version or precision differs from parent')
+    if os.environ.get('XLA_FLAGS', '') != cfg.get('xla_flags', ''):
+        raise ValueError('XLA execution flags differ from parent')
     if [str(x) for x in jax.devices()] != cfg['devices']:
         raise ValueError('Use the same device backend as parent')
     for name, version in cfg.get('nuts_dependencies', {}).items():

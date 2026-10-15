@@ -1,0 +1,28 @@
+{
+  "devices": [
+    "cuda:0"
+  ],
+  "repetitions": 5,
+  "xla_flags": "--xla_gpu_deterministic_ops=true",
+  "force_seconds": [
+    10.632803796004737,
+    5.022604025987675,
+    4.94037182800821,
+    4.863041164004244,
+    4.913756515015848
+  ],
+  "maximum_force_range_by_chain": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "maximum_likelihood_range_by_chain": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "force_bitwise_repeatable": true,
+  "likelihood_bitwise_repeatable": true
+}

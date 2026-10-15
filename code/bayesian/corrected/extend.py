@@ -104,6 +104,8 @@ def main():
         raise ValueError('Continue on the same backend as the parent')
     if jax.__version__!=cfg['jax'] or bool(jax.config.jax_enable_x64)!=cfg['x64']:
         raise ValueError('JAX version or precision differs from parent')
+    if os.environ.get('XLA_FLAGS','') != cfg.get('xla_flags',''):
+        raise ValueError('XLA execution flags differ from parent')
     if cfg.get('nuts_dependencies'):
         import importlib.metadata
         for name,version in cfg['nuts_dependencies'].items():

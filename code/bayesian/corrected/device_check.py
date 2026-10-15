@@ -53,6 +53,7 @@ def main():
     repo=Path(pypomp.__file__).resolve().parents[1]
     result={'utc':datetime.now(timezone.utc).isoformat(),'precision':a.precision,
             'devices':[str(x) for x in jax.devices()],'jax':jax.__version__,
+            'xla_flags':os.environ.get('XLA_FLAGS',''),
             'pypomp_revision':subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip(),
             'settings':{k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()},
             'inputs_sha256':hashlib.sha256(a.inputs.read_bytes()).hexdigest(),

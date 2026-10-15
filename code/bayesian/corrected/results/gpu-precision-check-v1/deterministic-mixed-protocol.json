@@ -1,0 +1,17 @@
+{
+  "purpose": "Measure actual-size deterministic mixed-force GPU NUTS after detecting nondeterministic float32 GPU force reductions. Fixed-point timings only.",
+  "inputs": "inputs.npz",
+  "precision": "float64",
+  "force_precision": "float32",
+  "particles": 5000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "max_depth": 4,
+  "batch_size": 4,
+  "likelihood_replicates_per_point": 1,
+  "postcompile_kernel_reps": 3,
+  "xla_flags": "--xla_gpu_deterministic_ops=true",
+  "gpu": 1,
+  "shared_load": "Both GPUs have unrelated work; GPU1 also runs the primary PMMH batch. No ESS/sec or controlled speedup claim."
+}
