@@ -16,6 +16,14 @@ four-chain posterior figure. Read each run's `status.json` or
 | `score-metric-j1000` | 64 replicated MOP scores, regularized second moment used only for proposal preconditioning |
 | `pilot-pmmala-metric-j5000` | Joint particle MALA with that covariance shape |
 | `pilot-hmc-metric-j5000` | Fixed-length HMC with that covariance shape and MH random-state refresh |
+| `pilot-nuts-metric-j5000` | Conditional NUTS using 5,000 particles for both the target and force |
+| `pilot-nuts-g1000-j5000` | Conditional NUTS with 1,000 force particles and 5,000 target particles; records a CPU-affinity change |
+| `pilot-pmmala-g1000-j5000` | Joint particle MALA with 1,000 force particles and 5,000 target particles |
+| `candidate-pmmala-4chain-v1` | Four independent longer chains, each with its own optimization and warmup; protocol committed before launch |
+| `candidate-pmrw-4chain-v1` | Four matching random-walk chains, using the same optimized starts and initial proposal scales |
+
+See [timing.md](timing.md) before comparing elapsed times. The concurrent
+candidates use different core classes and cannot establish a speedup.
 
 Chain folders contain the complete warmup/retained trace and PRNG state in
 `checkpoint.npz`, a source snapshot, parameter/prior settings and acceptance

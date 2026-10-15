@@ -1,5 +1,31 @@
 # Handoff
 
+## October 15: Pypomp continuation and pilot review
+
+- The four MALA candidates are at100/1000 warmup and the four matched RW
+  candidates at175/1000 as of this check. All eight remain live under the
+  handles below; no retained candidate samples yet. These are multi-hour
+  computations. Preserve their frozen configurations and do not relaunch.
+- Metric-scaled MALA pilot session52196 completed200 transitions in1984s.
+  Its report is generated under pilot-pmmala-metric-j5000/report and all
+  three figures were visually inspected. Trend bulk ESS is16.6/100 draws;
+  several other coordinates have ESS near1--4 and visible drift. This is
+  tuning evidence, not convergence or a replacement manuscript figure.
+- NUTS full-force pilot remains live at17/60 transitions; cheaper-force
+  NUTS at27/60, cheaper-force MALA at110/200, HMC at50/100. No replacement
+  NUTS recipe has been selected. Their original handles remain below.
+- report.py now retains the full negative ACF range, places panel letters
+  outside the plotting area, and labels chains/prior/warmup on the complete
+  parameter grids. The revised trend plot was visually checked. Report
+  regeneration and syntax/diff checks pass. No TeX document changed.
+- README now distinguishes conditional and joint parameter/randomness
+  updates; results navigation includes NUTS and the four-chain candidates.
+  extend.py also records continuation affinity and rejects truncated parents.
+- Previous push c0b590207 confirmed on origin/main. Next: inspect completed
+  cheaper-force/NUTS pilots, assess full independent candidates, then prior
+  sensitivity and controlled same-core timing. Preserve the old paper layout
+  and make only results-supported manuscript changes. Goal remains active.
+
 ## October 15: independent posterior candidates launched
 
 - Committed protocol550e5e614 before launch: four independent chains under

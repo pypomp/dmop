@@ -1,0 +1,35 @@
+{
+  "chains": [
+    "dmop/code/bayesian/corrected/results/pilot-pmmala-j5000"
+  ],
+  "warmup": 100,
+  "retained": 100,
+  "available_iterations": [
+    200
+  ],
+  "truncated_iterations": [
+    0
+  ],
+  "gates": {
+    "four_chains": false,
+    "complete": true,
+    "equal_lengths": true,
+    "rhat": false,
+    "ess": false
+  },
+  "numerical_convergence": false,
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity"
+  ],
+  "source_sha256": {
+    "dmop/code/bayesian/corrected/results/pilot-pmmala-j5000/checkpoint.npz": "6c0e5cfbf6a2bb62fc14ad0be8e8dac40327591d9c6f06fbc08247c255c34fe5"
+  },
+  "acceptance": [
+    {
+      "parameter": 0.25,
+      "randomness": 0.25
+    }
+  ]
+}

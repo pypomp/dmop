@@ -37,9 +37,11 @@ may supply starting points and proposal scales; neither changes the prior.
 The extended target is proportional to `Lhat(theta,u) prior(theta) m(u)`,
 where u is an explicit particle-filter PRNG state. The unscaled bootstrap
 particle-filter estimate enters every Metropolis ratio. MOP supplies only a
-proposal force. Parameter updates condition on u; random-number updates have
-an independent proposal from m, accepted with the likelihood ratio. Retaining
-u on rejection is essential. The force is deterministic conditional on u.
+proposal force. Conditional MALA, HMC and NUTS alternate parameter updates
+at fixed u with an independent proposal from m, accepted with the likelihood
+ratio. Joint particle MALA and random-walk MH instead propose parameters and
+u together. Retaining u on rejection is essential. The force is deterministic
+conditional on u.
 A fixed-length reversible leapfrog proposal with an endpoint energy correction
 is valid even if this force is not an exact gradient. We do not infer validity
 of an adaptive NUTS stopping rule from that argument.

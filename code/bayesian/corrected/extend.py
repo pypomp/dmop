@@ -57,6 +57,8 @@ def main():
                 raise ValueError(f'Changed NUTS dependency: {name}')
     cp=np.load(a.parent/'checkpoint.npz')
     old=len(cp['trace']);total=old+a.draws
+    if old!=cfg['warmup']+cfg['draws']:
+        raise ValueError('Parent checkpoint does not contain its completed run')
     if old<=cfg['warmup']:
         raise ValueError('No retained sampling in parent')
     state=State(jnp.asarray(cp['z']),jax.random.wrap_key_data(jnp.asarray(cp['u'])),
@@ -70,6 +72,7 @@ def main():
     cfg.update(output=str(a.output),draws=total-cfg['warmup'],parent=str(a.parent.resolve()),
                parent_checkpoint_sha256=hashlib.sha256((a.parent/'checkpoint.npz').read_bytes()).hexdigest(),
                continuation_utc=datetime.now(timezone.utc).isoformat(),pid=os.getpid(),
+               continuation_affinity=sorted(os.sched_getaffinity(0)),
                continuation_driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     shutil.copy2(Path(__file__),a.output/'continuation_driver.py')
     write_json(a.output/'configuration.json',cfg)
