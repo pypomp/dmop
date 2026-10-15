@@ -1,8 +1,9 @@
 # Timing interpretation
 
 The concurrent candidate chains run on separate cores of a hybrid Intel
-13900K. The NUTS candidates use performance cores; the random-walk
-candidates use efficiency cores. Each configuration records its CPU affinity.
+13900K. The NUTS candidates use performance cores. The random-walk
+candidates started on efficiency cores; three were moved to released
+performance cores during retained sampling (see their `affinity_change.json`). Each configuration records its CPU affinity.
 Their elapsed wall times are therefore not a matched hardware speed comparison.
 
 These runs assess posterior sampling and iteration counts. Any reported speed

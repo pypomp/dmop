@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-15T22:41:00.041521+00:00",
+  "pid": 2932368,
+  "create_time": 1792103772.65,
+  "previous_affinity": [
+    22
+  ],
+  "new_affinity": [
+    8
+  ],
+  "threads_changed": 9,
+  "reason": "Use performance cores released by stopped MALA development runs; no sampler state or tuning change.",
+  "timing_note": "Mixed-core run. Do not infer a method speedup from its total walltime; use the planned same-core comparison."
+}
