@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: deterministic GPU force option verified at small size
+
+- Session37490 completed. With XLA_FLAGS=--xla_gpu_deterministic_ops=true, all five repeated four-chain J100/G20 force and likelihood evaluations match bitwise. Postcompile force~4.9s. Result copied to batch-continuation-check-v1/force-repeatability-deterministic.json.
+- run.py, batch.py and device_check.py now record XLA_FLAGS; both continuation drivers reject different flags. Existing production snapshots unchanged and their flags were verified empty. Do not use deterministic flags to silently continue those existing chains.
+- Committed next protocol gpu-precision-check-v1/deterministic-mixed-protocol.json: actual J5000/G1000, four lanes/depth4, three timed postcompile updates onGPU1. Launch after commit; current production unchanged.
+- Next after timing: run the complete GPU partial-save replay with deterministic flags from the start (fresh reference; old reference used nondeterministic flags), then decide a documented production transition. Exact deterministic-force repetition alone is not full replay verification.
+- Previous batch replay under empty flags was numerically close, not exact; preserve its failure and comparison records. No production restart, posterior convergence or manuscript change.
+
 ## October 15: GPU replay exposes force nondeterminism
 
 - GPU partial-save replay completed after widening only the batch force-cache allowance from16 to64 eps32 times maximum force magnitude. Float64 likelihood tolerance remains1e-9; cached values are never replaced.

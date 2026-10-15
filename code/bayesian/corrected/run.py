@@ -59,6 +59,7 @@ def main():
     cfg = {k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()}
     cfg.update(utc=datetime.now(timezone.utc).isoformat(), pid=os.getpid(),
                jax=jax.__version__, x64=jax.config.jax_enable_x64,
+               xla_flags=os.environ.get('XLA_FLAGS',''),
                devices=[str(x) for x in jax.devices()], affinity=sorted(os.sched_getaffinity(0)),
                pypomp_revision=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip(),
                pypomp_dirty=bool(subprocess.check_output(['git','-C',str(repo),'status','--porcelain'],text=True)),

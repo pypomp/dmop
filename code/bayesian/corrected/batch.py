@@ -78,6 +78,7 @@ def main():
     repo = Path(pypomp.__file__).resolve().parents[1]
     meta = dict(utc=datetime.now(timezone.utc).isoformat(), pid=os.getpid(),
                 jax=jax.__version__, x64=True, devices=[str(x) for x in jax.devices()],
+                xla_flags=os.environ.get('XLA_FLAGS', ''),
                 affinity=sorted(os.sched_getaffinity(0)), batch_size=n,
                 timing_convention='iteration_seconds is wall time for the whole batch; do not sum across chains',
                 pypomp_revision=subprocess.check_output(['git', '-C', str(repo), 'rev-parse', 'HEAD'], text=True).strip(),
