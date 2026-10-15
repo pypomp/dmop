@@ -10,10 +10,12 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import time
 from model import setup
 import jax
 import numpy as np
+import pypomp
 
 
 def main():
@@ -41,6 +43,8 @@ def main():
         counts=a.counts, reps=a.reps, alpha=a.alpha, seed=a.seed,
         affinity=sorted(os.sched_getaffinity(0)), devices=[str(d) for d in jax.devices()],
         jax=jax.__version__, x64=jax.config.jax_enable_x64,
+        pypomp_revision=subprocess.check_output(['git','-C',str(Path(pypomp.__file__).resolve().parents[1]),
+                                                  'rev-parse','HEAD'],text=True).strip(),
         source_sha256={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in source.iterdir()},
         interpretation='Single-point force variability and serial timing; not evidence of posterior convergence')
     (a.output/'configuration.json').write_text(json.dumps(manifest, indent=2)+'\n')

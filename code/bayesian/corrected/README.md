@@ -71,6 +71,8 @@ where it remains informative; revise empirical claims only as needed.
   directory, preserving the parent, frozen tuning and random state.
 - `metric.py`: proposal scaling from replicated scores; affects efficiency
   only, and is not a posterior covariance estimate.
+- `force_check.py`: force variability and serial cost at the same fixed point
+  and CPU affinity, for selecting a gradient particle count.
 - `report.py`: all-coordinate diagnostics and the original four-panel trend
   layout, plus full trace/marginal grids with common-prior overlays.
 - `results/`: all pilots, including unsuccessful settings. No pilot is a
