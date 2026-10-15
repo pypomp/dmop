@@ -1,5 +1,67 @@
 # Handoff
 
+## October 15: faster four-chain candidates now running
+
+- Same-core timings completed: sessions49664 and4577 terminal. Median full
+  transition cost on core8 is9.383s (G5000) versus3.437s (G1000), a2.73x
+  cost ratio, with J5000 likelihood in both. See timing-force-counts.json.
+  This is NOT a posterior ESS/sec speedup. Excluded each first added step;
+  parent prefixes are duplicated and must not be pooled as independent draws.
+- Committed cheaper-force protocol257ec835b BEFORE replacing the four
+  full-force candidates. Exact iteration250 checkpoints/positions/metrics
+  preserved in candidate-pmmala-g1000-4chain-v2/inputs, with hashes.
+  Verified host PIDs2716071/74/75/69 were only the task's four v1 processes,
+  then terminated them at21:37:07UTC. Their handles34823/66148/60444/98321
+  confirmed exit143. termination.json records reason, retained checkpoint,
+  replacement and3262.72s elapsed preparation per chain. This was deliberate
+  tuning from measured cost, not a restart due to observation timeout.
+- NEW primary MALA handles: chain0 session56838(core0), chain1 62806(core2),
+  chain2 75156(core4), chain3 55847(core6). Logs
+  /tmp/dmop-bayes-cheap-candidate-chain{0,1,2,3}.log. All verified live,
+  configs show clean Pypomp, J5000 likelihood/G1000 force, same prior/alpha,
+  seeds2026102700--03. Start from saved independent parent warmup positions,
+  fresh1000 warmup then3000 retained draws; step.475 cap2, adapt only warmup.
+  No retained draws reused. Account for parent optimization/warmup costs
+  separately; the new clock alone understates total preparation.
+- Four original matching RW chains remain live under61014/83054/40197/54096.
+  NUTS depth4 session59154(core10) is live; full-force NUTS83471(core14) and
+  HMC16291(core12) continue. Core8 and core20 are free after completed timing
+  and pilot work. No GPU task launched; both GPUs were occupied by other work.
+- Prior sensitivity, doubled-particle checks, adequate independent-chain
+  convergence, final same-hardware method comparison and manuscript update
+  remain. Do not claim the old figure's qualitative mixing is reproduced yet.
+
+## October 15: smaller-force pilots complete; depth and timing checks
+
+- Sessions86306 (NUTS G1000/J5000) and83983 (joint MALA G1000/J5000)
+  completed normally and reports were generated. Their handles are terminal.
+  NUTS has30 retained draws, no divergences, position changes28/30, and all
+  trajectories reach depth3 (7 integration steps). Its all-coordinate trace
+  and trend panels were visually inspected: far too short for convergence.
+  MALA has100 retained draws, acceptance .37 vs .51 for the full-force pilot.
+  Its average squared trend jump is .000959 vs .001533 for full force, but
+  it has strong drift (trend ESS1.48 vs16.6). These short nonstationary ESS
+  values must not select a winner. Trend panels inspected; no paper figure
+  promoted.
+- New depth4 NUTS pilot: protocol fc65e73f3 committed before launch,
+  session59154 on core10, /tmp/dmop-bayes-nuts-depth4.log. Same target,
+  G1000/J5000, original shared pilot start, step .1123,60warm+60draws,
+  seed2026102600. Records the turning flag as well as depth, unlike the first
+  frozen pilot. No further trajectory pilots are currently planned.
+- Serial same-core kernel timing: full-force continuation session49664 on
+  core8, /tmp/dmop-bayes-timing-full.log,20 extra frozen transitions in
+  results/timing-pmmala-j5000-core8. At210/220 in latest check. AFTER it
+  completes, run the cheaper-force parent pilot-pmmala-g1000-j5000 via
+  extend.py,20 draws on the SAME core8, into timing-pmmala-g1000-j5000-core8.
+  Exclude the first added transition from timing (compilation). Compare only
+  appended times; copied parent arrays are not independent new draws.
+- report.py now emits diagnostics.tex using the current SI's compact table
+  layout, plus explicit pooled-chain diagnostic and KDE conventions in its
+  audit. This avoids reusing the archive's within-chain extrema convention.
+  Report regeneration passes. SI itself still unchanged pending valid samples.
+- All eight primary candidates remain live and in warmup; full-force NUTS
+  session83471 and HMC16291 remain live. No candidate restart or cancellation.
+
 ## October 15: gradient particle-count comparison
 
 - Previous turn made implementation/reporting progress. This continuation

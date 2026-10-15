@@ -74,6 +74,18 @@ def main():
             mcse_mean=float(az.mcse(x,method='mean'))))
     table=pd.DataFrame(rows)
     table.to_csv(a.output/'diagnostics.csv',index=False)
+    # Same compact table layout as the SI archive, now for the common target.
+    # ESS and MCSE combine chains; the archive used within-chain extrema
+    # because its fitted priors differed. The new caption must say this.
+    tex=[r'\begin{tabular}{lrrrr}',r'\toprule',
+         r'Coordinate & $\widehat R$ & Bulk ESS & Tail ESS & MCSE \\',r'\midrule']
+    for label,row in zip(LABELS,rows):
+        values=[row['rhat'],row['ess_bulk'],row['ess_tail'],row['mcse_mean']]
+        cells=[format(value,spec) if np.isfinite(value) else r'\textemdash'
+               for value,spec in zip(values,['.3f','.1f','.1f','.3g'])]
+        tex.append(label+' & '+' & '.join(cells)+r' \\')
+    tex.extend([r'\bottomrule',r'\end{tabular}'])
+    (a.output/'diagnostics.tex').write_text('\n'.join(tex)+'\n')
     lengths=[len(x['trace']) for x in arrays]
     complete=all((d/'completion.json').exists() and length==c['warmup']+c['draws']
                  for d,c,length in zip(a.chains,configs,lengths))
@@ -81,6 +93,8 @@ def main():
                rhat=bool(np.isfinite(table.rhat).all() and (table.rhat<=1.01).all()),
                ess=bool((table[['ess_bulk','ess_tail']]>=400).all().all()))
     audit=dict(chains=[str(d) for d in a.chains],warmup=warm,retained=n-warm,
+               diagnostic_convention='Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates',
+               marginal_density_estimator='Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain',
                available_iterations=lengths,truncated_iterations=[length-n for length in lengths],gates=gates,
                numerical_convergence=all(gates.values()),
                remaining_checks=['visual inspection','prior sensitivity','particle sensitivity'],
