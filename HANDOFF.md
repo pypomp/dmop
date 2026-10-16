@@ -1,5 +1,34 @@
 # Handoff
 
+## October 16: NUTS 1,000-draw review completed
+
+- Observer23545 reached the review point and exited normally. New observer
+  **90893** checks both original PID/create-time/command identities every
+  50 seconds, up to 600 polls, stopping when either sampler ends. Initial
+  check: NUTS1502total and widerprior47625total, both live. Resume90893;
+  do not restart either sampler. Identities remain3476536/1792120402.49 and
+  695522/1792165456.58.
+- `gpu-forward-nuts-v2/review-nuts-1000` freezes exactly500warm+1000retained
+  per chain. All18 traces/marginals, trend panels and the matching
+  `comparison-nuts-1000` against primaryJ10000PMMH30000 were visually reviewed.
+  Broad overlap, uneven immigration tails and persistent seasonal dependence.
+  Worst R-hat1.087668(omega1), min bulk37.044732(omega1), min tail90.152115
+  (epsilon). Trend mean-.441043, SD.105784, R-hat1.015995. Trend difference
+  from PMMH-.020778, or-2.38649 combined MCSE; largest absolute ratio2.616601
+  for log sigma. No joint-convergence or runtime-speedup claim.
+- Two trajectory divergences, chain3 iterations821 and1206; all sampled
+  states/force norms finite, retained steps frozen. First1000 total iterations
+  bitwise match the previous review snapshot. No samples removed or live
+  sampler settings changed. Continue original NUTS endpoint2500total and
+  wider-prior endpoint60500total; these are the next full reviews.
+- `report.py --max-retained` now supports exact interim samples and saves
+  the corresponding raw review snapshot. Verified by truncating1501available
+  iterations to1500 and reconstructing all posterior draws exactly. Python
+  compilation passed. See the review README and numerical_review.json.
+- Posterior draws SHA b22a7591d498c0d966efc2eb1a0bc7325a3d2106c748d7ec2526f8f4045ac0aa;
+  snapshot SHA11aa28509200a09f1d488ee9b52a75f42f6ee63c060019d0cec9ef370821e768.
+  Manuscript integration remains pending. Publication hold unchanged.
+
 ## October 16: active monitor23545
 
 - Observer49118 finished normally at its 40-poll limit. Final poll39 and

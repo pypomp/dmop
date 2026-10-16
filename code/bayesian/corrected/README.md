@@ -136,6 +136,9 @@ where it remains informative; revise empirical claims only as needed.
   effect of crossing resampling discontinuities.
 - `report.py`: all-coordinate diagnostics and the original four-panel trend
   layout, plus full trace/marginal grids with common-prior overlays.
+  Use `--max-retained N` to review the first N post-warmup draws per chain
+  while sampling continues. Each report saves the raw arrays it used in
+  `review_snapshot.npz`, as well as transformed posterior draws.
 - `compare.py`: compare frozen NUTS/PMMH reports on the same target, showing
   all-coordinate marginal agreement and differences relative to Monte Carlo
   error. Unconverged reports remain explicitly marked as development samples.

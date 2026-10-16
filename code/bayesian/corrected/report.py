@@ -43,6 +43,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('chains',nargs='+',type=Path)
     p.add_argument('--output',required=True,type=Path)
+    p.add_argument('--max-retained',type=int,
+                   help='Review at most this many post-warmup draws per chain')
     a=p.parse_args()
     configs=[json.loads((d/'configuration.json').read_text()) for d in a.chains]
     for field in ['particles','prior_scale','alpha','method','names','prior_center','prior_sd','pypomp_revision','warmup']:
@@ -56,6 +58,10 @@ def main():
     arrays=[np.load(io.BytesIO(data)) for data in payloads]
     warm=configs[0]['warmup']
     n=min(len(x['trace']) for x in arrays)
+    if a.max_retained is not None:
+        if a.max_retained < 20:
+            p.error('--max-retained must be at least 20')
+        n=min(n,warm+a.max_retained)
     if n-warm<20:
         raise ValueError('Not enough retained draws yet')
     raw=np.stack([x['trace'][:n,2:] for x in arrays])
@@ -66,6 +72,9 @@ def main():
     a.output.mkdir(parents=True,exist_ok=True)
     # Freeze the exact arrays used by this report for between-method review.
     np.savez_compressed(a.output/'posterior_draws.npz',draws=draws)
+    np.savez_compressed(a.output/'review_snapshot.npz',**{
+        field:np.stack([x[field][:n] for x in arrays])
+        for field in ['trace','info','step_size','iteration_seconds']})
     rows=[]
     for j,name in enumerate(NAMES):
         x=draws[:,:,j]
@@ -89,7 +98,7 @@ def main():
     tex.extend([r'\bottomrule',r'\end{tabular}'])
     (a.output/'diagnostics.tex').write_text('\n'.join(tex)+'\n')
     lengths=[len(x['trace']) for x in arrays]
-    complete=all((d/'completion.json').exists() and length==c['warmup']+c['draws']
+    complete=all((d/'completion.json').exists() and n==length==c['warmup']+c['draws']
                  for d,c,length in zip(a.chains,configs,lengths))
     gates=dict(four_chains=len(arrays)>=4,complete=complete,equal_lengths=len(set(lengths))==1,
                rhat=bool(np.isfinite(table.rhat).all() and (table.rhat<=1.01).all()),
@@ -100,6 +109,8 @@ def main():
                        ['particles','prior_scale','names','prior_center','prior_sd','pypomp_revision']},
                model_sha256=configs[0]['source_sha256']['model.py'],
                draws_sha256=hashlib.sha256((a.output/'posterior_draws.npz').read_bytes()).hexdigest(),
+               snapshot_sha256=hashlib.sha256((a.output/'review_snapshot.npz').read_bytes()).hexdigest(),
+               requested_max_retained=a.max_retained,
                diagnostic_convention='Rank split R-hat, bulk/tail ESS and mean MCSE across chains on displayed estimation coordinates',
                marginal_density_estimator='Gaussian KDE with scipy default Scott bandwidth, fitted separately to retained draws of each chain',
                available_iterations=lengths,truncated_iterations=[length-n for length in lengths],gates=gates,
