@@ -102,6 +102,24 @@ renv
 !/ditlevsen/results/**/*.tex
 !/ditlevsen/results/**/*.md
 !/ditlevsen/results/reference/ifad097_comparable_post_if2.npz
+# Small numerical-SAEM pilots retain their complete fitting record.
+!/ditlevsen/results/block_saem_pilot_start[01]/fit.npz
+!/ditlevsen/results/block_saem_pilot_start[01]/trace.csv
+!/ditlevsen/results/block_saem_pilot_start[01]/evaluation.csv
+!/ditlevsen/results/block_saem_pilot_start[01]/source/*.py
+!/ditlevsen/results/saem_ab*/protocol.json
+!/ditlevsen/results/saem_ab*/starts.npz
+!/ditlevsen/results/saem_ab*/worker*.json
+!/ditlevsen/results/saem_ab*/launch*.json
+!/ditlevsen/results/saem_ab*/source/*.py
+!/ditlevsen/results/saem_ab*/cold/start*/*.json
+!/ditlevsen/results/saem_ab*/cold/start*/*.csv
+!/ditlevsen/results/saem_ab*/cold/start*/*.npz
+!/ditlevsen/results/saem_ab*/warm/start*/*.json
+!/ditlevsen/results/saem_ab*/warm/start*/*.csv
+!/ditlevsen/results/saem_ab*/warm/start*/*.npz
+!/ditlevsen/results/saem_ab*/report/*.csv
+!/ditlevsen/results/saem_ab*/report/provenance.json
 /code/global_search/dmop_results/
 
 # Rebuildable documents; PDF figures under imgs/ remain tracked.
@@ -110,5 +128,6 @@ renv
 /ditlevsen/method.pdf
 /ditlevsen/invertibility_note.pdf
 /code/daphnia/report.html
+/code/benchmarks/results/**/*safeBackup*
 /code/global_search/precise_report.html
 /code/global_search/precise_report_long.html
