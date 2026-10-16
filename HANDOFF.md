@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: primary PMMH 30,000-draw review
+
+- Monitor19576 ended0 at poll43 when primary3680785 finished30500total. Host psutil confirms NoSuchProcess. All four complete checkpoints have finite sampled states and fixed retained step sizes; 48 negative-infinite log acceptance ratios (10/10/9/19) only on rejected proposals with unchanged states. Saved hashes in gpu-comparison-v2/pmrw-long-completion-verification.json. Report56530 and sensitivity43748 completed0.
+- gpu-comparison-v2/review-pmrw-30000 freezes30000retained per chain, draws SHA369eef0edee81bcf56b042b97d8ef0ab122b5e6b6ca327a80a6cb12dce9135ef. All18 traces/marginals and trend panels visually inspected. Considerably better overlap than10000draws; seasonal and immigration tails still differ. Trendmean-.420265,SD.112056,95%[-.651357,-.209770],Rhat1.00347,bulkESS535.95. WorstRhat1.01353(omega5),minbulk201.93(beta3),mintail151.72(omega6). Acceptance.19827/.24717/.20323/.189. Not joint convergence.
+- particle-comparison-30000 compares equal-length J10000/J5000 references; all18 panels visually inspected. Broad overlap, maximum mean shift.176 of J10000marginalSD; trendmean difference-.00304 (J5000 minus J10000). J5000omega5SD is18% larger; unequal tail occupancy limits inference. No blanket particle-insensitivity claim. Keep these references pending NUTS/widerprior; no further PMMH continuation launched merely to chase diagnostic thresholds.
+- No live monitor remains. TWO original samplers were live at poll43: NUTS3476536/create1792120402.49 at938total; widerprior4082486/create1792139160.88 at23000total. Resume monitoring only these two, excluding both completed PMMH references. Next reviews: NUTS1000total (500retained), widerprior30500total. No manuscript edits or push; publication hold and full goal persist.
+
 ## October 16: 5,000-particle PMMH 30,000-draw review
 
 - Monitor10835 ended normally at40polls with all three original sampler identities live. New read-only monitor19576 is LIVE (50polls/50s), stopping at terminal/completion or NUTS1000total. Poll0 verifies NUTS885total, primary28950total, widerprior21450total. Primary30500total is the nearest completion review; NUTS1000total remains its next posterior review. Recent turns were verified waits; no sampler/manuscript/publication changes. Resume19576, not the expired observer. Commit4069fdc01 records the previous observation window.
