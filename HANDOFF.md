@@ -2,6 +2,7 @@
 
 ## October 15: paired depth benchmark running on GPU1
 
+- Followup: both compiled transitions finished finite (depth5 76.35s, depth6 143.01s including compilation); timed paired trials now running. All four process identities revalidated live. New summarize.py refuses partial results, verifies seeds/counts, reports coordinate ratios and paired-trial bootstrap intervals. Run it after complete; do not infer a winner from the two compilation records. Screen protocol and production unchanged.
 - LIVE depth benchmark3358954/create1792116803.27, `results/nuts-depth-check-v1/check.py`, launched under8213c7abd. Log `/tmp/dmop-nuts-depth-check-v1.log`; launch.json records command/source/protocol hashes. Host process verified running after30s. Cache check passed BITWISE for all four stored likelihoods and forces (8.83s). Compiling first depth5 transition at last check; no timing result yet. Do not duplicate.
 - Production3262256/3137405/3143786 all revalidated live at benchmark launch and remain unchanged. The benchmark sharesGPU1 with PMMH; local same-device comparisons must not be presented as controlled production ESS/sec.
 - Next: check benchmark completion/paired results and numerical diagnostics before deciding whether depth6 merits a new warmup configuration. Never silently alter the current run. Review primaryPMMH at5000retained and J5000 atcompletion; wider-prior launch still waits for J5000 terminal completion. Publication still on hold. Goal active.
