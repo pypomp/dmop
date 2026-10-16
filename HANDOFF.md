@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: GPU timing accounting clarified
+
+- Updated code/bayesian/corrected/results/timing.md, whose previous contents covered CPU development only. Current GPU guidance identifies shared GPU1 load, whole-four-chain update times, cumulative continuation clocks, compilation, and preparation dependencies (including primary PMMH samples used for NUTS tuning). Verified against batch.py, batch_extend.py and frozen screen/retirement records; git diff --check passes. No sampler code, manuscript, or inference changed; no runtime advantage claimed.
+- All four sampler PID/create-time/command identities host-verified live: NUTS333warm, primary14800total, J500018425total, doubledprior7375total. Previous turn was a verified wait. Next review thresholds remain NUTS1000total, prior10500total, references30500total. Publication hold persists; goal active.
+
 ## October 16: live sampling revalidated after proposal explanation
 
 - Host checks confirmed all four original PID/create-time/command identities live and advancing across a 50-second observation: NUTS330/500 warmup, primary J10000 PMMH14725total, J5000 PMMH18350total, doubled-prior PMMH7325total. Read-only observation session26041 completed0. No sampler restarted or changed; this turn is a verified wait after answering the proposal question.
