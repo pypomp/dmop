@@ -3,7 +3,7 @@
 ## October 15: current experiment navigation updated
 
 - corrected/README.md now points to the four live batches, distinguishes the tuned NUTS covariance from PMMH, links the completed10,000-draw report and exact30,000-draw extension, and marks wider-prior sampling as running. No sampler/model/protocol changes.
-- Read-only monitor36337 is LIVE, checking all four PID/create-time/commands every50s. Latestpoll3: NUTS27warm, primaryPMMH7800total, J5000long10700total, prior275warm; all live. Stops at NUTS50warm, any completion/terminal process or30polls. Its expiry is not sampler termination. For the50warm review, reuse gpu-forward-nuts-v1/review_warmup.py with ROOT pointed at gpu-forward-nuts-v2 (or generalize its input); preserve the same frozen PMMH reference. Publication remains on hold; goal active.
+- Read-only monitor36337 is LIVE, checking all four PID/create-time/commands every50s. Latestpoll3: NUTS27warm, primaryPMMH7800total, J5000long10700total, prior275warm; all live. Stops at NUTS50warm, any completion/terminal process or30polls. Its expiry is not sampler termination. For the50warm review, run gpu-forward-nuts-v1/review_warmup.py --run-root code/bayesian/corrected/results/gpu-forward-nuts-v2. The shared script now accepts this argument (default old run preserved); CLI/help and diff check passed. Full command in new run README. Numeric review/plot logic and frozen PMMH reference are unchanged. Publication remains on hold; goal active.
 
 ## October 15: PMMH extension and prior study startup verified
 
