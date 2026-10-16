@@ -1,5 +1,10 @@
 # Handoff
 
+## October 15: primary PMMH 5,025-draw review inspected
+
+- `gpu-comparison-v2/review-pmrw-5000` freezes5,025 retained draws/chain. All18 traces/marginals and four trend panels visually inspected. Rhat1.019--1.179, minimum bulkESS18.6/tailESS20.0; no convergence. Seasonal transmission beta2/beta3 now show strongest disagreement, with further uneven immigration-tail excursions. Trend marginal overlap is insufficient (chain2 ACF~.46 atlag100). Acceptance.198/.238/.212/.178. Better than first1000 review but still incomplete; do not interpret differences from separately seeded J5000 as a particle effect.
+- Monitor48168 and report30512 terminal0. Existing production continues unchanged. Next primaryPMMH review at10,000retained completion; J5000 also at10,000retained completion, then prepared wider-prior launch once J5000 process is terminal. NUTS remains in warmup; depth5 retained after the completed paired screen. No new sampler or manuscript change. Publication on hold, local commits only.
+
 ## October 15: depth comparison complete; retain depth5
 
 - `nuts-depth-check-v1` complete,3358954 verified terminal. All14 transitions finite (2 compilation+12 timed); cached state bitwise check passed. Paired summary verified all seeds/counts and reproduced the main rate ratio. Depth5/6 mean batch costs67.47/134.92s, movement-rate ratio1.214 with paired bootstrap[.788,1.626]. Candidate misses prespecified25% improvement; wide uncertainty and omega5 ratio.960 give no reason to restart. Both zero divergences/all trajectories depth-capped; mean acceptance.731/.663. Retain current depth5 production.
