@@ -1,0 +1,50 @@
+{
+  "chains": [
+    {
+      "chain": 0,
+      "checkpoint_sha256": "295c749c24fffc3b6b9567226976d503a4254a60bb7a0885e6c8bfee56d662ca",
+      "iterations": 11,
+      "divergences": 0,
+      "mean_trajectory_acceptance": 0.7296444118236015,
+      "mean_integration_steps": 31.0,
+      "forced_depth_limit_fraction": 1.0,
+      "next_step_size": 0.038005789483411344,
+      "recent_batch_seconds": 135.26544776998344
+    },
+    {
+      "chain": 1,
+      "checkpoint_sha256": "b2fb19b25179a17089462fca44db5413da78a2b6a19682987756ad7478718e98",
+      "iterations": 11,
+      "divergences": 0,
+      "mean_trajectory_acceptance": 0.7501419750696812,
+      "mean_integration_steps": 31.0,
+      "forced_depth_limit_fraction": 1.0,
+      "next_step_size": 0.04029616852030924,
+      "recent_batch_seconds": 135.26544776998344
+    },
+    {
+      "chain": 2,
+      "checkpoint_sha256": "6d8b2bd8b7fca2487640acb2af0564b60c18973c3cc6de39ba9e2062bbbf320a",
+      "iterations": 11,
+      "divergences": 0,
+      "mean_trajectory_acceptance": 0.6308844015503555,
+      "mean_integration_steps": 31.0,
+      "forced_depth_limit_fraction": 1.0,
+      "next_step_size": 0.028730535351655397,
+      "recent_batch_seconds": 135.26544776998344
+    },
+    {
+      "chain": 3,
+      "checkpoint_sha256": "af65dbe3a0b1b4952f9da982f912f43c040242f1a63644d39a76a845a2a9f381",
+      "iterations": 11,
+      "divergences": 0,
+      "mean_trajectory_acceptance": 0.6776370241957597,
+      "mean_integration_steps": 31.0,
+      "forced_depth_limit_fraction": 1.0,
+      "next_step_size": 0.032486539028919,
+      "recent_batch_seconds": 135.26544776998344
+    }
+  ],
+  "interpretation": "Early warmup only. Step adaptation is active, no recorded divergences, but depth-limited trajectories may restrict movement. Position-changed fraction is not trajectory acceptance. No convergence or speedup claim.",
+  "next_review": "Review all four chains at50 warmup updates, including movement, trajectory acceptance and forced-depth fraction, before deciding on any explicit depth change. Do not silently change the existing run."
+}

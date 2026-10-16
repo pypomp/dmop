@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: NUTS early adaptation inspected
+
+- Live NUTS3137251 verified by host PID/create time/command. At11 saved warmup updates all chains had zero divergences but every trajectory hit depth5 with31 integration steps and no U-turn. Step adaptation is active (next steps roughly.029--.040); recent batch cost~135s. early-warmup-review.json freezes checkpoint hashes and summaries.
+- This is not convergence evidence. Reaching the cap may restrict movement; inspect again at50 warmup updates (all18 movement, trajectory acceptance and forced-depth fraction) before deciding whether any explicit depth change is justified. Preserve current run; no restart or tuning change this turn.
+- Next main PMMH diagnostic review remains at~1000 retained draws/chain. Previous verified monitor had450 retained; J5000 continuation2913 retained. Wider-prior study is prepared and must wait for J5000 completion. Manuscript unchanged; goal active.
+
 ## October 15: offline sensitivity comparison added
 
 - New sensitivity.py compares frozen report.py outputs for --kind prior or particles. Requires same method/model and permits only the intended target difference, verifies proportional prior-SD scaling, retains separate-chain marginal curves and labels unconverged comparisons. Table includes18-coordinate intervals, SD ratios, mean shifts/combined MCSE. It makes no automatic equivalence/insensitivity claim.
