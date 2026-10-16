@@ -1,5 +1,29 @@
 # Handoff
 
+## October 16: PMMH panels at the planned NUTS length
+
+- Previous goal turn was a verified wait. This turn generated and reviewed
+  `gpu-comparison-v2/review-pmrw-2000`, exactly iterations501--2500 of the
+  four primary PMMH chains. The window follows the existing NUTS endpoint,
+  not a selected interval. All18 traces/marginals and trend panels inspected.
+- Sampled states and diagnostics finite; retained steps frozen. All snapshot
+  fields match checkpoint prefixes exactly, and posterior draws match the
+  first2000 of the30000-draw reference. See numerical_review.json.
+- Trend mean-.429004, SD.104746, R-hat1.025014, bulk72.678421,
+  tail164.928794, MCSE.012353. Worst R-hat1.312156 and minbulk10.259072
+  (beta3); mintail26.380941(beta1). Trend overlap with substantial dependence;
+  seasonal differences and unequal immigration tails. No joint convergence.
+- Draws SHA ddfbc68d6775ec3d673adb7dc0441602e2d4cfcec4fd23a31ce60f9def0a321e;
+  snapshot SHA10053164682d3093a11f16e6d5a57ab8f36c2361527f26b8cfc965ff8c3d6708.
+  This is an equal-iteration display; no equal-runtime or speedup claim.
+  Keep the30000-draw PMMH reference for the endpoint marginal comparison.
+- Observer70070 poll10 confirms original NUTS identity live at1811total.
+  Continue to2500total before full review; no restart or retuning. Manuscript
+  still describes archived runs and needs coordinated text/figure replacement.
+  No manuscript edits this turn. Fetched origin/main is now907e23ec0, with
+  the2044 Overleaf branch also merged; preserve remote ms/si/HANDOFF changes.
+  Publication hold persists. No cleanup or archival authorized by sync question.
+
 ## October 16: wider-prior 60,000-draw review completed
 
 - Observer90893 ended normally at poll239: wider-prior PID695522 no longer
