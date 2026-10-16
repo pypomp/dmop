@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: fixed-metric mismatch checked; proposal screen prepared
+
+- Offline comparison on both frozen5000-draw PMMH reviews suggests the fixed metric misses correlated directions. Preconditioned pooled covariance condition numbers: old34.8(J5000)/42.35(J10000). A candidate0.75*J10000 covariance+0.25*old, trace-normalized, gives9.8 on independentJ5000 and1.5 on its construction snapshot; per-chain checks in geometry.json. Both snapshots unconverged, so this is proposal-tuning evidence only, not convergence or a fitted prior.
+- PREPARED `nuts-metric-check-v1`: reuses frozen update54 extended states/source from depth check, targets unchanged, depth5. Compare baseline, candidate covariance at1x and2x saved steps, six paired trials/four states/cyclic order, one shared executable. Screen requires>=50% movement/time improvement, acceptance>=.5, zero divergences, no lower point rate for beta3/omega5, plus paired-uncertainty/coordinate review. All preparation costs must be retained if adopted. Commit then launchGPU1; not launched at this entry. Production remains unchanged.
+- Latest host checks: NUTS3262256 at103warm, primaryPMMH3137405 at5175retained, J5000continuation3143786 at8038retained; all live. User's updated AGENTS instructions incorporated; publication hold remains. Next review thresholds unchanged; no ms/SI edits.
+
 ## October 15: primary PMMH 5,025-draw review inspected
 
 - `gpu-comparison-v2/review-pmrw-5000` freezes5,025 retained draws/chain. All18 traces/marginals and four trend panels visually inspected. Rhat1.019--1.179, minimum bulkESS18.6/tailESS20.0; no convergence. Seasonal transmission beta2/beta3 now show strongest disagreement, with further uneven immigration-tail excursions. Trend marginal overlap is insufficient (chain2 ACF~.46 atlag100). Acceptance.198/.238/.212/.178. Better than first1000 review but still incomplete; do not interpret differences from separately seeded J5000 as a particle effect.
