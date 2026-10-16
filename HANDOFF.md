@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: J5000 PMMH review after 5,063 retained draws
+
+- Saved `gpu-comparison-v1/review-pmrw-5000`: four chains, 5,063 retained draws each. All18 traces/marginals and four trend panels visually inspected. Rhat1.012--1.133, minimum bulkESS25.3/tailESS30.8; improved agreement but no convergence. Seasonal omega5/omega6 lower tails remain unevenly explored. Trend overlap alone is insufficient.
+- Fixed report.py warmup legend background so its marker cannot cross the text; regenerated and inspected the report. No numerical calculation or model change. Prepared prior-sensitivity protocol's report hash refreshed transparently; all27 source hashes verified.
+- Revalidated host PID/create-time/command: forwardNUTS3262256 live at18warm, J10000PMMH3137405 at2625retained, J5000continuation3143786 at5263retained. No sampler restart or tuning change. Latest neutral user question about old settings was answered from archived code; continuing the active goal.
+- Next: NUTS movement/depth review at50warm; primaryPMMH review at5000retained; J5000 next review at10000retained completion, then launch prepared wider-prior study once its prerequisite process is terminal. Continue toward converged NUTS/PMMH, prior/particle agreement and final figures; no ms/SI edits this turn. Goal active.
+
 ## October 15: validated forward NUTS is now the live primary run
 
 - LIVE new NUTS3262256/create1792113782.16/GPU0 at results/gpu-forward-nuts-v1/nuts. Launched under e1f25c604 with same target/prior/starts/covariance, J10000/G1000float32forward, both deterministic flags,500warm+2000draws/depth5/freshseeds2026111000--03. Log /tmp/dmop-bayes-gpu-forward-nuts-v1.log. Revalidate host identity; do not duplicate.

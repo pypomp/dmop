@@ -144,7 +144,7 @@ def main():
     axes[1,0].set(xlabel='Lag',ylabel='Autocorrelation',ylim=(min(-.15,acf_min-.05),1.05))
     axes[1,1].axvline(warm,color='k',ls='--',lw=1,label='End of warmup')
     axes[1,1].set(xlabel='Iteration',ylabel=LABELS[3])
-    axes[1,1].legend(fontsize=9,frameon=False)
+    axes[1,1].legend(fontsize=9,frameon=True,facecolor='white',edgecolor='none',framealpha=1.)
     for letter,ax in zip('ABCD',axes.flat):
         style(ax);ax.set_title(letter,loc='left',fontweight='bold',fontsize=18)
     fig.savefig(a.output/'trend_panels.png');plt.close(fig)
