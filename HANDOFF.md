@@ -1,5 +1,19 @@
 # Handoff
 
+## October 16: observer recovered after transient missing status
+
+- Observer70070 exited1 when chain0/status.json was temporarily absent.
+  Host process verification confirmed original NUTS PID3476536,
+  create1792120402.49 and batch.py command still running. The status file
+  reappeared at the next saved update; log advanced from1822 to1823total.
+  No sampler restart, file restoration or tuning change was needed.
+- Replacement read-only observer **97090** is live:600polls at50seconds,
+  verifying process identity and retrying transient OSError/JSONDecodeError
+  on status reads. Poll0:all four chains1823total, live=true, no read errors.
+  Resume97090. Next full review remains2500total (2000retained).
+- Recent turns were verified waits. This turn repaired observation only.
+  Manuscript integration remains pending; publication hold unchanged.
+
 ## October 16: PMMH panels at the planned NUTS length
 
 - Previous goal turn was a verified wait. This turn generated and reviewed
