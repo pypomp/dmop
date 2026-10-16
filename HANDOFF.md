@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: PMMH extension and prior study startup verified
+
+- LIVE J5000 extension3505775/create1792121252.05 onGPU1, `gpu-comparison-v1/pmrw-long`, launched under bf47b2120. Log `/tmp/dmop-bayes-pmrw5000-long.log`; pmrw-long-launch.json/protocol record command/hashes. Four chains advance beyond10500 with EXACT old trace/info/step/time prefixes and unchanged fixed tuning. State check retains cached values. New total30000retained; never pool this with overlapping parent files.
+- LIVE wider-prior3500694/create1792121116.93 onGPU1 has finite saved checkpoints. Verified same primaryJ10000 likelihood/model/centers/starts/flags and exactly doubled priorSD. Startup verification saved. Both new processes revalidated by host PID/create-time/command; monitor76562 terminal0. No monitor remains live.
+- Other live runs unchanged: tuned NUTS3476536/create1792120402.49(GPU0; next review50warm), primaryJ10000PMMH3137405/create1792109819.68(GPU1; next report10000retained completion). SharedGPU1 now has three PMMH batches; account actual time, no controlled speed claim. Next J5000 report at30000retained; prior report after10000retained and only interpret after convergence. All-parameter/prior/particle/method agreement still incomplete; no ms/SI edits. Publication hold persists; goal active.
+
 ## October 15: J5000 10,000-draw review; wider-prior study live
 
 - J5000 continuation3143786 verified terminal/completed10500total; completion-verification.json saved. Monitor74395 and report30988 terminal0. `gpu-comparison-v1/review-pmrw-10000` freezes all10000retained per chain; all18 traces/marginals and trend panels visually inspected. Rhat1.013--1.087, minbulkESS42.5(omega6), mintailESS57.5(beta3); omega4 worstRhat. Late chain3 beta2/beta3 excursion and uneven omega5/6 lower tails remain. Not converged.
