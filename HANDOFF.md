@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: J5000 10,000-draw review; wider-prior study live
+
+- J5000 continuation3143786 verified terminal/completed10500total; completion-verification.json saved. Monitor74395 and report30988 terminal0. `gpu-comparison-v1/review-pmrw-10000` freezes all10000retained per chain; all18 traces/marginals and trend panels visually inspected. Rhat1.013--1.087, minbulkESS42.5(omega6), mintailESS57.5(beta3); omega4 worstRhat. Late chain3 beta2/beta3 excursion and uneven omega5/6 lower tails remain. Not converged.
+- LIVE wider-prior PMMH3500694/create1792121116.93 onGPU1, protocol/source checks passed before launch. `prior-sensitivity-gpu-v1/launch.json`, log `/tmp/dmop-bayes-prior-sensitivity-gpu-v1.log`. SameJ10000 target/centers, prior SD2x,500warm+10000draws,freshseeds2026110800..03. Host process confirmed live; first saved checkpoint still to validate at this entry.
+- PREPARED `gpu-comparison-v1/pmrw-long-protocol.json`: exact continuation from completedpmrw-continued,20000additionaldraws=30000retainedtotal. Frozen source, four parent hashes and finite states verified by load_parent. Commit then launchGPU1; no process yet. Do not pool parent+continuation. PrimaryJ10000PMMH3137405 and tunedNUTS3476536 unchanged. New NUTS movement review at50warm, primaryPMMH review at10000retained. Publication on hold; goal active.
+
 ## October 15: tuned NUTS replacement live; prior warmup retired
 
 - LIVE3476536/create1792120402.49 onGPU0, `gpu-forward-nuts-v2/nuts`, launched under eb38ce7f1. Log `/tmp/dmop-bayes-gpu-forward-nuts-v2.log`; launch/protocol/startup-verification saved. All4 first2 checkpoints finite, zero divergences; full source hashes, model/target/prior/particle/flags and original starts verified. Seeds2026111400..03, common tuned covariance and initialstep.07,500warm+2000draws. No posterior samples yet.
