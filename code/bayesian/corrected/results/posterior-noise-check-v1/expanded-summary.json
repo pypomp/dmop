@@ -1,0 +1,52 @@
+{
+  "replicates": 128,
+  "initial32_included_not_pooled": true,
+  "interpretation": "Local diagnostic with percentile bootstrap intervals; does not certify global particle adequacy or chain convergence",
+  "loglik_variance_5000": {
+    "estimate": 1.010509023360164,
+    "bootstrap95": [
+      0.7505775409642188,
+      1.2981241066524822
+    ]
+  },
+  "loglik_variance_10000": {
+    "estimate": 0.3027410919244216,
+    "bootstrap95": [
+      0.24041225566215776,
+      0.3632461168822967
+    ]
+  },
+  "variance_ratio_5000_over_10000": {
+    "estimate": 3.337865424666019,
+    "bootstrap95": [
+      2.3911476177416606,
+      4.693524734876409
+    ]
+  },
+  "log_mean_likelihood_difference_5000_minus_10000": {
+    "estimate": 0.24219300849290448,
+    "bootstrap95": [
+      -0.048428943603312284,
+      0.5674451957297948
+    ]
+  },
+  "recorded_5000_minus_log_mean": {
+    "estimate": 1.8311584853413478,
+    "bootstrap95": [
+      1.4951601081888157,
+      2.1373110651208096
+    ]
+  },
+  "fixed_parameter_5000_refresh_acceptance": {
+    "estimate": 0.142973131733525,
+    "bootstrap95": [
+      0.1160461043963989,
+      0.17365413095523113
+    ]
+  },
+  "observed_seconds_per_16_replicates": {
+    "j5000": 2.072307211026782,
+    "j10000": 3.760830988001544
+  },
+  "timing_limit": "Shared GPU load; timings exclude compilation but are not a controlled method comparison"
+}
