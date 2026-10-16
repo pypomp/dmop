@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: primary J10000 PMMH complete and reviewed
+
+- Monitor71308 completed0 at primary10500total. PID3137405 verified terminal; all4 complete finite checkpoints and hashes saved in pmrw-completion-verification.json. Report83190 completed0, `gpu-comparison-v2/review-pmrw-10000` freezes10000retained/chain. All18 traces/marginals plus trend panels visually inspected: chain3 has a late beta1/2/3 excursion (beta3 near-7), unequal seasonal tails and remaining immigration-tail differences. Layouts sound; not converged.
+- WorstRhat1.05519(beta3), minimum bulkESS53.04/tailESS38.32(beta3); acceptance.2008/.2506/.2053/.1840. TrendRhat1.01095, bulkESS171.43, mean100beta=-.42786, descriptive95%interval[-.66677,-.20109]. Improved overall Rhat from8325drawsnapshot but still insufficient joint agreement; do not infer prior robustness or NUTS agreement.
+- PREPARED exact20000-additional-draw continuation to30000retained at gpu-comparison-v2/pmrw-long; protocol saves parent/driver/review hashes, load_parent validates all frozen sources and states. Commit then launchGPU1 preserving deterministicflags and frozen tuning/RNG. Long runs provide posterior reference; user-requested1500-iteration drift comparison remains separate. Do not pool overlapping parent/continuation.
+- Other jobs live at monitor end: NUTS3476536 at150warm, J5000long3505775 at13675total, widerprior3500694 at3000total, original-proposal3609096 at950total. No monitor remains live. No ms/SI edit or push; publication hold persists.
+
 ## October 16: five-job monitor renewed
 
 - Prior turns were verified sampling waits. Monitor44323 finished0 at its40-poll observation limit; this did not stop any sampler. New read-only monitor71308 LIVE now includes historical-proposal-control3609096 along with the four original jobs. Poll0 verifies all five PID/create-time/commands: NUTS128warm, primaryPMMH10075total, J5000long13200total, widerprior2575total, original-proposal control550/1500.
