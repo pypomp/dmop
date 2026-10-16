@@ -38,21 +38,25 @@
   "validation": "Require four-chain rank Rhat<=1.01 and bulk/tail ESS>=400 for all18 coordinates in both prior settings before interpreting differences. Inspect all traces and marginal plots. Compare means, standard deviations and95% intervals with Monte Carlo uncertainty; specifically inspect omega5 and omega6. Preserve and report substantive prior dependence.",
   "timing": "GPU is shared. This run is for prior sensitivity, not a method speed comparison.",
   "source_sha256": {
+    "test_force_modes.py": "de1d7a0965535a3df183c9a15925889ae7f4b639b0c2377d5f9e310947c9484e",
     "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "sensitivity.py": "a28f47d871ed3c8a9db0ab181bd3eab25d3d756b06430031985023db6ca13166",
+    "force_modes.py": "50e2a3fc42bbb460ee60e4f9a9465982e6a7a6af21b037a9b5765d471a545029",
     "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
-    "test_batch_extend.py": "e30bc08ea2b1aea0f284be7aa1b16f9e7d3c9b7c15e26bfe23d1cf9991d2ac3a",
-    "extend.py": "2f3f6894e664d4a0b53c67f8985f877df5638d3059c35a225fd2d61d36df5b64",
+    "test_batch_extend.py": "833b82eed8cd0e9b9ae4826fbf0c828bf14df701c731bb4c1639ba9532fd6c0c",
+    "extend.py": "8ca296d3cf513f5e187bf64130fc48f95a2c760a62bf430084c2de6e3a8528ac",
+    "test_sensitivity.py": "9ff6f3ee848af8dba51f9d1ad9e89f63f90cf0a121f5bc85c4ac9fa3331eec20",
     "test_model.py": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
     "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
     "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
-    "batch_extend.py": "15dafd2cd99cc793180c89e04dc938981a36255882d4b09fce0e2ac7b04d6a33",
+    "batch_extend.py": "59aff6d38c56e16ffec68f86786f7c8438af2f72565c33a4bcba3c4d2694f8ff",
     "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
     "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
-    "batch.py": "e2fba64e5a93f85483636fa8806e4c8589bdbcf4dccaa29b20a04f5773ede511",
+    "batch.py": "783545331e9c8c26b868e34eee48e46aa77499ed51638e5b3620502dc10bdb66",
     "report.py": "946c958a07c6d2c0684c6ed0757621d27159c1462a1fe2b90f36faffcaa4d9cc",
     "test_noise_check.py": "d43896866ded4580a7ebf64c97e80e6b04faff42c506f9c57e70624371318378",
     "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
-    "run.py": "9ab543e5e4d0960db26500473706db334ca5bc2d55d14545564c5715c2bba1c6",
+    "run.py": "1ecda9f8d66d7b7be82cb0f2468cc32130f42a23704f68fab94b9c4701fec3a1",
     "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
     "noise_check.py": "6b0981402545090021f7dfa84c0da4e679d91eac14adc6db29a44e793c4f52b1",
     "test_recovery.py": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
@@ -60,6 +64,7 @@
     "test_batch.py": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
     "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
     "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
-    "device_check.py": "400a4151f8f50e6f87fb310ea9cb6b53dd129581c7529f18a2be2d2dc6e1bf3f"
-  }
+    "device_check.py": "703e65711cde50d8eaf80b28402fe6c40b6c332270a164ea807f0a06b5b19837"
+  },
+  "implementation_update": "Added optional forward force mode to runners; default remains reverse and PMMH evaluates no force. Original sampling settings, seeds, inputs and model.py are unchanged."
 }

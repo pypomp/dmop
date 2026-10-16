@@ -39,7 +39,7 @@ def load_parent(parent, recover, draws):
         cfg = json.loads((folder/'configuration.json').read_text())
         if cfg['batch_chain_index'] != c:
             raise ValueError('Changed batch lane order')
-        for field in ['batch_size', 'method', 'particles', 'force_particles', 'force_precision',
+        for field in ['batch_size', 'method', 'particles', 'force_particles', 'force_precision', 'force_mode',
                       'alpha', 'prior_scale', 'warmup', 'draws', 'max_depth', 'max_step_size',
                       'fixed_metric', 'source_sha256', 'jax', 'x64', 'devices', 'pypomp_revision',
                       'names', 'prior_center', 'prior_sd', 'sort_particles', 'steps', 'nuts_dependencies', 'xla_flags']:
@@ -165,6 +165,9 @@ def main():
             raise ValueError(f'Changed dependency: {name}')
     m = setup(cfg['particles'], cfg['alpha'], cfg['prior_scale'],
               force_particles=cfg['force_particles'], force_precision=cfg.get('force_precision'))
+    if cfg.get('force_mode', 'reverse') != 'reverse':
+        from force_modes import select_value_force
+        m['value_force'] = select_value_force(m['value_force'], cfg['force_mode'])
     states = State(jnp.asarray(np.stack([cp['z'] for cp in arrays])),
                    jax.random.wrap_key_data(jnp.asarray(np.stack([cp['u'] for cp in arrays]))),
                    jnp.asarray(np.stack([cp['loglik'] for cp in arrays])),

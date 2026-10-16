@@ -17,6 +17,7 @@ import numpy as np
 import pypomp
 from model import setup, NAMES, CENTER, SCALE
 from kernels import make_kernel, finite_force
+from force_modes import select_value_force
 
 
 def write_json(path, value):
@@ -31,6 +32,7 @@ def main():
     p.add_argument('--particles', type=int, default=1000)
     p.add_argument('--sort-particles', action='store_true')
     p.add_argument('--force-particles', type=int)
+    p.add_argument('--force-mode', choices=['reverse', 'forward'], default='reverse')
     p.add_argument('--alpha', type=float, default=.95)
     p.add_argument('--prior-scale', type=float, default=1.)
     p.add_argument('--method', choices=['mala', 'hmc', 'pmrw', 'pmmala', 'nuts'], default='mala')
@@ -76,6 +78,9 @@ def main():
     write_json(a.output/'configuration.json',cfg)
     m = setup(a.particles,a.alpha,a.prior_scale,sort_particles=a.sort_particles,force_particles=a.force_particles)
     warm_model = setup(a.optimize_particles,a.alpha,a.prior_scale) if a.optimize and a.optimize_particles != a.particles else m
+    m['value_force'] = select_value_force(m['value_force'], a.force_mode)
+    if warm_model is not m:
+        warm_model['value_force'] = select_value_force(warm_model['value_force'], a.force_mode)
     key = jax.random.key(a.seed)
     key, initkey = jax.random.split(key)
     z = (jnp.asarray(np.load(a.initial)) if a.initial else

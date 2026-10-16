@@ -1,0 +1,19 @@
+{
+  "purpose": "Validate the forward wrapper inside full NUTS updates and exact interrupted-batch continuation before production use",
+  "likelihood_particles": 10000,
+  "force_particles": 1000,
+  "force_precision": "float32",
+  "force_mode": "forward",
+  "batch_size": 4,
+  "max_depth": 5,
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "step_size": 0.03,
+  "kernel_repetitions": 2,
+  "likelihood_repetitions": 0,
+  "gpu": 1,
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "inputs_sha256": "dff053f25a9a02792b32654970828a6ed494d221d45bfde161117740bd0b9e04",
+  "checks": "Finite target/state, zero divergences in this small fixed-point cost check. Run CPU then GPU uneven-checkpoint recovery with forward mode at J100/G20/depth2, all numerical arrays except times bitwise identical. This does not establish convergence or sampler speedup.",
+  "production": "Existing runs unchanged. Any adoption needs an explicit new configuration and recorded disposition of the old warmup."
+}

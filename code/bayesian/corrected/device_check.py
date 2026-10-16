@@ -29,11 +29,14 @@ def main():
     p.add_argument('--kernel-reps',type=int,default=3,
                    help='Postcompile updates at a fixed state; zero skips NUTS timing')
     p.add_argument('--batch-size',type=int,default=1)
+    p.add_argument('--force-mode',choices=['reverse','forward'],default='reverse')
+    p.add_argument('--max-depth',type=int,default=4)
     a=p.parse_args()
     os.environ['JAX_ENABLE_X64']=str(a.precision=='float64').lower()
     os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE','false')
     from model import setup
     from kernels import make_kernel
+    from force_modes import select_value_force
     import jax
     import jax.numpy as jnp
     import numpy as np
@@ -50,6 +53,7 @@ def main():
     assert zs.ndim==2 and len(zs)>=a.batch_size
     m=setup(a.particles,.95,1.,force_particles=a.force_particles,
             force_precision=a.force_precision)
+    m['value_force']=select_value_force(m['value_force'],a.force_mode)
     repo=Path(pypomp.__file__).resolve().parents[1]
     result={'utc':datetime.now(timezone.utc).isoformat(),'precision':a.precision,
             'devices':[str(x) for x in jax.devices()],'jax':jax.__version__,
@@ -73,7 +77,7 @@ def main():
         result['likelihoods'].append(rows);save()
         print(json.dumps({'phase':'likelihoods','point':i,'mean':float(np.mean([r['loglik'] for r in rows]))}),flush=True)
     if a.kernel_reps:
-        init,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],'nuts',4,4)
+        init,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],'nuts',4,a.max_depth)
         initialization_start=time.monotonic()
         if a.batch_size==1:
             state=init(zs[0],jax.random.key(2026103200));chol=chols[0];step=eps[0]

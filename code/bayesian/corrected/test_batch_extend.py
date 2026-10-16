@@ -36,7 +36,7 @@ def test_partial_batch_checkpoint_is_retained(tmp_path):
         load_parent(tmp_path, False, 2)
 
 
-@pytest.mark.parametrize('corruption', ['source', 'lane', 'state', 'terminal'])
+@pytest.mark.parametrize('corruption', ['source', 'lane', 'state', 'terminal', 'force_mode'])
 def test_reject_changed_parent(tmp_path, corruption):
     parent_fixture(tmp_path)
     if corruption == 'source':
@@ -49,6 +49,9 @@ def test_reject_changed_parent(tmp_path, corruption):
         with np.load(f) as cp:
             d = {k: cp[k].copy() for k in cp.files}
         d['z'][0] += 1.; np.savez(f, **d)
+    elif corruption == 'force_mode':
+        f = tmp_path/'chain1/configuration.json'; d = json.loads(f.read_text())
+        d['force_mode'] = 'forward'; f.write_text(json.dumps(d))
     else:
         (tmp_path/'interruption.json').write_text(json.dumps({'verified_terminal': False}))
     with pytest.raises((ValueError, AssertionError)):

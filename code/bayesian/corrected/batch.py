@@ -23,6 +23,7 @@ import numpy as np
 import pypomp
 from model import setup, NAMES, CENTER, SCALE
 from kernels import make_kernel
+from force_modes import select_value_force
 from extend import adapt_tuning
 from run import write_json
 
@@ -47,6 +48,7 @@ def main():
     p.add_argument('--particles', type=int, default=5000)
     p.add_argument('--force-particles', type=int, default=1000)
     p.add_argument('--force-precision', choices=['float32'], default=None)
+    p.add_argument('--force-mode', choices=['reverse', 'forward'], default='reverse')
     p.add_argument('--alpha', type=float, default=.95)
     p.add_argument('--prior-scale', type=float, default=1.)
     p.add_argument('--max-depth', type=int, default=4)
@@ -108,6 +110,7 @@ def main():
         np.save(folder/'initial_chol.npy', chols[c]); np.save(folder/'optimization.npy', np.array([]))
     m = setup(a.particles, a.alpha, a.prior_scale, force_particles=a.force_particles,
               force_precision=a.force_precision)
+    m['value_force'] = select_value_force(m['value_force'], a.force_mode)
     init, kernel = make_kernel(m['loglik'], m['logprior'], lambda z, u: m['value_force'](z, u)[1],
                                a.method, 4, a.max_depth)
     # Match run.py's two initial splits, including its unused jitter key.

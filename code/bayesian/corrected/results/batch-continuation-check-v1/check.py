@@ -20,6 +20,7 @@ import psutil
 
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--output',type=Path,required=True)
+p.add_argument('--force-mode',choices=['reverse','forward'],default='reverse')
 a=p.parse_args(); a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=False)
 code=Path(__file__).resolve().parents[2];repo=code.parents[2]
 original=code/'results/candidate-pmrw-4chain-v1'
@@ -30,9 +31,10 @@ cmd=[python,str(code/'batch.py'),'--output',str(a.output/'reference'),
      '--seeds','50','51','52','53','--method','nuts','--particles','100',
      '--force-particles','20','--force-precision','float32','--max-depth','2',
      '--warmup','6','--draws','2','--step-size','.001','--checkpoint','1','--fixed-metric']
+cmd.extend(['--force-mode',a.force_mode])
 metadata=dict(utc=datetime.now(timezone.utc).isoformat(),command=cmd,
               source_sha256={name:hashlib.sha256((code/name).read_bytes()).hexdigest()
-                             for name in ['batch.py','batch_extend.py','model.py','kernels.py','nuts.py']},
+                             for name in ['batch.py','batch_extend.py','model.py','kernels.py','nuts.py','force_modes.py']},
               simulated_partial_save_iterations=[3,2,3,2],posterior_samples=False)
 (a.output/'protocol.json').write_text(json.dumps(metadata,indent=2)+'\n')
 captured={}

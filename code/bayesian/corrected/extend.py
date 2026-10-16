@@ -150,6 +150,9 @@ def main():
     if cfg.get('force_precision') is not None:
         model_extra['force_precision'] = cfg['force_precision']
     m=setup(cfg['particles'],cfg['alpha'],cfg['prior_scale'],sort_particles=cfg.get('sort_particles',False),**model_extra)
+    if cfg.get('force_mode', 'reverse') != 'reverse':
+        from force_modes import select_value_force
+        m['value_force'] = select_value_force(m['value_force'], cfg['force_mode'])
     extra={'max_depth':cfg['max_depth']} if cfg['method']=='nuts' else {}
     _,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],cfg['method'],cfg['steps'],**extra)
     if a.recover_interrupted:
