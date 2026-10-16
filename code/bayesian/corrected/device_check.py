@@ -74,6 +74,7 @@ def main():
         print(json.dumps({'phase':'likelihoods','point':i,'mean':float(np.mean([r['loglik'] for r in rows]))}),flush=True)
     if a.kernel_reps:
         init,kernel=make_kernel(m['loglik'],m['logprior'],lambda z,u:m['value_force'](z,u)[1],'nuts',4,4)
+        initialization_start=time.monotonic()
         if a.batch_size==1:
             state=init(zs[0],jax.random.key(2026103200));chol=chols[0];step=eps[0]
             get_key=lambda i:jax.random.key(2026103300+i)
@@ -83,6 +84,8 @@ def main():
             kernel=jax.jit(jax.vmap(kernel));chol=chols[:a.batch_size];step=eps[:a.batch_size]
             get_key=lambda i:jax.random.split(jax.random.key(2026103300+i),a.batch_size)
         jax.block_until_ready(state)
+        result['initialization_seconds']=time.monotonic()-initialization_start
+        save();print(json.dumps({'phase':'initialized','seconds':result['initialization_seconds']}),flush=True)
         for i in range(a.kernel_reps+1):
             start=time.monotonic();new,info=kernel(state,get_key(i),step,chol)
             jax.block_until_ready((new,info));seconds=time.monotonic()-start
