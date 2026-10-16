@@ -46,6 +46,18 @@ reference choice, not claimed scientific prior knowledge. A doubled-SD
 sensitivity run will assess the dependence on that choice. IF2 or optimization
 may supply starting points and proposal scales; neither changes the prior.
 
+Removing the empirical KDE does not justify an unrestricted flat prior.
+In the library model, environmental immigration is
+`exp(sum_k seas_k(t) * omegas_k)`. The supplied seasonal basis is nonnegative
+and sums to one, so subtracting a common constant c from all six coefficients
+multiplies immigration by `exp(-c)`. This approaches the model with no
+environmental immigration. If its limiting data likelihood is positive,
+a flat prior on that common level has a nonintegrable lower tail. We have not
+evaluated that limiting likelihood here. The observed long tails in individual
+coefficients also require checking; this algebra alone does not diagnose their
+mixing or establish prior sensitivity. Retain the proper prior and compare
+with doubled prior SDs after both runs have converged.
+
 ## Sampler and checks
 
 The extended target is proportional to `Lhat(theta,u) prior(theta) m(u)`,

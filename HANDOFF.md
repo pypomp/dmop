@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: prior-tail interpretation checked against library model
+
+- Read current Pypomp dacca._rproc: immigration is exp(dot(seas,omegas)). Checked all5,017 supplied covariate rows: seasonal basis minimum0, row sums0.9999999999999989--1.0000000000000013. Subtracting c from all six coefficients multiplies immigration by exp(-c), approaching zero environmental immigration. README records the conditional implication: a positive limiting likelihood would make an unrestricted flat prior on that common level improper. We have NOT evaluated the limiting likelihood or established posterior impropriety for a proposed flat prior.
+- This supports keeping a proper reference prior while replacing the chain-specific empirical KDE. It does not prove why individual omega5/6 chains mix slowly or establish prior sensitivity. The planned doubled-SD comparison remains necessary.
+- Same host processes revalidated live at20warm/2750retained/5388retained (NUTS/J10000PMMH/J5000PMMH). No sampling change. Publication approval still pending; do not push without it. Next convergence-review thresholds unchanged.
+
 ## October 15: publication approval pending; sampling continues
 
 - Commit a5348b587 (longer PMMH review) is LOCAL ONLY. Automatic approval review rejected `git push origin main` twice: the destination is public and the posterior draws/diagnostic artifacts require specific publication approval. Read-only GitHub check confirms pypomp/dmop is public and authenticated viewer has ADMIN permission; that evidence did not satisfy review. Do not retry or bypass the rejection without new explicit approval.
