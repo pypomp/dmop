@@ -1,0 +1,71 @@
+{
+  "utc": "2026-10-16T01:09:09.808274+00:00",
+  "devices": [
+    "cuda:0"
+  ],
+  "jax": "0.9.0.1",
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "settings": {
+    "output": "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/forward-force-check-v1/gpu-wrapped-batch4",
+    "force_particles": 1000,
+    "batch_size": 4,
+    "reps": 3,
+    "candidate": "wrapped"
+  },
+  "source_sha256": {
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "forward_model.py": "fc0de6848dffd953d6a39b9fdd6d8f72ff68870ca8f1526b7fc40b36fcb0e7ee",
+    "check.py": "79a58b1417d19c9181b5efde32bc4a1a5aae9876f150eec94b6d39704df16282"
+  },
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "timings": {
+    "reverse": [
+      {
+        "seconds": 12.773608251009136,
+        "compile_included": true
+      },
+      {
+        "seconds": 4.594883857003879,
+        "compile_included": false
+      },
+      {
+        "seconds": 4.59757492801873,
+        "compile_included": false
+      },
+      {
+        "seconds": 4.4764142529747915,
+        "compile_included": false
+      }
+    ],
+    "forward": [
+      {
+        "seconds": 5.816044926003087,
+        "compile_included": true
+      },
+      {
+        "seconds": 1.0079536759876646,
+        "compile_included": false
+      },
+      {
+        "seconds": 1.0118376159807667,
+        "compile_included": false
+      },
+      {
+        "seconds": 1.0065527170081623,
+        "compile_included": false
+      }
+    ]
+  },
+  "complete": true,
+  "comparison": {
+    "same_value": true,
+    "max_absolute_force_difference": 0.000640869140625,
+    "scaled_max_force_difference": 1.5648003962968774e-06,
+    "repeat_bitwise": {
+      "reverse": true,
+      "forward": true
+    },
+    "force_tolerance": 0.0001,
+    "passed": true
+  }
+}

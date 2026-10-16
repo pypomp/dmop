@@ -1,0 +1,16 @@
+{
+  "pid": 3234591,
+  "create_time": 1792112947.65,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/forward-force-check-v1/check.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/forward-force-check-v1/gpu-wrapped-batch4",
+    "--candidate",
+    "wrapped"
+  ],
+  "log": "/tmp/dmop-forward-force-wrapped-v1.log",
+  "utc": "2026-10-16T01:09:08.599329+00:00",
+  "gpu": 1,
+  "revision": "4939f6d999d9fb2441e85da23151665fc16e301d"
+}
