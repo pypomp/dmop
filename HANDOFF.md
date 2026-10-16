@@ -2,6 +2,7 @@
 
 ## October 15: proposal covariance benchmark live
 
+- Followup: first compiled baseline transition finite (76.12s); timed trials underway. Added summarize.py for both candidate/base comparisons, paired-trial bootstrap intervals and per-coordinate losses; it refuses incomplete results. No paired conclusions yet. All four process identities revalidated live (NUTS111warm, primaryPMMH5425retained, J5000continuation8338retained). Run the summary only after complete.
 - LIVE3428797/create1792118901.92 onGPU1, `nuts-metric-check-v1/check.py`, protocol committed441e45abf. Log `/tmp/dmop-nuts-metric-check-v1.log`; launch.json records command/source/protocol hashes. Revalidated after25s; cached likelihoods/forces match BITWISE (8.64s). First shared-kernel compilation in progress. No timed results yet; do not duplicate.
 - All three production processes verified live at launch and unchanged. Current posterior/prior/model and particle counts are untouched. This benchmark only changes proposal covariance/step size, with the old run still progressing.
 - Next: monitor complete19 records (1 compilation+18 timed across3 candidates), then produce paired-trial uncertainty and coordinate comparison analogous to nuts-depth-check-v1/summarize.py (candidate names replace depths). No candidate automatically adopted; apply committed screen and inspect losses in beta3/omega5. Account for all pilot/setup costs if changing production. Keep publication on hold. Other run-review/prior-sensitivity tasks remain unchanged; goal active.
