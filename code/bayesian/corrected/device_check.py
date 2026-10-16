@@ -67,6 +67,8 @@ def main():
         temp=a.output/'result.tmp';temp.write_text(json.dumps(result,indent=2)+'\n');temp.replace(a.output/'result.json')
     save();print(json.dumps({'phase':'loaded','precision':a.precision,'devices':result['devices']}),flush=True)
     for i,z in enumerate(zs):
+        if a.reps == 0:
+            break
         rows=[]
         for rep in range(a.reps):
             key=jax.random.key(2026103100+100*i+rep);start=time.monotonic()
