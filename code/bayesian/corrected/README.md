@@ -7,7 +7,7 @@ figures remain unchanged until replacement runs have passed their checks.
 
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
-See `results/gpu-comparison-v1/protocol.json` for the current GPU comparison.
+See `results/gpu-comparison-v2/protocol.json` for the current GPU comparison.
 
 ## Target and model
 
@@ -92,9 +92,10 @@ where it remains informative; revise empirical claims only as needed.
   CPU replay is bitwise identical in the recorded test. With the default GPU
   execution settings, repeated float32 force evaluations vary slightly;
   GPU replay preserves random states but is not bitwise identical. The
-  deterministic XLA option removes this variation in the repeated-force
-  test. Its full replay and production-cost checks are in progress under
-  `results/batch-continuation-check-v1` and `results/gpu-precision-check-v1`.
+  optimized deterministic XLA settings also give bitwise replay on the GPU
+  in the four-chain interrupted-warmup test. See
+  `results/batch-continuation-check-v1/optimized-verification.json` and
+  `results/gpu-precision-check-v1/optimized-deterministic-batch4`.
   Both continuation drivers require the parent's recorded XLA flags.
 - `extend.py`: exact continuation into a new directory, preserving the parent,
   tuning and random state. `--recover-interrupted` requires a recorded terminal
@@ -138,11 +139,18 @@ MH. Joint particle MALA and fixed-length HMC remain development trials. The join
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
 
-The current batches are in `results/gpu-comparison-v1/nuts/chain{0,1,2,3}`
-and `results/gpu-comparison-v1/pmrw/chain{0,1,2,3}`. They use the same starts,
-proposal covariance and prior. Their directories contain the preparation and
-cost records. Both batches have saved finite initial checkpoints; convergence
-is still unverified.
+The current batches are in `results/gpu-comparison-v2/nuts/chain{0,1,2,3}`
+and `results/gpu-comparison-v2/pmrw/chain{0,1,2,3}`. They use the same starts,
+proposal covariance, proper prior and 10,000-particle likelihood. NUTS uses
+a 1,000-particle float32 force with deterministic GPU execution. Their
+directories link the preparation, noise and cost records. Both batches have
+saved finite initial checkpoints; convergence is still unverified.
+
+The earlier 5,000-particle PMMH run continues under
+`results/gpu-comparison-v1/pmrw-continued` for a particle-count check. Its
+original `pmrw` directory is an immutable parent; the continuation retains
+every parent draw and the same random state and frozen tuning. The earlier
+GPU NUTS warmup was retired after validating the new deterministic run.
 
 The CPU runs in `results/candidate-nuts-4chain-v1` and
 `results/sampling-recovery-v1` were retired after validating the GPU starts;

@@ -1,5 +1,21 @@
 # Handoff
 
+## October 15: production identities revalidated and records saved
+
+- Host PID/create-time/command checks confirm all three current batches live: NUTS3137251, J10000 PMMH3137405, J5000 PMMH continuation3143786. At check they had 4,375,2788 total updates respectively. No restart or tuning change.
+- Noise-prefix check confirms the expanded128 reused the original32 seeds. J5000 re-evaluation differs by at most9.1e-13 log units; J10000 agrees bitwise. prefix-verification.json records this. Do not pool the two sets.
+- Saving launch, startup, retirement, exact-continuation and completed diagnostic records. Still no converged NUTS/PMMH comparison. Next: let current batches accumulate; review retained draws, then prior sensitivity, particle agreement and final figures. Main/SI unchanged.
+
+## October 15: deterministic J10000 production running
+
+- Primary results/gpu-comparison-v2 launched under protocol c328bb670. LIVE NUTS3137251/create1792109818.16/GPU0 and PMMH3137405/create1792109819.68/GPU1. Both J10000, prior scale1, same starts/fixed covariance,500 warmup; NUTS G1000 float32 force/depth5/2000 draws, PMMH10000 draws. Both use --xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true. Logs /tmp/dmop-bayes-gpu-comparison-v2-{nuts,pmrw}.log.
+- Both primary batches saved finite checkpoints; first NUTS update159.6s including compilation, zero divergences. startup-verification.json records source/input checks. New PMMH passed125 warmup updates at check. Current throughput implies a multi-day NUTS run; user informed. No convergence claim.
+- Old GPU NUTS3052229 deliberately stopped/verified terminal at22 warmup iterations, preserved under gpu-comparison-v1/nuts/termination.json.
+- J5000 PMMH retained for particle sensitivity. Old3052372 deliberately stopped at2513; exact batch continuation LIVE3143786/create1792110008.97/GPU1 under gpu-comparison-v1/pmrw-continued. Checkpoint interval25 instead of1; original10500 total and frozen tuning unchanged. All four restored likelihood/force differences0. First resumed prefixes match parent exactly; pmrw-continuation-verification.json records it. Use continuation only, never parent+continuation as separate chains. Log /tmp/dmop-bayes-pmrw5000-continued.log.
+- Optimized deterministic benchmark3115959 and followup3121299 are terminal/complete. Median75.18s per four-chain15-step batch atJ5000/G1000; exact GPU partial-save replay passed ALL numerical arrays under optimized flags. Artifacts copied into repo.
+- Expanded plateau diagnostic128replicates: J5000 variance1.0105[.751,1.298], J10000 .3027[.240,.363], ratio3.338[2.391,4.694]; cached5000 likelihood1.831 log units above estimated mean and fixed-theta refresh acceptance.143. Initial32 are included in128, never pool. This motivated J10000; it is local evidence, not a global adequacy proof.
+- Next: monitor three LIVE batches, review retained samples after warmup; avoid further restarts without evidence. Assess all18 convergence, prior-scale sensitivity and particle-count agreement, then controlled cost and final figure/manuscript work. Main/SI unchanged; goal active.
+
 ## October 15: optimized deterministic timing and expanded noise check
 
 - Ordinary deterministic benchmark3098070 deliberately terminated after490s without a recorded NUTS update; termination.json verifies PID/create time and partial outputs. Do not resume it.
