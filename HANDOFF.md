@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: historical-proposal control live
+
+- Launched control3609096/create1792124393.61 onGPU1 underd5ae529f3. `historical-proposal-control-v1/launch.json` records command; log `/tmp/dmop-historical-proposal-control-v1.log`. Host PID/create-time/command verified live; startup monitor98636 completed0. All4 saved checkpoints finite, starts and target/prior/particle/model/Pypomp/flags match primary exactly, proposal remains zSD.02 and identity factor, no adaptation. startup-verification.json saved. Review at1500iterations; use iterations501–1500 for comparisons matching old plotting discard, despite no adaptation in this control. Do not conflate control with exact historical replay.
+- Original trend chain1 start/end imply only-1.029 log-density change under the current *trend marginal* N(-.5,.5^2) prior. This excludes other-coordinate prior effects and does not by itself identify the cause of old drift. Pending functions cell569 now completed; monitor44323 covers original4jobs only, not new control. Existing production unchanged. Publication hold remains.
+
 ## October 16: original MH drift recovered; proposal control prepared
 
 - User clarified that reproducing the original MH chain drift is part of the requested comparison. Do not substitute the HMC divergence diagnostic for this question or treat all-method convergence alone as the intended figure. Preserve long runs as posterior references; compare finite-budget behavior and explain changed settings. No tuning to force a visual outcome.
