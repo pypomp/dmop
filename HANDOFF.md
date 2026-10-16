@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: first NUTS posterior comparison
+
+- Monitor27515 ended0 at poll46 when NUTS reached1000total; both original samplers remained live. Report20620 and comparison91068 completed0. `gpu-forward-nuts-v2/review-nuts-500` freezes exactly500retained per chain; draws SHA1e84763115376714ee1c84c4a59d36349fde7151abb83aa5953dc22f6110c521. `review_snapshot.npz` freezes first1000 trace/info/step/time rows, hash e23f3070ff605603f92f4b7b7b3d9737c6f025a496aa458037c5d5b47f91793b. Posterior reconstruction matches exactly; sampled states/force norms finite and retained steps fixed.
+- All18 traces/marginals, trend panels and `comparison-nuts-500/method_marginals.png` visually inspected. Broad overlap with primaryJ10000PMMH30000reference, but remaining seasonal/immigration chain differences. NUTS trendmean-.427883,SD.103855,95%[-.624904,-.222519],Rhat1.02603,bulkESS133.85. WorstRhat1.15098(omega3),minbulk23.44(beta3). PMMH trendmean-.420265. Largest mean difference/combinedMCSE1.2605(sigma), descriptive only; unequal sample lengths and unconverged chains preclude equivalence/efficiency claims.
+- One NUTS trajectory divergence in chain3 at iteration821 (1based), with finite sampled states at/after event. Saved numerical_review.json records it, trajectory acceptance .612--.659 and fixed steps. Almost every trajectory hits depth5 without U-turn. No draws discarded, no tuning or restart; continue original run toward2000retained and assess divergence frequency/chain agreement at next review.
+- NEW read-only monitor41525 LIVE (50polls/50s), follows only original NUTS3476536/create1792120402.49 and widerprior4082486/create1792139160.88. Poll0 host-verifies NUTS1002total and widerprior25825total. Stops at terminal/completion or NUTS1500total (1000retained). Widerprior30500total likely next full review. Completed PMMH references unchanged. No manuscript edits or push; publication hold persists and full goal remains active.
+
 ## October 16: primary PMMH 30,000-draw review
 
 - Read-only monitor27515 is LIVE, following only NUTS3476536 and widerprior4082486 (50polls/50s, stop at terminal/completion or NUTS1000total). Poll0 host-verifies original identities: NUTS943total, widerprior23200total. Completed primary review committed22d65b997; no new sampler or configuration changes. Resume27515 for the next NUTS500-retained review. Publication hold persists.
