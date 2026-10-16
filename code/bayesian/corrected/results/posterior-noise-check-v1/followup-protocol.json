@@ -1,0 +1,15 @@
+{
+  "purpose": "Confirm local filter-noise reduction at the sticky PMMH state before changing production particle counts",
+  "point": "Point0 of protocol.json: chain0 iteration827, beginning of105-iteration plateau",
+  "particles": [
+    5000,
+    10000
+  ],
+  "reps": 128,
+  "batch_size": 16,
+  "gpu": 0,
+  "seeds": "Same sequence as initial32; expanded128 contains those32, so use128 alone",
+  "preceding_check": "Run full four-chain GPU partial-save replay with both deterministic XLA flags; independent noise diagnostic follows even if replay fails",
+  "replay_output": "/tmp/dmop-batch-continuation-gpu-optimized-v1",
+  "noise_output": "expanded"
+}
