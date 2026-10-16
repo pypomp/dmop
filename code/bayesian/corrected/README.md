@@ -11,6 +11,15 @@ See `results/gpu-comparison-v2/protocol.json` for the current GPU comparison.
 
 ## Target and model
 
+For sensitivity checks, first freeze each setting with `report.py`, then use
+`sensitivity.py --reference REPORT1 --alternative REPORT2 --kind prior`
+`--output NEW_DIRECTORY` (or `--kind particles`). It requires the same
+method and model, permits only the requested target-setting difference,
+and shows individual chains. Its table reports marginal intervals, standard
+deviations, mean shifts and their Monte Carlo errors. Passing convergence
+checks is required before interpreting these comparisons; no sensitivity
+claim is made automatically.
+
 The target is the untempered posterior for the Pypomp Gaussian-noise Dhaka
 Euler model, with 20 steps per monthly observation and the library's fixed
 initial proportions. There are 18 estimated parameters. The obsolete constant
