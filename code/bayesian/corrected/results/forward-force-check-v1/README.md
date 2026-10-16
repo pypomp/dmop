@@ -36,8 +36,22 @@ The direct check used commit f92e8c0db; the wrapped extension used 4939f6d99.
 Source and launch hashes are recorded with each run. Existing production
 processes were verified still live after the checks.
 
-Next, validate the wrapper inside complete NUTS updates, then test exact
-interrupted-batch continuation with it. Integrate it as an explicit optional
-force mode only after those checks. Any new sampling configuration must be
-recorded; do not change a running chain's numerical force silently. The
-existing likelihood/model source can remain identical across settings.
+The integrated wrapper in `force_modes.py` passed 16 unit/recovery tests.
+Real-model interrupted-batch recovery is bitwise exact on CPU and GPU;
+`cpu-recovery-verification.json` and `gpu-recovery-verification.json` list
+the compared fields and frozen configurations. The generic wrapper casts
+its gradient back to the parameter dtype, as checked by the tests.
+
+The complete four-chain NUTS benchmark at 10,000 likelihood particles,
+1,000 force particles and depth 5 took 110.56 seconds including compilation,
+then 100.55 and 100.81 seconds. Every update used 31 integration steps and
+had finite states and zero divergences. Likelihood-replicate checks were
+disabled for this timing run; initialization and each trajectory still
+evaluate the full likelihood. The first benchmark's empty-replicate progress
+messages printed NaN means; this logging issue was fixed afterward.
+
+The full-update improvement is smaller than the force-only timing suggests.
+Old production updates took roughly 135 seconds on GPU0, whereas this check
+ran on shared GPU1; this is not a controlled speed comparison. A new explicit
+configuration is prepared in `../gpu-forward-nuts-v1`. Model.py remains
+byte-for-byte unchanged. Existing runs must retain their recorded force mode.

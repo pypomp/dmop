@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: forward mode validated for full NUTS and recovery
+
+- force_modes.py implements a scalar-projection jacfwd wrapper. run.py/batch.py/device_check.py accept --force-mode forward (defaultreverse); continuation drivers restore the recorded mode from frozen source and reject mixed batch modes. model.py remains byte-identical (c4804a1b44da...). Generic float32-objective test caught a gradient dtype mismatch; explicit cast to parameter dtype fixes it. All16 relevant tests pass.
+- Real Dhaka uneven-checkpoint replay passes BITWISE on CPU and GPU, all arrays excepttimes. CPU session59698 terminal0; GPU replay3251125/create1792113437.93 verified terminal and passed. Verification JSONs in forward-force-check-v1; full fixtures /tmp/dmop-forward-recovery-{cpu,gpu}-v1.
+- Full four-chain forward NUTS J10000/G1000/depth5 benchmark complete: first110.56s includingcompile, then100.55/100.81s,31steps, allfinite/zero divergences. Benchmark3244703/create1792113249.2 was running at last hostcheck but result now complete; verify terminal before reporting retirement. SharedGPU1 vsoldproductionGPU0 prevents a controlledspeedupclaim. Separate likelihoodreplicatesdisabled; NaN emptymeans in initial progresslog were loggingonly, nowfixed.
+- PREPARED new gpu-forward-nuts-v1 protocol/launcher: same target/prior/starts/covariance, G1000float32forward,J10000,500warm+2000draws, depth5, step.03, freshseeds2026111000--03, GPU0, checkpoint1. Commit then launch. RetireoldNUTS3137251 only after finite newcheckpoint and matchingtarget/source checks; keepbothPMMH jobs unchanged. No newproduction launch yet at this entry.
+- Prior-sensitivity protocol sourcehashes refreshed transparently for optional runner changes; its seeds/settings/model remain unchanged and defaultforce reverse. Next: launchvalidatednewNUTS, verifythenretireoldwarmup withPIDidentityrecord; preserve allcosts. ContinuePMMH/priorparticlechecks and finalmanuscriptwork. Goalactive.
+
 ## October 15: forward force benchmark gives a promising cost reduction
 
 - New results/forward-force-check-v1, protocol f92e8c0db, evaluates differentiation only. CPU G20/batch2 and GPU G1000/batch4 checks passed. Scalar objectives identical, scaled maximum force difference1.56e-6 on GPU (threshold1e-4), repeated force/value evaluations bitwise identical under both optimized deterministic flags.
