@@ -1,0 +1,15 @@
+{
+  "purpose": "Evaluate forward differentiation of the identical proposal force as a possible runtime improvement",
+  "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+  "inputs_sha256": {
+    "initial1.npy": "8f2531b0215f28f25bad5be6eb1646fcf4974497d5b0d731096b9e44fdd61452",
+    "initial2.npy": "ed966f3e522e931e9f2073f831e89c6dffcd6e7ac47c082de798b4151657dcf3",
+    "initial0.npy": "11f267ff171b104f616eac222364edabd60eaa4aa47ff98238a2ad3bb96fc448",
+    "initial3.npy": "7d19213d6d634ef7a5244612ca838c611df6f93536e0a451fa8d63e7a8a96e82",
+    "chol.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6"
+  },
+  "force_tolerance": 0.0001,
+  "validation": "First CPU smoke G20 batch2, then GPU1 production-size G1000 batch4 under the same optimized deterministic flags. Same four starting points and fixed particle keys. Require identical scalar values, scaled max gradient error<=1e-4, and bitwise repetition. Record first compilation separately, then3timed repetitions. Shared GPU load prevents a controlled speedup claim.",
+  "production_changes": "None. A faster force would require explicit production integration and full kernel/recovery validation before any new sampling configuration.",
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+}
