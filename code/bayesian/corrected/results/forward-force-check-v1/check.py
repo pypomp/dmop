@@ -27,6 +27,7 @@ def main():
     parser.add_argument('--force-particles', type=int, default=1000)
     parser.add_argument('--batch-size', type=int, default=4)
     parser.add_argument('--reps', type=int, default=3)
+    parser.add_argument('--candidate', choices=['direct', 'wrapped'], default='direct')
     args = parser.parse_args()
     if not 1 <= args.batch_size <= 4 or min(args.force_particles, args.reps) < 1:
         parser.error('Positive counts required; batch size must be1--4')
@@ -76,6 +77,16 @@ def main():
     outputs = {}
     for name, module in [('reverse',reverse), ('forward',forward)]:
         model = module.setup(10000,.95,1.,force_particles=args.force_particles,force_precision='float32')
+        if name == 'forward' and args.candidate == 'wrapped':
+            reference = reverse.setup(10000,.95,1.,force_particles=args.force_particles,
+                                      force_precision='float32')['value_force']
+            def wrapped(z, key):
+                def with_aux(x):
+                    value = reference(x, key)[0]
+                    return value, value
+                force, value = jax.jacfwd(with_aux, has_aux=True)(z)
+                return value, force
+            model['value_force'] = jax.jit(wrapped)
         evaluate = jax.jit(jax.vmap(model['value_force']))
         times, values, forces = [], [], []
         for rep in range(args.reps+1):
