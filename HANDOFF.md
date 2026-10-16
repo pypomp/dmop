@@ -1,5 +1,11 @@
 # Handoff
 
+## October 16: user-requested interim posterior reports
+
+- Three frozen `review-interim-20261016` reports completed successfully: primary J10000 PMMH 8325 retained/chain (max Rhat1.0821, min bulkESS46.6), J5000 exact continuation11300 (1.0813,47.1), doubled-prior-SD J10000 study800 (1.8948,5.8). No run has all-parameter convergence; prior sensitivity remains too early to interpret. No overlapping continuation samples pooled.
+- Primary trend panels, all18 marginals and traces visually inspected: layout sound, trend marginals broadly overlap (Rhat1.0089), but seasonal and immigration coordinates still show uneven excursions and tails. Trend mean100*beta=-0.4225; descriptive95% interval[-0.6574,-0.1970]. This does not establish joint convergence. Other two fresh reports have numerical checks only at this entry.
+- Tuned NUTS last observed69/500 warmup, zero retained; first50 warmup movement plot remains the available reviewed NUTS figure. Existing samplers/configurations continue unchanged. Read-only monitor session3767 was live at last check; functions cell545 is complete. Next planned thresholds unchanged. No manuscript edits or push; publication hold persists and goal remains active.
+
 ## October 15: tuned NUTS first50 warmup reviewed; retain configuration
 
 - Monitor36337 terminal0 at NUTS50warm/primaryPMMH8350total/J5000long11300total/prior825total, all four host identities live. Review6152 terminal0. `gpu-forward-nuts-v2/warmup-review-50` freezes exactly50updates and initial states; all18 movement panels visually inspected. No divergences, trajectory acceptance.595--.643, all200 trajectories depth5/31steps; medianbatch40.41s. Chains still separated and lower tails incompletely explored.
