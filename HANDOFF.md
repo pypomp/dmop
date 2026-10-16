@@ -2,6 +2,8 @@
 
 ## October 16: NUTS warmup complete
 
+- Read-only monitor96068 is LIVE (40polls/50s), stopping at any terminal/completed sampler or NUTS1000total. Poll0 host-verifies all4 original PID/create-time/command identities live: NUTS749total, primary25125total, J500029575total, widerprior17600total. J5000 completion30500total is the nearest full review. Previous monitor6540 ended normally; samplers and review thresholds unchanged, publication hold persists.
+
 - Read-only monitor6540 completed0 at its40-poll observation limit. Final poll39 host-verifies all4 original PID/create-time/command identities live and advancing: NUTS748total (248retained), primary25100total, J500029575total, widerprior17600total. No live monitor remains; samplers continue unchanged. Recent turns were verified waits, with no sampler restarts or retuning. Next reviews remain NUTS1000total and PMMH30500total; publication hold unchanged.
 
 - Read-only monitor5330 completed0 at its40-poll observation limit. Final poll39 host-verifies all4 original PID/create-time/command identities live and advancing: NUTS699total (199retained), primary23900total, J500028250total, widerprior16375total. No live monitor remains; the samplers continue unchanged. Recent continuation turns were verified waits. Next reviews remain NUTS1000total and PMMH30500total; publication hold persists.
