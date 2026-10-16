@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: user asked for status; publication remains on hold
+
+- User answered the publication question with "hang on. how is it going?" This is NOT permission to push. Hold publication; local sampling continues. They also explicitly invoked the neurotypical skill, already read in this session. Keep status focused on outcomes and the bottleneck, not minute-by-minute counters.
+- Explained candidly: PMMH improves but worst reviewed Rhat1.13 and immigration tails remain poorly explored; NUTS has no retained samples and is the runtime bottleneck, with a full run roughly1--2days at observed rates. Current proper reference prior replaces empirical KDE, but sensitivity remains untested.
+- Monitor47054 still live, poll9: NUTS37warm, J10000PMMH3175retained, J5000PMMH5863retained. functions cell372 completed; resume the PTY monitor directly. Next movement review remains at50warm, not a convergence claim.
+
 ## October 15: warmup review prepared; monitor active
 
 - `gpu-forward-nuts-v1/review_warmup.py` prepares the first50-update all18 movement plot and depth/acceptance summaries. It refuses to run before50 or overwrite an existing review. Grey bands/relative movement use the frozen, explicitly UNCONVERGED J5000 PMMH5063-draw snapshot; these are descriptive scales only, not a convergence test. Prepared but not yet executed or visually reviewed.
