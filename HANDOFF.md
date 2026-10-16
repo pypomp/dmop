@@ -1,5 +1,10 @@
 # Handoff
 
+## October 15: current experiment navigation updated
+
+- corrected/README.md now points to the four live batches, distinguishes the tuned NUTS covariance from PMMH, links the completed10,000-draw report and exact30,000-draw extension, and marks wider-prior sampling as running. No sampler/model/protocol changes.
+- Read-only monitor36337 is LIVE, checking all four PID/create-time/commands every50s. Latestpoll3: NUTS27warm, primaryPMMH7800total, J5000long10700total, prior275warm; all live. Stops at NUTS50warm, any completion/terminal process or30polls. Its expiry is not sampler termination. For the50warm review, reuse gpu-forward-nuts-v1/review_warmup.py with ROOT pointed at gpu-forward-nuts-v2 (or generalize its input); preserve the same frozen PMMH reference. Publication remains on hold; goal active.
+
 ## October 15: PMMH extension and prior study startup verified
 
 - LIVE J5000 extension3505775/create1792121252.05 onGPU1, `gpu-comparison-v1/pmrw-long`, launched under bf47b2120. Log `/tmp/dmop-bayes-pmrw5000-long.log`; pmrw-long-launch.json/protocol record command/hashes. Four chains advance beyond10500 with EXACT old trace/info/step/time prefixes and unchanged fixed tuning. State check retains cached values. New total30000retained; never pool this with overlapping parent files.

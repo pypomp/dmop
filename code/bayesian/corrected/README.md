@@ -7,7 +7,7 @@ figures remain unchanged until replacement runs have passed their checks.
 
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
-The current NUTS configuration is in `results/gpu-forward-nuts-v1`; its
+The current NUTS configuration is in `results/gpu-forward-nuts-v2`; its
 PMMH counterpart continues in `results/gpu-comparison-v2`.
 
 ## Target and model
@@ -161,28 +161,43 @@ MH. Joint particle MALA and fixed-length HMC remain development trials. The join
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
 
-The current batches are in `results/gpu-forward-nuts-v1/nuts/chain{0,1,2,3}`
-and `results/gpu-comparison-v2/pmrw/chain{0,1,2,3}`. They use the same starts,
-proposal covariance, proper prior and 10,000-particle likelihood. NUTS uses
+The current batches each contain `chain0` through `chain3`:
+
+| Purpose | Batch directory under `results/` |
+|---|---|
+| Primary NUTS | `gpu-forward-nuts-v2/nuts` |
+| Primary PMMH | `gpu-comparison-v2/pmrw` |
+| PMMH with 5,000 particles | `gpu-comparison-v1/pmrw-long` |
+| PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw` |
+
+Primary NUTS and PMMH use the same starts, proper prior and 10,000-particle
+likelihood. NUTS uses
 a 1,000-particle float32 force with forward differentiation and deterministic
 GPU execution. `force_modes.py` differentiates the scalar objective supplied
 by the unchanged model. `--force-mode` is saved with every new run, and
-continuation restores it from the parent's frozen source. The earlier
-reverse-mode warmup is preserved in `gpu-comparison-v2/nuts`. Their
-directories link the preparation, noise and cost records. Both batches have
-saved finite initial checkpoints; convergence is still unverified.
+continuation restores it from the parent's frozen source. The NUTS proposal
+covariance and initial step size were revised after the paired screen in
+`results/nuts-metric-check-v1`. Its local movement improvement is not an
+ESS/sec or convergence result. Earlier warmups are preserved in
+`gpu-forward-nuts-v1/nuts` and `gpu-comparison-v2/nuts`; their termination
+records identify the retired processes. Include the covariance pilot,
+tuning screens and retired warmups in setup costs. Convergence is still
+unverified.
 
 The earlier 5,000-particle PMMH run continues under
-`results/gpu-comparison-v1/pmrw-continued` for a particle-count check. Its
-original `pmrw` directory is an immutable parent; the continuation retains
-every parent draw and the same random state and frozen tuning. The earlier
-GPU NUTS warmup was retired after validating the new deterministic run.
+`results/gpu-comparison-v1/pmrw-long` for a particle-count check. The completed
+10,000-draw report is in `gpu-comparison-v1/review-pmrw-10000`; it did not
+pass convergence checks. The extension targets 30,000 retained draws per
+chain. It retains every draw from `pmrw-continued`, which itself includes
+the original `pmrw` prefix, with the same random state and frozen tuning.
+Use only the latest continuation when reporting these chains; never pool
+overlapping parent files.
 
-The wider-prior comparison is prepared in `results/prior-sensitivity-gpu-v1`.
+The wider-prior comparison is running in `results/prior-sensitivity-gpu-v1`.
 It doubles the normal prior's standard deviations while keeping its centers
-and the likelihood fixed. Its launcher refuses to start until the
-5,000-particle PMMH continuation finishes; see that directory for launch
-and review steps.
+and the likelihood fixed. It started after the initial 10,000-draw
+5,000-particle PMMH continuation finished. See its protocol, launch record
+and README for settings and review steps. Prior sensitivity remains unverified.
 
 The CPU runs in `results/candidate-nuts-4chain-v1` and
 `results/sampling-recovery-v1` were retired after validating the GPU starts;
