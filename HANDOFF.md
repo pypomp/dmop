@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: primary PMMH continuation verified live
+
+- New primary PMMH continuation3680785/create1792126631.34 runs onGPU1 under1e2549a1f, `gpu-comparison-v2/pmrw-long`; launch JSON and log `/tmp/dmop-bayes-pmrw10000-long.log`. Host identity verified live during startup. All4 checkpoints advanced beyond10500 with BITWISE-identical parent trace/info/step/time prefixes and unchanged frozen covariance/step; finite saved states. pmrw-long-startup-verification.json records checks. Startup monitor21914 completed0; no live monitor remains at this entry.
+- README navigation now points to both30,000-draw reference continuations and the separate1500-iteration historical-proposal control. Next immediate review is control3609096 completion1500 (new comparison command in historical-mh/README.md), then posterior references at30000retained, widerprior10000retained, NUTS500retained following500warm. All other running PIDs unchanged; previous primary3137405 terminal complete. No ms/SI edits or push; goal active, publication hold persists.
+
 ## October 16: primary J10000 PMMH complete and reviewed
 
 - Monitor71308 completed0 at primary10500total. PID3137405 verified terminal; all4 complete finite checkpoints and hashes saved in pmrw-completion-verification.json. Report83190 completed0, `gpu-comparison-v2/review-pmrw-10000` freezes10000retained/chain. All18 traces/marginals plus trend panels visually inspected: chain3 has a late beta1/2/3 excursion (beta3 near-7), unequal seasonal tails and remaining immigration-tail differences. Layouts sound; not converged.

@@ -166,9 +166,10 @@ The current batches each contain `chain0` through `chain3`:
 | Purpose | Batch directory under `results/` |
 |---|---|
 | Primary NUTS | `gpu-forward-nuts-v2/nuts` |
-| Primary PMMH | `gpu-comparison-v2/pmrw` |
+| Primary PMMH | `gpu-comparison-v2/pmrw-long` |
 | PMMH with 5,000 particles | `gpu-comparison-v1/pmrw-long` |
 | PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw` |
+| Fixed historical-proposal control | `historical-proposal-control-v1/pmrw` |
 
 Primary NUTS and PMMH use the same starts, proper prior and 10,000-particle
 likelihood. NUTS uses
@@ -184,6 +185,13 @@ records identify the retired processes. Include the covariance pilot,
 tuning screens and retired warmups in setup costs. Convergence is still
 unverified.
 
+Primary PMMH completed 10,000 retained draws per chain; its report in
+`gpu-comparison-v2/review-pmrw-10000` still shows disagreement in seasonal
+coefficients and incomplete tail exploration. The same chains continue to
+30,000 retained draws in `gpu-comparison-v2/pmrw-long`, preserving the target,
+random state and frozen tuning. The extension includes the entire original
+`pmrw` trace; report the latest continuation without pooling overlapping files.
+
 The earlier 5,000-particle PMMH run continues under
 `results/gpu-comparison-v1/pmrw-long` for a particle-count check. The completed
 10,000-draw report is in `gpu-comparison-v1/review-pmrw-10000`; it did not
@@ -198,6 +206,15 @@ It doubles the normal prior's standard deviations while keeping its centers
 and the likelihood fixed. It started after the initial 10,000-draw
 5,000-particle PMMH continuation finished. See its protocol, launch record
 and README for settings and review steps. Prior sensitivity remains unverified.
+
+The historical-proposal control uses the current primary starts and target
+with the original fixed diagonal proposal for 1,500 iterations. Its purpose
+is to investigate the drift in the original SI traces. It changes proposal
+choice and adaptation, while retaining the common prior and untempered
+likelihood. The original traces and available sampling source are archived
+in [historical-mh](../historical-mh/README.md); that directory also documents
+the missing information that prevents an exact fresh replay. The finite-length
+comparison is separate from the longer posterior-reference runs.
 
 The CPU runs in `results/candidate-nuts-4chain-v1` and
 `results/sampling-recovery-v1` were retired after validating the GPU starts;
