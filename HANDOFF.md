@@ -2,6 +2,8 @@
 
 ## October 16: wider-prior 30,000-draw review
 
+- Read-only monitor67698 LIVE (40polls/50s), following NUTS3476536 and new widerprior695522 only. Poll0 host-verifies original identities live: NUTS1115total, widerprior30600total. Stops at terminal/completion or NUTS1500total. Startup verification committedffbd53183. Resume67698; no sampler/manuscript changes and publication hold persists.
+
 - Continuation LAUNCHED under39a7d072f: PID695522/create1792165456.58, GPU1, `prior-sensitivity-gpu-v1/pmrw-60000`, log `/tmp/dmop-bayes-prior-60000.log`. Startup observer19339 completed0, both original NUTS and new continuation identities live (NUTS1114total, prior30550total). `pmrw-60000-startup-verification.json` confirms exact30500-row prefixes, unchanged covariance/step, finite new states and cached-likelihood check. New launch record saved. No live monitor remains; next monitoring must use695522, excluding completed4082486. Next reviews: NUTS1500total, prior60500total. Do not pool parent and continuation prefixes.
 
 - Monitor96556 ended0 at poll27: widerprior4082486 terminal,30500total,complete=true; NUTS3476536 still live at1108total. Report15148 and sensitivity99203 completed0. All4 completed checkpoints finite with fixed retained steps; 144 negative-infinite log acceptance ratios (67/37/22/18) occur only on rejected proposals with unchanged states. `pmrw-long-completion-verification.json` saves checkpoint/completion hashes.
