@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: forward force benchmark gives a promising cost reduction
+
+- New results/forward-force-check-v1, protocol f92e8c0db, evaluates differentiation only. CPU G20/batch2 and GPU G1000/batch4 checks passed. Scalar objectives identical, scaled maximum force difference1.56e-6 on GPU (threshold1e-4), repeated force/value evaluations bitwise identical under both optimized deterministic flags.
+- Direct isolated model-copy forward AD median1.070s vsreverse4.688s per force batch. More useful WRAPPED candidate (commit4939f6d99) applies jacfwd to the scalar projection of the existing value_force function: median1.008s vsreverse4.595s. It needs NO model.py change. Full gradients differ slightly due tofloat32 rounding; do not claim bitwise equality across AD modes.
+- GPU benchmark3228541/create1792112770.67 and wrapped3234591/create1792112947.65 both verified terminal/absent with complete results. Production3137251/3137405/3143786 revalidated live and unchanged. No production integration or restart yet.
+- NEXT: extract/test a forward_value_force wrapper, benchmark complete NUTS updates and verify exact interrupted-batch replay using the wrapper. Then consider an explicit new NUTS configuration. Preserve model.py byte-for-byte so target hashes and prior/particle comparisons remain valid. Optional runner/continuation configuration must record force mode, with old snapshots defaulting toreverse. The prepared wider-prior protocol hashes runner source; refresh its source hashes transparently if integration changes runner files before its launch.
+- Current force check costs are under shared GPU load, not controlled sampler speedup/ESS evidence. Keep primary PMMH sampling and prior/particle checks. Main/SI unchanged; goal active.
+
 ## October 15: first J10000 PMMH report inspected
 
 - Monitored the same three verified host processes until primary PMMH reached1500 total. Monitor session25235 terminal0; sampler processes remain live. Last monitor: NUTS18 warmup, J10000 PMMH1000 retained, J5000 continuation3513 retained per chain.
