@@ -1,5 +1,9 @@
 # Handoff
 
+## October 16: monitor resumed after primary continuation
+
+- Read-only monitor9675 LIVE, now follows new primary3680785 and the other four unchanged samplers. Poll0 revalidated all PID/create-time/commands: NUTS155warm, primarylong10525total, J5000long13800total, widerprior3100total, historical-proposal control1075/1500. Stops at any terminal/completed job, NUTS1000total, or40polls/50s. Next likely substantive review is control completion; generate its three-row comparison and inspect all18 traces, preserving distinct targets when discussing archived MH. Prior review/extension was progress; this turn is a verified wait. No configuration or manuscript changes; publication hold persists.
+
 ## October 16: primary PMMH continuation verified live
 
 - New primary PMMH continuation3680785/create1792126631.34 runs onGPU1 under1e2549a1f, `gpu-comparison-v2/pmrw-long`; launch JSON and log `/tmp/dmop-bayes-pmrw10000-long.log`. Host identity verified live during startup. All4 checkpoints advanced beyond10500 with BITWISE-identical parent trace/info/step/time prefixes and unchanged frozen covariance/step; finite saved states. pmrw-long-startup-verification.json records checks. Startup monitor21914 completed0; no live monitor remains at this entry.
