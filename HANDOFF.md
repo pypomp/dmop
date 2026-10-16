@@ -1,5 +1,26 @@
 # Handoff
 
+## October 16: GitHub/Overleaf sync diagnosis
+
+- User asked why Overleaf cannot sync. Fetched origin/main, now
+  f7cef632150ec9aee5baaae0696e85fb174a3641 (merge of the Overleaf conflict
+  branch). No merge into local main and no push. Remote additions include
+  `Revise Lemma S7`, changes to ms.tex/si.tex, and HANDOFF notes. Preserve
+  these edits when integrating the Bayesian results; inspect the current
+  remote again before merging or publication. Publication hold persists.
+- Current remote tree:6028 files,123.415671 MB. Local HEAD:7135 files,
+  about234.7 MB. Overleaf documents a2000-file project limit,7 MB editable
+  material limit, and recommends under100 MB for GitHub sync. Remote counts:
+  code/benchmarks/results2707,code/bayesian/corrected2114,ditlevsen863.
+  File count is a confirmed incompatibility; the user has not yet supplied
+  the specific Overleaf error. Asked via async clarification. No cleanup,
+  archival, project relinking, or deletion performed. Potential remedy is
+  to archive bulk results and repeated source snapshots while preserving
+  runnable code, summaries and manuscript assets individually.
+- Observer90893 remains active. Poll48 verified original sampler identities
+  live at NUTS1562total and widerprior50225total. Both runs unchanged; next
+  full reviews remain NUTS2500total and widerprior60500total.
+
 ## October 16: NUTS 1,000-draw review completed
 
 - Observer23545 reached the review point and exited normally. New observer
