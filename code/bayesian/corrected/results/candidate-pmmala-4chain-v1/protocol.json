@@ -1,0 +1,47 @@
+{
+  "purpose": "Four independent candidate posterior chains; promote only after diagnostic gates and sensitivity checks",
+  "method": "pmmala",
+  "particles": 5000,
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "seeds": [
+    2026102300,
+    2026102301,
+    2026102302,
+    2026102303
+  ],
+  "initialization": "Library default plus independent N(0,.12^2 I) jitter on standardized estimation coordinates; 400 gradient optimization updates",
+  "optimize": 400,
+  "optimize_particles": 1000,
+  "warmup": 1000,
+  "draws": 3000,
+  "initial_step_size": 0.5,
+  "max_step_size": 2.0,
+  "initial_metric": "../score-metric-j1000/chol.npy",
+  "metric_sha256": "65ef481dd2e652830ec4243bf2c4ebc126839fbcdcc1a6340e43282f7340420b",
+  "adaptation": "Step size during warmup only; covariance updates at400,600,800 from warmup draws, regularized and preserving initial trace; both frozen for retained sampling",
+  "gates": {
+    "rank_split_rhat_max": 1.01,
+    "bulk_ess_min": 400,
+    "tail_ess_min": 400,
+    "coordinates": 18,
+    "independent_chains": 4
+  },
+  "remaining_checks": [
+    "visual inspection of all traces/marginals",
+    "same-target random-walk comparison",
+    "double prior SD sensitivity",
+    "double-particle check"
+  ],
+  "source_sha256": {
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "extend.py": "7941cd98b083e29f7cf35ccde10347d2c1c52999bb02b83db5ca1e900becdcc5",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "dd15e38dab3439263e0126dac3ca7fbb61f63545efd87c47f12cd3808c002418",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "3e8aecbaa4ee6bd25263c164c8337e812780b7b6f9c009b72958f72b051a039e",
+    "report.py": "af69d32c4cede066240d5ed5be9d066a42072f209800249e6e5cd39ecd02a1b3",
+    "run.py": "c25e7bcc5964cd6c7a858a50b3c6fcaa823355a92cbec656461513972b0b5ca1",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "initial_check_passed": false,
+  "failed_stage": "standalone force check before any resumed transition",
+  "maximum_force_differences": [
+    0.00033569,
+    0.00154877,
+    0.00183105,
+    0.00195312
+  ],
+  "previous_force_allowances": [
+    0.00234358,
+    0.00086196,
+    0.00233603,
+    0.00787938
+  ],
+  "target_check_passed": true,
+  "next": "Use64 float32 eps times maximum force magnitude as an empirical cache check, preserve cache unchanged, require exact equality of every replayed numerical array. Reuse the saved reference and partial-save fixture; rerun continuation only."
+}

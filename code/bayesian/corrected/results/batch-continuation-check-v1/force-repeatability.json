@@ -1,0 +1,20 @@
+{
+  "devices": [
+    "cuda:0"
+  ],
+  "repetitions": 5,
+  "maximum_force_range_by_chain": [
+    0.0020751953125,
+    0.002422332763671875,
+    0.002685546875,
+    0.0035400390625
+  ],
+  "maximum_likelihood_range_by_chain": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "force_bitwise_repeatable": false,
+  "likelihood_bitwise_repeatable": true
+}
