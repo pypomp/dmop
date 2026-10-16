@@ -1,5 +1,17 @@
 # Handoff
 
+## October 16: current sampler monitor
+
+- Observer4232 completed normally at its 40-poll limit, with both original
+  sampler identities live (NUTS1212total, widerprior34875total).
+- New read-only observer26162 is live (40 polls, 50 seconds apart). Poll0
+  revalidates NUTS3476536/create1792120402.49 and
+  widerprior695522/create1792165456.58, at1212total and34900total respectively.
+  Resume26162. It stops on termination/completion or NUTS1500total.
+- Recent turns were verified waits. No sampler, manuscript or publication
+  changes. Next full reviews remain NUTS1500total and widerprior60500total;
+  publication hold persists.
+
 ## October 16: renewed sampler monitor
 
 - Observer67698 completed normally at its 40-poll limit. Final poll39 showed
