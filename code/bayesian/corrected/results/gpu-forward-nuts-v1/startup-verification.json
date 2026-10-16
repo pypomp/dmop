@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": "All four chains finite, zero divergences, identical model source/target/prior/starts/covariance to J10000 PMMH; recorded forward mode and frozen source hashes verified",
+  "chains": [
+    {
+      "chain": 0,
+      "iterations": 1,
+      "divergences": 0,
+      "checkpoint_sha256": "c3274971d70ca5d3053550a98590631e787da14d07f9158bee286dc16098a819",
+      "first_batch_seconds": 88.574460437987
+    },
+    {
+      "chain": 1,
+      "iterations": 1,
+      "divergences": 0,
+      "checkpoint_sha256": "f0b0e915e4fc441eb055a5b64d1514e84230f0eadf45b2d254d840f80b05bdc5",
+      "first_batch_seconds": 88.574460437987
+    },
+    {
+      "chain": 2,
+      "iterations": 1,
+      "divergences": 0,
+      "checkpoint_sha256": "5710c7f804500fe7cc360adda63e5a50f4f0361541eb39445886ce529ad84b6a",
+      "first_batch_seconds": 88.574460437987
+    },
+    {
+      "chain": 3,
+      "iterations": 1,
+      "divergences": 0,
+      "checkpoint_sha256": "5ee2b75c47c9b161d8492f7f2e574c4d361131779e62ef11f46724a6f2dcd508",
+      "first_batch_seconds": 88.574460437987
+    }
+  ]
+}

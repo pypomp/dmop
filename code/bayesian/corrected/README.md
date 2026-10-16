@@ -7,7 +7,8 @@ figures remain unchanged until replacement runs have passed their checks.
 
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
-See `results/gpu-comparison-v2/protocol.json` for the current GPU comparison.
+The current NUTS configuration is in `results/gpu-forward-nuts-v1`; its
+PMMH counterpart continues in `results/gpu-comparison-v2`.
 
 ## Target and model
 
@@ -148,10 +149,14 @@ MH. Joint particle MALA and fixed-length HMC remain development trials. The join
 proposal refreshes parameters and randomness together, with its reverse
 proposal density in the acceptance ratio. See METHOD.md for each kernel.
 
-The current batches are in `results/gpu-comparison-v2/nuts/chain{0,1,2,3}`
+The current batches are in `results/gpu-forward-nuts-v1/nuts/chain{0,1,2,3}`
 and `results/gpu-comparison-v2/pmrw/chain{0,1,2,3}`. They use the same starts,
 proposal covariance, proper prior and 10,000-particle likelihood. NUTS uses
-a 1,000-particle float32 force with deterministic GPU execution. Their
+a 1,000-particle float32 force with forward differentiation and deterministic
+GPU execution. `force_modes.py` differentiates the scalar objective supplied
+by the unchanged model. `--force-mode` is saved with every new run, and
+continuation restores it from the parent's frozen source. The earlier
+reverse-mode warmup is preserved in `gpu-comparison-v2/nuts`. Their
 directories link the preparation, noise and cost records. Both batches have
 saved finite initial checkpoints; convergence is still unverified.
 

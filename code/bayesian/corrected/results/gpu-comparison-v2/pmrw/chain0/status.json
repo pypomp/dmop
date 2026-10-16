@@ -1,13 +1,13 @@
 {
-  "iteration": 400,
+  "iteration": 2500,
   "warmup": 500,
   "total": 10500,
   "complete": false,
-  "phase": "warmup",
-  "seconds": 669.0299811129807,
+  "phase": "sampling",
+  "seconds": 4209.122939377994,
   "batch_initialize_seconds": 4.554869760002475,
-  "loglik": -3754.2527969533808,
-  "step_size": 0.6846949492312747,
+  "loglik": -3756.623820928246,
+  "step_size": 0.7455973825775967,
   "parameter_acceptance_recent": 0.32,
   "randomness_acceptance_recent": 0.32
 }

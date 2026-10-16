@@ -1,5 +1,13 @@
 # Handoff
 
+## October 15: validated forward NUTS is now the live primary run
+
+- LIVE new NUTS3262256/create1792113782.16/GPU0 at results/gpu-forward-nuts-v1/nuts. Launched under e1f25c604 with same target/prior/starts/covariance, J10000/G1000float32forward, both deterministic flags,500warm+2000draws/depth5/freshseeds2026111000--03. Log /tmp/dmop-bayes-gpu-forward-nuts-v1.log. Revalidate host identity; do not duplicate.
+- All four first checkpoints finite/zero divergences; startup-verification.json checks target/model hash, priors, starts, covariance and frozen source. First update88.57s includingcompile with oldNUTS still sharingGPU0. Full newproduction throughput pending; no controlledspeedupclaim.
+- OLD NUTS3137251 verified and terminated at29warm updates. results/gpu-comparison-v2/nuts/termination.json records identity, terminal verification and checkpoint hashes. Do not restart it. Both PMMH jobs remain unchanged:3137405 J10000 in gpu-comparison-v2/pmrw and3143786 J5000 in gpu-comparison-v1/pmrw-continued.
+- Full forward kernel benchmark3244703 and replay3251125 verified terminal/complete. CPU/GPU exact partial-save recovery passed,16tests passed. Model.py unchanged. Prior-sensitivity source hashes refreshed for optional runner changes, settings/seeds unchanged.
+- Next: monitor forwardNUTS; review its movement/forced-depth fraction at50warm updates. Review J10000 PMMH at5000retained (last seen1900). Launch prepared wider-prior PMMH after J5000 completion. Convergence/prior/particle checks, controlled cost and final manuscript figures remain pending. Goal active; no ms/SI edits.
+
 ## October 15: forward mode validated for full NUTS and recovery
 
 - force_modes.py implements a scalar-projection jacfwd wrapper. run.py/batch.py/device_check.py accept --force-mode forward (defaultreverse); continuation drivers restore the recorded mode from frozen source and reject mixed batch modes. model.py remains byte-identical (c4804a1b44da...). Generic float32-objective test caught a gradient dtype mismatch; explicit cast to parameter dtype fixes it. All16 relevant tests pass.

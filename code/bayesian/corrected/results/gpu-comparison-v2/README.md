@@ -1,6 +1,12 @@
 # Deterministic GPU comparison
 
-This is the primary NUTS and PMMH comparison. Both methods use 10,000 particles
+The PMMH run here remains part of the primary comparison. NUTS now runs in
+[`../gpu-forward-nuts-v1`](../gpu-forward-nuts-v1), using a validated forward
+derivative of the same proposal objective. The reverse-mode NUTS warmup here
+was retired at 29 updates after the new run passed its startup checks; see
+`nuts/termination.json`. Preserve its cost and checkpoints.
+
+Both methods use 10,000 particles
 for the untempered likelihood and the same common proper prior. NUTS uses
 1,000 particles for its float32 proposal force; likelihoods remain float64.
 The two deterministic XLA flags are recorded in `protocol.json` and each run.

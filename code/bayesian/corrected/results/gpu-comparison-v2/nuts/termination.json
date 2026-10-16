@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-16T01:25:23.532247+00:00",
+  "pid": 3137251,
+  "create_time": 1792109818.16,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/batch.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v2/nuts",
+    "--method",
+    "nuts",
+    "--initials",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial0.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial1.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial2.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial3.npy",
+    "--metrics",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "--seeds",
+    "2026110600",
+    "2026110601",
+    "2026110602",
+    "2026110603",
+    "--particles",
+    "10000",
+    "--force-particles",
+    "1000",
+    "--force-precision",
+    "float32",
+    "--alpha",
+    "0.95",
+    "--prior-scale",
+    "1.0",
+    "--warmup",
+    "500",
+    "--draws",
+    "2000",
+    "--step-size",
+    "0.03",
+    "--max-depth",
+    "5",
+    "--checkpoint",
+    "1",
+    "--fixed-metric"
+  ],
+  "verified_terminal": true,
+  "reason": "Retired reverse-mode warmup after validated forward-mode NUTS saved finite checkpoints for all four chains on the identical target. Preserve all warmup and preparation cost.",
+  "replacement": "../../gpu-forward-nuts-v1/nuts",
+  "checkpoints": [
+    {
+      "chain": 0,
+      "iterations": 29,
+      "checkpoint_sha256": "ffe903116e3e8a815e5df6a2482032f189abff25e2037620dc81f8c9b81ac3aa"
+    },
+    {
+      "chain": 1,
+      "iterations": 29,
+      "checkpoint_sha256": "f2b3d735054b758fe1e87e9be7c5815daab55488a1d106417629a84aca04d57a"
+    },
+    {
+      "chain": 2,
+      "iterations": 29,
+      "checkpoint_sha256": "6232cf3d8270b0a85d520cce7457240e3874f788638178f870fde1781b8c2b96"
+    },
+    {
+      "chain": 3,
+      "iterations": 29,
+      "checkpoint_sha256": "89ed70745e3a116de09aefe86f30cbcf14ee07412ad3e3ca699eef392b60b541"
+    }
+  ]
+}
