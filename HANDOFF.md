@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: first J10000 PMMH report inspected
+
+- Monitored the same three verified host processes until primary PMMH reached1500 total. Monitor session25235 terminal0; sampler processes remain live. Last monitor: NUTS18 warmup, J10000 PMMH1000 retained, J5000 continuation3513 retained per chain.
+- gpu-comparison-v2/review-pmrw-first1000 freezes exactly1000 retained draws/chain. All18 trace/marginal panels and four trend panels visually inspected. Rhat1.094--1.722, min bulkESS6.58; seasonal beta1--3 and omega4 especially poor, omega6 lower tail explored unevenly. Trend Rhat1.179/ESS16.3. Acceptance.162/.285/.188/.176. No convergence.
+- Preserve and continue the planned frozen run; next PMMH review around5000 retained or earlier numerical failure. Do not compare this1000-draw snapshot causally with longerJ5000 snapshots. More particles have not removed slow exploration, but this is not evidence they worsen it.
+- NUTS review remains scheduled at50 warmup updates for depth-cap/movement assessment. Wider-prior study remains prepared/unlaunched untilJ5000 finishes. No manuscript or sampler changes. Goal active.
+
 ## October 15: NUTS early adaptation inspected
 
 - Live NUTS3137251 verified by host PID/create time/command. At11 saved warmup updates all chains had zero divergences but every trajectory hit depth5 with31 integration steps and no U-turn. Step adaptation is active (next steps roughly.029--.040); recent batch cost~135s. early-warmup-review.json freezes checkpoint hashes and summaries.
