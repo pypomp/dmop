@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: live sampling revalidated after proposal explanation
+
+- Host checks confirmed all four original PID/create-time/command identities live and advancing across a 50-second observation: NUTS330/500 warmup, primary J10000 PMMH14725total, J5000 PMMH18350total, doubled-prior PMMH7325total. Read-only observation session26041 completed0. No sampler restarted or changed; this turn is a verified wait after answering the proposal question.
+- Next substantive reviews remain doubled-prior10500total, NUTS1000total (500retained), and reference PMMH30500total. The new runs already replace the empirical KDE with a proper Gaussian reference prior; independence of posterior conclusions from its width remains unverified. No manuscript changes or push; publication hold and active goal persist.
+
 ## October 16: historical-proposal control complete and reviewed
 
 - Monitor61842 ended143 afterpoll34. Direct host recheck confirmed all four original PID/create-time/command identities still live; NUTS322warm,primary14525total,J500018150total,widerprior7125total. No live monitor remains. Monitor termination did not stop samplers; do not restart them. Recent turns are verified waits, unchanged settings/next review thresholds/publication hold.
