@@ -2204,11 +2204,11 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     \label{lem:posterior-proper-weights}
     Suppose that $\{(X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
     Also suppose that $(X^{\prime J}_j,U^{\prime J}_j) = \big(X_j^J,U_j^J \, f_{Z|X}(z^*|X_j^J)\big)$. 
-    Then, if $U_j^J \, f_{Z|X}(z^*|X_j^J)$ and $U_j^J \, f_{Z|X}(z^*|X_j^J) \big/ f_Z(z^*)$ are bounded, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
+    Then, if $x\mapsto f_{Z|X}(z^*|x)$ is bounded and $0<f_Z(z^*)<\infty$, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
 \end{lem}
 
 \begin{proof}[Proof.]
-    Again, we want to show that
+    Again, we want to show that, for any measurable bounded $h$,
      \begin{equation}
      \frac{\sum_j h(X_j^J) \cdot U_j^J \cdot f_{Z|X}(z^*|X_j^J)}{\sum_j U_j^J \cdot f_{Z|X}(z^*|X_j^J)} \stackrel{a.s.}{\to} \E_{f_{X|Z}}\big[h(X)\big|z^*\big].
      \end{equation}
@@ -2222,11 +2222,12 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J)\,  {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}
     \times \left( \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \right)^{-1}.
     \end{equation}
+    The functions $x\mapsto f_{Z|X}(z^*|x)$ and $x\mapsto h(x)f_{Z|X}(z^*|x)$ are bounded.
     We will apply Equation (\ref{eq:lemma-posterior-hypothesis}) to the numerator and the denominator in the ratio above individually. The numerator converges to 
     \begin{equation}
-    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {u}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
+    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
     \end{equation}
-    while the reciprocal of the denominator converges to 
+    while the denominator converges to
     \begin{equation} 
     \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}  \stackrel{a.s.}{\to} \E_{f_X}\big[f_{Z|X}(z^*|X)\big] = f_Z(z^*).
     \end{equation}
@@ -2253,6 +2254,8 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     % where we can swap the limit and expectations with the bounded convergence theorem.
 \end{proof}
 
+
+\noindent\textbf{Remark.} In the MOP application, the boundedness and positivity conditions in Lemma~\ref{lem:posterior-proper-weights} follow from Assumption~\refAssumpBoundedMeasurement.
 
 % \begin{lem}[Change of Particle Marginal Measure]
 %     \label{lem:change-marginal-proper-weights}

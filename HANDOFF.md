@@ -1,5 +1,25 @@
 # Handoff
 
+## October 15: integrate the approved Lemma S7 revision
+
+- Fast-forwarded the clean checkout to `99370c9a6` before editing; the S7
+  statement and the corresponding main-text proof were unchanged from the
+  version used for the approved note.
+- In `si.tex`, replaced the bounds on weighted likelihood products with a
+  bounded measurement density and a positive finite normalizer. Retained
+  the original ratio argument and equation numbering, stated why its two
+  test functions are bounded, corrected the lowercase weight and denominator
+  wording, and added the approved remark referring to (A3).
+- In `ms.tex`, added the approved sentence explaining that (A3) supplies
+  the conditions for Lemma S7. A local line-breaking allowance avoids a new
+  overfull line. All additions are black; other manuscript content is unchanged.
+- Baseline and revised main/SI compile to 23/92 pages. All label numbers
+  match, with no undefined references or citations and no new compiler
+  warnings. Inspected main page 16 and SI pages S18--S19. Verification and
+  baseline builds are in `tmp/pdfs/dmop_s7_20261015` in the parent workspace;
+  final PDFs are `output/pdf/dmop_main.pdf` and `output/pdf/dmop_si.pdf` there.
+- Author approved the revision for publication on `main`.
+
 ## October 15: validated forward NUTS is now the live primary run
 
 - LIVE new NUTS3262256/create1792113782.16/GPU0 at results/gpu-forward-nuts-v1/nuts. Launched under e1f25c604 with same target/prior/starts/covariance, J10000/G1000float32forward, both deterministic flags,500warm+2000draws/depth5/freshseeds2026111000--03. Log /tmp/dmop-bayes-gpu-forward-nuts-v1.log. Revalidate host identity; do not duplicate.
