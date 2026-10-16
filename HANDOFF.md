@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: wider-prior 30,000-draw review
+
+- Monitor96556 ended0 at poll27: widerprior4082486 terminal,30500total,complete=true; NUTS3476536 still live at1108total. Report15148 and sensitivity99203 completed0. All4 completed checkpoints finite with fixed retained steps; 144 negative-infinite log acceptance ratios (67/37/22/18) occur only on rejected proposals with unchanged states. `pmrw-long-completion-verification.json` saves checkpoint/completion hashes.
+- `prior-sensitivity-gpu-v1/review-pmrw-30000` freezes30000retained per chain, draws SHA3fb5e57085a5b5d066f61210a91b17c314a322840b7c5a359e0375f7b0dcf73a. All18 traces/marginals, trend panels and `comparison-30000/marginals.png` visually inspected. Trendmean-.407636,SD.115519,95%[-.643575,-.193207],Rhat1.01951,bulkESS257.49,tail877.37. Acceptance.16897/.15077/.25363/.27950. WorstRhat1.14666/minbulk21.20 omega6; mintail97.35 omega1.
+- Equal-length prior comparison: trend mean changes+.012629 and SD ratio1.0309. Immigration SD ratios1.9783(omega1),1.8588(omega5),2.7764(omega6); omega6 mean changes-3.8533. Three chains explore long omega6 lower excursions, fourth remains near main peak; chain3 prolonged below-20, with correlated omega1/omega2 shifts. Omega5 lower tails broaden across all chains. Empirical KDE removed but prior influence is material; no prior-insensitivity claim, and precise tail changes remain uncertain from incomplete mixing.
+- PREPARED exact further30000-draw continuation to60000retained in `prior-sensitivity-gpu-v1/pmrw-60000`, protocol saves parent/driver hashes and load_parent validation passes (60500total). Purpose is visibly unequal tail occupancy, not diagnostic thresholds alone. Commit prepared protocol/results, then launch onGPU1 and verify prefixes/frozen tuning/finite new checkpoints. No live observer remains. NUTS unchanged; next NUTS review1500total. No manuscript edits or push; publication hold and full goal persist.
+
 ## October 16: first NUTS posterior comparison
 
 - Monitor19294 completed0 at its40-poll limit; both original sampler identities remained live. New read-only monitor96556 LIVE (40polls/50s), same terminal/completion/NUTS1500total stopping conditions. Poll0 host-verifies NUTS1075total and widerprior29025total. Widerprior completion30500total is the next expected full review. Resume96556; no sampler or manuscript changes, publication hold persists.
