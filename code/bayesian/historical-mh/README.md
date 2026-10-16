@@ -35,7 +35,7 @@ proposal; the plot does not isolate a prior effect or establish a speedup.
 Run from the repository root with NumPy, SciPy and Matplotlib installed:
 
 ```sh
-python code/bayesian/historical-mh/compare_traces.py
+python code/bayesian/historical-mh/compare_traces.py --output /tmp/mh-comparison
 ```
 
 The new control in
@@ -43,3 +43,17 @@ The new control in
 proposal scale without adaptation, keeping the current Pypomp likelihood,
 proper prior and initial states fixed. This tests the proposal difference;
 it does not recreate the missing historical KDE or reinstate tempering.
+
+After the control completes, add its row with:
+
+```sh
+python code/bayesian/historical-mh/compare_traces.py \
+  --control code/bayesian/corrected/results/historical-proposal-control-v1/pmrw \
+  --output code/bayesian/corrected/results/historical-proposal-control-v1/comparison
+```
+
+The script requires all 1,500 control iterations and checks that its target,
+starts and fixed proposal match the protocol. It refuses to overwrite an
+existing comparison. The vertical line marks the first500 iterations excluded
+from every density panel; the control itself has no adaptive warmup. Its
+comparison with current PMMH isolates proposal choice and adaptation together.

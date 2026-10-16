@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: fixed-length control comparison ready
+
+- Extended historical-mh/compare_traces.py with optional --control and --output. At control completion, render original/current/fixed-proposal rows on shared linear scales, all1500 iterations and densities501–1500. Validates common current/control target, starts, model, fixedSD.02 and completion; refuses existing output. Command in historical-mh/README.md. The resulting plot still needs visual inspection after real control completion.
+- Verified premature control review is rejected without creating output; default two-row numerical arrays reproduce frozen comparison exactly (report7712 terminal0). No sampler/core source change, tests or regenerated manuscript figures. Existing runs unchanged; next thresholds unchanged. Monitor44323 remains the original-four-job monitor; control3609096 separate. Publication hold persists.
+
 ## October 16: historical-proposal control live
 
 - Launched control3609096/create1792124393.61 onGPU1 underd5ae529f3. `historical-proposal-control-v1/launch.json` records command; log `/tmp/dmop-historical-proposal-control-v1.log`. Host PID/create-time/command verified live; startup monitor98636 completed0. All4 saved checkpoints finite, starts and target/prior/particle/model/Pypomp/flags match primary exactly, proposal remains zSD.02 and identity factor, no adaptation. startup-verification.json saved. Review at1500iterations; use iterations501–1500 for comparisons matching old plotting discard, despite no adaptation in this control. Do not conflate control with exact historical replay.
