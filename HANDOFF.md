@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: posterior-state likelihood noise check prepared
+
+- Current GPU production and deterministic benchmark remain live; benchmark3098070 had no timed update yet after~200s, verified process (not a failure). Keep monitoring it.
+- New noise_check.py evaluates fresh PF replicates in batches at saved states, preserving zero likelihood estimates and reporting fixed-parameter refresh acceptance only at the recorded particle count. No parameter proposals or sampling changes.
+- Frozen protocol/results/posterior-noise-check-v1 uses chain0 longest postwarmup plateau through1400, then chain0/1/3 states at1400. J5000 vs10000,32 independent replicates per point, batches16, GPU1. Inputs and source checkpoint hashes saved. Launch after committing protocol; not launched in this entry.
+- This diagnostic addresses lower PMMH chain0 acceptance. It does not certify posterior convergence or justify changing the target/prior. NUTS remains in warmup and PMMH continues retained sampling. Goal active.
+
 ## October 15: deterministic production-size benchmark live
 
 - LIVE detached benchmark PID3098070/create1792108682.20 onGPU1. Command/log in gpu-precision-check-v1/deterministic-mixed-batch4-launch.json; log /tmp/dmop-bayes-deterministic-mixed-batch4.log. Protocol a26dff2e9. Revalidate host process; do not duplicate.
