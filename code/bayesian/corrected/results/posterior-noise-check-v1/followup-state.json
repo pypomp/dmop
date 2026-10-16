@@ -1,0 +1,14 @@
+[
+  {
+    "task": "replay",
+    "command": [
+      "/home/kevin/anaconda3/envs/pypomp/bin/python",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/batch-continuation-check-v1/check.py",
+      "--output",
+      "/tmp/dmop-batch-continuation-gpu-optimized-v1"
+    ],
+    "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+    "start_utc": "2026-10-16T00:08:50.768025+00:00",
+    "complete": false
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-16T00:06:12.388243+00:00",
+  "pid": 3115959,
+  "create_time": 1792109171.44,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/device_check.py",
+    "--inputs",
+    "code/bayesian/corrected/results/gpu-precision-check-v1/inputs.npz",
+    "--output",
+    "code/bayesian/corrected/results/gpu-precision-check-v1/optimized-deterministic-batch4",
+    "--precision",
+    "float64",
+    "--force-precision",
+    "float32",
+    "--reps",
+    "1",
+    "--kernel-reps",
+    "3",
+    "--batch-size",
+    "4"
+  ],
+  "log": "/tmp/dmop-bayes-optimized-deterministic-batch4.log",
+  "gpu": 1,
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+}
