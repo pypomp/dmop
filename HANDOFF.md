@@ -2,6 +2,8 @@
 
 ## October 16: 5,000-particle PMMH 30,000-draw review
 
+- Monitor78305 ended normally at its40-poll observation limit. All THREE original sampler identities remained live and advancing. New read-only monitor10835 is LIVE (40polls/50s), with the same completion/terminal/NUTS1000total stopping conditions. Poll0 host-verifies NUTS837total, primary27525total, widerprior20025total. Recent turns were verified waits. No sampler settings or manuscript changes; publication hold persists. Resume10835; next full reviews remain NUTS1000total and primary/widerprior30500total.
+
 - Read-only monitor78305 is LIVE (40polls/50s), following only the THREE remaining samplers and stopping at completion/terminal process or NUTS1000total. Poll0 host-verifies original identities: NUTS3476536 at788total, primary3680785 at26125total, widerprior4082486 at18600total. J5000 is terminal complete, reviewed underb0e35f266. No sampler changes; next review thresholds and publication hold persist.
 
 - Monitor96068 completed0 at poll28 when J5000 continuation3505775 finished30500total. Host process-identity check confirms terminal; `gpu-comparison-v1/pmrw-long-completion-verification.json` hashes all4 completed checkpoints. All sampled states/loglikelihoods finite, retained steps fixed. Initial overstrict check of every info entry failed: 61 negative-infinite log acceptance ratios (50/4/3/4 by chain) occur only on rejected proposals; state unchanged in every case. Corrected verification records these explicitly; no sampler bug or restart.
