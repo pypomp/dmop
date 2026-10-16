@@ -2,7 +2,7 @@
 
 ## October 16: NUTS warmup complete
 
-- Read-only monitor5330 is LIVE (40polls/50s), stopping at terminal/completion or NUTS1000total. Poll1 host-revalidates all4 original PID/create-time/command identities live and advancing: NUTS652total (152retained), primary22725total, J500027000total, widerprior15200total. Previous15905 completed0. Verified wait; no sampler changes, next review thresholds unchanged, publication hold persists.
+- Read-only monitor5330 completed0 at its40-poll observation limit. Final poll39 host-verifies all4 original PID/create-time/command identities live and advancing: NUTS699total (199retained), primary23900total, J500028250total, widerprior16375total. No live monitor remains; the samplers continue unchanged. Recent continuation turns were verified waits. Next reviews remain NUTS1000total and PMMH30500total; publication hold persists.
 
 - Monitor15905 completed0 at its40-poll observation limit. Final poll39 verified all4sampler identities live and advancing: NUTS650total (150retained), primary22675total, J500026950total, widerprior15150total. No live monitor remains; sampling continues unchanged. Recent turns are verified waits. Next reviews remain NUTS1000total and allPMMH30500total. No manuscript or publication changes; goal active.
 
