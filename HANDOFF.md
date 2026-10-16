@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: tuned NUTS first50 warmup reviewed; retain configuration
+
+- Monitor36337 terminal0 at NUTS50warm/primaryPMMH8350total/J5000long11300total/prior825total, all four host identities live. Review6152 terminal0. `gpu-forward-nuts-v2/warmup-review-50` freezes exactly50updates and initial states; all18 movement panels visually inspected. No divergences, trajectory acceptance.595--.643, all200 trajectories depth5/31steps; medianbatch40.41s. Chains still separated and lower tails incompletely explored.
+- Descriptive RMS movement vs old50-update review is higher in beta2/beta3/omega5 by1.44/1.44/1.47; movement_comparison.csv/provenance include all18 and preserve identical unconvergedPMMH reference. Different seeds/states and warmup adaptation prevent a paired efficiency claim or confirmation of the threefold local screen result. Retain current settings; no restart.
+- Next NUTS review after500retained (1000total), following500warm. Existing primaryJ10000PMMH3137405 next review at10000retained completion; J5000long3505775 at30000retained; prior3500694 at10000retained. NUTS3476536 remains live onGPU0. No monitor remains live at this entry. No manuscript changes; prior/particle/method agreement and full convergence still outstanding. Publication hold persists; goal active.
+
 ## October 15: current experiment navigation updated
 
 - corrected/README.md now points to the four live batches, distinguishes the tuned NUTS covariance from PMMH, links the completed10,000-draw report and exact30,000-draw extension, and marks wider-prior sampling as running. No sampler/model/protocol changes.
