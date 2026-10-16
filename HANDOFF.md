@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: original MH drift recovered; proposal control prepared
+
+- User clarified that reproducing the original MH chain drift is part of the requested comparison. Do not substitute the HMC divergence diagnostic for this question or treat all-method convergence alone as the intended figure. Preserve long runs as posterior references; compare finite-budget behavior and explain changed settings. No tuning to force a visual outcome.
+- Recovered four original1500x21 `mh_eb` arrays from diffPomp8d2fa90 into `code/bayesian/historical-mh`, with hashes and historical notebook/model/filtering source. Original SI image SHA matches diffPomp HEAD. Original trend chain1 ends-1.218689; same-length original/current trace comparison generated and visually inspected. Original drift is real. All available cholera.ipynb history inspected: MH survives as a commented alternative, active cells save NUTS. Intended target divides objective and KDE logprior by600; proposal SD=range/100. Actual KDE clouds, initial states and tracing-time seeds absent, so exact fresh replay is not established. Earlier narrow NUTS archive did not cover these existing MH arrays.
+- PREPARED `historical-proposal-control-v1`: four chains, current primary starts/prior/untempered Pypomp target/J10000 unchanged, old fixed diagonal proposal (z SD.02), no adaptation,1500 iterations,seeds2026111600..03,GPU1. This isolates historical proposal versus tuned current proposal/adaptation, not the target/prior difference. Launcher validates source/input hashes and refuses overwrite. Commit then launch; verify finite checkpoints and identical current target/starts. Full posterior convergence is not expected in this short diagnostic and is not its success criterion.
+- Existing four production jobs left unchanged. Monitor44323 live at last check; pending functions cell569 needs resuming. No ms/SI changes or push; publication hold remains.
+
 ## October 16: remaining interim marginals and traces inspected
 
 - Inspected all18 marginal and trace panels in both J5000 and doubled-prior-SD `review-interim-20261016` reports. Layouts/linear scales are readable. J5000 retains chain3's late beta1/2/3 excursion and uneven omega4/5/6 tails. Wider-prior800-draw report shows substantial chain separation in gamma, beta1/2/3, omega4/6, including late chain1 movement; pooled trend resemblance does not demonstrate prior robustness. No new sampler change justified by these early plots; continue scheduled runs. These are frozen snapshots, not current chain lengths.

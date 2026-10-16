@@ -1,0 +1,91 @@
+{
+  "iteration_window": [
+    1,
+    1500
+  ],
+  "density_window": [
+    501,
+    1500
+  ],
+  "caveat": "Different targets, priors, initial states and proposals; no causal attribution or timing comparison.",
+  "current_checkpoint_sha256": {
+    "corrected/results/gpu-comparison-v2/pmrw/chain0/checkpoint.npz": "07507dfa6ce3513c88b1197f09ecbb3c01b10dbf254e50c44ec46fc8551e4e35",
+    "corrected/results/gpu-comparison-v2/pmrw/chain1/checkpoint.npz": "2b2607bc1bf182c846fcb08ffd281a8fea0c232f94979eb22570afad4af13544",
+    "corrected/results/gpu-comparison-v2/pmrw/chain2/checkpoint.npz": "f9315badeddb2f48163a3a2351e6e7a0de438e6b7082673075818e988fce2125",
+    "corrected/results/gpu-comparison-v2/pmrw/chain3/checkpoint.npz": "443c00de4015d02bf61dc083a86fedb1084130d23e337953fb2efcf4069ef768"
+  },
+  "rows": [
+    {
+      "run": "Archived MH",
+      "chain": 1,
+      "start": -0.45450690388679504,
+      "end": -1.2186890840530396,
+      "min": -1.2295135259628296,
+      "max": -0.23135767877101898,
+      "rms_jump": 0.009189117699861526
+    },
+    {
+      "run": "Archived MH",
+      "chain": 2,
+      "start": -0.46078234910964966,
+      "end": -0.039282429963350296,
+      "min": -0.46147897839546204,
+      "max": -0.039282429963350296,
+      "rms_jump": 0.009153745137155056
+    },
+    {
+      "run": "Archived MH",
+      "chain": 3,
+      "start": -0.4052741229534149,
+      "end": -0.451566606760025,
+      "min": -0.8603875041007996,
+      "max": -0.33807381987571716,
+      "rms_jump": 0.007798759266734123
+    },
+    {
+      "run": "Archived MH",
+      "chain": 4,
+      "start": -0.34535202383995056,
+      "end": -0.3094739615917206,
+      "min": -0.3742101490497589,
+      "max": -0.08577089756727219,
+      "rms_jump": 0.008395562879741192
+    },
+    {
+      "run": "Current PMMH",
+      "chain": 1,
+      "start": -0.4484294654702748,
+      "end": -0.5592736269654651,
+      "min": -0.5955772229328333,
+      "max": -0.13633410013526515,
+      "rms_jump": 0.0171879814507938
+    },
+    {
+      "run": "Current PMMH",
+      "chain": 2,
+      "start": -0.2781240644980987,
+      "end": -0.3656798121181617,
+      "min": -0.6970215723186375,
+      "max": -0.03434859483393882,
+      "rms_jump": 0.02029114847645214
+    },
+    {
+      "run": "Current PMMH",
+      "chain": 3,
+      "start": -0.48490309504847856,
+      "end": -0.3149054606020393,
+      "min": -0.6942617851872028,
+      "max": -0.06364452004748994,
+      "rms_jump": 0.017779151417449273
+    },
+    {
+      "run": "Current PMMH",
+      "chain": 4,
+      "start": -0.47659253168286775,
+      "end": -0.3622210654438968,
+      "min": -0.680192821203995,
+      "max": -0.2617117902065753,
+      "rms_jump": 0.01746121331558059
+    }
+  ]
+}
