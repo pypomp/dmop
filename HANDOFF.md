@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: covariance screen complete; replacement NUTS prepared
+
+- Monitor4583 terminal0 at screen completion; benchmark3428797 verified terminal. All19 records finite. Paired summary independently reproduced rate ratios. Covariance-only ratio.844[.622,1.278] misses screen; covariance+2x steps ratio3.013[1.696,6.128] passes all gates, acceptance.622/zero divergences. All18 coordinate point rates improve; bs3/omega5 ratios7.95/2.82. Individual intervals broad (epsilon/bs6/omega3 include loss); conditional six-trial evidence, not convergence or ESS/sec.
+- PREPARED `gpu-forward-nuts-v2`: same original four starts/target/prior/J10000/G1000float32forward/depth5; selected common covariance, initialstep.07 (geometric mean tested doubled steps.07092), fresh seeds2026111400..03,500warm+2000draws. Existing adaptation unchanged. Check-only verifies all input/source/screen hashes. Commit then launchGPU0; not launched at this entry.
+- Keep old NUTS3262256/create1792113782.16 until finite replacement checkpoint and source/target validation; then preserve retirement record and warmup. All pilot/retired warmup/screen/new warmup costs count. PMMH3137405 and3143786 unchanged/live (latest6725total and9688total); next reviews at10500total completion, then wider-prior launch after J5000 terminal. Publication hold remains, local commits only. Goal active.
+
 ## October 15: proposal covariance benchmark live
 
 - Followup: first compiled baseline transition finite (76.12s); timed trials underway. Added summarize.py for both candidate/base comparisons, paired-trial bootstrap intervals and per-coordinate losses; it refuses incomplete results. No paired conclusions yet. All four process identities revalidated live (NUTS111warm, primaryPMMH5425retained, J5000continuation8338retained). Run the summary only after complete.
