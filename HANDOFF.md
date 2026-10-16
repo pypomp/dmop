@@ -1,5 +1,9 @@
 # Handoff
 
+## October 16: verified wait after interim reports
+
+- Previous goal turn made progress: three frozen interim reports committed locally as3f284d4e5 and primary plots visually inspected. This turn is a verified wait. Monitor3767 ended143 afterpoll18; no live monitor remains. Rechecked all four host process identities after termination: all running and advancing, NUTS76warm, primaryPMMH9000total, J5000long12000total, widerprior1500total. The monitor ending did not terminate sampling; no restart or configuration change. Next reviews remain primaryPMMH10500total completion, NUTS1000total, J5000long30500total and widerprior10500total. Publication hold and active goal unchanged.
+
 ## October 16: user-requested interim posterior reports
 
 - Three frozen `review-interim-20261016` reports completed successfully: primary J10000 PMMH 8325 retained/chain (max Rhat1.0821, min bulkESS46.6), J5000 exact continuation11300 (1.0813,47.1), doubled-prior-SD J10000 study800 (1.8948,5.8). No run has all-parameter convergence; prior sensitivity remains too early to interpret. No overlapping continuation samples pooled.
