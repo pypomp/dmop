@@ -2,6 +2,8 @@
 
 ## October 16: first NUTS posterior comparison
 
+- Monitor19294 completed0 at its40-poll limit; both original sampler identities remained live. New read-only monitor96556 LIVE (40polls/50s), same terminal/completion/NUTS1500total stopping conditions. Poll0 host-verifies NUTS1075total and widerprior29025total. Widerprior completion30500total is the next expected full review. Resume96556; no sampler or manuscript changes, publication hold persists.
+
 - Monitor41525 ended143 after poll19. Direct host checks confirm both original sampler PID/create-time/command identities still live; no sampler restarted. New read-only monitor19294 LIVE (40polls/50s), same terminal/completion/NUTS1500total stop conditions. Poll0: NUTS1026total, widerprior26875total. Resume19294. Recent turns were verified waits; review2766dac90 and publication hold unchanged.
 
 - Monitor27515 ended0 at poll46 when NUTS reached1000total; both original samplers remained live. Report20620 and comparison91068 completed0. `gpu-forward-nuts-v2/review-nuts-500` freezes exactly500retained per chain; draws SHA1e84763115376714ee1c84c4a59d36349fde7151abb83aa5953dc22f6110c521. `review_snapshot.npz` freezes first1000 trace/info/step/time rows, hash e23f3070ff605603f92f4b7b7b3d9737c6f025a496aa458037c5d5b47f91793b. Posterior reconstruction matches exactly; sampled states/force norms finite and retained steps fixed.
