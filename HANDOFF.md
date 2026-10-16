@@ -1,5 +1,34 @@
 # Handoff
 
+## October 16: wider-prior 60,000-draw review completed
+
+- Observer90893 ended normally at poll239: wider-prior PID695522 no longer
+  live, all four chains complete at60500total. NUTS PID3476536/create1792120402.49
+  remained live at1798total. Replacement observer **70070** monitors only that
+  original NUTS identity, every50seconds, up to600polls or termination/completion.
+  Its first check was1799total. Resume70070; do not restart NUTS.
+- `prior-sensitivity-gpu-v1/review-pmrw-60000` freezes500warm+60000retained
+  per chain. All18 traces/marginals, trend panels and `comparison-60000`
+  were visually reviewed. Finite sampled/cached states, fixed retained steps,
+  exact parent30500-update prefix and unchanged proposal verified.320
+  negative infinite log acceptance ratios (132/104/49/35) occur only on
+  rejected proposals with unchanged saved states.
+- Worst R-hat1.073936, min bulk56.567054 and min tail95.001044 (omega6).
+  Trend mean-.405597, SD.115124, R-hat1.014588, bulk503.206980,
+  tail1692.670884, MCSE.005107. Omega6 tail below-20 occupies
+  9.3/10.3/25.5/0.9% of the four chains. Chain4 now visits the tail;
+  unequal occupancy and seasonal dependence remain. No joint-convergence claim.
+- Against primary J10000PMMH30000, trend mean shift+.014668 and SD ratio1.02738;
+  omega1/5/6 SD ratios1.81487/1.73080/2.48836. Empirical KDE removal is supported
+  as an implementation change; this does not establish prior insensitivity.
+  No further sensitivity continuation scheduled. Keep primary NUTS endpoint
+  at2500total, then review the full method comparison before manuscript edits.
+- Draws SHA1fa0fb32c88c07285ec9bcdba1d61d9992f43090380b6a686770bc84a3085749;
+  snapshot SHA43e9657718c12fe46a4790148981f003c60309af6a430dd748a8d0d553d6fc42.
+  Report and comparison completed without errors; parent draws match exactly.
+  No sampler changes or manuscript edits. Publication hold persists; remote
+  Overleaf/LemmaS7 changes below still need preservation when integrating.
+
 ## October 16: GitHub/Overleaf sync diagnosis
 
 - User asked why Overleaf cannot sync. Fetched origin/main, now
