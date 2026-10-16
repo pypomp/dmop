@@ -1,0 +1,12 @@
+{
+  "purpose": "Continue the J5000 PMMH particle-count check with less checkpoint I/O",
+  "parent": "pmrw",
+  "output": "pmrw-continued",
+  "checkpoint": 25,
+  "original_warmup": 500,
+  "original_total_iterations": 10500,
+  "changes": "Only save frequency and continuation driver. Preserve every parent draw, cached state, tuning, RNG and original batch shape. No new burn-in or additional draws.",
+  "xla_flags": "",
+  "gpu": 1,
+  "verification": "Verify parent PID/create time and terminal state before recovery. Validate cached likelihoods/zero forces with frozen parent source. Check exact copied prefixes and first resumed checkpoints."
+}
