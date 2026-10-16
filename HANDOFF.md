@@ -1,5 +1,23 @@
 # Handoff
 
+## October 16: proposal documentation and manuscript check
+
+- Expanded `code/bayesian/corrected/METHOD.md` with the actual PMMH proposal,
+  acceptance ratio, pilot covariance construction and frozen tuning. Checked
+  against `kernels.py`, the shared-input manifest and adaptation code. The
+  PMMH kernel requires no derivatives; initialization and initial scaling in
+  this workflow did use gradients. No sampler settings changed.
+- Main-text Bayesian section and SI still describe the archived tempered,
+  chain-specific empirical-prior runs. Replacement must update both prose
+  and figures together: common proper prior, untempered extended target,
+  explicit random-state updates, actual retained lengths and all-parameter
+  diagnostics. Do not carry over the claim that the IF2 prior is needed.
+  Current evidence does not support a matched-target runtime speedup.
+- Observer67698 remains live; poll11 verifies both original sampler identities
+  advancing: NUTS1129total and widerprior31200total. Next review points remain
+  NUTS1500total and widerprior60500total. No manuscript edits or push; the
+  publication hold persists. Previous goal turn was a verified wait.
+
 ## October 16: wider-prior 30,000-draw review
 
 - Read-only monitor67698 LIVE (40polls/50s), following NUTS3476536 and new widerprior695522 only. Poll0 host-verifies original identities live: NUTS1115total, widerprior30600total. Stops at terminal/completion or NUTS1500total. Startup verification committedffbd53183. Resume67698; no sampler/manuscript changes and publication hold persists.

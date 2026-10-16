@@ -44,11 +44,42 @@ of [Nemeth, Sherlock and Fearnhead (2016)](https://arxiv.org/abs/1412.7299),
 with a MOP force in place of their score estimate. We make no claim that
 this replacement meets the assumptions of their scaling theorems.
 
+## Particle random-walk Metropolis (`pmrw`)
+
+The PMMH comparison proposes
+
+    z' = z + h B xi,    xi ~ Normal(0,I),    u' ~ m,
+
+independently, with B B^T = C. Its acceptance probability is
+
+    min(1, Lhat(z',u') p(z') / [Lhat(z,u) p(z)]).
+
+The Gaussian proposal is symmetric in z, and the seed-law terms cancel.
+On rejection, the parameters, random seed and cached likelihood estimate
+are retained together. The prior is specified in z coordinates; no
+parameter-transformation Jacobian is missing from this ratio.
+
+For the current comparison, C was estimated from iterations 501--1000 of
+four pilot PMMH chains. We used 0.99 times the sample covariance plus 0.01
+times its diagonal and a ridge of 1e-6 I, then normalized its trace to the
+initial score-based covariance. C stays fixed. The scalar h adapts toward
+acceptance probability 0.234 during 500 warmup iterations and then freezes.
+The [input manifest](results/gpu-comparison-v1/inputs/manifest.json) records
+the source draws, starting points and preparation costs. These pilot draws
+affect the proposal, not the prior or likelihood.
+
+The PMMH kernel requires process simulation and measurement-density
+evaluation, without process densities or parameter derivatives. However,
+the preparation used here includes gradient-based optimization and initial
+score-based scaling. Thus the kernel is plug-and-play in the POMP sense,
+whereas the complete workflow as run uses derivatives. IF2 initialization
+and derivative-free pilot scaling could remove that requirement; this is
+not a description of the present runs. Preparation costs belong in any
+computational comparison.
+
 ## Other pilot kernels
 
-`pmrw` is the same joint parameter/randomness update with a symmetric random
-walk and no force. It supplies a comparison with the same likelihood and
-prior. `mala` alternates an independent MH update of u at fixed z, followed
+`mala` alternates an independent MH update of u at fixed z, followed
 by MALA at fixed u, using both conditional proposal densities.
 
 `hmc` alternates the same u update with a fixed-length leapfrog trajectory
