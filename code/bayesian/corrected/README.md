@@ -66,6 +66,9 @@ where it remains informative; revise empirical claims only as needed.
 ## Running and reviewing
 
 - `preflight.py`: PF/MOP agreement, observation-floor effect, noise and timing.
+- `noise_check.py`: batched independent likelihood estimates at saved sampling
+  states, including a diagnostic for sticking caused by the retained filter
+  estimate. It compares particle counts without changing an ongoing chain.
 - `coupling.py`: paired likelihood estimates with optional endpoint sorting.
 - `kernels.py`: corrected proposal kernels; see [METHOD.md](METHOD.md).
 - `nuts.py`: BlackJAX NUTS with deterministic MOP forces, unscaled PF

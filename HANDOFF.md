@@ -1,5 +1,14 @@
 # Handoff
 
+## October 15: optimized deterministic timing and expanded noise check
+
+- Ordinary deterministic benchmark3098070 deliberately terminated after490s without a recorded NUTS update; termination.json verifies PID/create time and partial outputs. Do not resume it.
+- LIVE optimized benchmark3115959/create1792109171.44 onGPU1, flags --xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true. First initialization14.96s, compiled first15-step batch90.25s, next batches76.08/75.18s so far, finite/zero divergences. Check completion and third timing. Launch/log under gpu-precision-check-v1/optimized-deterministic-batch4-launch.json.
+- Initial posterior-noise job3112729 is terminal and complete. Plateau105 iterations at chain0 iteration827: J5000 loglik variance1.728, J10000 .302 (32 replicates); recorded likelihood1.441 above estimated logmean, fixed-theta refresh acceptance .168. This suggests noise contributes, not that it is the sole cause.
+- LIVE sequential followup parent3121299/create1792109329.80 onGPU0: first full optimized deterministic partial-save replay (/tmp/dmop-batch-continuation-gpu-optimized-v1), then128 replicates at the plateau for both J5000/J10000. Parent/source/tasks recorded under posterior-noise-check-v1/followup*.json and followup.py. Reference8-step run finished; resumed stage pending/in progress. Use parent process+children and task logs; do not duplicate.
+- Expanded128 includes original32 seeds; do not pool. Once complete run posterior-noise-check-v1/summarize.py for bootstrap diagnostic intervals. No production particle-count change yet.
+- All source/tests/protocols committed; noise summary tests2passed. Both production3052229(NUTS warmup) and3052372(PMMH sampling) remain unchanged. Goal active.
+
 ## October 15: posterior-state likelihood noise check prepared
 
 - Current GPU production and deterministic benchmark remain live; benchmark3098070 had no timed update yet after~200s, verified process (not a failure). Keep monitoring it.
