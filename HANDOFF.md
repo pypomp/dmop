@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: longer PMMH traces reviewed
+
+- Revalidated all three current host processes by PID, create time and command; they remain live. NUTS warmup unchanged.
+- New gpu-comparison-v1/review-pmrw-continued-20261015 freezes2338 retained draws per chain through2838. All18 traces/marginals and four trend panels visually inspected. Rhat1.033--1.235, min bulkESS12.7; no convergence. Trend is better mixed than the worst seasonal immigration coefficients.
+- omega5/omega6 show long lower tails and slow exploration; scrutinize them in the planned prior-scale comparison. Concentration relative to the current prior alone is not a sensitivity test. Keep current frozen runs going; do not restart from this interim review.
+- Report outputs/interpretation saved; no manuscript or production code change. Next review J10000 after retained sampling accumulates; convergence, prior/particle checks and final figures still pending.
+
 ## October 15: production identities revalidated and records saved
 
 - Host PID/create-time/command checks confirm all three current batches live: NUTS3137251, J10000 PMMH3137405, J5000 PMMH continuation3143786. At check they had 4,375,2788 total updates respectively. No restart or tuning change.
