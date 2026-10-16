@@ -1,5 +1,12 @@
 # Handoff
 
+## October 16: 5,000-particle PMMH 30,000-draw review
+
+- Monitor96068 completed0 at poll28 when J5000 continuation3505775 finished30500total. Host process-identity check confirms terminal; `gpu-comparison-v1/pmrw-long-completion-verification.json` hashes all4 completed checkpoints. All sampled states/loglikelihoods finite, retained steps fixed. Initial overstrict check of every info entry failed: 61 negative-infinite log acceptance ratios (50/4/3/4 by chain) occur only on rejected proposals; state unchanged in every case. Corrected verification records these explicitly; no sampler bug or restart.
+- Report13997 completed0, `gpu-comparison-v1/review-pmrw-30000` freezes30000retained/chain. All18 traces/marginals and trend panels visually inspected. Trend overlap improved: Rhat1.00749,bulkESS541.53,mean100beta=-.42331,SD.10634. Remaining seasonal/immigration differences: heavier chain3 beta3 lower tail, late chain1 omega6 excursion toward-20, unequal omega4/5 tails. WorstRhat1.04012(omega4),minbulk132.22/mintail112.82(omega6). No joint-convergence claim.
+- Keep completed J5000 as particle-count reference while primary J10000 and NUTS finish; assess particle sensitivity against completed primary before deciding whether J5000 needs further extension. Do not pool duplicated prefixes. README navigation updated. No manuscript edits or push; publication hold and full goal remain active.
+- No live monitor remains. At final poll the other original sampler identities were LIVE: NUTS3476536 at783total, primary3680785 at25975total, widerprior4082486 at18475total. Next reviews: primary/widerprior30500total; NUTS1000total. Resume observation of these THREE processes, excluding completed3505775.
+
 ## October 16: NUTS warmup complete
 
 - Read-only monitor96068 is LIVE (40polls/50s), stopping at any terminal/completed sampler or NUTS1000total. Poll0 host-verifies all4 original PID/create-time/command identities live: NUTS749total, primary25125total, J500029575total, widerprior17600total. J5000 completion30500total is the nearest full review. Previous monitor6540 ended normally; samplers and review thresholds unchanged, publication hold persists.
