@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: NUTS warmup reviewed; depth comparison prepared
+
+- Monitor47054 terminal0 at NUTS50warm/J10000PMMH3600retained/J5000PMMH6338retained. Samplers were all verified live; monitor exit is just its threshold. Review session45464 terminal0; layout-fix63499 terminal0.
+- `gpu-forward-nuts-v1/warmup-review-50`: all18 movement inspected. No divergences, trajectory acceptance.638--.687, all200 trajectories forced to depth5 (31steps). Weakest RMS jumps omega5=.20--.24 times provisional PMMH SD; omega6 range1.06--1.92 SD. No convergence claim. Initial figure title/legend overlapped; fixed and rerendered from the SAME frozen positions, then visually inspected.
+- PREPARED `nuts-depth-check-v1`: frozen update54 states, same target/J10000/G1000forward force, compare depth5/6 with six paired independent four-chain transitions each, alternating order; compilation separate. Local geometric-mean coordinate squared-jump/time screen, not ESS. Candidate requires>=25% improvement, acceptance>=.5, zero divergences; inspect paired variability/coordinate losses before any restart. Source/input hashes verified, script parsed. Commit then launch onGPU1; current three production jobs unchanged. No benchmark process launched at this entry.
+- Publication remains on hold per user. Prior sensitivity and full convergence remain pending. Next: launch/check depth benchmark, continue primaryPMMH to5000retained review and J5000 tocompletion; then wider-prior study. No ms/SI edits.
+
 ## October 15: user asked for status; publication remains on hold
 
 - User answered the publication question with "hang on. how is it going?" This is NOT permission to push. Hold publication; local sampling continues. They also explicitly invoked the neurotypical skill, already read in this session. Keep status focused on outcomes and the bottleneck, not minute-by-minute counters.
