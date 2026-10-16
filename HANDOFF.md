@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: proposal covariance benchmark live
+
+- LIVE3428797/create1792118901.92 onGPU1, `nuts-metric-check-v1/check.py`, protocol committed441e45abf. Log `/tmp/dmop-nuts-metric-check-v1.log`; launch.json records command/source/protocol hashes. Revalidated after25s; cached likelihoods/forces match BITWISE (8.64s). First shared-kernel compilation in progress. No timed results yet; do not duplicate.
+- All three production processes verified live at launch and unchanged. Current posterior/prior/model and particle counts are untouched. This benchmark only changes proposal covariance/step size, with the old run still progressing.
+- Next: monitor complete19 records (1 compilation+18 timed across3 candidates), then produce paired-trial uncertainty and coordinate comparison analogous to nuts-depth-check-v1/summarize.py (candidate names replace depths). No candidate automatically adopted; apply committed screen and inspect losses in beta3/omega5. Account for all pilot/setup costs if changing production. Keep publication on hold. Other run-review/prior-sensitivity tasks remain unchanged; goal active.
+
 ## October 15: fixed-metric mismatch checked; proposal screen prepared
 
 - Offline comparison on both frozen5000-draw PMMH reviews suggests the fixed metric misses correlated directions. Preconditioned pooled covariance condition numbers: old34.8(J5000)/42.35(J10000). A candidate0.75*J10000 covariance+0.25*old, trace-normalized, gives9.8 on independentJ5000 and1.5 on its construction snapshot; per-chain checks in geometry.json. Both snapshots unconverged, so this is proposal-tuning evidence only, not convergence or a fitted prior.
