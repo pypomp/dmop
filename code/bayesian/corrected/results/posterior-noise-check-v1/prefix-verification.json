@@ -1,0 +1,13 @@
+{
+  "5000": {
+    "same_seeds": true,
+    "bitwise_equal_loglik": false,
+    "max_absolute_loglik_difference": 9.094947017729282e-13
+  },
+  "10000": {
+    "same_seeds": true,
+    "bitwise_equal_loglik": true,
+    "max_absolute_loglik_difference": 0.0
+  },
+  "interpretation": "The first 32 seeds were reused, with float64 rounding differences on re-evaluation. Use the expanded 128 alone; these are not 160 independent replicates."
+}

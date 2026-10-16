@@ -9,6 +9,28 @@
     ],
     "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
     "start_utc": "2026-10-16T00:08:50.768025+00:00",
-    "complete": false
+    "complete": true,
+    "returncode": 0,
+    "end_utc": "2026-10-16T00:12:24.719143+00:00"
+  },
+  {
+    "task": "noise",
+    "command": [
+      "/home/kevin/anaconda3/envs/pypomp/bin/python",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/noise_check.py",
+      "--inputs",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/posterior-noise-check-v1/plateau-input.npz",
+      "--output",
+      "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/posterior-noise-check-v1/expanded",
+      "--reps",
+      "128",
+      "--batch-size",
+      "16"
+    ],
+    "xla_flags": "",
+    "start_utc": "2026-10-16T00:12:24.719306+00:00",
+    "complete": true,
+    "returncode": 0,
+    "end_utc": "2026-10-16T00:13:20.277772+00:00"
   }
 ]

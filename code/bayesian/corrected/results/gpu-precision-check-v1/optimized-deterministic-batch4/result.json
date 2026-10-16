@@ -1,0 +1,181 @@
+{
+  "utc": "2026-10-16T00:06:15.742101+00:00",
+  "precision": "float64",
+  "devices": [
+    "cuda:0"
+  ],
+  "jax": "0.9.0.1",
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "settings": {
+    "inputs": "code/bayesian/corrected/results/gpu-precision-check-v1/inputs.npz",
+    "output": "code/bayesian/corrected/results/gpu-precision-check-v1/optimized-deterministic-batch4",
+    "precision": "float64",
+    "particles": 5000,
+    "force_particles": 1000,
+    "force_precision": "float32",
+    "reps": 1,
+    "kernel_reps": 3,
+    "batch_size": 4
+  },
+  "inputs_sha256": "ff0643fb5c864ff92ef4d2fc2c4e34b80388b2cd21b093ca601096912e1a681c",
+  "source_sha256": {
+    "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "test_batch_extend.py": "e30bc08ea2b1aea0f284be7aa1b16f9e7d3c9b7c15e26bfe23d1cf9991d2ac3a",
+    "extend.py": "2f3f6894e664d4a0b53c67f8985f877df5638d3059c35a225fd2d61d36df5b64",
+    "test_model.py": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "batch_extend.py": "15dafd2cd99cc793180c89e04dc938981a36255882d4b09fce0e2ac7b04d6a33",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "batch.py": "e2fba64e5a93f85483636fa8806e4c8589bdbcf4dccaa29b20a04f5773ede511",
+    "report.py": "946c958a07c6d2c0684c6ed0757621d27159c1462a1fe2b90f36faffcaa4d9cc",
+    "test_noise_check.py": "d43896866ded4580a7ebf64c97e80e6b04faff42c506f9c57e70624371318378",
+    "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+    "run.py": "9ab543e5e4d0960db26500473706db334ca5bc2d55d14545564c5715c2bba1c6",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "noise_check.py": "6b0981402545090021f7dfa84c0da4e679d91eac14adc6db29a44e793c4f52b1",
+    "test_recovery.py": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
+    "compare.py": "dfac7a38daa353093bb5b0d0aab4aac125f89667f36e79d7fa7e9a006a1fe981",
+    "test_batch.py": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+    "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
+    "device_check.py": "400a4151f8f50e6f87fb310ea9cb6b53dd129581c7529f18a2be2d2dc6e1bf3f"
+  },
+  "likelihoods": [
+    [
+      {
+        "seed": 2026103100,
+        "loglik": -3749.3395674068756,
+        "seconds": 3.2234785160108004,
+        "compile_included": true
+      }
+    ],
+    [
+      {
+        "seed": 2026103200,
+        "loglik": -3757.343007315814,
+        "seconds": 0.9372315240034368,
+        "compile_included": false
+      }
+    ],
+    [
+      {
+        "seed": 2026103300,
+        "loglik": -3753.5091648611365,
+        "seconds": 1.0168425909942016,
+        "compile_included": false
+      }
+    ],
+    [
+      {
+        "seed": 2026103400,
+        "loglik": -3758.9347213880187,
+        "seconds": 0.9889874560176395,
+        "compile_included": false
+      }
+    ]
+  ],
+  "kernel_timings": [
+    {
+      "seconds": 90.25140991300577,
+      "compile_included": true,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.34294105687368504,
+        0.8427298546716078,
+        0.6418755019278596,
+        0.739185945852499
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 76.08257328098989,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.6293921415021234,
+        0.17532410276509516,
+        0.9999999999999996,
+        0.6481881677316494
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 75.17957496302552,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.7611032489769161,
+        0.6247097828997217,
+        0.8818942863134537,
+        0.49741535948286286
+      ],
+      "finite": true
+    },
+    {
+      "seconds": 74.99941435697838,
+      "compile_included": false,
+      "batch_size": 4,
+      "integration_steps": [
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ],
+      "divergences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "acceptance": [
+        0.4653933341142118,
+        0.4391674700197549,
+        0.7727237632876839,
+        0.7914709703756073
+      ],
+      "finite": true
+    }
+  ],
+  "complete": true,
+  "initialization_seconds": 14.963300302013522
+}

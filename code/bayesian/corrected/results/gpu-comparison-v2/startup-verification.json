@@ -1,0 +1,77 @@
+{
+  "utc": "2026-10-16T00:20:47.666232+00:00",
+  "checks": [
+    {
+      "method": "nuts",
+      "chain": 0,
+      "iteration": 1,
+      "checkpoint_sha256": "1c715250248990cbb2327e87fdf444759722dc783a03135f3ecb22f5f7b0d321",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "nuts",
+      "chain": 1,
+      "iteration": 1,
+      "checkpoint_sha256": "04461d3a249c76ae29cc34a7b05b409c28887dd74bf1496ccd842d082c2dce03",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "nuts",
+      "chain": 2,
+      "iteration": 1,
+      "checkpoint_sha256": "eb04e22453fbc211532b226f87dffe068d82bc7f247ce88d37e57d9b5c23c43b",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "nuts",
+      "chain": 3,
+      "iteration": 1,
+      "checkpoint_sha256": "72aab329dba3511a9b7bbaa8ae8402d287415d1430250dea16c4d9d8a9ee0c21",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "pmrw",
+      "chain": 0,
+      "iteration": 125,
+      "checkpoint_sha256": "e3343b003aace38b365881b9342446bc17a2b63aa811fc03f19c231749c80f28",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "pmrw",
+      "chain": 1,
+      "iteration": 125,
+      "checkpoint_sha256": "7d2a7ea24bf3201377f850f70c7e7c37a40a1323c49399228899d45964201933",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "pmrw",
+      "chain": 2,
+      "iteration": 125,
+      "checkpoint_sha256": "f75961e6f079ad139d14af1d4c4927a8a2ba5aa9838b4b07e73aad3cbc1dec30",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    },
+    {
+      "method": "pmrw",
+      "chain": 3,
+      "iteration": 125,
+      "checkpoint_sha256": "9ebff0a238e02d6f30fc8cc5680a12930f19fc4683a6703a65341520b8338742",
+      "model_sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "particles": 10000,
+      "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true"
+    }
+  ]
+}

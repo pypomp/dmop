@@ -1,5 +1,11 @@
 # GPU NUTS and PMMH comparison
 
+This is a development run. The primary comparison is now in
+[gpu-comparison-v2](../gpu-comparison-v2/README.md), with deterministic GPU
+execution and 10,000 likelihood particles. This run's 5,000-particle PMMH
+chains continue under `pmrw-continued` for a particle-count check; that
+directory includes every parent draw. Its NUTS warmup was retired and saved.
+
 `protocol.json` specifies the common target, initialization, prior and checks.
 `prepare.py` freezes starts and a proposal covariance from the previous PMMH
 development run. The prior is not fitted to these draws. Preparation inputs,

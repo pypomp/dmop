@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-16T00:20:47.666501+00:00",
+  "pid": 3052229,
+  "create_time": 1792107342.38,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/batch.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/nuts",
+    "--method",
+    "nuts",
+    "--initials",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial0.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial1.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial2.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial3.npy",
+    "--metrics",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "--seeds",
+    "2026110100",
+    "2026110101",
+    "2026110102",
+    "2026110103",
+    "--particles",
+    "5000",
+    "--force-particles",
+    "1000",
+    "--force-precision",
+    "float32",
+    "--alpha",
+    "0.95",
+    "--prior-scale",
+    "1.0",
+    "--warmup",
+    "500",
+    "--draws",
+    "2000",
+    "--step-size",
+    "0.03",
+    "--max-depth",
+    "5",
+    "--checkpoint",
+    "1",
+    "--fixed-metric"
+  ],
+  "reason": "Replaced by validated deterministic J10000 NUTS batch; preserve old warmup as development evidence",
+  "signal": "SIGTERM",
+  "verified_terminal": true,
+  "checkpoints": [
+    {
+      "chain": 0,
+      "iteration": 22,
+      "sha256": "3b830f99ce8d6bfe9778099f6332ec579c0f9dd7e08f519b5739ca3534af671c"
+    },
+    {
+      "chain": 1,
+      "iteration": 22,
+      "sha256": "25fcce63ca1565a5bee07e025eb8e007dec721790f8ae9d146ea6587371dc7a5"
+    },
+    {
+      "chain": 2,
+      "iteration": 22,
+      "sha256": "1bb716bd4a93e9e65f9c5f16385ae2a293daaac287289b9c0c35ee8fa500cbfb"
+    },
+    {
+      "chain": 3,
+      "iteration": 22,
+      "sha256": "a994608da5393e94971a8b2477db2f56538a2cc45cf642da068c93d01b404ab4"
+    }
+  ]
+}

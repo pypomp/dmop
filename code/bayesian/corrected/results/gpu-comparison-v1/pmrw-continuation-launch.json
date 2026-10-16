@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-16T00:20:09.919990+00:00",
+  "pid": 3143786,
+  "create_time": 1792110008.97,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/batch_extend.py",
+    "--parent",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw",
+    "--output",
+    "code/bayesian/corrected/results/gpu-comparison-v1/pmrw-continued",
+    "--recover-interrupted",
+    "--checkpoint",
+    "25"
+  ],
+  "log": "/tmp/dmop-bayes-pmrw5000-continued.log",
+  "gpu": 1,
+  "xla_flags": ""
+}

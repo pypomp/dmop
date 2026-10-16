@@ -19,13 +19,17 @@ existing sampler states or frozen source snapshots.
 | `float32-batch2`, `float32-batch4` | Vectorized independent NUTS updates, testing GPU throughput |
 | `float64-batch4` | Full-precision GPU throughput; check completion before interpreting |
 | `mixed-force-batch4` | Float64 likelihood/acceptance with float32 proposal force; see `mixed-force-protocol.json` |
-| `deterministic-mixed-batch4` | Same sizes with `--xla_gpu_deterministic_ops=true`; check completion before using timings |
+| `deterministic-mixed-batch4` | Ordinary deterministic mode; stopped after 490 seconds before a recorded update, with partial outputs retained |
+| `optimized-deterministic-batch4` | Both deterministic-operations and optimized-scatter flags; completed, median 75.18 seconds per four-chain 15-step update |
 
 Three postcompilation float32 timings give median wall times of 34.50 seconds
 for one chain, 33.53 seconds for two chains together, and 39.11 seconds for
 four chains together. Each update took 15 integration steps. This measures
 kernel throughput under shared load, not effective samples per second.
 The earlier float64 scalar check is in `../gpu-current-config-check-v1`.
+The optimized deterministic run used GPU1 while it also hosted PMMH and
+unrelated work; the earlier mixed-force timing used GPU0. These measurements
+do not establish a controlled speed ratio between execution modes.
 Full float64 batch4 completed with median 85.94 seconds per four-chain update.
 The mixed-force experiment retains the same likelihood precision; its first
 likelihood evaluation at each of the four saved points exactly matches the

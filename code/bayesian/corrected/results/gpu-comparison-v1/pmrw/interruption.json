@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-16T00:20:09.810023+00:00",
+  "pid": 3052372,
+  "create_time": 1792107343.84,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/batch.py",
+    "--output",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/pmrw",
+    "--method",
+    "pmrw",
+    "--initials",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial0.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial1.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial2.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/initial3.npy",
+    "--metrics",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/gpu-comparison-v1/inputs/chol.npy",
+    "--seeds",
+    "2026110200",
+    "2026110201",
+    "2026110202",
+    "2026110203",
+    "--particles",
+    "5000",
+    "--force-particles",
+    "1000",
+    "--force-precision",
+    "float32",
+    "--alpha",
+    "0.95",
+    "--prior-scale",
+    "1.0",
+    "--warmup",
+    "500",
+    "--draws",
+    "10000",
+    "--step-size",
+    "0.5",
+    "--max-depth",
+    "5",
+    "--checkpoint",
+    "1",
+    "--fixed-metric"
+  ],
+  "reason": "Resume identical PMMH chain states with checkpoint interval25 instead of1",
+  "signal": "SIGTERM",
+  "verified_terminal": true,
+  "checkpoints": [
+    {
+      "chain": 0,
+      "iteration": 2513,
+      "sha256": "24e93b27d7efdc952e1eed439510dc33934b3ba05da4d0394079ccc75683636b"
+    },
+    {
+      "chain": 1,
+      "iteration": 2513,
+      "sha256": "3d1d25149f52b63f3f7a83be48f39957182c8b5102205577c18ad2baa267f901"
+    },
+    {
+      "chain": 2,
+      "iteration": 2513,
+      "sha256": "8e25705c1b07e8175845df1f9a1c6dfc4abbae3045057d2e53595031a1831349"
+    },
+    {
+      "chain": 3,
+      "iteration": 2513,
+      "sha256": "fe472b7a929b59c581283a6dd09c462db8f7e0c164fb3695997542916fc399e5"
+    }
+  ]
+}
