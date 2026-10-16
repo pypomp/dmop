@@ -2,6 +2,8 @@
 
 ## October 16: GPU timing accounting clarified
 
+- Read-only monitor30305 is LIVE with45poll/50s window, stopping at any terminal/completed sampler or NUTS1000total. Same four sampler identities host-verified at poll1: NUTS412warm,primary16750total,J500020525total,prior9350total. Wider-prior completion10500total is expected within this observation window at the recent rate; review only after verifying completion. No sampler changes; publication hold persists.
+
 - Monitor72947 completed0 at its30-poll observation limit. All four original sampler identities remained host-verified live and advancing: NUTS410warm, primary16700total,J500020475total,widerprior9300total. No live monitor remains. Recent continuation turns were verified waits; no changes to samplers, manuscripts or publication hold. Next full reviews remain prior10500total, NUTS1000total, references30500total.
 
 - Read-only monitor72947 is LIVE, same four original sampler identities and30-poll/50s observation window. First monitor launch request timed out in automatic approval review; its permitted single retry succeeded. Poll0 host-verified NUTS374warm, primary15800total,J500019525total,prior8400total. No sampler changes. Resume72947; stop/review thresholds unchanged.
