@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: depth comparison complete; retain depth5
+
+- `nuts-depth-check-v1` complete,3358954 verified terminal. All14 transitions finite (2 compilation+12 timed); cached state bitwise check passed. Paired summary verified all seeds/counts and reproduced the main rate ratio. Depth5/6 mean batch costs67.47/134.92s, movement-rate ratio1.214 with paired bootstrap[.788,1.626]. Candidate misses prespecified25% improvement; wide uncertainty and omega5 ratio.960 give no reason to restart. Both zero divergences/all trajectories depth-capped; mean acceptance.731/.663. Retain current depth5 production.
+- Monitor21298 terminal0 at benchmark completion. Production identities revalidated live: NUTS3262256 at93warm, J10000PMMH3137405 at4850retained, J5000continuation3143786 at7663retained. No tuning, target, prior or source change to existing jobs.
+- Next immediate review: primaryJ10000 PMMH at5000retained using report.py; inspect all18 traces/marginals and trend panels. J5000 next review at10000retained planned completion; launch prepared prior sensitivity only when its process is terminal. Continue NUTS warmup (500planned), then diagnose retained samples. No converged comparison yet. Publication remains on hold; local commits only.
+
 ## October 15: paired depth benchmark running on GPU1
 
 - Followup: both compiled transitions finished finite (depth5 76.35s, depth6 143.01s including compilation); timed paired trials now running. All four process identities revalidated live. New summarize.py refuses partial results, verifies seeds/counts, reports coordinate ratios and paired-trial bootstrap intervals. Run it after complete; do not infer a winner from the two compilation records. Screen protocol and production unchanged.
