@@ -49,9 +49,10 @@
     "reps": 32,
     "batch_size": 16,
     "precision": "float64",
-    "gpu": 1,
+    "gpu": 0,
     "purpose": "Diagnose filter noise and retained likelihood overestimation; no posterior draws",
     "refresh_check": "Mean min(1,exp(fresh_loglik-cached_loglik)) at fixed theta, only for J5000",
-    "uncertainty": "Thirty-two replicates provide a local diagnostic, not a proof of particle adequacy throughout the posterior"
+    "uncertainty": "Thirty-two replicates provide a local diagnostic, not a proof of particle adequacy throughout the posterior",
+    "device_choice": "GPU0 avoids adding load to the deterministic benchmark onGPU1. Both devices are RTX3090s; all timing is under shared load."
   }
 }
