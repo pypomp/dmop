@@ -2,6 +2,8 @@
 
 ## October 16: NUTS warmup complete
 
+- Monitor58722 completed0 at its40-poll observation limit. Final poll39 verified all4sampler identities live and advancing: NUTS552total (52retained), primary20250total, J500024325total, widerprior12725total. No live monitor remains; observation expiry did not stop any sampler. Recent continuation turns are verified waits. Next reviews unchanged: NUTS1000total and PMMH30500total. No sampler/manuscript/publication changes.
+
 - Read-only monitor58722 is LIVE (40polls/50s), stopping at a terminal/completed sampler or NUTS1000total. Poll1 revalidates all4 original process identities live and advancing: NUTS505total (5retained), primary19100total, J500023075total, widerprior11550total. This turn is a verified wait after warmup-exit evidence; no sampler changes. Resume this handle; prior monitor65358 is terminal0.
 
 - Monitor65358 completed0 at NUTS503total, with all four sampler identities live. PrimaryPMMH19025total, J500023025total, widerprior11475total. No live monitor remains. Samplers continue unchanged; do not restart them.
