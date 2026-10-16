@@ -1,5 +1,16 @@
 # Handoff
 
+## October 16: active monitor39386
+
+- Observer26162 completed normally at its 40-poll limit. Final poll39 and
+  new observer39386 poll0 verify both original sampler identities live:
+  NUTS1261total and widerprior37025total.
+- Resume39386 (40 polls, 50 seconds apart); it stops on sampler termination,
+  completion or NUTS1500total. Samplers remain3476536/create1792120402.49 and
+  695522/create1792165456.58. No restart or retuning.
+- Recent goal turns were verified waits. Next full reviews remain NUTS1500total
+  and widerprior60500total. Manuscript and publication hold unchanged.
+
 ## October 16: current sampler monitor
 
 - Observer4232 completed normally at its 40-poll limit, with both original
