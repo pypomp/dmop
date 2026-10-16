@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: remaining interim marginals and traces inspected
+
+- Inspected all18 marginal and trace panels in both J5000 and doubled-prior-SD `review-interim-20261016` reports. Layouts/linear scales are readable. J5000 retains chain3's late beta1/2/3 excursion and uneven omega4/5/6 tails. Wider-prior800-draw report shows substantial chain separation in gamma, beta1/2/3, omega4/6, including late chain1 movement; pooled trend resemblance does not demonstrate prior robustness. No new sampler change justified by these early plots; continue scheduled runs. These are frozen snapshots, not current chain lengths.
+- Read-only monitor44323 LIVE; stops at any terminal/completed sampler, NUTS1000total, or40polls at50s. Poll0 revalidated PID/create-time/commands: NUTS79warm, primary9075total, J5000long12075total, widerprior1575total. Earlier35116 completed0. No manuscript change; publication hold persists.
+
 ## October 16: verified wait after interim reports
 
 - Previous goal turn made progress: three frozen interim reports committed locally as3f284d4e5 and primary plots visually inspected. This turn is a verified wait. Monitor3767 ended143 afterpoll18; no live monitor remains. Rechecked all four host process identities after termination: all running and advancing, NUTS76warm, primaryPMMH9000total, J5000long12000total, widerprior1500total. The monitor ending did not terminate sampling; no restart or configuration change. Next reviews remain primaryPMMH10500total completion, NUTS1000total, J5000long30500total and widerprior10500total. Publication hold and active goal unchanged.
