@@ -2,6 +2,8 @@
 
 ## October 16: NUTS warmup complete
 
+- Read-only monitor58722 is LIVE (40polls/50s), stopping at a terminal/completed sampler or NUTS1000total. Poll1 revalidates all4 original process identities live and advancing: NUTS505total (5retained), primary19100total, J500023075total, widerprior11550total. This turn is a verified wait after warmup-exit evidence; no sampler changes. Resume this handle; prior monitor65358 is terminal0.
+
 - Monitor65358 completed0 at NUTS503total, with all four sampler identities live. PrimaryPMMH19025total, J500023025total, widerprior11475total. No live monitor remains. Samplers continue unchanged; do not restart them.
 - `gpu-forward-nuts-v2/warmup-exit-502` freezes first502 updates (500warm+2retained) and saves numerical/tuning checks. All4 chains finite, covariance bitwise matches input, no covariance adaptation records, all saved retained step sizes equal next_step_size. No divergences in reviewed warmup or retained updates. Frozen steps .0494965/.0602041/.0479560/.0499303. Last50warmup acceptance .6646/.7142/.5749/.6120; all reached depth5 without U-turn. No mixing/convergence claim from this check.
 - Reproduction script `verify_warmup_exit.py` refuses overwrite. Next substantive posterior review NUTS1000total (500retained); all3PMMH references30500total. Manuscript figures still await corrected comparison; prior sensitivity unresolved. No ms/SI changes or push, publication hold persists. This turn progressed from a verified wait to saved warmup-exit evidence; goal active.
