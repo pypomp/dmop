@@ -2,6 +2,8 @@
 
 ## October 16: GPU timing accounting clarified
 
+- Monitor56101 completed0 at its30-poll observation limit. All four original sampler PID/create-time/command identities remained live and advancing at the final poll: NUTS371warm, primary15725total, J500019450total, widerprior8325total. No live monitor remains. These continuation turns were verified waits; no sampler, manuscript or publication changes. Next review thresholds unchanged.
+
 - Read-only monitor56101 is LIVE (30 polls, 50 seconds apart), checking the four original PID/create-time/command identities. Latest poll1: NUTS336warm, primary14875total, J500018525total, widerprior7450total. Stops on any terminal/completed sampler or NUTS1000total. Resume this handle; observation expiry does not stop sampling. No configurations changed.
 
 - Updated code/bayesian/corrected/results/timing.md, whose previous contents covered CPU development only. Current GPU guidance identifies shared GPU1 load, whole-four-chain update times, cumulative continuation clocks, compilation, and preparation dependencies (including primary PMMH samples used for NUTS tuning). Verified against batch.py, batch_extend.py and frozen screen/retirement records; git diff --check passes. No sampler code, manuscript, or inference changed; no runtime advantage claimed.
