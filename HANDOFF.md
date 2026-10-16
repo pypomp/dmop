@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: offline sensitivity comparison added
+
+- New sensitivity.py compares frozen report.py outputs for --kind prior or particles. Requires same method/model and permits only the intended target difference, verifies proportional prior-SD scaling, retains separate-chain marginal curves and labels unconverged comparisons. Table includes18-coordinate intervals, SD ratios, mean shifts/combined MCSE. It makes no automatic equivalence/insensitivity claim.
+- Three tests passed for valid single-factor changes and rejection of confounded, identical and incorrectly scaled comparisons. No sensitivity results yet; wider-prior launcher remains prepared/unlaunched pending J5000 completion.
+- All three existing GPU processes revalidated live this turn; no production source, target, tuning or manuscript change. Run this comparison only on frozen reports, interpret after convergence and visual review.
+
 ## October 15: wider-prior PMMH comparison prepared
 
 - results/prior-sensitivity-gpu-v1 contains a frozen protocol and guarded launcher: J10000, four fresh seeds2026110800--03, prior_scale2, same fixed coordinates/centers/starts/covariance as primary,500 warmup+10000 draws. This doubles prior SDs; likelihood remains unchanged. No new fitted prior.

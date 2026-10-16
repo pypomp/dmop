@@ -23,6 +23,10 @@ refuses to overwrite an existing run. No background scheduler is installed.
 
 After both settings have converged, compare all parameter marginals, means,
 standard deviations and 95% intervals, accounting for Monte Carlo error.
+Freeze each with `report.py`, then run `sensitivity.py` with the two report
+directories and `--kind prior`. The script verifies that only the prior
+scale differs and labels provisional comparisons if either report has not
+passed its numerical checks. Its plots retain separate chains.
 The long lower tails of omega5 and omega6 in the initial PMMH review deserve
 particular attention. Report any material changes. A narrow sampled
 distribution relative to one prior does not by itself establish that the
