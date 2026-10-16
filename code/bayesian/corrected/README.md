@@ -168,7 +168,7 @@ The current batches each contain `chain0` through `chain3`:
 | Primary NUTS | `gpu-forward-nuts-v2/nuts` |
 | Primary PMMH | `gpu-comparison-v2/pmrw-long` |
 | PMMH with 5,000 particles | `gpu-comparison-v1/pmrw-long` |
-| PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw` |
+| PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw-long` |
 | Fixed historical-proposal control | `historical-proposal-control-v1/pmrw` |
 
 Primary NUTS and PMMH use the same starts, proper prior and 10,000-particle
@@ -205,7 +205,12 @@ The wider-prior comparison is running in `results/prior-sensitivity-gpu-v1`.
 It doubles the normal prior's standard deviations while keeping its centers
 and the likelihood fixed. It started after the initial 10,000-draw
 5,000-particle PMMH continuation finished. See its protocol, launch record
-and README for settings and review steps. Prior sensitivity remains unverified.
+and README for settings and review steps. Its completed 10,000-draw report
+shows substantial immigration-coefficient chain separation, although the
+trend distribution resembles the original-prior result. The same chains
+continue to 30,000 retained draws in `pmrw-long`, with unchanged tuning.
+`comparison-10000` retains the provisional comparison of both prior settings
+at 10,000 draws. Prior sensitivity remains unresolved.
 
 The historical-proposal control uses the current primary starts and target
 with the original fixed diagonal proposal for 1,500 iterations. Its purpose
