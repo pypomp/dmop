@@ -1,5 +1,10 @@
 # Handoff
 
+## October 16: five-job monitor renewed
+
+- Prior turns were verified sampling waits. Monitor44323 finished0 at its40-poll observation limit; this did not stop any sampler. New read-only monitor71308 LIVE now includes historical-proposal-control3609096 along with the four original jobs. Poll0 verifies all five PID/create-time/commands: NUTS128warm, primaryPMMH10075total, J5000long13200total, widerprior2575total, original-proposal control550/1500.
+- Monitor stops at any terminal/completed job, NUTS1000total, or40polls/50s. Next substantive review is primaryPMMH10500total completion or control1500total completion; commands and preparation above. No configuration, manuscript or publication change. Goal remains active.
+
 ## October 16: fixed-length control comparison ready
 
 - Extended historical-mh/compare_traces.py with optional --control and --output. At control completion, render original/current/fixed-proposal rows on shared linear scales, all1500 iterations and densities501–1500. Validates common current/control target, starts, model, fixedSD.02 and completion; refuses existing output. Command in historical-mh/README.md. The resulting plot still needs visual inspection after real control completion.
