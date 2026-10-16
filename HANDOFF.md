@@ -2,6 +2,8 @@
 
 ## October 16: GPU timing accounting clarified
 
+- Read-only monitor72947 is LIVE, same four original sampler identities and30-poll/50s observation window. First monitor launch request timed out in automatic approval review; its permitted single retry succeeded. Poll0 host-verified NUTS374warm, primary15800total,J500019525total,prior8400total. No sampler changes. Resume72947; stop/review thresholds unchanged.
+
 - Monitor56101 completed0 at its30-poll observation limit. All four original sampler PID/create-time/command identities remained live and advancing at the final poll: NUTS371warm, primary15725total, J500019450total, widerprior8325total. No live monitor remains. These continuation turns were verified waits; no sampler, manuscript or publication changes. Next review thresholds unchanged.
 
 - Read-only monitor56101 is LIVE (30 polls, 50 seconds apart), checking the four original PID/create-time/command identities. Latest poll1: NUTS336warm, primary14875total, J500018525total, widerprior7450total. Stops on any terminal/completed sampler or NUTS1000total. Resume this handle; observation expiry does not stop sampling. No configurations changed.
