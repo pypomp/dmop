@@ -1,5 +1,11 @@
 # Handoff
 
+## October 16: historical-proposal control complete and reviewed
+
+- Control3609096 verified terminal, all four finite1500-iteration checkpoints and completion files hashed in completion-verification.json. Monitor9675 completed0; report2707 completed0. No live monitor remains. Existing four production jobs unchanged; last monitor: NUTS179warm, primarylong10975total, J5000long14300total, widerprior3550total.
+- Three-row comparison generated under historical-proposal-control-v1/comparison: archived MH/current tuned PMMH/current target with old fixed proposal, common linear axes, traces1--1500 and densities501--1500. Comparison and all18 control traces/marginals visually inspected. Old proposal gives9.6--13.6% acceptance and clear chain separation/slow movement in trend and many other coordinates; it does NOT recreate original trend excursion to-1.22. Current tuned proposal explores trend more broadly. No causal attribution to prior/tempering from archived-vs-current comparison; old active MH sampling cell/clouds remain missing.
+- review-1500 uses all1500 (zero adaptivewarmup), unlike comparison densitywindow501--1500: worstRhat2.706/minbulkESS4.73. These are not posterior estimates. New run README records evidence, limits and reproduction paths. This addresses finite-budget poor mixing, not complete NUTS-vs-PMMH reproduction. Next: NUTS500retained following500warm; both reference PMMH30000retained; doubledprior10000retained. No manuscript changes or push; publication hold persists, goal active.
+
 ## October 16: monitor resumed after primary continuation
 
 - Read-only monitor9675 LIVE, now follows new primary3680785 and the other four unchanged samplers. Poll0 revalidated all PID/create-time/commands: NUTS155warm, primarylong10525total, J5000long13800total, widerprior3100total, historical-proposal control1075/1500. Stops at any terminal/completed job, NUTS1000total, or40polls/50s. Next likely substantive review is control completion; generate its three-row comparison and inspect all18 traces, preserving distinct targets when discussing archived MH. Prior review/extension was progress; this turn is a verified wait. No configuration or manuscript changes; publication hold persists.

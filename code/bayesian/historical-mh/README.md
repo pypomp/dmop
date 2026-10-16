@@ -44,7 +44,10 @@ proposal scale without adaptation, keeping the current Pypomp likelihood,
 proper prior and initial states fixed. This tests the proposal difference;
 it does not recreate the missing historical KDE or reinstate tempering.
 
-After the control completes, add its row with:
+The control is complete. Its [review](../corrected/results/historical-proposal-control-v1/README.md)
+documents persistent chain separation with the old proposal, without the
+original trend excursion to -1.22. The three-row comparison is saved under
+its `comparison/` directory. To regenerate it, choose a new output path:
 
 ```sh
 python code/bayesian/historical-mh/compare_traces.py \

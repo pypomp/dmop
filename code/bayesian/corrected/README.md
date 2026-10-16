@@ -215,6 +215,10 @@ likelihood. The original traces and available sampling source are archived
 in [historical-mh](../historical-mh/README.md); that directory also documents
 the missing information that prevents an exact fresh replay. The finite-length
 comparison is separate from the longer posterior-reference runs.
+The control has completed: acceptance is 9.6--13.6%, with substantial chain
+separation, but without the original trend excursion to -1.22. Its
+[review and figures](results/historical-proposal-control-v1/README.md) compare
+all three runs at 1,500 iterations and distinguish their targets.
 
 The CPU runs in `results/candidate-nuts-4chain-v1` and
 `results/sampling-recovery-v1` were retired after validating the GPU starts;
