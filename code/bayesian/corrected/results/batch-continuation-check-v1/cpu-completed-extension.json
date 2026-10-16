@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "chain": 0,
+      "fields": [
+        "trace",
+        "info",
+        "step_size",
+        "z",
+        "u",
+        "force",
+        "loglik",
+        "key",
+        "chol",
+        "next_step_size"
+      ],
+      "reference_sha256": "1fb525dec93c85ad620a43eca9ba6f8815e5fe183a138e38a0e49c5607ac9306",
+      "continued_sha256": "d975371728acf5f352067b1cf8201204578016082e1e14a452f9f669c972d484"
+    },
+    {
+      "chain": 1,
+      "fields": [
+        "trace",
+        "info",
+        "step_size",
+        "z",
+        "u",
+        "force",
+        "loglik",
+        "key",
+        "chol",
+        "next_step_size"
+      ],
+      "reference_sha256": "a969754f40eaffaab668aa0fc386512fa1f6804a2ff3685b28aff5b9c0c5ed05",
+      "continued_sha256": "cfe89daf8a27ae44e71d0ec45528ffba2ddf30a95ffe7bd1a72eb9180d877b5a"
+    }
+  ],
+  "reference": "/tmp/dmop-bayes-batch-replay-smoke-v1",
+  "continued": "/tmp/dmop-bayes-batch-extend-smoke-v1"
+}

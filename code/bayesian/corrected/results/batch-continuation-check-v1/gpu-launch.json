@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-15T23:46:42.173543+00:00",
+  "pid": 3074902,
+  "create_time": 1792108001.22,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "code/bayesian/corrected/results/batch-continuation-check-v1/check.py",
+    "--output",
+    "/tmp/dmop-batch-continuation-gpu-v1"
+  ],
+  "log": "/tmp/dmop-batch-continuation-gpu-v1.log",
+  "gpu": 1
+}

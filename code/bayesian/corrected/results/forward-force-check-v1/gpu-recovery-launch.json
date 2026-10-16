@@ -1,0 +1,16 @@
+{
+  "pid": 3251125,
+  "create_time": 1792113437.93,
+  "command": [
+    "/home/kevin/anaconda3/envs/pypomp/bin/python",
+    "/home/kevin/OneDrive/Documents/UMich/Research/pypomp/dmop/code/bayesian/corrected/results/batch-continuation-check-v1/check.py",
+    "--output",
+    "/tmp/dmop-forward-recovery-gpu-v1",
+    "--force-mode",
+    "forward"
+  ],
+  "log": "/tmp/dmop-forward-recovery-gpu-v1.log",
+  "utc": "2026-10-16T01:17:18.883735+00:00",
+  "gpu": 0,
+  "revision": "5acfbbf923562f1a59597948e4146d6c74f3dc4c"
+}

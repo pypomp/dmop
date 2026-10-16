@@ -1,0 +1,64 @@
+{
+  "purpose": "Four independent cheaper-force MALA candidates, continuing development from saved full-force warmup states with a new full warmup",
+  "method": "pmmala",
+  "particles": 5000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 1,
+  "warmup": 1000,
+  "draws": 3000,
+  "step_size": 0.475,
+  "max_step_size": 2,
+  "optimization": 0,
+  "parents": [
+    {
+      "chain": 0,
+      "parent": "code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain0",
+      "warmup_iterations": 250,
+      "parent_checkpoint_sha256": "f7056bc846cdeecc0edadf5bea5c74f510a79f3c4a0380842b7a1a841a79ba1c",
+      "seed": 2026102700,
+      "core": 0
+    },
+    {
+      "chain": 1,
+      "parent": "code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain1",
+      "warmup_iterations": 250,
+      "parent_checkpoint_sha256": "617f7df3c078a676cc77dd507db712a7838a2ff68b73eb589ad24482cf23e70d",
+      "seed": 2026102701,
+      "core": 2
+    },
+    {
+      "chain": 2,
+      "parent": "code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain2",
+      "warmup_iterations": 250,
+      "parent_checkpoint_sha256": "9faa44120e3f777d2ecf33042b4476f3dfccd0cf9f9759b1f5484f9807ed3e82",
+      "seed": 2026102702,
+      "core": 4
+    },
+    {
+      "chain": 3,
+      "parent": "code/bayesian/corrected/results/candidate-pmmala-4chain-v1/chain3",
+      "warmup_iterations": 250,
+      "parent_checkpoint_sha256": "406e7b3c9d6a5f9583fc8d6d241c377ad31aa2eda317f289f168495b3dc732ce",
+      "seed": 2026102703,
+      "core": 6
+    }
+  ],
+  "reason": "Same-core transition cost3.44s versus9.38s; short-pilot squared jump ratio for trend0.626. Retain failures and assess all-coordinate convergence; pilot drift prevents conclusions from its ESS.",
+  "initialization": "Exact saved independent parent warmup positions and metrics; new independent seeds,1000 additional warmup iterations, no reused retained draws",
+  "preparation_accounting": "Retain parent optimization and consumed full-force warmup as preparation; do not report the new-run clock as total experiment cost",
+  "gates": {
+    "rank_split_rhat_max": 1.01,
+    "bulk_ess_min": 400,
+    "tail_ess_min": 400,
+    "coordinates": 18,
+    "independent_chains": 4
+  },
+  "remaining_checks": [
+    "visual inspection",
+    "prior sensitivity",
+    "particle sensitivity",
+    "same-target random-walk comparison",
+    "matched-hardware timing"
+  ]
+}

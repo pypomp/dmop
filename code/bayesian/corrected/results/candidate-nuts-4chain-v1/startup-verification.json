@@ -1,0 +1,50 @@
+{
+  "utc": "2026-10-15T22:34:21.545863+00:00",
+  "purpose": "First checkpoint verification, not convergence evidence",
+  "chains": [
+    {
+      "chain": 0,
+      "iteration": 5,
+      "finite_trace_and_force": true,
+      "matched_pmmh_initial_and_metric": true,
+      "same_target_source_and_prior": true,
+      "divergences": 0,
+      "position_changes": 5,
+      "mean_trajectory_acceptance": 0.5410346442406204,
+      "checkpoint_sha256": "886879ba75607d4324ba7bd4c0db0f9ca9f6cf5433125f33bd239ce5840a3419"
+    },
+    {
+      "chain": 1,
+      "iteration": 5,
+      "finite_trace_and_force": true,
+      "matched_pmmh_initial_and_metric": true,
+      "same_target_source_and_prior": true,
+      "divergences": 0,
+      "position_changes": 5,
+      "mean_trajectory_acceptance": 0.5457401260307893,
+      "checkpoint_sha256": "b19ac2765e39ac8d9d366027be08b98b5a40ef296d80de80401de0a78ead4b4c"
+    },
+    {
+      "chain": 2,
+      "iteration": 5,
+      "finite_trace_and_force": true,
+      "matched_pmmh_initial_and_metric": true,
+      "same_target_source_and_prior": true,
+      "divergences": 0,
+      "position_changes": 5,
+      "mean_trajectory_acceptance": 0.6205964013347434,
+      "checkpoint_sha256": "a3d639ab71900ac9bebf72158f8360b0726a6c0c85943e2d23ea33480868bfec"
+    },
+    {
+      "chain": 3,
+      "iteration": 5,
+      "finite_trace_and_force": true,
+      "matched_pmmh_initial_and_metric": true,
+      "same_target_source_and_prior": true,
+      "divergences": 0,
+      "position_changes": 5,
+      "mean_trajectory_acceptance": 0.5749736359479547,
+      "checkpoint_sha256": "97cbbe02288993c1080bb3f9fd11ea5790726cc2f00da4dcacb6152e65784d9e"
+    }
+  ]
+}

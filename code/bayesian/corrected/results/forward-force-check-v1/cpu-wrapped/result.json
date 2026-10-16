@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-16T01:08:49.646652+00:00",
+  "devices": [
+    "TFRT_CPU_0"
+  ],
+  "jax": "0.9.0.1",
+  "xla_flags": "",
+  "settings": {
+    "output": "code/bayesian/corrected/results/forward-force-check-v1/cpu-wrapped",
+    "force_particles": 20,
+    "batch_size": 2,
+    "reps": 2,
+    "candidate": "wrapped"
+  },
+  "source_sha256": {
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "forward_model.py": "fc0de6848dffd953d6a39b9fdd6d8f72ff68870ca8f1526b7fc40b36fcb0e7ee",
+    "check.py": "79a58b1417d19c9181b5efde32bc4a1a5aae9876f150eec94b6d39704df16282"
+  },
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "timings": {
+    "reverse": [
+      {
+        "seconds": 2.2235141999844927,
+        "compile_included": true
+      },
+      {
+        "seconds": 0.2358530960045755,
+        "compile_included": false
+      },
+      {
+        "seconds": 0.25666468898998573,
+        "compile_included": false
+      }
+    ],
+    "forward": [
+      {
+        "seconds": 2.2079681270115543,
+        "compile_included": true
+      },
+      {
+        "seconds": 0.18164465299923904,
+        "compile_included": false
+      },
+      {
+        "seconds": 0.17380388401215896,
+        "compile_included": false
+      }
+    ]
+  },
+  "complete": true,
+  "comparison": {
+    "same_value": true,
+    "max_absolute_force_difference": 0.00830078125,
+    "scaled_max_force_difference": 2.7197441264725815e-06,
+    "repeat_bitwise": {
+      "reverse": true,
+      "forward": true
+    },
+    "force_tolerance": 0.0001,
+    "passed": true
+  }
+}
