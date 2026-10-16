@@ -64,7 +64,7 @@
     "test_batch.py": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
     "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
     "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
-    "device_check.py": "703e65711cde50d8eaf80b28402fe6c40b6c332270a164ea807f0a06b5b19837"
+    "device_check.py": "3dbc75981a06f97092bf6757a3f4a4b15ff6db632284219e259529bf06979183"
   },
   "implementation_update": "Added optional forward force mode to runners; default remains reverse and PMMH evaluates no force. Original sampling settings, seeds, inputs and model.py are unchanged."
 }
