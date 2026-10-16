@@ -2,6 +2,8 @@
 
 ## October 16: wider-prior 10,000-draw review
 
+- Read-only monitor7032 is LIVE,40poll/50s window, now using new prior continuation4082486. All4sampler identities verified at poll1: NUTS467warm,primary18150total,J500022050total,priorlong10600total. Monitor stops at any terminal/completed process or NUTS502total, to verify warmup ends and tuning freezes (not a posterior convergence review). Full posterior review remains NUTS1000total; PMMH30500total. No settings changed.
+
 - LIVE wider-prior continuation4082486/create1792139160.88 onGPU1, prior-sensitivity-gpu-v1/pmrw-long, launched undera9ef9fae0; log /tmp/dmop-bayes-prior-long.log. First10525 checkpoints finite, old trace/info/step/time prefixes BITWISE exact and frozen tuning unchanged; startup-verification saved. Startup monitor94503 completed0. All4 current process identities revalidated live: NUTS464warm,primary18075total,J500021975total,priorlong10525total. No live monitor remains. Next full reviews: NUTS1000total, all3PMMHreferences30500total. Continue original seeds/states; do not pool prefixes.
 
 - Monitor30305 completed0 when wider-prior3500694 finished10500total. Host check confirms that process terminal; completion-verification.json hashes all4 finite completed checkpoints. report63355 and sensitivity29190 completed0. All18 traces/marginals, trend panels and original-vs-wider-prior comparison visually inspected; outputs in prior-sensitivity-gpu-v1/review-pmrw-10000 and comparison-10000.
