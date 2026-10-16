@@ -1,5 +1,11 @@
 # Handoff
 
+## October 16: wider-prior 10,000-draw review
+
+- Monitor30305 completed0 when wider-prior3500694 finished10500total. Host check confirms that process terminal; completion-verification.json hashes all4 finite completed checkpoints. report63355 and sensitivity29190 completed0. All18 traces/marginals, trend panels and original-vs-wider-prior comparison visually inspected; outputs in prior-sensitivity-gpu-v1/review-pmrw-10000 and comparison-10000.
+- Strong chain separation remains: omega6 Rhat1.40648/minbulkESS8.54, chain3 prolonged excursions below-20 (minimum below-30), separated omega1/2, seasonal beta1/2/3 differences and chain1 late omega5 descent. Trendmean-.40516 vs primary-.42786, SD.11823 vs.11840; this does not establish prior robustness. Acceptance.1636/.1527/.2426/.2773. Empirical KDE is already absent; replacement-prior sensitivity remains unresolved.
+- PREPARED exact20000-additional-draw continuation to30000retained in prior-sensitivity-gpu-v1/pmrw-long. Frozen source/input/finite-parent checks pass via load_parent; protocol saves hashes. Commit then launch onGPU1 and verify exact prefixes/frozen tuning/finite new checkpoints. Other3samplers unchanged. No live monitor remains. No ms/SI changes or push; publication hold persists, goal active.
+
 ## October 16: GPU timing accounting clarified
 
 - Read-only monitor30305 is LIVE with45poll/50s window, stopping at any terminal/completed sampler or NUTS1000total. Same four sampler identities host-verified at poll1: NUTS412warm,primary16750total,J500020525total,prior9350total. Wider-prior completion10500total is expected within this observation window at the recent rate; review only after verifying completion. No sampler changes; publication hold persists.
