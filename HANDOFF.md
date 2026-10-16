@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: tuned NUTS replacement live; prior warmup retired
+
+- LIVE3476536/create1792120402.49 onGPU0, `gpu-forward-nuts-v2/nuts`, launched under eb38ce7f1. Log `/tmp/dmop-bayes-gpu-forward-nuts-v2.log`; launch/protocol/startup-verification saved. All4 first2 checkpoints finite, zero divergences; full source hashes, model/target/prior/particle/flags and original starts verified. Seeds2026111400..03, common tuned covariance and initialstep.07,500warm+2000draws. No posterior samples yet.
+- Old NUTS3262256/create1792113782.16 deliberately SIGTERM'd only after replacement validation, verified terminal. Preserved all four148-warmup checkpoints and termination.json. Batch iteration cost6744.85s, counted ONCE, not four times. Monitor87463 terminal0; earlier monitor4583 also terminal0. No monitor remains live at this entry.
+- PMMH3137405(J10000) and3143786(J5000 continuation) remain unchanged. Next: host-revalidate them and review at planned10500total completion; J5000 completion permits prepared prior-sensitivity-gpu-v1 launch once process terminal. New NUTS movement review after50warm, full convergence after retained sampling. Cost accounting includes all pilots/screens/retired warmups. No manuscript changes or converged comparison. Publication remains held; local commits only. Goal active.
+
 ## October 15: covariance screen complete; replacement NUTS prepared
 
 - Monitor4583 terminal0 at screen completion; benchmark3428797 verified terminal. All19 records finite. Paired summary independently reproduced rate ratios. Covariance-only ratio.844[.622,1.278] misses screen; covariance+2x steps ratio3.013[1.696,6.128] passes all gates, acceptance.622/zero divergences. All18 coordinate point rates improve; bs3/omega5 ratios7.95/2.82. Individual intervals broad (epsilon/bs6/omega3 include loss); conditional six-trial evidence, not convergence or ESS/sec.
