@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: warmup review prepared; monitor active
+
+- `gpu-forward-nuts-v1/review_warmup.py` prepares the first50-update all18 movement plot and depth/acceptance summaries. It refuses to run before50 or overwrite an existing review. Grey bands/relative movement use the frozen, explicitly UNCONVERGED J5000 PMMH5063-draw snapshot; these are descriptive scales only, not a convergence test. Prepared but not yet executed or visually reviewed.
+- Read-only monitor PTY session47054 is LIVE, checking the same three sampler PID/create-time/commands every50s. Last poll2: NUTS28warm, J10000PMMH2950retained, J5000PMMH5638retained. Monitor stops at NUTS50warm, primaryPMMH5000retained, J5000completion, or30polls. Resume with write_stdin; its expiry is not sampler termination.
+- At NUTS50: run the review script with PYTHONPATH=/tmp/dmop-bayes-deps and MPLCONFIGDIR=/tmp/dmop-matplotlib using the pypomp Python, inspect movement.png and audit before deciding tuning. No changes to production or the prior-sensitivity source hashes. Publication approval remains pending.
+
 ## October 15: prior-tail interpretation checked against library model
 
 - Read current Pypomp dacca._rproc: immigration is exp(dot(seas,omegas)). Checked all5,017 supplied covariate rows: seasonal basis minimum0, row sums0.9999999999999989--1.0000000000000013. Subtracting c from all six coefficients multiplies immigration by exp(-c), approaching zero environmental immigration. README records the conditional implication: a positive limiting likelihood would make an unrestricted flat prior on that common level improper. We have NOT evaluated the limiting likelihood or established posterior impropriety for a proposed flat prior.
