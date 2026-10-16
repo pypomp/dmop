@@ -1,5 +1,11 @@
 # Handoff
 
+## October 15: publication approval pending; sampling continues
+
+- Commit a5348b587 (longer PMMH review) is LOCAL ONLY. Automatic approval review rejected `git push origin main` twice: the destination is public and the posterior draws/diagnostic artifacts require specific publication approval. Read-only GitHub check confirms pypomp/dmop is public and authenticated viewer has ADMIN permission; that evidence did not satisfy review. Do not retry or bypass the rejection without new explicit approval.
+- A user question is pending: publish a5348b587 including draws/figures to public pypomp/dmop, or keep local. No reply received as of this entry. This limits publication only; continue local experiments and commits.
+- Same three GPU jobs revalidated live by host PID/create time/command after the rejection: NUTS3262256 at19warm, J10000PMMH3137405 at2675retained, J5000continuation3143786 at5313retained. No restart. The next useful reviews remain NUTS50warm, J10000PMMH5000retained, and J5000completion. Goal active.
+
 ## October 15: J5000 PMMH review after 5,063 retained draws
 
 - Saved `gpu-comparison-v1/review-pmrw-5000`: four chains, 5,063 retained draws each. All18 traces/marginals and four trend panels visually inspected. Rhat1.012--1.133, minimum bulkESS25.3/tailESS30.8; improved agreement but no convergence. Seasonal omega5/omega6 lower tails remain unevenly explored. Trend overlap alone is insufficient.
