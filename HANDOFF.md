@@ -2,6 +2,8 @@
 
 ## October 16: 5,000-particle PMMH 30,000-draw review
 
+- Monitor10835 ended normally at40polls with all three original sampler identities live. New read-only monitor19576 is LIVE (50polls/50s), stopping at terminal/completion or NUTS1000total. Poll0 verifies NUTS885total, primary28950total, widerprior21450total. Primary30500total is the nearest completion review; NUTS1000total remains its next posterior review. Recent turns were verified waits; no sampler/manuscript/publication changes. Resume19576, not the expired observer. Commit4069fdc01 records the previous observation window.
+
 - Monitor78305 ended normally at its40-poll observation limit. All THREE original sampler identities remained live and advancing. New read-only monitor10835 is LIVE (40polls/50s), with the same completion/terminal/NUTS1000total stopping conditions. Poll0 host-verifies NUTS837total, primary27525total, widerprior20025total. Recent turns were verified waits. No sampler settings or manuscript changes; publication hold persists. Resume10835; next full reviews remain NUTS1000total and primary/widerprior30500total.
 
 - Read-only monitor78305 is LIVE (40polls/50s), following only the THREE remaining samplers and stopping at completion/terminal process or NUTS1000total. Poll0 host-verifies original identities: NUTS3476536 at788total, primary3680785 at26125total, widerprior4082486 at18600total. J5000 is terminal complete, reviewed underb0e35f266. No sampler changes; next review thresholds and publication hold persist.
