@@ -1,5 +1,12 @@
 # Handoff
 
+## October 15: wider-prior PMMH comparison prepared
+
+- results/prior-sensitivity-gpu-v1 contains a frozen protocol and guarded launcher: J10000, four fresh seeds2026110800--03, prior_scale2, same fixed coordinates/centers/starts/covariance as primary,500 warmup+10000 draws. This doubles prior SDs; likelihood remains unchanged. No new fitted prior.
+- Host --check-only passed input/source hashes and confirmed prerequisite3143786 is still live/incomplete. NO sensitivity run launched and no background scheduler installed. Launch manually after J5000 pmrw-continued completes and its host process exits. It will useGPU1; primary NUTS/PMMH untouched.
+- All three existing process identities were revalidated this turn. Prior-sensitivity assessment requires convergence in both settings and all18 marginal/interval comparisons, especially omega5/omega6; do not claim prior independence based on current concentration.
+- Next: monitor the existing jobs, launch sensitivity when its prerequisite finishes, assess primary convergence and particle agreement. Goal active; manuscript unchanged.
+
 ## October 15: longer PMMH traces reviewed
 
 - Revalidated all three current host processes by PID, create time and command; they remain live. NUTS warmup unchanged.

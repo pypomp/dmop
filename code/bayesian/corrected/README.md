@@ -152,6 +152,12 @@ original `pmrw` directory is an immutable parent; the continuation retains
 every parent draw and the same random state and frozen tuning. The earlier
 GPU NUTS warmup was retired after validating the new deterministic run.
 
+The wider-prior comparison is prepared in `results/prior-sensitivity-gpu-v1`.
+It doubles the normal prior's standard deviations while keeping its centers
+and the likelihood fixed. Its launcher refuses to start until the
+5,000-particle PMMH continuation finishes; see that directory for launch
+and review steps.
+
 The CPU runs in `results/candidate-nuts-4chain-v1` and
 `results/sampling-recovery-v1` were retired after validating the GPU starts;
 their `termination.json` files record the verified processes and checkpoints.
