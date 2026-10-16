@@ -1,5 +1,16 @@
 # Handoff
 
+## October 16: renewed sampler monitor
+
+- Observer67698 completed normally at its 40-poll limit. Final poll39 showed
+  NUTS1164total and widerprior32750total, both original processes live.
+- New read-only observer4232 is live (40 polls, 50 seconds apart). Poll0
+  revalidates PID/create-time/command identities for NUTS3476536 and
+  widerprior695522 with the same counts. Resume4232. Stop conditions remain
+  process termination/completion or NUTS1500total. No sampler restarted.
+- Recent goal turns were verified waits. Proposal documentation is committed
+  in79b22fe3f. No manuscript changes or push; publication hold persists.
+
 ## October 16: proposal documentation and manuscript check
 
 - Expanded `code/bayesian/corrected/METHOD.md` with the actual PMMH proposal,
