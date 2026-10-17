@@ -1,5 +1,23 @@
 # Handoff
 
+## October 16: shared-scale method panels prepared
+
+- Recent goal turns were verified waits. Added optional `compare.py
+  --trend-panels` for equal-length NUTS/PMMH reports: two rows of retained
+  trend traces, densities with the common prior, and autocorrelations.
+  Corresponding axes share linear scales. Unequal chain/draw counts are
+  rejected; warmup is excluded. This is an iteration comparison, not timing.
+- Visually inspected all six panels using frozen NUTS1000 and the first1000
+  draws of PMMH2000 in `/tmp/dmop-equal-iteration-preview/method_trend.png`.
+  Labels/legend are clear, scales consistent and sample ranges visible.
+  This is a development preview, not a new manuscript result. Existing
+  reports and live sampler were unchanged. Syntax and unequal-length guard
+  checked; final2000 reports should be used with this option at completion.
+- Observer97090 poll283 confirms original NUTS live at2172total for every
+  chain (1672retained), no read errors. Continue the same run to2500total.
+  Final comparison, manuscript integration and remote-change preservation
+  remain pending. Publication hold unchanged.
+
 ## October 16: observer recovered after transient missing status
 
 - Observer70070 exited1 when chain0/status.json was temporarily absent.

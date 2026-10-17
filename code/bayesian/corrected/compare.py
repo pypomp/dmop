@@ -17,7 +17,44 @@ from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
 from scipy.stats import gaussian_kde, norm
-from report import NAMES,LABELS,style
+from report import NAMES,LABELS,COLORS,acf,style
+
+
+def trend_panels(nuts, pmmh, target, output):
+    """Compare retained draws at equal iteration counts, on shared linear axes."""
+    if nuts.shape != pmmh.shape:
+        raise ValueError('Trend panels require equal chain and retained-draw counts')
+    samples=[nuts[:,:,3],pmmh[:,:,3]]
+    lo=min(x.min() for x in samples);hi=max(x.max() for x in samples)
+    span=max(hi-lo,1e-8)
+    grid=np.linspace(lo-.1*span,hi+.1*span,400)
+    maxlag=min(100,nuts.shape[1]//4)
+    fig,axes=plt.subplots(2,3,figsize=(12,6),sharex='col',sharey='col',
+                          layout='constrained')
+    for row,(method,draws) in enumerate(zip(['NUTS','PMMH'],samples)):
+        for c,chain in enumerate(draws):
+            color=COLORS[c%len(COLORS)]
+            axes[row,0].plot(np.arange(1,len(chain)+1),chain,color=color,lw=.65,alpha=.8)
+            if np.std(chain)>1e-10:
+                axes[row,1].plot(grid,gaussian_kde(chain)(grid),color=color)
+            else:
+                axes[row,1].axvline(chain[0],color=color)
+            axes[row,2].plot(np.arange(maxlag+1),acf(chain,maxlag),color=color)
+        axes[row,0].set_ylabel(method+'\n'+LABELS[3])
+        axes[row,1].plot(grid,norm.pdf(grid,target['prior_center'][3],
+                                      target['prior_sd'][3]),'k--',lw=1)
+        axes[row,1].set_ylabel('Density')
+        axes[row,2].set_ylabel('Autocorrelation')
+        axes[row,2].axhline(0,color='gray',lw=.6)
+    for ax,label in zip(axes[1],['Retained iteration',LABELS[3],'Lag']):
+        ax.set_xlabel(label)
+    for letter,ax in zip('ABCDEF',axes.flat):
+        style(ax);ax.set_title(letter,loc='left',fontweight='bold')
+    fig.legend(handles=[Line2D([],[],color=COLORS[c%len(COLORS)],label=f'Chain {c+1}')
+                        for c in range(nuts.shape[0])]
+               +[Line2D([],[],color='black',ls='--',label='Prior')],
+               loc='outside upper center',ncol=nuts.shape[0]+1,frameon=False)
+    fig.savefig(output/'method_trend.png');plt.close(fig)
 
 
 def load_report(folder, method):
@@ -41,10 +78,14 @@ def main():
     p.add_argument('--nuts',required=True,type=Path,help='Frozen report directory')
     p.add_argument('--pmmh',required=True,type=Path,help='Frozen report directory')
     p.add_argument('--output',required=True,type=Path)
+    p.add_argument('--trend-panels',action='store_true',
+                   help='Also plot trend traces, densities and ACFs; requires equal retained lengths')
     a=p.parse_args()
     na,nd,nt=load_report(a.nuts,'nuts');pa,pd_,pt=load_report(a.pmmh,'pmrw')
     if na['target']!=pa['target'] or na['model_sha256']!=pa['model_sha256']:
         raise ValueError('Reports do not have the same model, likelihood particles and prior')
+    if a.trend_panels and nd.shape!=pd_.shape:
+        raise ValueError('--trend-panels requires equal chain and retained-draw counts')
     a.output.mkdir(parents=True,exist_ok=True)
     table=pd.DataFrame(index=NAMES)
     for label,t in [('nuts',nt),('pmmh',pt)]:
@@ -59,6 +100,10 @@ def main():
            'report_hashes':{str(folder/'audit.json'):hashlib.sha256((folder/'audit.json').read_bytes()).hexdigest()
                             for folder in [a.nuts,a.pmmh]},
            'same_target':True,'both_pass_numerical_checks':bool(adequate),
+           'trend_panels':({'retained_per_chain':int(nd.shape[1]),
+                            'warmup_excluded':True,'shared_linear_axes':True,
+                            'comparison':'equal iterations, not equal runtime'}
+                           if a.trend_panels else None),
            'interpretation':'Mean differences divided by combined MCSE are descriptive. Unconverged-chain MCSE can be misleading. No equivalence or speedup is inferred.',
            'remaining_checks':['visual review','prior sensitivity','particle sensitivity','same-hardware timing']}
     (a.output/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
@@ -84,6 +129,8 @@ def main():
         ax.plot(grid,norm.pdf(grid,target['prior_center'][j],target['prior_sd'][j]),'k--',lw=1)
         ax.set_title(LABELS[j]);style(ax)
     fig.savefig(a.output/'method_marginals.png');plt.close(fig)
+    if a.trend_panels:
+        trend_panels(nd,pd_,na['target'],a.output)
     print(json.dumps(audit,indent=2))
 
 

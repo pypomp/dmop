@@ -142,6 +142,13 @@ where it remains informative; revise empirical claims only as needed.
 - `compare.py`: compare frozen NUTS/PMMH reports on the same target, showing
   all-coordinate marginal agreement and differences relative to Monte Carlo
   error. Unconverged reports remain explicitly marked as development samples.
+  Optional `--trend-panels` adds a two-row comparison of trend traces,
+  densities and autocorrelations, with shared linear axes. This requires equal
+  chain counts and retained lengths; use `report.py --max-retained N` to freeze
+  the same prefix for each method. Warmup is excluded. Matching chain colors
+  identify chains within each method, not paired random draws. Equal iterations
+  do not imply equal computing time. The default marginal comparison also
+  accepts unequal lengths, for comparison with a longer reference run.
 - `results/`: all pilots, including unsuccessful settings. No pilot is a
   final posterior sample. The historical files one level up stay unchanged.
 
