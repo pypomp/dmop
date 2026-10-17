@@ -55,18 +55,26 @@ saved draws and verifies the earlier 1,000-draw review as an exact prefix.
 
 ## Original-settings control and historical comparison
 
-The requested original-settings NUTS control is running in
-`results/original-settings-nuts-v1/nuts`: four chains, fixed step size .05,
-identity metric in the original estimation coordinates, depth 5, no adaptation,
-and 1,500 iterations. It uses the corrected common prior and untempered
-10,000-particle target, not the old tempered target. Its launch protocol
-explains the conversion to standardized coordinates. BlackJAX replaces TFP;
-this restores proposal settings, not the original algorithm or random draws.
+The fixed-step original-settings NUTS control was stopped at the user's
+request after 250 saved iterations per chain, with frequent divergences.
+`results/original-settings-nuts-v1/termination.json` preserves process identity
+and checkpoint hashes. This aborted run is not used as a posterior sample.
+
+Its replacement in `results/identity-adapt-nuts-v1/nuts` uses the same fixed
+identity metric in original estimation coordinates, but adapts the scalar
+step size during 500 warmup iterations, starting at .002 and targeting .65
+trajectory acceptance. It then retains 1,000 iterations with frozen tuning.
+The four starts, common prior, untempered 10,000-particle target and
+1,000-particle DMOP force are unchanged. The metric does not adapt.
+
 Compare with the completed diagonal PMMH control in
 `results/historical-proposal-control-v1/pmrw` (fixed standardized SD .02,
-no adaptation, 1,500 iterations). Use iterations 501--1500 for both density
-and diagnostic comparisons, with full traces showing the first 500 as well.
-The additional SI figure remains pending completion of this NUTS control.
+no adaptation, 1,500 iterations). Use iterations 501--1500 for both methods,
+with full traces showing the first 500 separately. The first 500 PMMH draws
+are discarded for this comparison, not an adaptive warmup. The additional
+SI figure is pending completion of the replacement NUTS control. This is a
+comparison of identity-metric NUTS with adapted steps versus fixed diagonal
+PMMH; do not describe it as a replication of the archived NUTS settings.
 Automatic polling is paused; do not restart or extend runs without a request.
 
 Fasiolo et al. (2016) proposal provenance remains unresolved. The paper and

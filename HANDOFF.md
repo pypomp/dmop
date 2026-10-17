@@ -1,5 +1,28 @@
 # Handoff
 
+## October 17: identity-metric NUTS replacement
+
+- User explicitly stopped the original fixed-.05 control after observing its
+  divergences and requested identity-metric NUTS with step adaptation versus
+  diagonal PMMH. Verified PID427216/create1792222661.01 and exact command,
+  terminated it, verified exit, and preserved four250-iteration checkpoints.
+  `original-settings-nuts-v1/termination.json` records hashes and authorization.
+  It is an aborted diagnostic run; do not resume or present as completed.
+- Replacement `code/bayesian/corrected/results/identity-adapt-nuts-v1` launched
+  on GPU0 PID613935/create1792224810.41 at2026-10-17T08:13:31Z.
+  Log `/tmp/dmop-identity-adapt-nuts-v1.log`. Four fresh chains, initial step
+  .002, 500 warmup iterations adapting scalar step toward acceptance .65,
+  then1000retained with frozen step sizes. Depth5. Identity in ORIGINAL
+  estimation coordinates, with B_z=diag(1/prior_sd) in standardized coords;
+  this was numerically checked. `--fixed-metric` prevents covariance adaptation.
+  Same starts, prior, J10000float64 target and G1000float32 DMOP-.95 force.
+- Compare against completed `historical-proposal-control-v1/pmrw`, using
+  iterations501--1500 from both methods. PMMH's first500 are a display/analysis
+  discard, not adaptive warmup. Show initial traces too; no runtime claim.
+  This supersedes the previous original-settings control comparison. The
+  replacement results and SI figure remain pending; do not change main results.
+- No recurring model polling or automatic restart. Publication hold unchanged.
+
 ## October 17: Bayesian manuscript figures and redlines
 
 - Primary NUTS is finished: 500 warmup + 2,000 retained per chain. Final report
