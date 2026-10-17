@@ -11,6 +11,32 @@ The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 The current NUTS configuration is in `results/gpu-forward-nuts-v2`; its
 PMMH reference is complete in `results/gpu-comparison-v2`.
 
+## Files to retain in Git
+
+Each experiment keeps its launch script, protocol, configuration files and
+initial inputs. For the identity-metric control, aborted fixed-step control
+and wider-prior PMMH run, the batch directory also contains one `source/`
+snapshot and a `reproducibility.json` manifest. The manifest records source,
+configuration and input hashes; input paths are relative to the dmop root.
+The four per-chain source copies were checked against this shared snapshot.
+
+Live checkpoints, status/metrics files, duplicate per-chain sources and
+initial arrays, and OneDrive `safeBackup` files are ignored. They remain on
+disk for running jobs and continuation. Existing tracked results remain
+tracked. Frozen review reports and manuscript figures remain versioned.
+At the end of a run, archive the selected final checkpoint explicitly
+(`git add -f` for that checkpoint only), together with its review report.
+Do not add sync backups or intermediate checkpoints.
+
+For a new run, retain its configuration and launch inputs and save one source
+snapshot with hashes before changing the implementation. Run the archived
+launcher against that snapshot to reproduce the experiment. Configuration
+files record the original machine's absolute paths; use the manifest's
+repository-relative input paths on another machine. To continue an archived
+chain after cloning, restore its local `source/` from the batch snapshot and
+its `initial.npy` and `initial_chol.npy` from the manifest's input paths.
+The checkpoint selected for continuation must also be available.
+
 ## Manuscript figures and diagnostic table
 
 Run from the dmop root with the report dependencies installed:

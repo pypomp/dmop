@@ -1,5 +1,23 @@
 # Handoff
 
+## October 17: Bayesian artifact cleanup
+
+- Consolidated reproducibility records for identity-adapt-nuts-v1/nuts,
+  original-settings-nuts-v1/nuts and prior-sensitivity-gpu-v1/pmrw-60000:
+  one canonical source snapshot per batch plus reproducibility.json. All four
+  per-chain source copies match the configuration hashes. Launch inputs are
+  already tracked; manifests identify them by repository-relative path/hash.
+- Ignore live checkpoints, status/metrics/completion markers, duplicated
+  per-chain source/input arrays and Bayesian OneDrive safeBackup files.
+  No outputs were deleted and no sampler was changed. Existing tracked final
+  results remain tracked; reviewed reports and figures remain visible to Git.
+- Keep new launch inputs/configs and one source snapshot in Git. Explicitly
+  archive selected completed checkpoints and review reports; do not force-add
+  sync backups. See corrected/README.md for the artifact policy.
+- Publication hold remains: commit locally, do not push. No sampler polling
+  was performed for this cleanup. Identity-control SI comparison remains
+  pending completion and review; the cleanup does not finish that work.
+
 ## October 17: identity-metric NUTS replacement
 
 - User explicitly stopped the original fixed-.05 control after observing its
