@@ -1,5 +1,29 @@
 # Handoff
 
+## October 17: common-target SI methods added
+
+- Previous goal turn was a verified wait. Original NUTS observer97090
+  poll420 confirms PID identity live,2341total in all chains, no read errors.
+  Continue to2500total; no restart or tuning change. Endpoint figures,
+  comparison and coordinated replacement of archived manuscript results
+  remain pending.
+- Preserved origin/main907e23ec0's ms.tex/si.tex changes to LemmaS7 by
+  copying those two clean tracked sources before the Bayesian insertion.
+  ms.tex now matches that remote exactly. No whole-branch merge or push.
+- Added SI subsection `sec:bayes-common-target`: model, all18 prior
+  coordinates and exact interval table, augmented untempered target,
+  PMMH acceptance/cache retention and conditional NUTS/randomness updates.
+  Checked against model.py, kernels.py, nuts.py and frozen run configuration.
+  The existing subsection is explicitly titled archived; its figures and
+  main-text account remain for coordinated replacement at endpoint review.
+  This intermediate SI includes both calculations with their distinction
+  explicit; remove the archived presentation when integrating final figures.
+- Built-in compile_latex_document was called on the saved si.tex and failed
+  at input{macros}: its isolated compiler cannot access macros.tex, which is
+  present in the repository. No source workaround, alternate document, tab,
+  or separate PDF was created. Native compilation remains unverified.
+  Publication hold unchanged; no experiment outputs staged in this change.
+
 ## October 16: shared-scale method panels prepared
 
 - Recent goal turns were verified waits. Added optional `compare.py

@@ -2204,11 +2204,11 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     \label{lem:posterior-proper-weights}
     Suppose that $\{(X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
     Also suppose that $(X^{\prime J}_j,U^{\prime J}_j) = \big(X_j^J,U_j^J \, f_{Z|X}(z^*|X_j^J)\big)$. 
-    Then, if $U_j^J \, f_{Z|X}(z^*|X_j^J)$ and $U_j^J \, f_{Z|X}(z^*|X_j^J) \big/ f_Z(z^*)$ are bounded, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
+    Then, if $x\mapsto f_{Z|X}(z^*|x)$ is bounded and $0<f_Z(z^*)<\infty$, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
 \end{lem}
 
 \begin{proof}[Proof.]
-    Again, we want to show that
+    Again, we want to show that, for any measurable bounded $h$,
      \begin{equation}
      \frac{\sum_j h(X_j^J) \cdot U_j^J \cdot f_{Z|X}(z^*|X_j^J)}{\sum_j U_j^J \cdot f_{Z|X}(z^*|X_j^J)} \stackrel{a.s.}{\to} \E_{f_{X|Z}}\big[h(X)\big|z^*\big].
      \end{equation}
@@ -2222,11 +2222,12 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J)\,  {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}
     \times \left( \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \right)^{-1}.
     \end{equation}
+    The functions $x\mapsto f_{Z|X}(z^*|x)$ and $x\mapsto h(x)f_{Z|X}(z^*|x)$ are bounded.
     We will apply Equation (\ref{eq:lemma-posterior-hypothesis}) to the numerator and the denominator in the ratio above individually. The numerator converges to 
     \begin{equation}
-    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {u}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
+    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
     \end{equation}
-    while the reciprocal of the denominator converges to 
+    while the denominator converges to
     \begin{equation} 
     \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}  \stackrel{a.s.}{\to} \E_{f_X}\big[f_{Z|X}(z^*|X)\big] = f_Z(z^*).
     \end{equation}
@@ -2253,6 +2254,8 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     % where we can swap the limit and expectations with the bounded convergence theorem.
 \end{proof}
 
+
+\noindent\textbf{Remark.} In the MOP application, the boundedness and positivity conditions in Lemma~\ref{lem:posterior-proper-weights} follow from Assumption~\refAssumpBoundedMeasurement.
 
 % \begin{lem}[Change of Particle Marginal Measure]
 %     \label{lem:change-marginal-proper-weights}
@@ -12410,7 +12413,103 @@ identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
 \section{Implementation and Figures for Bayesian Inference}
 \label{appendix:bayes}
 
-\subsection{Sampling calculation and empirical priors}
+\subsection{A common sampling target}
+\label{sec:bayes-common-target}
+
+For a comparison with a common posterior, we implemented NUTS and particle
+Metropolis--Hastings (PMMH) using the Dhaka model in Pypomp.
+The process simulator uses Gaussian noise with 20 Euler steps per monthly
+observation. We fix the initial state proportions at the library values,
+with $\rho=0$, $c=1$, $\alpha=1$ and $\delta=0.02$.
+Here $\alpha$ is a model parameter, distinct from the DMOP discount parameter.
+The observation distribution is Gaussian, with mean equal to the simulated
+monthly deaths and standard deviation equal to $\tau$ times that mean.
+We omit the additive measurement-density floor used in the library's
+optimization code. Paths that leave the nonnegative state space are assigned
+zero likelihood for the observed series.
+
+Let $x$ denote the 18 estimation coordinates. These comprise the logarithms
+of the five positive parameters $\gamma,m,\epsilon,\sigma,\tau$, the trend
+coordinate $100\beta_{\mathrm{trend}}$, and the six coefficients in each
+seasonal function. The unused constant environmental-transmission parameter
+in the earlier implementation is excluded.
+We use independent Gaussian priors for these coordinates, common to all
+chains and both methods. For each coordinate, the mean is the midpoint
+of the interval in Table~\ref{tab:bayes-prior}, and the standard deviation
+is half its width. These intervals come from the parameter search ranges;
+they do not truncate the Gaussian distributions.
+Thus, writing $a_i$ and $b_i$ for the endpoints,
+\[
+ z_i=\frac{x_i-(a_i+b_i)/2}{(b_i-a_i)/2},
+ \qquad p(z)=\prod_{i=1}^{18}\phi(z_i;0,1).
+\]
+This specifies a reference prior without fitting a density to IF2 particles.
+The prior density is evaluated in $z$, so the sampling calculation requires
+no further Jacobian factor. On the natural parameter scale, the priors for
+the five positive parameters are lognormal.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lll}
+\toprule
+Estimation coordinate & $a_i$ & $b_i$ \\
+\midrule
+$\log\gamma$ & $\log 10$ & $\log 40$ \\
+$\log m$ & $\log 0.03$ & $\log 0.6$ \\
+$\log\epsilon$ & $\log 0.2$ & $\log 30$ \\
+$100\beta_{\mathrm{trend}}$ & $-1$ & $0$ \\
+$\log\sigma$ & $\log 1$ & $\log 5$ \\
+$\log\tau$ & $\log 0.1$ & $\log 0.5$ \\
+Seasonal transmission coefficients 1 and 3 & $-4$ & $4$ \\
+Seasonal transmission coefficients 2, 4, 5 and 6 & $0$ & $8$ \\
+Each seasonal environmental-transmission coefficient & $-10$ & $0$ \\
+\bottomrule
+\end{tabular}
+\caption{Intervals specifying the means and standard deviations of the
+common Gaussian prior on the estimation scale. A sensitivity calculation
+doubles all prior standard deviations, keeping the means fixed.}
+\label{tab:bayes-prior}
+\end{table}
+
+Let $u$ denote the particle-filter random numbers, with law $m$, and let
+$\widehat L_J(z,u)$ be the bootstrap particle-filter likelihood estimate.
+The augmented target is
+\begin{equation}
+ \widetilde\pi(z,u)\ \propto\ \widehat L_J(z,u)\,p(z)\,m(u).
+ \label{eq:bayes-common-target}
+\end{equation}
+Unbiasedness of the likelihood estimate gives the posterior for the
+specified Euler model as the marginal distribution of $z$ \citep{andrieu10}.
+The log likelihood and log prior enter without division by the number of
+observations. We use $J=10,000$ particles and double precision for this
+likelihood calculation in both methods.
+
+PMMH jointly proposes $z'=z+hB\xi$, where $\xi\sim N(0,I)$, and independent
+random numbers $u'\sim m$. Its acceptance probability is
+\[
+ 1\wedge\frac{\widehat L_J(z',u')p(z')}{\widehat L_J(z,u)p(z)}.
+\]
+On rejection, both $z$ and $u$ are retained, together with the cached
+likelihood estimate. The matrix $BB^T$ is estimated from pilot PMMH draws
+and held fixed; the scalar $h$ is adapted during 500 warmup iterations.
+Preparation of the starting points and proposal scales includes numerical
+optimization with derivatives, although the PMMH transition itself
+requires only process simulation and measurement-density evaluation.
+
+NUTS first proposes independent random numbers $u'\sim m$, accepting with
+probability $1\wedge\widehat L_J(z,u')/\widehat L_J(z,u)$, and then updates
+$z$ conditional on the retained $u$.
+We use BlackJAX's NUTS trajectory construction, with maximum tree depth 5.
+DMOP with discount parameter 0.95 and 1,000 particles supplies the proposal
+force, evaluated in single precision with deterministic GPU operations.
+Every trajectory weight uses the double-precision likelihood in
+Equation~\ref{eq:bayes-common-target} and the common prior.
+The force and likelihood are therefore separate numerical calculations.
+Step sizes are adapted during 500 warmup iterations and then held fixed.
+The implementation, prior specification and checks of the sampling kernels
+are available in \texttt{code/bayesian/corrected}.
+
+\subsection{Archived sampling calculation and empirical priors}
 
 The code and four saved chains underlying Figure~\refFigNutsEb\ are
 available in \texttt{code/bayesian}, together with the script producing
