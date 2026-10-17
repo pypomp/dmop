@@ -1,5 +1,17 @@
 # Handoff
 
+## October 17: experiment navigation updated
+
+- Updated corrected/README.md's obsolete running status: both primary and
+  J5000 PMMH references are complete at30000retained; doubled-prior PMMH
+  is complete at60000retained. Corrected the wider-prior batch path and
+  linked the current frozen reports, comparisons and equal-iteration prefix.
+- Included the completed visual-review conclusions and unresolved tail
+  mixing, without claiming convergence or prior/particle insensitivity.
+  Existing report CSVs/audits and review README checked against these edits.
+- Original NUTS observer97090 poll433 confirms live2357total, no read errors.
+  Next full review2500total. No sampler changes, manuscript changes or push.
+
 ## October 17: common-target SI methods added
 
 - Previous goal turn was a verified wait. Original NUTS observer97090

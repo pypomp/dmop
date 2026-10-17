@@ -8,7 +8,7 @@ figures remain unchanged until replacement runs have passed their checks.
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
 The current NUTS configuration is in `results/gpu-forward-nuts-v2`; its
-PMMH counterpart continues in `results/gpu-comparison-v2`.
+PMMH reference is complete in `results/gpu-comparison-v2`.
 
 ## Target and model
 
@@ -42,8 +42,8 @@ A common proper reference prior replaces the chain-specific empirical KDEs.
 The 18 estimation coordinates have independent Normal priors, with mean at
 the midpoint of the old search ranges and SD half their width. These ranges
 and the coordinate transformations are explicit in `model.py`. They are a
-reference choice, not claimed scientific prior knowledge. A doubled-SD
-sensitivity run will assess the dependence on that choice. IF2 or optimization
+reference choice, not claimed scientific prior knowledge. The completed
+doubled-SD sensitivity run is described below. IF2 or optimization
 may supply starting points and proposal scales; neither changes the prior.
 
 Removing the empirical KDE does not justify an unrestricted flat prior.
@@ -55,8 +55,8 @@ environmental immigration. If its limiting data likelihood is positive,
 a flat prior on that common level has a nonintegrable lower tail. We have not
 evaluated that limiting likelihood here. The observed long tails in individual
 coefficients also require checking; this algebra alone does not diagnose their
-mixing or establish prior sensitivity. Retain the proper prior and compare
-with doubled prior SDs after both runs have converged.
+mixing or establish prior sensitivity. The doubled-SD experiment below
+examines this dependence while retaining a proper prior.
 
 ## Sampler and checks
 
@@ -178,7 +178,7 @@ The current batches each contain `chain0` through `chain3`:
 | Primary NUTS | `gpu-forward-nuts-v2/nuts` |
 | Primary PMMH | `gpu-comparison-v2/pmrw-long` |
 | PMMH with 5,000 particles | `gpu-comparison-v1/pmrw-long` |
-| PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw-long` |
+| PMMH with doubled prior SDs | `prior-sensitivity-gpu-v1/pmrw-60000` |
 | Fixed historical-proposal control | `historical-proposal-control-v1/pmrw` |
 
 Primary NUTS and PMMH use the same starts, proper prior and 10,000-particle
@@ -195,32 +195,41 @@ records identify the retired processes. Include the covariance pilot,
 tuning screens and retired warmups in setup costs. Convergence is still
 unverified.
 
-Primary PMMH completed 10,000 retained draws per chain; its report in
-`gpu-comparison-v2/review-pmrw-10000` still shows disagreement in seasonal
-coefficients and incomplete tail exploration. The same chains continue to
-30,000 retained draws in `gpu-comparison-v2/pmrw-long`, preserving the target,
-random state and frozen tuning. The extension includes the entire original
-`pmrw` trace; report the latest continuation without pooling overlapping files.
+Primary PMMH completed 30,000 retained draws per chain. Its report in
+`gpu-comparison-v2/review-pmrw-30000` shows improved agreement relative to
+10,000 draws, with residual seasonal dependence and unequal tail exploration.
+All 18 traces and marginal plots have been inspected. The largest rank
+R-hat is 1.014; the smallest bulk and tail ESS are 202 and 152. These
+results do not establish joint convergence. The completed extension in
+`gpu-comparison-v2/pmrw-long` preserves the original target, random state
+and frozen tuning, and includes the entire original `pmrw` trace.
+Report the latest continuation without pooling overlapping files.
+`review-pmrw-2000` freezes its first 2,000 retained draws for the planned
+equal-iteration NUTS comparison; this does not equalize computing time.
 
-The earlier 5,000-particle PMMH run continues under
-`results/gpu-comparison-v1/pmrw-long` for a particle-count check. The completed
-10,000-draw report is in `gpu-comparison-v1/review-pmrw-10000`; it did not
-pass convergence checks. The extension targets 30,000 retained draws per
-chain. It retains every draw from `pmrw-continued`, which itself includes
-the original `pmrw` prefix, with the same random state and frozen tuning.
-Use only the latest continuation when reporting these chains; never pool
-overlapping parent files.
+The 5,000-particle PMMH run also completed 30,000 retained draws per chain
+in `results/gpu-comparison-v1/pmrw-long`. Its report is
+`gpu-comparison-v1/review-pmrw-30000`; comparison with the primary run is
+in `gpu-comparison-v2/particle-comparison-30000`. All 18 displayed marginal
+distributions broadly overlap, with residual chain differences and tail
+uncertainty. This is a descriptive particle-count check, not evidence of
+joint convergence or general insensitivity to particle count. The extension
+retains every draw from `pmrw-continued`, including the original `pmrw`
+prefix. Use only the latest continuation when reporting these chains.
 
-The wider-prior comparison is running in `results/prior-sensitivity-gpu-v1`.
-It doubles the normal prior's standard deviations while keeping its centers
-and the likelihood fixed. It started after the initial 10,000-draw
-5,000-particle PMMH continuation finished. See its protocol, launch record
-and README for settings and review steps. Its completed 10,000-draw report
-shows substantial immigration-coefficient chain separation, although the
-trend distribution resembles the original-prior result. The same chains
-continue to 30,000 retained draws in `pmrw-long`, with unchanged tuning.
-`comparison-10000` retains the provisional comparison of both prior settings
-at 10,000 draws. Prior sensitivity remains unresolved.
+The wider-prior experiment completed 60,000 retained draws per chain in
+`results/prior-sensitivity-gpu-v1/pmrw-60000`. It doubles all prior standard
+deviations while keeping the centers and likelihood fixed. The frozen report
+is `prior-sensitivity-gpu-v1/review-pmrw-60000`; `comparison-60000` compares
+it with the primary 30,000-draw reference. All 18 traces and marginals have
+been inspected. The sampled trend SD changes from 0.1121 to 0.1151, whereas
+the SDs of environmental coefficients 1, 5 and 6 increase by factors of
+1.81, 1.73 and 2.49. Tail occupancy remains unequal across chains; the
+largest R-hat is 1.074 and smallest bulk ESS is 56.6, both for coefficient 6.
+These finite-run results support replacing the empirical KDE with a common
+proper prior, but do not establish prior insensitivity. No further
+sensitivity continuation is scheduled. See that directory's README and
+numerical review for the retained limitations and exact continuation checks.
 
 The historical-proposal control uses the current primary starts and target
 with the original fixed diagonal proposal for 1,500 iterations. Its purpose
