@@ -126,8 +126,8 @@ IFAD also outperforms marginalized panel iterated filtering on an ecological pan
 \newEdit{\editPlugAndPlay}
 
 We also present an exploratory application of DMOP-$\alpha$ to Bayesian computation.
-In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14} in conjunction with empirical priors estimated with IF2.
-The numerical results provide promising preliminary evidence of faster parameter-space exploration on the Dhaka cholera model of \cite{king08}, with the interpretation and limitations of this comparison discussed below.
+In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14} in conjunction with \sout{empirical priors estimated with IF2}\kevin{a common Gaussian prior}.
+The numerical results provide promising preliminary evidence of faster parameter-space exploration \kevin{per iteration} on the Dhaka cholera model of \cite{king08}, with the interpretation and limitations of this comparison discussed below.
 
 \section{Problem Setup}
 
@@ -539,28 +539,35 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
 Particle MCMC \citep{andrieu10} is arguably the most popular method for full-information plug-and-play Bayesian inference for POMP models.
 However, particle Metropolis-Hastings often mixes slowly, requiring long burn-in periods.
 For instance, \cite{fasiolo16} ran $1.4$ million iterations and discarded the first half as burn-in for a modified version of the \cite{king08} model, using a different transition scheme, process noise and observation distribution.
-To alleviate this, we demonstrate a No U-Turn Sampler (NUTS) \citep{hoffman14} powered by DMOP-$\alpha$, with a nonparametric empirical prior constructed from density estimation of the parameter swarm from the IF2 warm-start. 
-Using NUTS with MOP-$\alpha$ and these priors gives promising preliminary results for parameter-space exploration after discarding $500$ iterations (Figure \ref{fig:nuts-eb}).
-The calculation uses a tempered log potential and a separate fitted prior for each chain; Supplementary Section~\suppSecBayesFigs\ gives the construction and diagnostics.
+To alleviate this, we demonstrate a No U-Turn Sampler (NUTS) \citep{hoffman14} powered by DMOP-$\alpha$, with \sout{a nonparametric empirical prior constructed from density estimation of the parameter swarm from the IF2 warm-start}\kevin{a Gaussian prior common to NUTS and particle Metropolis--Hastings}.
+Using NUTS with MOP-$\alpha$ and \sout{these priors}\kevin{this prior} gives promising preliminary results for parameter-space exploration after discarding $500$ iterations (Figure \ref{fig:nuts-eb}).
+\sout{The calculation uses a tempered log potential and a separate fitted prior for each chain; Supplementary Section~\suppSecBayesFigs\ gives the construction and diagnostics.}\kevin{Both methods target the same untempered posterior; Supplementary Section~\suppSecBayesFigs\ gives the implementation and diagnostics.}
 NUTS has been implemented with previous differentiable particle filters \citep{rosato22} but not in our plug-and-play context with control over the bias/variance tradeoff.
 \newEdit{The effect of approximate gradients on sampling accuracy depends on the numerical potential and the complete sampling procedure, including any acceptance correction.}
 
 \begin{figure}[tb]
     \centering
     \vspace{1mm}
-    \includegraphics[width=\arxiv{\textwidth/\real{1.25}}{\textwidth}/\real{1.25}]{imgs/pmcmc/nuts_eb.png}
-    \caption{Sampling diagnostics for NUTS with $4$ chains, showing $1000$ retained draws of the transformed trend coordinate $100\beta_{\text{trend}}$ within the Dhaka cholera model of \cite{king08}. \textbf{A:} Histogram of retained draws. \textbf{B:} Density estimate from these draws. \textbf{C:} Autocorrelation plot using all $1500$ iterations. \textbf{D:} Trace plot before and after the $500$ discarded iterations. The empirical-prior calculations explore similar modal values of this parameter; the separate fitted priors and diagnostics for all sampled coordinates are described in Supplementary Section~\suppSecBayesFigs.}
+    \includegraphics[width=\textwidth]{imgs/pmcmc/common_target_trend.pdf}
+    \caption{\sout{Sampling diagnostics for NUTS with \mbox{$4$} chains, showing \mbox{$1000$} retained draws of the transformed trend coordinate \mbox{$100\beta_{\text{trend}}$} within the Dhaka cholera model of \mbox{\cite{king08}}. \textbf{A:} Histogram of retained draws. \textbf{B:} Density estimate from these draws. \textbf{C:} Autocorrelation plot using all \mbox{$1500$} iterations. \textbf{D:} Trace plot before and after the \mbox{$500$} discarded iterations. The empirical-prior calculations explore similar modal values of this parameter; the separate fitted priors and diagnostics for all sampled coordinates are described in Supplementary Section~\suppSecBayesFigs.}\kevin{Sampling diagnostics for the transformed trend coordinate $100\beta_{\mathrm{trend}}$ in the Dhaka cholera model of \cite{king08}. Four chains of each method have 2,000 retained iterations after 500 warmup iterations. Panels A--C show NUTS and D--F show particle Metropolis--Hastings: traces, marginal density estimates and autocorrelations, respectively. Corresponding panels use the same scales; dashed curves show the common prior.}}
     \label{fig:nuts-eb}
     \arxiv{}{\vspace*{-4mm}}
 \end{figure}
 
 
-Without the IF2 prior, NUTS with the MOP-$\alpha$ estimate alone tended to diverge.
+\sout{Without the IF2 prior, NUTS with the MOP-\mbox{$\alpha$} estimate alone tended to diverge.
 In our runs, particle Metropolis-Hastings, with or without said prior, explored the parameter space slowly.
 We display these results in the supplement (Section~\suppSecBayesFigs). 
 These preliminary results suggest that combining gradient estimates with empirical priors could accelerate particle Bayesian computation for complex scientific models.
-Differences in the priors, tempering and model formulations preclude interpreting the iteration counts as a matched-target speedup or as evidence of convergence to a common posterior.
+Differences in the priors, tempering and model formulations preclude interpreting the iteration counts as a matched-target speedup or as evidence of convergence to a common posterior.}\kevin{With the same prior and starting points, NUTS explores the trend parameter more rapidly per iteration than particle Metropolis--Hastings (Figure~\ref{fig:nuts-eb}). Table~\ref{tab:bayes-main-diagnostics} gives quantitative comparisons for all estimated parameters. These preliminary results suggest that DMOP gradient estimates could accelerate particle Bayesian computation for complex scientific models. Some seasonal parameters require longer runs, and the comparison does not establish a computing-time advantage (Supplementary Section~\suppSecBayesFigs).}
 
+
+\begin{table}[tb]
+\centering
+\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/corrected/results/paper/diagnostics}}}
+\caption{\kevin{Sampling diagnostics for all 18 estimation coordinates in the Dhaka example, using four chains and 2,000 retained iterations per chain for each method, after 500 warmup iterations. The columns give rank-normalized split $\widehat R$, bulk and tail effective sample sizes (ESS), and Monte Carlo standard errors of the mean (MCSE). Bold entries indicate the more favorable value in each comparison: $\widehat R$ closer to 1, larger ESS, or smaller MCSE. These are comparisons per iteration, not per unit computing time.}}
+\label{tab:bayes-main-diagnostics}
+\end{table}
 
 \section{Theoretical Analysis of MOP-$\alpha$}
 \label{sec:thms}

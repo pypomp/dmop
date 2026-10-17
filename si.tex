@@ -12509,52 +12509,51 @@ Step sizes are adapted during 500 warmup iterations and then held fixed.
 The implementation, prior specification and checks of the sampling kernels
 are available in \texttt{code/bayesian/corrected}.
 
-\subsection{Archived sampling calculation and empirical priors}
+\subsection{\sout{Archived sampling calculation and empirical priors}\kevin{Sampling settings and diagnostics}}
 
-The code and four saved chains underlying Figure~\refFigNutsEb\ are
+\sout{The code and four saved chains underlying Figure~\refFigNutsEb\ are
 available in \texttt{code/bayesian}, together with the script producing
-Table~\ref{tab:bayesian-diagnostics} and their original \texttt{diffPomp}
+Table~\mbox{\ref{tab:bayesian-diagnostics}} and their original \texttt{diffPomp}
 source revision.
 This earlier calculation fixes the initial state proportions and uses
-19 finite transformed parameter coordinates, denoted by $z$.
+19 finite transformed parameter coordinates, denoted by \mbox{$z$}.
 Positive rates and noise scales are represented by their logarithms,
-the trend coordinate is $100\beta_{\mathrm{trend}}$, and the seasonal
+the trend coordinate is \mbox{$100\beta_{\mathrm{trend}}$}, and the seasonal
 coefficients are unchanged. The two remaining stored coordinates fix
-$\rho=0$ and $c=1$. An additional coordinate $\log\omega$ is retained
+\mbox{$\rho=0$} and \mbox{$c=1$}. An additional coordinate \mbox{$\log\omega$} is retained
 in the fitted prior although the seasonal environmental force of infection
-replaces this constant in the simulator.
+replaces this constant in the simulator.}
 
-For each chain $c$, we ran 40 IF2 iterations with 10,000 particles from
+\sout{For each chain \mbox{$c$}, we ran 40 IF2 iterations with 10,000 particles from
 a random starting point. The perturbation standard deviation was initially
 0.02 on the transformed scale and decreased by a factor of 0.95 per iteration.
 We selected the swarm with the highest monitored likelihood and initialized
-NUTS at its mean. If its particles are $z_{c,1},\ldots,z_{c,K}$, with
-$K=10,000$, the empirical prior was the joint Gaussian kernel estimate
-\[
- \widehat\pi_c(z)=\frac{1}{K}\sum_{k=1}^K
+NUTS at its mean. If its particles are \mbox{$z_{c,1},\ldots,z_{c,K}$}, with
+\mbox{$K=10,000$}, the empirical prior was the joint Gaussian kernel estimate}
+
+\[\text{\sout{\mbox{$\displaystyle \widehat\pi_c(z)=\frac{1}{K}\sum_{k=1}^K
  \phi_{19}(z;z_{c,k},h^2 S_c),\qquad
- h=K^{-1/(19+4)}\simeq0.670,
-\]
-where $S_c$ is the sample covariance of the swarm. This is the default
+ h=K^{-1/(19+4)}\simeq0.670,$}}}\]
+
+\sout{where \mbox{$S_c$} is the sample covariance of the swarm. This is the default
 Scott bandwidth used by \texttt{jax.scipy.stats.gaussian\_kde}.
 The prior is defined on the transformed coordinates, so no additional
-change-of-variables factor enters the calculation in $z$.
+change-of-variables factor enters the calculation in \mbox{$z$}.
 Each chain has its own fitted prior. The observations are therefore used
 both to construct that prior and to evaluate the likelihood, with the
-fitted density subsequently held fixed.
+fitted density subsequently held fixed.}
 
-The numerical log potential supplied to NUTS was
-\begin{equation}
- a_c(z;u)=\frac{\widehat\ell_J(z;u)+\log\widehat\pi_c(z)}{N},
- \qquad N=600,\quad J=1,000,
- \label{eq:bayes-numerical-potential}
-\end{equation}
-where $\widehat\ell_J$ is the forward particle-filter log objective
+\sout{The numerical log potential supplied to NUTS was}
+
+\[\text{\sout{\mbox{$\displaystyle a_c(z;u)=\frac{\widehat\ell_J(z;u)+\log\widehat\pi_c(z)}{N},
+ \qquad N=600,\quad J=1,000,$}}}\]
+
+\sout{where \mbox{$\widehat\ell_J$} is the forward particle-filter log objective
 returned by the MOP routine, including its measurement-density stabilization,
-and $u$ denotes the simulation random numbers.
-The archived sampling code uses $\alpha=0.95$ for its DMOP derivative.
+and \mbox{$u$} denotes the simulation random numbers.
+The archived sampling code uses \mbox{$\alpha=0.95$} for its DMOP derivative.
 Thus the supplied potential corresponds numerically to a tempered density
-proportional to $\{\exp(\widehat\ell_J)\widehat\pi_c\}^{1/N}$,
+proportional to \mbox{$\{\exp(\widehat\ell_J)\widehat\pi_c\}^{1/N}$},
 rather than the untempered empirical-prior posterior.
 The resampling genealogy is recalculated at each candidate parameter;
 the stop-gradient operations freeze the resampling measurements only
@@ -12562,9 +12561,9 @@ for differentiation. The code draws its simulation seed and systematic
 resampling offsets using NumPy during JAX tracing, so these random
 numbers are reused by the compiled computation. They are not part of
 an augmented Markov-chain state, and no separate pseudo-marginal update
-is applied. This construction does not establish exact posterior sampling.
+is applied. This construction does not establish exact posterior sampling.}
 
-We used TensorFlow Probability's JAX \texttt{NoUTurnSampler}, with step
+\sout{We used TensorFlow Probability's JAX \texttt{NoUTurnSampler}, with step
 size 0.05, maximum tree depth 5, and maximum energy difference 1,000.
 There was no step-size adaptation. Each run saved 1,500 draws; the figures
 discard the first 500. The library's NUTS transition uses the supplied
@@ -12572,65 +12571,97 @@ potential and its AD force, without an additional likelihood correction.
 Only the parameter draws were saved. The fitted prior clouds, kernel
 diagnostic traces and computation times were not archived, so prior
 overlays, divergence counts, tree-depth saturation and ESS per second
-cannot be recovered from these files.
+cannot be recovered from these files.}
 
-Table~\ref{tab:bayesian-diagnostics} summarizes the retained draws.
+\sout{Table~\mbox{\ref{tab:bayesian-diagnostics}} summarizes the retained draws.
 The between-chain differences include differences in fitted priors, so
-$\widehat R$ here describes disagreement between runs and cannot establish
+\mbox{$\widehat R$} here describes disagreement between runs and cannot establish
 convergence to a common posterior. We calculate ESS and MCSE separately
-within each chain; these estimates also require approximate stationarity.
+within each chain; these estimates also require approximate stationarity.}
+
+\kevin{We ran four chains of each method from the same four starting points,
+obtained by optimization followed by a pilot PMMH run.
+Figure~\refFigNutsEb\ compares the first 2,000 retained iterations of each
+chain, after 500 warmup iterations. A longer PMMH run provides 30,000
+retained iterations per chain for comparison of the marginal distributions
+(Figure~\ref{fig:mh}). No draws from the earlier tempered calculation enter
+these figures.}
+
+\kevin{Both methods use fixed covariance matrices estimated from preliminary
+PMMH runs. The PMMH covariance uses 1\% diagonal shrinkage and a $10^{-6}I$ ridge.
+For NUTS, we combine the pooled covariance from the first 5,000 retained PMMH
+iterations per chain with this matrix, with weights 0.75 and 0.25, and rescale
+to the trace of the PMMH proposal covariance. These matrices affect the proposals but not the prior.
+Only the scalar step size is adapted during warmup, with target acceptance
+probabilities 0.65 for NUTS and 0.234 for PMMH. Initial step sizes are 0.07
+and 0.5, respectively. The final NUTS step sizes range from 0.048 to 0.060.
+The proposal matrices, starting points, random seeds and software versions
+are saved with the code in \texttt{code/bayesian/corrected}.}
+
+\kevin{Table~\ref{tab:bayesian-diagnostics} gives diagnostics for all 18
+coordinates in the 2,000-iteration comparison. For the trend coordinate,
+NUTS has $\widehat R=1.014$ and bulk ESS 333, compared with 1.025 and 73 for
+PMMH. The largest NUTS $\widehat R$ is 1.059, and the smallest bulk ESS is
+60, both for the first seasonal environmental-transmission coefficient.
+There are two divergent NUTS transitions among 8,000 retained iterations.
+Almost all trajectories reach the depth limit of 5, corresponding to
+31 integration steps. Thus the traces show improved exploration without
+establishing convergence of all coordinates.}
+
+\kevin{The longer PMMH runs give broadly similar marginal distributions
+(Figure~\ref{fig:mh}); their largest $\widehat R$ is 1.014 and smallest bulk
+ESS is 202. Doubling all prior standard deviations has little effect on
+the sampled trend standard deviation (0.112 versus 0.115), but gives wider
+lower tails for some seasonal environmental-transmission coefficients.
+These tails also mix slowly, so the comparison does not establish prior
+insensitivity. The prior overlays in Figure~\ref{fig:posteriors} make this
+issue visible. The calculations were run on shared GPUs, and preparation
+of both samplers used optimization and pilot runs. The iteration comparison
+therefore does not measure a computing-time speedup.}
 
 \begin{table}[htbp]
 \centering
-\input{code/bayesian/results/diagnostics}
-\caption{Diagnostics for the four archived empirical-prior NUTS runs,
+\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/corrected/results/paper/diagnostics}}}
+\caption{\sout{Diagnostics for the four archived empirical-prior NUTS runs,
 using 1,000 retained draws per run. The rank-normalized split
-$\widehat R$ compares all four runs, whose fitted priors differ.
+\mbox{$\widehat R$} compares all four runs, whose fitted priors differ.
 Bulk and tail ESS are the smallest within-chain values, and MCSE is
 the largest within-chain Monte~Carlo standard error of the mean.
 All quantities use the displayed transformed coordinates. The fixed
-coordinates $\rho=0$ and $c=1$ are excluded. Divergences and tree-depth
-diagnostics were not saved.}
+coordinates \mbox{$\rho=0$} and \mbox{$c=1$} are excluded. Divergences and tree-depth
+diagnostics were not saved.}\kevin{Diagnostics for four chains of each method, using 2,000 retained iterations per chain after 500 warmup iterations. Rank-normalized split $\widehat R$, bulk and tail ESS, and the Monte Carlo standard error of the mean (MCSE) are calculated across chains on the displayed estimation coordinates. All chains have the common prior and target specified above. Bold entries indicate $\widehat R$ closer to 1, larger ESS, or smaller MCSE.}}
 \label{tab:bayesian-diagnostics}
 \end{table}
 \FloatBarrier
 
 \subsection{Additional sampling figures}
 
-\begin{figure}[H]
+\begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth/\real{1.3}]{imgs/pmcmc/mh.png}
-\caption{
-  Convergence diagnostics for the Metropolis-Hastings variant particle MCMC with the random walk proposal and an informative empirical prior from IF2, on the trend parameter in the Dhaka cholera model of \cite{king08}.
-  The poor convergence shown here, using an MCMC algorithm that does not have access to derivatives, contrasts with Fig.~{\refFigNutsEb} in the main text.
-}
-    \label{fig:mh}
+\includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_reference.pdf}
+\caption{\sout{Convergence diagnostics for the Metropolis-Hastings variant particle MCMC with the random walk proposal and an informative empirical prior from IF2, on the trend parameter in the Dhaka cholera model of \mbox{\cite{king08}}.
+  The poor convergence shown here, using an MCMC algorithm that does not have access to derivatives, contrasts with Fig.~{\refFigNutsEb} in the main text.}\kevin{Marginal sample distributions for all 18 estimation coordinates, pooled over four chains of each method. NUTS uses 2,000 retained iterations per chain (blue fill). To reduce serial dependence in the displayed PMMH sample, we take every 25th retained draw from each 30,000-iteration run, giving 1,200 draws per chain (orange dashed curve). Both curves use the Gaussian-kernel bandwidth selected by Scott's rule for the thinned PMMH sample. Diagnostics use all draws; thinning is only for this display. Both methods use the common prior and untempered target.}}
+\label{fig:mh}
 \end{figure}
 \FloatBarrier
 
 %\newpage
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth/\real{1.3}]{imgs/pmcmc/nuts.png}
-    \caption{Convergence diagnostics for a No-U-Turn Sampler (NUTS) with uniform priors on a compact set, on the trend parameter in the Dhaka cholera model of \cite{king08}. The NUTS sampler explores more of the posterior than the Metropolis-Hastings sampler, but fails to converge quickly.
-      Comparison with Fig.~{\refFigNutsEb} in the main text suggests that the empirical prior assists exploration, though it also changes the sampling target.
-}
-    \label{fig:nuts}
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_traces.pdf}
+\caption{\sout{Convergence diagnostics for a No-U-Turn Sampler (NUTS) with uniform priors on a compact set, on the trend parameter in the Dhaka cholera model of \mbox{\cite{king08}}. The NUTS sampler explores more of the posterior than the Metropolis-Hastings sampler, but fails to converge quickly.
+      Comparison with Fig.~{\refFigNutsEb} in the main text suggests that the empirical prior assists exploration, though it also changes the sampling target.}\kevin{NUTS traces for all 18 estimation coordinates. Colors identify the four chains, with 2,000 retained iterations per chain after 500 warmup iterations. The long excursions of some seasonal environmental-transmission coefficients are less apparent in the trend diagnostic alone.}}
+\label{fig:nuts}
 \end{figure}
 \FloatBarrier
 \newpage
 
-\begin{figure}[H]
-    \centering\
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Recovery_Rate.png}
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Death_Rate.png}
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Reciprocal_of_Mean_Immunity_Duration.png}
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Trend_in_Force_of_Infection.png}
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Noise_in_Force_of_Infection.png}
-    \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Measurement_Noise.png}
-    \caption{Marginal sample distributions from NUTS powered by MOP-$\alpha$, with a separate empirical prior fitted to each chain's IF2 parameter cloud. The calculation and diagnostics are given above.}
-    \label{fig:posteriors}
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_marginals.pdf}
+\caption{\sout{Marginal sample distributions from NUTS powered by MOP-\mbox{$\alpha$}, with a separate empirical prior fitted to each chain's IF2 parameter cloud. The calculation and diagnostics are given above.}\kevin{Marginal sample distributions from the four NUTS chains for all 18 estimation coordinates, using 2,000 retained iterations per chain. Dashed curves show the common Gaussian prior. Density estimates use Gaussian kernels with Scott bandwidths. The prior is not fitted to the observations or to an IF2 parameter cloud.}}
+\label{fig:posteriors}
 \end{figure}
 
 \FloatBarrier

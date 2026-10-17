@@ -1,14 +1,87 @@
-# Corrected Bayesian experiment (in progress)
+# Corrected Bayesian experiment
 
 The archived NUTS calculation divided both log likelihood and log prior by
 600. These new experiments remove that division and use current Pypomp,
-without importing the archived diffPomp implementation. Historical arrays and
-figures remain unchanged until replacement runs have passed their checks.
+without importing the archived diffPomp implementation. Historical arrays and figures remain archived one directory above. The
+manuscript now uses the common-target comparison described below, with the
+remaining convergence limitations reported explicitly.
 
 The primary comparison is NUTS versus particle random-walk Metropolis–Hastings
 (PMMH). MALA and fixed-length HMC runs are retained as development trials.
 The current NUTS configuration is in `results/gpu-forward-nuts-v2`; its
 PMMH reference is complete in `results/gpu-comparison-v2`.
+
+## Manuscript figures and diagnostic table
+
+Run from the dmop root with the report dependencies installed:
+
+```sh
+python code/bayesian/corrected/paper_figures.py
+```
+
+This reads frozen reports; it does not run a sampler. The primary NUTS
+report is `results/gpu-forward-nuts-v2/review-nuts-2000`. The PMMH reports
+are `results/gpu-comparison-v2/review-pmrw-2000` and `review-pmrw-30000`.
+The script checks matching models/targets and the PMMH prefix before plotting.
+
+- `imgs/pmcmc/common_target_trend.pdf`: main Figure 6, four chains per method,
+  first 2,000 retained iterations after 500 warmup updates. Trace, density,
+  and autocorrelation panels use shared linear axes.
+- `results/paper/diagnostics.tex`: main-text and SI table, all 18 coordinates
+  at that same 2,000-iteration window. Bold cells select R-hat closest to 1,
+  higher bulk/tail ESS or lower mean MCSE; displayed ties are both bold.
+- `imgs/pmcmc/common_target_reference.pdf`: SI marginal comparison with the
+  30,000-iteration PMMH reference. Pool chains separately by method. For this
+  display alone, retain PMMH iterations 25, 50, ..., 30000 (1,200 per chain).
+  NUTS has 2,000 retained draws per chain. PMMH is dark orange/dashed;
+  NUTS is blue/filled. Each coordinate uses a common absolute Gaussian KDE
+  bandwidth, selected by Scott's rule from the thinned PMMH sample.
+  Thinning does not assert independence. Numerical diagnostics use all draws.
+- `imgs/pmcmc/common_target_traces.pdf` and `common_target_marginals.pdf`:
+  SI NUTS traces and prior overlays for all 18 coordinates, shown by chain.
+
+PNG previews accompany the vector PDFs. `results/paper/manifest.json`
+records input hashes, windows, plotting conventions and bold-cell choices.
+All four figures and their placement in the compiled documents were visually
+checked. The figure script, not an external notebook, is their source.
+
+The primary NUTS run is complete at 500 warmup + 2,000 retained iterations
+per chain. Trend R-hat is 1.014 and bulk ESS is 333. Across coordinates,
+maximum R-hat is 1.059, minimum bulk ESS is 60 and minimum tail ESS is 116.
+Two retained transitions diverged; almost all trajectories reached depth 5.
+These results show improved exploration per iteration, not established joint
+convergence or a computing-time advantage. The final report preserves all
+saved draws and verifies the earlier 1,000-draw review as an exact prefix.
+
+## Original-settings control and historical comparison
+
+The requested original-settings NUTS control is running in
+`results/original-settings-nuts-v1/nuts`: four chains, fixed step size .05,
+identity metric in the original estimation coordinates, depth 5, no adaptation,
+and 1,500 iterations. It uses the corrected common prior and untempered
+10,000-particle target, not the old tempered target. Its launch protocol
+explains the conversion to standardized coordinates. BlackJAX replaces TFP;
+this restores proposal settings, not the original algorithm or random draws.
+Compare with the completed diagonal PMMH control in
+`results/historical-proposal-control-v1/pmrw` (fixed standardized SD .02,
+no adaptation, 1,500 iterations). Use iterations 501--1500 for both density
+and diagnostic comparisons, with full traces showing the first 500 as well.
+The additional SI figure remains pending completion of this NUTS control.
+Automatic polling is paused; do not restart or extend runs without a request.
+
+Fasiolo et al. (2016) proposal provenance remains unresolved. The paper and
+its eight-page supplement specify POMP PMMH but not the proposal covariance.
+The October 17 search checked the author's public repository list, the
+`synlik_dev` master and `synlik_CRAN` trees, `synlik_release`, `LFexamples`,
+the authors' publication pages, and GitHub repository searches for the paper.
+No original Dhaka analysis script was located. `LFexamples` links to the
+library's Dhaka simulator, not the paper's PMMH analysis. Do not infer a
+specific proposal from library capabilities or label our diagonal control
+as Fasiolo's implementation.
+Sources: [paper](https://doi.org/10.1214/15-STS534),
+[supplement](https://doi.org/10.1214/15-STS534SUPP),
+[author repositories](https://github.com/mfasiolo?tab=repositories),
+[example list](https://github.com/mfasiolo/LFexamples).
 
 ## Target and model
 
@@ -204,7 +277,7 @@ results do not establish joint convergence. The completed extension in
 `gpu-comparison-v2/pmrw-long` preserves the original target, random state
 and frozen tuning, and includes the entire original `pmrw` trace.
 Report the latest continuation without pooling overlapping files.
-`review-pmrw-2000` freezes its first 2,000 retained draws for the planned
+`review-pmrw-2000` freezes its first 2,000 retained draws for the main
 equal-iteration NUTS comparison; this does not equalize computing time.
 
 The 5,000-particle PMMH run also completed 30,000 retained draws per chain

@@ -1,5 +1,46 @@
 # Handoff
 
+## October 17: Bayesian manuscript figures and redlines
+
+- Primary NUTS is finished: 500 warmup + 2,000 retained per chain. Final report
+  `code/bayesian/corrected/results/gpu-forward-nuts-v2/review-nuts-2000`;
+  numerical_review.json verifies all four checkpoints, earlier review prefix,
+  transformed draws, finite saved states and frozen steps. No draws removed.
+- Main Figure 6 is the common-target NUTS/PMMH comparison at 2,000 retained
+  iterations per chain. Added the all-18-parameter diagnostic table to main
+  text at the user's request, bolding the favorable value within each pair.
+  SI retains the table, methods/prior/settings and all-parameter figures.
+- All changed manuscript prose/captions use visible old-text strikeouts and
+  new `\kevin{}` additions. Shared macros load ulem with normalem.
+  Main prose edits are confined to the exploratory Bayesian application.
+- `paper_figures.py` generates four vector PDF/PNG pairs and the paired table
+  from frozen reports. SI comparison pools chains by method; NUTS blue fill,
+  PMMH dark orange dashed. User rejected thinning by250 as excessive:
+  final display uses every25th PMMH draw, 1,200 per chain, with common KDE
+  bandwidth. Numerical diagnostics still use all draws. Main windows unchanged.
+- Native compile_latex_document was attempted for both saved sources; it cannot
+  read this multi-file project's macros.tex. Local make compiles the existing
+  ms.tex/si.tex in place successfully. Figures and table pages visually checked;
+  final table and thinning-by25 versions also compile; main table and SI
+  overlay pages visually checked. Main24pages, SI96pages. Only existing
+  theorem overfull line remains, outside this edit.
+- Original-settings NUTS control was explicitly requested on the corrected
+  target. Launched GPU0 PID427216/create1792222661.01 on October17 07:37 UTC,
+  log /tmp/dmop-original-settings-nuts-v1.log. Fixed .05 step, identity metric
+  in estimation coordinates, depth5, no adaptation, 1,500 iterations, four
+  chains. Corresponding diagonal PMMH control is already complete. Protocol
+  and launcher are committed; launch.json records process/source identity.
+  Last incidental log read showed iteration150. Do not poll every minute.
+  Original-settings SI figure is pending; compare retained501--1500 for both
+  methods and display full traces. Do not use archived tempered draws.
+- Fasiolo proposal remains unverified after checking the supplied supplement,
+  public author repos/branches, publication pages and repository searches.
+  No paper-specific Dhaka analysis code was located. See corrected/README.md.
+  Do not identify our diagonal proposal as theirs without direct evidence.
+- Automatic goal/polling remains PAUSED. Publication hold remains: local
+  commits only, no push. Do not stage OneDrive safeBackup files or unrelated
+  wider-prior inputs/source trees. No background monitoring was created.
+
 ## October 17: experiment navigation updated
 
 - Updated corrected/README.md's obsolete running status: both primary and

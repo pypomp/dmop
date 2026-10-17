@@ -1,9 +1,10 @@
 # Archived Bayesian calculation
 
 The corrected, untempered Pypomp rerun is under [corrected/](corrected/README.md).
-It is in progress; the original files below remain an unchanged archive.
+It supplies the current manuscript figures and diagnostics; the original files
+below remain an unchanged archive. The original-settings NUTS control is pending.
 
-This directory documents the original empirical-prior NUTS calculation in
+This directory documents the original empirical-prior NUTS calculation formerly shown in
 main-text Figure 6 and SI S8. It preserves the saved draws and the sampling
 source from [diffPomp revision 65e64d3](https://github.com/hetankevin/diffPomp/tree/65e64d3e24d7d82839b413067c30b4224dee43c9).
 These are historical runs, not a new Bayesian experiment.
@@ -74,7 +75,7 @@ The script verifies the archived hashes, excludes only the two fixed
 coordinates, and retains all 1,000 post-discard draws in every run.
 Rank-normalized split R-hat compares the four runs descriptively: their
 priors differ, so it is not a convergence test for one common target.
-ESS and mean MCSE are calculated within each chain; the SI gives the
+ESS and mean MCSE are calculated within each chain; the archived table gives the
 minimum ESS and maximum MCSE, with every individual result saved in CSV.
 The estimates require stationarity and do not certify posterior accuracy.
 
