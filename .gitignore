@@ -186,3 +186,7 @@ renv
 
 # Temporary local alias for the already-running Bayesian sampler; never publish.
 /code/bayesian/corrected
+
+# Bayesian figure previews; vector PDFs are the manuscript assets.
+/imgs/pmcmc/common_target_*.png
+/imgs/pmcmc/identity_control_*.png
