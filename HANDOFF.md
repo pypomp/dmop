@@ -1,5 +1,16 @@
 # Handoff
 
+## October 19: Overleaf 1451 conflict resolved
+
+- Merged origin/overleaf-2026-10-19-1451 (9f727871d), based on the compact
+  history. Resolved the single ms.tex conflict by preserving Overleaf's
+  revised prior/proposal wording and the GitHub Dahlin--Schon citation.
+  Preserved the incoming table-caption TODO as the author's pending edit;
+  its proposed numerical summary was not checked or adopted as final prose.
+- Main and SI compile locally with no undefined references or citations.
+  Native compiler unavailable (no connected document sessions). File budget:
+  625 tracked files, 670 distinct historical paths. No history rewrite.
+
 ## October 19: ESS per second audit
 
 - Added `code/bayesian/corrected/ess_timing.py` to combine the frozen
