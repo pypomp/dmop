@@ -1,5 +1,20 @@
 # Handoff
 
+## October 19: main-text prior and proposal description
+
+- Pulled origin/main 1b392b5cb with a fast-forward, preserving the incoming
+  manuscript edits. Added one paragraph in the Bayesian section, entirely
+  inside `\kevin{}`; no existing prose was replaced.
+- Describes independent Gaussian priors on estimation coordinates, search
+  interval midpoint/half-width calibration, the full-covariance PMMH random
+  walk, and NUTS trajectories conditional on filter randomness with a separate
+  Metropolis refresh. Proposal matrices are fixed and scalar steps adapt in
+  warmup; numerical settings remain in the SI. Checked against model.py,
+  kernels.py, nuts.py and the SI for the runs in the main figure.
+- Native compilation unavailable: no connected document sessions. Local
+  manuscript compilation and the file-budget check pass. No experiment or
+  figure changes; the identity-metric comparison remains separate.
+
 ## October 19: compact history published
 
 - Published the requested history cleanup atomically to all nine remote
