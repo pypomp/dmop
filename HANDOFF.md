@@ -1,5 +1,23 @@
 # Handoff
 
+## October 19: identity-metric comparison complete
+
+- Identity-metric NUTS and its worker finished successfully; comparison ready
+  at15:11UTC/11:11EDT. All4chains have500warmup+1000retained iterations.
+  The comparison script verified chain completion, exact parent checkpoint
+  prefixes, frozen metric/steps, common target and matching starting points.
+- `code/bayesian/corrected/results/identity-adapt-nuts-v1/comparison` contains
+  trend panels, full trend traces, all18parameter traces/marginals, diagnostic
+  CSV, summary and provenance manifest. Visually inspected the trend panels
+  and all18parameter traces/marginals; linear scales and labels are readable.
+- Zero retained NUTS divergences, but poor mixing: trend Rhat1.380/bulkESS8.93
+  versus diagonalPMMH2.395/4.93. Worst Rhat3.491 versus2.580; minimum bulkESS
+  4.40 versus4.76. Every NUTS trajectory hits depth5. Both methods show
+  persistent between-chain separation; neither supports convergence.
+- Final outputs remain local and ignored pending compact archival and the
+  previously requested SI addition. Do not restart or extend automatically.
+  The main tuned-covariance comparison remains distinct from this control.
+
 ## October 19: Overleaf 1451 conflict resolved
 
 - Merged origin/overleaf-2026-10-19-1451 (9f727871d), based on the compact
