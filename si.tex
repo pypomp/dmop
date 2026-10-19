@@ -2297,7 +2297,7 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
 
 \begin{thm}[Off-Parameter Resampled Particle Filters Target the Filtering Distribution]
     \label{thm:off-parameter-targeting}
-    The off-parameter resampled particle filter of Definition \ref{defn:off-parameter-filter} targets the filtering distribution when the resampling probabilities $(p_{n,j})_{j=1}^J$ are chosen so that $g_{n,j}/p_{n,j}$ is uniformly bounded above and away from zero whenever $g_{n,j}>0$.
+    The off-parameter resampled particle filter of Definition \ref{defn:off-parameter-filter} targets the filtering distribution when the resampling probabilities $(p_{n,j})_{j=1}^J$ are chosen so that $g_{n,j}/(J\, p_{n,j})$ is uniformly bounded above and away from zero whenever $g_{n,j}>0$.
 \end{thm}
 \begin{proof}[Proof.]
     Recursively applying Lemmas \ref{lem:change-measure-proper-weights}, \ref{lem:marginal-proper-weights}, and \ref{lem:posterior-proper-weights}, we obtain that the off-parameter resampled particle filter targets the posterior.
@@ -2651,6 +2651,8 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
 at $\theta=\phi$. The observations are fixed throughout this section;
 expectations and variances are over the particle-filter randomness.
 
+We next investigate conditions (A6) and (A6-J), repeating them here to assist the discussion.
+
 \paragraph*{(A6) Measurement-sensitivity decay.}
 \label{assump:measurement-sensitivity}
 The simulator is $C^1$ in its incoming state. For a continuation
@@ -2688,9 +2690,8 @@ and population Lemmas~\ref{lem:derivative-measure-forgetting}
 and~\ref{lem:dmop-population-discount-bias} retain (A1)--(A5).
 Neither additional condition requires density evaluation by the algorithm.
 Their constants enter the particle bounds, while $\varrho$ retains its
-physical-model definition. Under (A6), enlarge $G'(\theta)$ to bound the
-parameter derivatives coordinatewise, using Euclidean norms for state
-derivatives.
+physical-model definition. 
+%Under (A6), enlarge $G'(\theta)$ to bound the parameter derivatives coordinatewise, using Euclidean norms for state derivatives.
 
 \paragraph*{Sufficient condition for (A6).}
 Suppose the parameter derivatives in (A6) are bounded, the spatial log

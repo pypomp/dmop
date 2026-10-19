@@ -1,5 +1,20 @@
 # Handoff
 
+## October 19: intermediate publication authorized
+
+- User explicitly requested pulling and pushing the intermediate edits. This
+  authorizes publication of the current committed changes and supersedes the
+  earlier publication hold for this push.
+- Pulled origin/main d1cbff1aa (October15 manuscript review edits). Manuscript
+  sources merged automatically; the sole conflict was simultaneous additions
+  to this handoff. Both histories are retained below.
+- Merged main/SI compile successfully with the local make targets. Incoming
+  author prose and macros are preserved. The open Overleaf PR #3 contains
+  only an unmerged historical merge commit, with no additional text changes;
+  integrate its ancestry so GitHub can close the stale sync PR.
+- The identity-metric NUTS continuation and its queued comparison remain
+  separate from this Git synchronization; no sampler settings changed.
+
 ## October 19: authorized checkpoint continuation and comparison
 
 - User explicitly requested resuming without warmup and completing/plotting
@@ -661,6 +676,25 @@
 - Fixed report.py warmup legend background so its marker cannot cross the text; regenerated and inspected the report. No numerical calculation or model change. Prepared prior-sensitivity protocol's report hash refreshed transparently; all27 source hashes verified.
 - Revalidated host PID/create-time/command: forwardNUTS3262256 live at18warm, J10000PMMH3137405 at2625retained, J5000continuation3143786 at5263retained. No sampler restart or tuning change. Latest neutral user question about old settings was answered from archived code; continuing the active goal.
 - Next: NUTS movement/depth review at50warm; primaryPMMH review at5000retained; J5000 next review at10000retained completion, then launch prepared wider-prior study once its prerequisite process is terminal. Continue toward converged NUTS/PMMH, prior/particle agreement and final figures; no ms/SI edits this turn. Goal active.
+## October 15: integrate the approved Lemma S7 revision
+
+- Fast-forwarded the clean checkout to `99370c9a6` before editing; the S7
+  statement and the corresponding main-text proof were unchanged from the
+  version used for the approved note.
+- In `si.tex`, replaced the bounds on weighted likelihood products with a
+  bounded measurement density and a positive finite normalizer. Retained
+  the original ratio argument and equation numbering, stated why its two
+  test functions are bounded, corrected the lowercase weight and denominator
+  wording, and added the approved remark referring to (A3).
+- In `ms.tex`, added the approved sentence explaining that (A3) supplies
+  the conditions for Lemma S7. A local line-breaking allowance avoids a new
+  overfull line. All additions are black; other manuscript content is unchanged.
+- Baseline and revised main/SI compile to 23/92 pages. All label numbers
+  match, with no undefined references or citations and no new compiler
+  warnings. Inspected main page 16 and SI pages S18--S19. Verification and
+  baseline builds are in `tmp/pdfs/dmop_s7_20261015` in the parent workspace;
+  final PDFs are `output/pdf/dmop_main.pdf` and `output/pdf/dmop_si.pdf` there.
+- Author approved the revision for publication on `main`.
 
 ## October 15: validated forward NUTS is now the live primary run
 

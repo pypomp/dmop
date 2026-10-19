@@ -109,8 +109,8 @@ Particle filters have previously been adapted to provide a smooth estimate of th
 
 DMOP trades bias against variance via a discount factor, $\alpha \in [0,1]$.
 We find that DMOP-$\alpha$ posesses a bias-variance tradeoff that permits both low bias and low variance for suitable choices of $\alpha$ strictly in $(0,1)$, both in theory (Theorem \ref{thm:mop-biasvar}) and practice (Figure \ref{fig:biasvar}).
-Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$\alpha$ coincides with the biased gradient estimator of \cite{naesseth18} when $\alpha=0$.
-In the case $\alpha=1$, Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$\alpha$ is a plug-and-play variant of the gradient estimate proposed by \cite{poyiadjis11} and \cite{scibior21}.
+DMOP-$\alpha$ coincides with the biased gradient estimator of \cite{naesseth18} when $\alpha=0$.
+In the case $\alpha=1$, DMOP-$\alpha$ is a plug-and-play variant of the gradient estimate proposed by \cite{poyiadjis11} and \cite{scibior21}.
 When $\alpha=1$ the variance can become prohibitively high, as discovered by these researchers and others \citep{arya22}.
 However, the variance rapidly reduces as $\alpha$ decreases, and so a choice of $\alpha$ close to one can provide a low-bias, low-variance, plug-and-play gradient estimate with computational scaling linear in the number of particles.
 
@@ -226,13 +226,16 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
             \hspace*{4mm} Measurement density,
             $g^{\theta}_{n,j}={f}_{{Y}_{n}|{X}_{n}}(y_{n}^{*}|{X}_{n,j}^{P,\theta}\giventh{\theta})$. \newline
             \hspace*{4mm} Compute $L_n^{B,\theta,\alpha} ={\sum_{j=1}^Jg^\theta_{n,j} \, w^{P,\theta}_{n,j}}\, \big/\, {\sum_{j=1}^J  w^{P,\theta}_{n,j}}$. \newline
-%            \hspace*{4mm} Conditional likelihood under $\phi$,
-%            $L_n^{\phi} = \frac{1}{J}\sum_{m=1}^{J}g^{\phi}_{n,m}$.\newline
+        %    \hspace*{4mm} Conditional likelihood frozen at first pass,
+        %    $L_n^{\theta} = \mathtt{stop\_gradient}\Big(\frac{1}{J}\sum_{m=1}^{J}g^{\theta}_{n,m}\Big)$.\newline
+        %   THIS IS EQUAL TO STOP_GRADIENT(L_n^{B,\theta,\alpha})
+        %   SINCE ON THE FIRST PASS, WEIGHTS ARE EQUAL AND SO
+        %   $L_n^{\theta} = L_n^{B,\theta,\alpha}$
             \hspace*{4mm} Select resampling indices $k_{1:J}$ with $\prob\big(k_{j}=m\big) \propto g^{\theta}_{n,m}$. \newline
             \hspace*{4mm} Obtain resampled particles ${X}_{n,j}^{F,\theta}={X}_{n,k_{j}}^{P,\theta}$. \newline
             \hspace*{4mm} Calculate corrected weights
             $w_{n,j}^{F,\theta}= w^{P,\theta}_{n,k_j} \, g^{\theta}_{n,k_j} \, \big/ \, { \mathtt{stop\_gradient}(g^{\theta}_{n,k_j})}$.\newline
-            \hspace*{4mm} Compute $ L_n^{A,\theta,\alpha} = L_n^\phi\cdot {\sum_{j=1}^J w^{F,\theta}_{n,j}} \, \big/ \, {\sum_{j=1}^J  w^{P,\theta}_{n,j}}$.\newline
+            \hspace*{4mm} Compute $ L_n^{A,\theta,\alpha} = \mathtt{stop\_gradient}\big(L_n^{B,\theta,\alpha}\big)\, {\sum_{j=1}^J w^{F,\theta}_{n,j}} \, \big/ \, {\sum_{j=1}^J  w^{P,\theta}_{n,j}}$.\newline
 	    \textbf{Return:} log-likelihood estimate $\hat{\loglik}^A(\theta)= \log\big(\hat{\lik}^A(\theta)\big) = \sum_{n=1}^N \log L_n^{A,\theta,\alpha}$ or $\hat{\loglik}^B(\theta)=\log\big(\hat{\lik}^B(\theta)\big) = \sum_{n=1}^N \log L_n^{B,\theta,\alpha}$, and gradient estimate $\hat{\mathcal{D}}^A(\theta)$ or $\hat{\mathcal{D}}^B(\theta)$.
 \end{algorithm}
 
@@ -279,7 +282,7 @@ For $\alpha<1$, the weights from previous timesteps are discounted as in Equatio
 When $\alpha=1$, MOP-$1$ maintains complete memory of each particle's ancestral trajectory.
 \newEdit{\editPoyiadjisCorrespondence}
 
-When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and Theorem~\ref{thm:mop-functional-forms} shows that DMOP-$0$ recovers the low-variance but asymptotically biased score estimate of \cite{naesseth18}.
+When $\alpha=0$, MOP-$0$ considers only single-step transition dynamics, and the before-sampling variant of DMOP-$0$ recovers the low-variance but asymptotically biased score estimate of \cite{naesseth18}.
 \cite{scibior21} showed that this matches the gradient of a vanilla particle filter when resampling terms are dropped. 
 
 \begin{thm}[DMOP-$0$ and DMOP-$1$ Functional Forms]
@@ -422,11 +425,11 @@ The measurement model for observed monthly cholera deaths is
 where $M_n= m\int_{t_{n-1}}^{t_n}I(s)\, ds$ is the modeled cholera deaths in that month.
 
 We numerically solve this SDE using Euler's method with a time step of $1/20$ months, matching \citep{king08}.
-This example is a partially observed hypo-elliptical SDE, and methodology specific to this model class has been previously studied \citep{ditlevsen19}.
-Supplementary Section S11 compares IFAD with a transition-density adaptation of \citet{ditlevsen19} (DS19) and the differentiable particle filter of \citet{corenflos21} (CTDD21), including refinement from shared IF2 starting points.
-Our method applies to a class of latent Markov processes larger than Gaussian SDEs, permitting the use of L\'{e}vy noise \citep{bhadra11} or other discontinuities.
-
-
+This example is a partially observed hypo-elliptical SDE, and methodology specific to this model class has been previously studied by \citet{ditlevsen19} (henceforth, DS19).
+Supplementary Section~{\suppSecComparison} compares IFAD with an adaptation of DS19 and the differentiable particle filter of \citet{corenflos21} (CTDD21), including the use of a warm start using IF2 that is found to assist both methods, on a range of examples. 
+%Our method applies to a class of latent Markov processes larger than the Gaussian SDEs, permitting the use of L\'{e}vy noise \citep{bhadra11} or other discontinuities.
+In these examples, the advantage of IFAD becomes clear on the more complex situations such as this Dhaka model. 
+The plug-and-play property also ensures that IFAD is readily applicable to a wide class of scientific models.
 
 \begin{figure}[htbp!]
     \centering
@@ -441,6 +444,7 @@ Our method applies to a class of latent Markov processes larger than Gaussian SD
 %\subsection{Results}
 
 We tested IFAD with $\alpha = 0$, $\alpha=0.97$ and $\alpha=1$ against IF2 on a global search problem for the Dhaka cholera model using our implementation in Pypomp 1.0.5 \citep{abkemeier25}.
+This example does not satisfy the conditions for our theoretical analysis of IFAD, so the successful empirical performance suggests these conditions are stronger than necessary.
 For each method, we performed 100 searches, initialized with 100 starting parameter vectors drawn uniformly from the same wide bounding box used by \cite{ionides15}. 
 To ensure a fair comparison under comparable computational effort, we ran each method for a similar amount of time (approximately 15 minutes).
 For each method, we chose algorithmic parameters that maximized the log-likelihood well for that method while finishing within the allotted time. 
