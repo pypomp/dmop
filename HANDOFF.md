@@ -1,5 +1,25 @@
 # Handoff
 
+## October 19: nodewise proof details
+
+- Fast-forward pull of `covariance-mse` was already current. Kept this
+  follow-up limited to the three reviewed repairs, inside `\kevin{}`.
+- Made the enlarged G' convention explicit for the separate A6 partial
+  derivatives, with a matching qualification in the main theorem comment.
+- Expanded the nodewise conditional expectation and Doob variance
+  identities, retaining each terminal label's revealed suffix. Displayed
+  the backward oscillation bound and both Cauchy--Schwarz steps. Restricted
+  every descendant-weight and square-root sum to u <= b_s+1.
+- Follow-up mathematical review found no further correction needed.
+  Rates, assumptions, population-bias lemma, and original arguments are
+  unchanged. The separate population-bias recheck is not included here.
+- Rebuilt main (24 pages) and SI (101 pages), with resolved references and
+  citations. Visually checked SI S-41 and S-46--S-48, plus main page 18.
+  No SI overfull boxes; the existing main-text box at lines 651--658 and
+  existing duplicate PDF destination warnings remain.
+- Refreshed both marked-up PDFs and the cumulative source patch under
+  `output/`. Push target remains `covariance-mse`, not main.
+
 ## October 19: covariance review branch
 
 - Pulled main through `c7556a6`, preserving the incoming Overleaf prose,

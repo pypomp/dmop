@@ -6937,6 +6937,21 @@ Here $h_{s,i}^{[0]}$ combines the direct parameter derivative of the
 log measurement density, holding $x$ fixed, with the contribution from the
 time-$s$ simulator's partial parameter derivative. The endpoint
 $h_{s,i}^{[s]}$ is the contribution from the initial-state derivative.
+\kevin{For the particle bounds under (A6), enlarge $G'(\theta)$,
+if necessary, so that the bounded partial derivatives in (A6) satisfy
+\begin{equation}
+\max\left\{
+ \|\partial_{\theta_i}X_0^\theta\|_2,\,
+ \|\partial_{\theta_i}\process_u(x;\theta,\omega_u)\|_2,\,
+ \left|\partial_{\theta_i}\log f_{Y_u\mid X_u}(y_u^*\mid x;\theta)\right|
+\right\}\leq G'(\theta),
+\label{eq:review-component-normalization}
+\end{equation}
+uniformly in $u,i,x$ and simulator draws, holding $x$ fixed in the
+partial derivatives. This preserves the bound in (A3). Together with
+the spatial sensitivity bound in (A6), it gives the component bounds
+below even when different chain-rule contributions cancel in their sum.
+Under (A6-J), the original bound on $h_{s,i}$ suffices.}
 Multiplying Equation~(\ref{eq:simulator-gradient-chain-expansion}) by
 the spatial log measurement derivative gives
 \begin{equation}
@@ -7351,6 +7366,7 @@ $CG'(\theta)^2\kappa^{2r}(r+2)^2m^2/J$.
 We now condition on $\mathcal C$ and reveal the parent choices and
 simulator draws backwards, one time layer at a time. For the endpoint $b_s+1$,
 let $W_{s,u}(j)$ be the fraction of its $J$ labels at time-$u$ node $j$.
+We use these weights only for $1\leq u\leq b_s+1$.
 Initially $W_{s,b_s+1}(j)=1/J$. Given the later layers, the choices at
 distinct child nodes are independent. Writing $\mathcal R_u$ for
 $\mathcal C$ and the already revealed layers strictly after $u$,
@@ -7381,21 +7397,97 @@ parent layers, while $\mathcal R_0$ additionally contains those draws.
 Let $Z=\sum_{s\in I}m(\xi_{b_s})(h_{s,i}^{[r]})$. Its conditional
 Doob differences are
 $D_u=\E[Z\mid\mathcal R_{u-1}]-\E[Z\mid\mathcal R_u]$.
-The newly revealed nodes are independent and enter these conditional
-expectations additively. Summing their conditional variances, then
-using the triangle inequality over nodes and
-Equation~(\ref{eq:review-descendant-collisions}), gives
+We write out the contribution of each newly revealed node. Let
+$V_{u,j}$ be its parent choice together with its simulator draw, or
+its initial-history draw when $u=1$. Conditional on $\mathcal R_u$,
+these variables are independent over $j$. For $u\leq b_s+1$, let
+$\mathcal D_{s,u}(j)$ be the set of terminal labels at $b_s+1$ whose
+revealed ancestral paths pass through node $j$ at time $u$. This set is
+$\mathcal R_u$-measurable, and
+\begin{equation}
+|\mathcal D_{s,u}(j)|=J W_{s,u}(j).
+\end{equation}
+For each such label $\ell$, $\xi_{b_s,\ell}$ is its inherited path
+after time-$b_s$ resampling. Define the conditional contribution
+\begin{equation}
+Z_{u,j}(v)=\frac1J
+\sum_{\substack{s\in I\\u\leq b_s+1}}
+\sum_{\ell\in\mathcal D_{s,u}(j)}
+\E\left[h_{s,i}^{[r]}(\xi_{b_s,\ell})
+       \mid\mathcal R_u,V_{u,j}=v\right].
+\label{eq:review-node-contribution}
+\end{equation}
+The expectation integrates the earlier, unrevealed layers. Each
+terminal path meets exactly one node in layer $u$. Consequently,
+linearity of conditional expectation gives
+\begin{align}
+D_u
+&=\sum_{j=1}^J\left\{Z_{u,j}(V_{u,j})
+       -\E[Z_{u,j}(V_{u,j})\mid\mathcal R_u]\right\},\notag\\
+\E[D_u^2\mid\mathcal R_u]
+&=\sum_{j=1}^J\Var\{Z_{u,j}(V_{u,j})\mid\mathcal R_u\}.
+\label{eq:review-nodewise-doob}
+\end{align}
+Paths may share earlier ancestors. This does not change the first
+identity, which sums their individual conditional expectations. The
+second identity uses independence only of the newly revealed
+variables $V_{u,j}$ conditional on $\mathcal R_u$.
+\endgraf
+Within the function's block, the conditional expectation for each
+terminal label has oscillation at most $CG'(\theta)\kappa^r$.
+For $u>s+1$, let $f(l)$ be the conditional expectation of
+$h_{s,i}^{[r]}$ along a backward path ending at time-$s$ node $l$,
+given $\mathcal C$. Then $\|f\|_\infty\leq CG'(\theta)\kappa^r$,
+and its conditional expectation as a function of the newly chosen
+parent is $B_{u-1}^J\cdots B_{s+1}^J f$. Thus
+\begin{equation}
+\operatorname{osc}(B_{u-1}^J\cdots B_{s+1}^J f)
+\leq\varrho_*^{u-s-1}\operatorname{osc}(f)
+\leq CG'(\theta)\kappa^r\varrho_*^{u-s-1}.
+\end{equation}
+Once the block has been revealed, earlier choices have zero
+oscillation. The initial-history layer has the bound already given
+by $c_{s,r}(1)$. Taking the oscillation of
+Equation~(\ref{eq:review-node-contribution}) term by term therefore gives
+\begin{align}
+\operatorname{osc}(Z_{u,j})
+&\leq\frac{CG'(\theta)\kappa^r}{J}
+ \sum_{\substack{s\in I\\u\leq b_s+1}}
+ c_{s,r}(u)|\mathcal D_{s,u}(j)|\notag\\
+&=CG'(\theta)\kappa^r
+ \sum_{\substack{s\in I\\u\leq b_s+1}}c_{s,r}(u)W_{s,u}(j).
+\end{align}
+Using $\Var\{Z_{u,j}(V_{u,j})\mid\mathcal R_u\}
+\leq\operatorname{osc}(Z_{u,j})^2$, then conditioning on
+$\mathcal C$, proves
 \begin{align}
 \E[D_u^2\mid\mathcal C]
 &\leq CG'(\theta)^2\kappa^{2r}
- \E\left[\sum_j\left\{\sum_{s\in I}
- c_{s,r}(u)W_{s,u}(j)\right\}^2\middle|\mathcal C\right]\notag\\
-&\leq CG'(\theta)^2\kappa^{2r}
- \left\{\sum_{s\in I}c_{s,r}(u)
-             \sqrt{(b_s-u+2)/J}\right\}^2.
+ \E\left[\sum_j\left\{
+ \sum_{\substack{s\in I\\u\leq b_s+1}}
+ c_{s,r}(u)W_{s,u}(j)\right\}^2\middle|\mathcal C\right].
 \end{align}
-Terms before their endpoint is reached are zero. Since $I$ has length
-$m\leq L$,
+For every pair of terms in this sum, Cauchy--Schwarz over nodes and
+then over the remaining randomness gives
+\begin{align}
+\E\left[\sum_jW_{s,u}(j)W_{t,u}(j)\middle|\mathcal C\right]
+&\leq\left\{
+ \E\left[\sum_jW_{s,u}(j)^2\middle|\mathcal C\right]
+ \E\left[\sum_jW_{t,u}(j)^2\middle|\mathcal C\right]
+ \right\}^{1/2}\notag\\
+&\leq\frac{C\sqrt{(b_s-u+2)(b_t-u+2)}}{J},
+ \qquad u\leq\min(b_s+1,b_t+1).
+\end{align}
+Expanding the square and applying this bound term by term yields
+\begin{equation}
+\E[D_u^2\mid\mathcal C]
+\leq CG'(\theta)^2\kappa^{2r}
+ \left\{\sum_{\substack{s\in I\\u\leq b_s+1}}
+ c_{s,r}(u)\sqrt{(b_s-u+2)/J}\right\}^2.
+\end{equation}
+Terms with $u>b_s+1$ are absent because revealing layer $u$ does not
+change that terminal average. The restriction also makes every square
+root well-defined. Since $I$ has length $m\leq L$,
 \begin{align}
 b_s-u+2&\leq C(L+r+2)\quad\text{on the nonzero terms},\notag\\
 \sup_u\sum_{s\in I}c_{s,r}(u)&\leq C(r+2),&

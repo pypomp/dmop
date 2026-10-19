@@ -21,10 +21,10 @@ index bb708e3..a3e04e8 100644
    author = {Del Moral, Pierre and Jasra, Ajay},
    title = {A sharp first order analysis of {F}eynman--{K}ac particle models, {Part I}: Propagation of chaos},
 diff --git a/ms.tex b/ms.tex
-index af7a5d6..67a4bd8 100644
+index af7a5d6..cb365a3 100644
 --- a/ms.tex
 +++ b/ms.tex
-@@ -698,6 +698,18 @@ At $\alpha=1$,
+@@ -698,6 +698,20 @@ At $\alpha=1$,
  \E\|\nabla_\theta\hat\ell_J^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
  \lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
  \end{equation}
@@ -39,11 +39,13 @@ index af7a5d6..67a4bd8 100644
 +\end{align}
 +At $\alpha=1$, the bound is $pG'(\theta)^2N^2/J$.
 +The supplement retains the sharper $\varrho$-dependent population
-+term. These are finite-$J$ bounds under the same assumptions.}
++term. Under (A6), enlarge $G'(\theta)$ to bound the separate partial
++parameter derivatives in that assumption, as specified in the proof
++of Lemma S13. These are finite-$J$ bounds under the same assumptions.}
  The constants depend on the model and the stated stability bounds, independently of $N,J,\alpha$.
  Expectations are over the particle-filter randomness.
  \end{thm}
-@@ -728,6 +740,12 @@ $\alpha=1$ & $N^3/J$ & $N^3/J$ & $0$ \\
+@@ -728,6 +742,12 @@ $\alpha=1$ & $N^3/J$ & $N^3/J$ & $0$ \\
  The particle MSE bounds also bound the variance; adding the population term bounds the full-score MSE up to a constant.}
  \label{tab:dmop-error-bounds}
  \end{table}
@@ -57,7 +59,7 @@ index af7a5d6..67a4bd8 100644
  For DMOP-$0$, the particle error grows at most linearly with the number of observations, apart from logarithmic factors.
  The joint mixing assumption (A6-J) gives one fewer factor of $1+\log J$ in this case.
 diff --git a/si.tex b/si.tex
-index bae10a1..cb6ff81 100644
+index bae10a1..96a998d 100644
 --- a/si.tex
 +++ b/si.tex
 @@ -6829,6 +6829,11 @@ N,&\alpha=1.
@@ -72,7 +74,29 @@ index bae10a1..cb6ff81 100644
  The constants suppressed by $\lesssim$ depend only on the fixed model
  and stability bounds and are independent of $N,J$, and $\alpha$.
  As elsewhere,
-@@ -7195,6 +7200,314 @@ Consequently,
+@@ -6932,6 +6937,21 @@ Here $h_{s,i}^{[0]}$ combines the direct parameter derivative of the
+ log measurement density, holding $x$ fixed, with the contribution from the
+ time-$s$ simulator's partial parameter derivative. The endpoint
+ $h_{s,i}^{[s]}$ is the contribution from the initial-state derivative.
++\kevin{For the particle bounds under (A6), enlarge $G'(\theta)$,
++if necessary, so that the bounded partial derivatives in (A6) satisfy
++\begin{equation}
++\max\left\{
++ \|\partial_{\theta_i}X_0^\theta\|_2,\,
++ \|\partial_{\theta_i}\process_u(x;\theta,\omega_u)\|_2,\,
++ \left|\partial_{\theta_i}\log f_{Y_u\mid X_u}(y_u^*\mid x;\theta)\right|
++\right\}\leq G'(\theta),
++\label{eq:review-component-normalization}
++\end{equation}
++uniformly in $u,i,x$ and simulator draws, holding $x$ fixed in the
++partial derivatives. This preserves the bound in (A3). Together with
++the spatial sensitivity bound in (A6), it gives the component bounds
++below even when different chain-rule contributions cancel in their sum.
++Under (A6-J), the original bound on $h_{s,i}$ suffices.}
+ Multiplying Equation~(\ref{eq:simulator-gradient-chain-expansion}) by
+ the spatial log measurement derivative gives
+ \begin{equation}
+@@ -7195,6 +7215,391 @@ Consequently,
  \label{eq:fixed-lag-terminal-bias-s13}
  \end{align}
  
@@ -227,6 +251,7 @@ index bae10a1..cb6ff81 100644
 +We now condition on $\mathcal C$ and reveal the parent choices and
 +simulator draws backwards, one time layer at a time. For the endpoint $b_s+1$,
 +let $W_{s,u}(j)$ be the fraction of its $J$ labels at time-$u$ node $j$.
++We use these weights only for $1\leq u\leq b_s+1$.
 +Initially $W_{s,b_s+1}(j)=1/J$. Given the later layers, the choices at
 +distinct child nodes are independent. Writing $\mathcal R_u$ for
 +$\mathcal C$ and the already revealed layers strictly after $u$,
@@ -257,21 +282,97 @@ index bae10a1..cb6ff81 100644
 +Let $Z=\sum_{s\in I}m(\xi_{b_s})(h_{s,i}^{[r]})$. Its conditional
 +Doob differences are
 +$D_u=\E[Z\mid\mathcal R_{u-1}]-\E[Z\mid\mathcal R_u]$.
-+The newly revealed nodes are independent and enter these conditional
-+expectations additively. Summing their conditional variances, then
-+using the triangle inequality over nodes and
-+Equation~(\ref{eq:review-descendant-collisions}), gives
++We write out the contribution of each newly revealed node. Let
++$V_{u,j}$ be its parent choice together with its simulator draw, or
++its initial-history draw when $u=1$. Conditional on $\mathcal R_u$,
++these variables are independent over $j$. For $u\leq b_s+1$, let
++$\mathcal D_{s,u}(j)$ be the set of terminal labels at $b_s+1$ whose
++revealed ancestral paths pass through node $j$ at time $u$. This set is
++$\mathcal R_u$-measurable, and
++\begin{equation}
++|\mathcal D_{s,u}(j)|=J W_{s,u}(j).
++\end{equation}
++For each such label $\ell$, $\xi_{b_s,\ell}$ is its inherited path
++after time-$b_s$ resampling. Define the conditional contribution
++\begin{equation}
++Z_{u,j}(v)=\frac1J
++\sum_{\substack{s\in I\\u\leq b_s+1}}
++\sum_{\ell\in\mathcal D_{s,u}(j)}
++\E\left[h_{s,i}^{[r]}(\xi_{b_s,\ell})
++       \mid\mathcal R_u,V_{u,j}=v\right].
++\label{eq:review-node-contribution}
++\end{equation}
++The expectation integrates the earlier, unrevealed layers. Each
++terminal path meets exactly one node in layer $u$. Consequently,
++linearity of conditional expectation gives
++\begin{align}
++D_u
++&=\sum_{j=1}^J\left\{Z_{u,j}(V_{u,j})
++       -\E[Z_{u,j}(V_{u,j})\mid\mathcal R_u]\right\},\notag\\
++\E[D_u^2\mid\mathcal R_u]
++&=\sum_{j=1}^J\Var\{Z_{u,j}(V_{u,j})\mid\mathcal R_u\}.
++\label{eq:review-nodewise-doob}
++\end{align}
++Paths may share earlier ancestors. This does not change the first
++identity, which sums their individual conditional expectations. The
++second identity uses independence only of the newly revealed
++variables $V_{u,j}$ conditional on $\mathcal R_u$.
++\endgraf
++Within the function's block, the conditional expectation for each
++terminal label has oscillation at most $CG'(\theta)\kappa^r$.
++For $u>s+1$, let $f(l)$ be the conditional expectation of
++$h_{s,i}^{[r]}$ along a backward path ending at time-$s$ node $l$,
++given $\mathcal C$. Then $\|f\|_\infty\leq CG'(\theta)\kappa^r$,
++and its conditional expectation as a function of the newly chosen
++parent is $B_{u-1}^J\cdots B_{s+1}^J f$. Thus
++\begin{equation}
++\operatorname{osc}(B_{u-1}^J\cdots B_{s+1}^J f)
++\leq\varrho_*^{u-s-1}\operatorname{osc}(f)
++\leq CG'(\theta)\kappa^r\varrho_*^{u-s-1}.
++\end{equation}
++Once the block has been revealed, earlier choices have zero
++oscillation. The initial-history layer has the bound already given
++by $c_{s,r}(1)$. Taking the oscillation of
++Equation~(\ref{eq:review-node-contribution}) term by term therefore gives
++\begin{align}
++\operatorname{osc}(Z_{u,j})
++&\leq\frac{CG'(\theta)\kappa^r}{J}
++ \sum_{\substack{s\in I\\u\leq b_s+1}}
++ c_{s,r}(u)|\mathcal D_{s,u}(j)|\notag\\
++&=CG'(\theta)\kappa^r
++ \sum_{\substack{s\in I\\u\leq b_s+1}}c_{s,r}(u)W_{s,u}(j).
++\end{align}
++Using $\Var\{Z_{u,j}(V_{u,j})\mid\mathcal R_u\}
++\leq\operatorname{osc}(Z_{u,j})^2$, then conditioning on
++$\mathcal C$, proves
 +\begin{align}
 +\E[D_u^2\mid\mathcal C]
 +&\leq CG'(\theta)^2\kappa^{2r}
-+ \E\left[\sum_j\left\{\sum_{s\in I}
-+ c_{s,r}(u)W_{s,u}(j)\right\}^2\middle|\mathcal C\right]\notag\\
-+&\leq CG'(\theta)^2\kappa^{2r}
-+ \left\{\sum_{s\in I}c_{s,r}(u)
-+             \sqrt{(b_s-u+2)/J}\right\}^2.
++ \E\left[\sum_j\left\{
++ \sum_{\substack{s\in I\\u\leq b_s+1}}
++ c_{s,r}(u)W_{s,u}(j)\right\}^2\middle|\mathcal C\right].
 +\end{align}
-+Terms before their endpoint is reached are zero. Since $I$ has length
-+$m\leq L$,
++For every pair of terms in this sum, Cauchy--Schwarz over nodes and
++then over the remaining randomness gives
++\begin{align}
++\E\left[\sum_jW_{s,u}(j)W_{t,u}(j)\middle|\mathcal C\right]
++&\leq\left\{
++ \E\left[\sum_jW_{s,u}(j)^2\middle|\mathcal C\right]
++ \E\left[\sum_jW_{t,u}(j)^2\middle|\mathcal C\right]
++ \right\}^{1/2}\notag\\
++&\leq\frac{C\sqrt{(b_s-u+2)(b_t-u+2)}}{J},
++ \qquad u\leq\min(b_s+1,b_t+1).
++\end{align}
++Expanding the square and applying this bound term by term yields
++\begin{equation}
++\E[D_u^2\mid\mathcal C]
++\leq CG'(\theta)^2\kappa^{2r}
++ \left\{\sum_{\substack{s\in I\\u\leq b_s+1}}
++ c_{s,r}(u)\sqrt{(b_s-u+2)/J}\right\}^2.
++\end{equation}
++Terms with $u>b_s+1$ are absent because revealing layer $u$ does not
++change that terminal average. The restriction also makes every square
++root well-defined. Since $I$ has length $m\leq L$,
 +\begin{align}
 +b_s-u+2&\leq C(L+r+2)\quad\text{on the nonzero terms},\notag\\
 +\sup_u\sum_{s\in I}c_{s,r}(u)&\leq C(r+2),&
@@ -387,7 +488,7 @@ index bae10a1..cb6ff81 100644
  \medskip\noindent\emph{Step 1d: covariance summation.}\quad
  Fix $r$ and consider the interior terms
  $m(\xi_{s+k})(h_{s,i}^{[r]})$, $1\leq s<N-k$.
-@@ -7413,6 +7726,10 @@ $z=\nabla_\theta\ell^\alpha(\theta)$, and substitute Equations~
+@@ -7413,6 +7818,10 @@ $z=\nabla_\theta\ell^\alpha(\theta)$, and substitute Equations~
  \label{lem:dmop-full-particle-bias}
  Under the conditions of Lemma~\ref{lem:dmop-alpha-variance},
  Equation~(\ref{eq:refined-dmop-alpha-particle-bias}) holds.
@@ -398,7 +499,7 @@ index bae10a1..cb6ff81 100644
  \end{cor}
  
  \begin{proof}[Proof.]
-@@ -10622,6 +10939,34 @@ At $\alpha=0$, the variance is at most order $NpG'(\theta)^2(1+\log J)^2/J$;
+@@ -10622,6 +11031,34 @@ At $\alpha=0$, the variance is at most order $NpG'(\theta)^2(1+\log J)^2/J$;
  at $\alpha=1$, the population discounting bias is exactly zero.
  Remark~\ref{rem:population-bias-cancellation} gives a complementary
  bound retaining signed cancellation.
@@ -433,7 +534,7 @@ index bae10a1..cb6ff81 100644
  \end{thm}
  
  \begin{proof}[Proof.]
-@@ -10826,6 +11171,11 @@ At $\alpha=1$ and $J/N\to\infty$, the same exact formula gives
+@@ -10826,6 +11263,11 @@ At $\alpha=1$ and $J/N\to\infty$, the same exact formula gives
  \end{equation}
  Thus the general $N^3/J$ endpoint upper bound is also conservative
  in this model.
@@ -445,7 +546,7 @@ index bae10a1..cb6ff81 100644
  \end{remark}
  
  \iffalse
-@@ -11056,6 +11406,15 @@ with the DMOP-$1$ estimator in the model under study.
+@@ -11056,6 +11498,15 @@ with the DMOP-$1$ estimator in the model under study.
  \fi
  
  \begin{remark}[Rates and normalization]
@@ -461,7 +562,7 @@ index bae10a1..cb6ff81 100644
  The finite particle term in Lemma~\ref{lem:dmop-alpha-variance} is
  \begin{equation}
  pG'(\theta)^2
-@@ -11094,6 +11453,44 @@ asymptotic-variance lower bound of \citet{poyiadjis11}.
+@@ -11094,6 +11545,44 @@ asymptotic-variance lower bound of \citet{poyiadjis11}.
  
  \begin{remark}[Choosing $\alpha$ in the upper bound]
  \label{rem:alpha-tuning-upper-bound}
@@ -506,7 +607,7 @@ index bae10a1..cb6ff81 100644
  We tune the upper bound. For $0\leq\alpha<1$,
  \begin{equation}
  \sum_{r=0}^{N-1}\alpha^r
-@@ -11936,6 +12333,12 @@ fixed-lag MSE bound.
+@@ -11936,6 +12425,12 @@ fixed-lag MSE bound.
  \fi
  
  \begin{remark}[Geometric discounting and lag truncation]
