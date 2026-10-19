@@ -1,5 +1,14 @@
 # Handoff
 
+## October 19: pilot-proposal citation
+
+- Pulled main (already current) and added Dahlin and Schon (2019), p.29,
+  beside the main-text description of the covariance estimated from pilot
+  PMMH runs. Citation is inside the existing `\kevin{}` addition; no prose
+  was removed. Added `dahlin19` to bib-ifad.bib with the journal DOI.
+- Native document compilation unavailable (no connected sessions); verified
+  with the local manuscript build and checked that the citation resolves.
+
 ## October 19: main-text prior and proposal description
 
 - Pulled origin/main 1b392b5cb with a fast-forward, preserving the incoming
