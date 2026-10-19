@@ -698,6 +698,18 @@ At $\alpha=1$,
 \E\|\nabla_\theta\hat\ell_J^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
 \lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
 \end{equation}
+\kevin{Proposed replacement, using the joint-covariance calculation
+in the supplement. For $0\leq\alpha<1$,
+\begin{align}
+&\E\|\nabla_\theta\hat\ell_J^\alpha(\theta)
+              -\nabla_\theta\ell(\theta)\|_2^2\notag\\
+&\quad\lesssim pG'(\theta)^2\left[
+ \frac{NH_N(\alpha)+\{N-H_N(\alpha)\}(1+\log J)^2}{J}
+ +\frac{N^2}{J^2}+N^2(1-\alpha)^2\right].
+\end{align}
+At $\alpha=1$, the bound is $pG'(\theta)^2N^2/J$.
+The supplement retains the sharper $\varrho$-dependent population
+term. These are finite-$J$ bounds under the same assumptions.}
 The constants depend on the model and the stated stability bounds, independently of $N,J,\alpha$.
 Expectations are over the particle-filter randomness.
 \end{thm}
@@ -728,6 +740,12 @@ $\alpha=1$ & $N^3/J$ & $N^3/J$ & $0$ \\
 The particle MSE bounds also bound the variance; adding the population term bounds the full-score MSE up to a constant.}
 \label{tab:dmop-error-bounds}
 \end{table}
+\kevin{Proposed table and discussion update: under either assumption,
+the $\alpha=1$ entry becomes $N^2/J$. For fixed $0<\alpha<1$ and
+$J\geq N$, use $N\{(1-\alpha)^{-1}+L_J^2\}/J$ as a common
+particle-MSE bound. Leave the population-bias column and the
+$\alpha=0$ discussion unchanged. Replace $N^3/J$ by $N^2/J$ in
+the DMOP-$1$ paragraph below.}
 
 For DMOP-$0$, the particle error grows at most linearly with the number of observations, apart from logarithmic factors.
 The joint mixing assumption (A6-J) gives one fewer factor of $1+\log J$ in this case.

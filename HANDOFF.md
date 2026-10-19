@@ -1,5 +1,26 @@
 # Handoff
 
+## October 19: covariance review branch
+
+- Pulled main through `c7556a6`, preserving the incoming Overleaf prose,
+  bibliography, and ESS timing changes. Review branch: `covariance-mse`.
+  Remote main is not a push target.
+- Kept the mathematical edits in `\kevin{}` comments. Matched the proof's
+  step headings and connected prose to the surrounding supplement, and
+  displayed the conditional-mean telescope, nodewise variance bound, and
+  conditional mean--variance identity explicitly. Rates and assumptions
+  are unchanged from the reviewed proposal below.
+- Marked-up PDFs and the source diff are included under `output/` so the
+  branch contains the material needed for review.
+- Both PDFs compile with resolved references and citations. Visually
+  checked the changed proof on SI pages S-45--S-48 and the main theorem.
+  No SI overfull boxes; the main text retains its existing overfull box
+  near line 658. The incoming Overleaf table-caption TODO is untouched.
+- File budget for published histories plus this branch: 628 tracked files,
+  673 historical paths, below 1800. The all-local-ref check additionally
+  sees the intentionally retained pre-cleanup backup and reports 2145
+  paths; that backup is not part of this branch or the push.
+
 ## October 19: Overleaf 1451 conflict resolved
 
 - Merged origin/overleaf-2026-10-19-1451 (9f727871d), based on the compact
@@ -35,6 +56,39 @@
   was removed. Added `dahlin19` to bib-ifad.bib with the journal DOI.
 - Native document compilation unavailable (no connected sessions); verified
   with the local manuscript build and checked that the citation resolves.
+
+## October 19: unpushed covariance correction for review
+
+- User requested pull, a finite-J repair of the S267 calculation, fresh
+  independent checks, minimal changes in `\kevin{}` comments, and no push.
+  Local main was based on pre-cleanup history. Preserved it as
+  `saved-main-before-2026-10-19` and aligned main with origin/main at
+  `88adb52`. No old history was merged back and nothing was pushed.
+- All manuscript changes are additive `\kevin{}` comments in `si.tex`
+  and `ms.tex`. Original arguments, inactive blocks, assumptions, population
+  bias, and Arzela--Ascoli remain unchanged. Added the DDS 2010 backward
+  Feynman--Kac bibliography entry.
+- Proposed S13 replacement conditions on prediction clouds, uses exact
+  backward parent probabilities and simulator bridges, bounds collisions
+  through a reverse Doob calculation, and groups interior contributions
+  before the existing cloud-mixing covariance sum. The conditional mean
+  uses DDS Definition 5.1 and equation (7.1), not a CLT.
+- With H=sum(alpha^r,r=0..N-1), the proposed variance is
+  pG'^2[ N H + (N-H)(1+log J)^2 ]/J. Particle weak bias is
+  N sqrt(p)G'/J. Direct terminal MSE at alpha=1 is pG'^2 N^2/J,
+  for every J>=2, with no J-versus-N restriction. Population bias is
+  unchanged. Corresponding main/SI theorem, corollary, table, and remarks
+  have proposed updates, including the three tuning regimes.
+- Three fresh independent mathematical reviews checked the actual proof.
+  Incorporated the explicit initial-history layer, A6-J block endpoint,
+  current measurement in the normalizer, and conditional L2 notation.
+- Tectonic builds both PDFs with resolved references/citations. SI has no
+  overfull boxes. Main retains one pre-existing overfull box near line 657.
+  New proof and rate pages were visually inspected. The source patch and
+  marked-up PDFs are exported under output/ for local review.
+- The initial delivery was uncommitted and unpushed. Kevin subsequently
+  requested a branch push. Blue comments remain proposed replacements,
+  not a deletion of the old text.
 
 ## October 19: main-text prior and proposal description
 
