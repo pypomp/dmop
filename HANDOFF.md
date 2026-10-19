@@ -2,6 +2,9 @@
 
 ## October 19: shorter-trajectory pilot prepared
 
+- Launched worker1892072/create1792433476.79 on GPU0 under80ce73d5e.
+  Durable log: code/bayesian/corrected/.runtime/short-trajectories.log.
+  Per-arm logs and pipeline-status.json are under the experiment directory.
 - User requested shorter NUTS trajectories versus PMMH on ESS per second,
   strictly outside manuscript/SI. Prepared short-trajectories-v1: depth2,
   fresh PMMH, depth3 sequentially on GPU0; four chains each,1100iterations,

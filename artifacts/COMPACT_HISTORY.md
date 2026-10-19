@@ -7,7 +7,8 @@ Do not force-add entire result directories or duplicate source snapshots.
 The original compact snapshot contains 6,985 previously tracked result files
 in 195 archives. The October 19 identity-metric NUTS completion adds 158 files
 in one 6.9 MB archive, including final checkpoints and comparison outputs.
-`packed/manifest.json` lists all 7,143 files with their original paths, sizes,
+The shorter-trajectory pilot adds 42 frozen source/input files in a 49 KB
+archive. `packed/manifest.json` lists all 7,185 files with their original paths, sizes,
 Git blob IDs and SHA-256 hashes. The archives contain their exact bytes. Each
 archive is smaller than 20 MB. All members have been independently verified.
 
