@@ -145,3 +145,9 @@ renv
 /code/bayesian/corrected/results/**/chain*/warm_start.npy
 /code/bayesian/corrected/results/**/chain*/initial.npy
 /code/bayesian/corrected/results/**/chain*/initial_chol.npy
+
+# Local isolated Python dependencies, GPU isolation and durable run logs.
+/code/bayesian/corrected/.runtime/
+
+# Automatically generated control comparison awaits visual review before archiving.
+/code/bayesian/corrected/results/identity-adapt-nuts-v1/comparison/

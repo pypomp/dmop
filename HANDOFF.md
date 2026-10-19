@@ -1,5 +1,35 @@
 # Handoff
 
+## October 19: authorized checkpoint continuation and comparison
+
+- User explicitly requested resuming without warmup and completing/plotting
+  the comparison with diagonal PMMH. Recovery now runs on GPU0 outside MPS:
+  sampler PID117366/create1792384358.61, worker117365. Durable ignored log:
+  `code/bayesian/corrected/.runtime/identity-resume.log`.
+- Output `identity-adapt-nuts-v1/nuts-resumed` resumes all four chains at500,
+  retaining the original total1500 (1000 posterior draws). Frozen parent
+  batch_extend.py preserves states/keys/forces/metric/next step sizes. Its
+  startup likelihood and force differences are exactly zero in all four
+  chains. No warmup repeats. Four starting points exactly match diagonal PMMH.
+- Shared root HANDOFF explains the original termination: an MPS GPU fault
+  killed this PID on October17, followed by reboot. Dependencies formerly
+  under /tmp were lost. Restored pinned packages under ignored .runtime/deps;
+  Pypomp/JAX unchanged. resume-launch.json records the new process identity.
+- Worker waits on sampler exit then runs identity_comparison.py automatically;
+  no model polling, repeated checking or automatic retry. It compares501--1500
+  for both methods, checks exact parent prefix/frozen tuning and common targets,
+  and produces four PDF/PNG pairs plus all-parameter diagnostic CSV/summary.
+  Future generated comparison/ stays ignored until visual review and archive.
+- Verification: comparison script executed end-to-end on a temporary synthetic
+  continuation plus the real PMMH input; all four figure pairs and diagnostics
+  were generated, and the trend layout was inspected. Synthetic plots are
+  only a layout/plumbing check under /tmp, never experiment results. Actual
+  retained-draw plots and convergence conclusions remain pending.
+- On completion: inspect comparison figures and numerical diagnostics, archive
+  final checkpoints/review outputs explicitly, show plots in chat, then finish
+  the requested SI addition with visible redlines. Main comparison unchanged.
+  Do not claim completion or convergence from startup checks. No public push.
+
 ## October 19: requested status check
 
 - Identity-adapt NUTS is no longer running: host PID613935 is absent and

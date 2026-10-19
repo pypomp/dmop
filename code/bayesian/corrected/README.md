@@ -101,7 +101,36 @@ are discarded for this comparison, not an adaptive warmup. The additional
 SI figure is pending completion of the replacement NUTS control. This is a
 comparison of identity-metric NUTS with adapted steps versus fixed diagonal
 PMMH; do not describe it as a replication of the archived NUTS settings.
-Automatic polling is paused; do not restart or extend runs without a request.
+The October 17 batch was interrupted by the shared GPU fault described in
+`pypomp/HANDOFF.md`. At the user's request it resumed from the four saved
+iteration-500 checkpoints on October 19, in `identity-adapt-nuts-v1/nuts-resumed`.
+No warmup is repeated. The original random states, cached forces, metric and
+final warmup step sizes are preserved. `state_check.json` records exact
+agreement of recomputed likelihoods and forces at the restart.
+
+`identity-adapt-nuts-v1/resume.py` starts the frozen continuation driver and
+waits for it to exit successfully, then runs `identity_comparison.py`. It does
+not poll or retry failed jobs. The comparison checks exact warmup prefixes,
+frozen tuning, common targets and identical starting points before using
+iterations 501--1500 from both methods. It writes trend traces/densities/ACFs,
+full trend traces, all-parameter traces and marginals, and all-parameter
+R-hat/ESS/MCSE diagnostics into `identity-adapt-nuts-v1/comparison`.
+Those generated outputs are ignored until reviewed and explicitly archived.
+All diagnostics and densities use all 1,000 retained draws per chain.
+
+The isolated dependencies and durable log live under ignored `.runtime/`.
+Recreate the dependency directory, without changing the Pypomp environment:
+
+```sh
+python -m pip install --no-deps --target code/bayesian/corrected/.runtime/deps \
+  -r code/bayesian/corrected/requirements-nuts.txt \
+  -r code/bayesian/corrected/requirements-review.txt
+```
+
+Use the recorded Pypomp/JAX environment; the continuation driver checks its
+versions and source revision. The launcher isolates this job from GPU MPS.
+Do not rerun `resume.py` over an existing recovery directory. Automatic
+model polling remains paused; this restart was explicitly requested.
 
 Fasiolo et al. (2016) proposal provenance remains unresolved. The paper and
 its eight-page supplement specify POMP PMMH but not the proposal covariance.
