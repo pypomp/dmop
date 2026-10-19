@@ -1,5 +1,16 @@
 # Comparisons across models
 
+Saved run artifacts are bundled to keep the Git history within Overleaf's
+file budget. Before reproducing results or plots, restore this directory from
+the repository root:
+
+```sh
+python artifacts/restore_results.py --prefix code/benchmarks/results
+```
+
+See [compact result storage](../../artifacts/COMPACT_HISTORY.md) for verification and selective restoration.
+Restored outputs stay ignored by Git.
+
 This directory contains the cross-model comparison in SI S12. Completed
 experiments, figures and the central table are linked below. The original
 Daphnia and Dhaka results remain in

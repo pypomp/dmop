@@ -1,5 +1,16 @@
 # Corrected Bayesian experiment
 
+Saved run artifacts are bundled to keep the Git history within Overleaf's
+file budget. Before reproducing results or plots, restore this directory from
+the repository root:
+
+```sh
+python artifacts/restore_results.py --prefix code/bayesian/corrected/results
+```
+
+See [compact result storage](../../../artifacts/COMPACT_HISTORY.md) for verification and selective restoration.
+Restored outputs stay ignored by Git.
+
 The archived NUTS calculation divided both log likelihood and log prior by
 600. These new experiments remove that division and use current Pypomp,
 without importing the archived diffPomp implementation. Historical arrays and figures remain archived one directory above. The
