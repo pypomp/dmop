@@ -598,9 +598,9 @@ Here, we will show that MOP-$\alpha$ targets the filtering distribution and like
 \item{\textbf{Measurement-sensitivity decay.}}
 \newEdit{
 The simulator is $C^1$ in its incoming state. 
-Conditioning on $X^\theta_\nPrevious = x_\nPrevious$, with $\omega$ fixed,
+Starting the simulator at $X^\theta_\nPrevious=x_\nPrevious$, with $\theta$ and subsequent simulator draws held fixed,
 \[
-\left\|D_{x_\nPrevious}\log f_{Y_n\mid X_n}
+\left\|\nabla_{x_\nPrevious}\log f_{Y_n\mid X_n}
 \bigl(y_n^*\mid X_n^\theta;\theta\bigr)\right\|_2
 \leq C\kappa^{n-\nPrevious},\qquad C<\infty,\quad 0<\kappa<1.
 \]
@@ -608,7 +608,7 @@ The bound is uniform in $\nPrevious\leq n$, $x_\nPrevious$, $X^\theta_n$, $\omeg
 The parameter derivatives of the initial state, simulator, and log measurement
 density are bounded, holding incoming states fixed.
 }
-\item[(A6-J)]{\textbf{Alternative joint version of (A6).}} 
+\item[(A6-J)]{\textbf{Alternative assumption to (A6).}} 
 \newEdit{
 The log measurement density is $C^1$ in
 $(x,\theta)$, and (A2) holds for $\theta$ near $\phi$ for the joint Markov process
@@ -677,17 +677,12 @@ The result describes the bias-variance tradeoff as $\alpha$ varies between zero 
 \label{thm:mop-biasvar}
 Suppose (A2), (A3), (A5), and either (A6) or (A6-J) hold.
 Fix the observations, use multinomial resampling, and let $J\geq2$ and $\theta=\phi$.
-Write
-\[
-\widehat S_\alpha=\nabla_\theta\hat\ell_J^\alpha(\theta),
-\qquad S=\nabla_\theta\ell(\theta),
-\qquad H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r,
-\]
+Write $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$,
 using the after-resampling likelihood estimate.
 For $0\leq\alpha<1$,
 \begin{equation}
 \label{eq:mop-mse}
-\E\|\widehat S_\alpha-S\|_2^2
+\E\|\nabla_\theta\hat\ell_J^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
 \lesssim pG'(\theta)^2
 \left[
 \left\{\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right\}
@@ -697,7 +692,7 @@ H_N(\alpha)^2+N^2(1-\alpha)^2
 At $\alpha=1$,
 \begin{equation}
 \label{eq:mop-one-mse}
-\E\|\widehat S_1-S\|_2^2
+\E\|\nabla_\theta\hat\ell_J^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
 \lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
 \end{equation}
 The constants depend on the model and the stated stability bounds, independently of $N,J,\alpha$.
@@ -706,7 +701,7 @@ Expectations are over the particle-filter randomness.
 
 The bound separates particle approximation error from population discount bias.
 The first term in Equation~\ref{eq:mop-mse} controls the error relative to the population DMOP-$\alpha$ score, while the second controls its squared difference from the full score.
-Increasing the number of particles reduces the particle error; it does not remove population discount bias.
+Increasing the number of particles reduces the particle error, but note that it does not remove the population bias introduced by discounting.
 
 Table~\ref{tab:dmop-error-bounds} summarizes the bounds.
 We suppress the common factor $pG'(\theta)^2$, write $L_J=1+\log J$, and take $J\geq N$.
@@ -720,13 +715,13 @@ The population bias is the bias remaining as $J\to\infty$.
 \cmidrule(lr){2-3}
 Choice of $\alpha$ & Under (A6) & Under (A6-J) & bias \\
 \midrule
-$\alpha=0$ & $NL_J^2/J$ & $NL_J/J$ & $N^2$ \\
+$\alpha=0$ & $N/J$ & $N/J$ & $N^2$ \\
 Fixed $0<\alpha<1$ & $\dfrac{NL_J^2}{J(1-\alpha)^2}$
-& $\dfrac{NL_J^2}{J(1-\alpha)^2}$ & $N^2(1-\alpha)^2$ \\[8pt]
+& $\dfrac{NL_J}{J(1-\alpha)^2}$ & $N^2(1-\alpha)^2$ \\[8pt]
 $\alpha=1$ & $N^3/J$ & $N^3/J$ & $0$ \\
 \bottomrule
 \end{tabular}
-\caption{Upper bounds for DMOP-$\alpha$ with $J\geq N$, omitting the common factor $pG'(\theta)^2$ and model-dependent constants, with $L_J=1+\log J$.
+\caption{Upper bounds for DMOP-$\alpha$ with $J\geq N$, omitting the common factor $pG'(\theta)^2$, model-dependent constants, and logarithmic factors.
 The particle MSE bounds also bound the variance; adding the population term bounds the full-score MSE up to a constant.}
 \label{tab:dmop-error-bounds}
 \end{table}
