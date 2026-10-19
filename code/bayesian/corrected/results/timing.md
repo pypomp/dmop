@@ -3,10 +3,40 @@
 ## Current GPU comparison
 
 The primary runs are `gpu-forward-nuts-v2/nuts` (NUTS on GPU0) and
-`gpu-comparison-v2/pmrw-long` (J10000 PMMH on GPU1). NUTS is still running;
-the primary PMMH, J5000 continuation and wider-prior comparison have
-finished. GPU1 was shared during parts of these experiments. Their elapsed
-times do not establish a controlled speed comparison.
+`gpu-comparison-v2/pmrw-long` (J10000 PMMH on GPU1). Both are complete.
+The separate identity-metric NUTS control is not part of these figures.
+GPU1 was shared during parts of these experiments. Their elapsed times do
+not establish a controlled speed comparison.
+
+Run `python code/bayesian/corrected/ess_timing.py` from the repo root after
+restoring the archived results to reproduce the all-parameter comparison.
+The script checks the frozen reports against the checkpoint draws, verifies
+the common target and shared batch clocks, and writes ignored CSV/JSON
+outputs under `results/paper/ess-timing.*`. It records input hashes and
+reports sampling-only and warmup-inclusive ESS per second. Neither measure
+includes pilot preparation or tuning screens.
+
+For the first 2,000 retained draws per chain, NUTS takes 80,836 seconds and
+PMMH takes 3,368 seconds. NUTS has higher bulk ESS per second on only one of
+18 coordinates, and higher tail ESS per second on none. Median NUTS/PMMH
+ratios across coordinates are 0.637 (bulk) and 0.221 (tail). The short PMMH
+chains have substantial between-chain differences, limiting these estimates.
+
+The longer PMMH run takes 47,339 seconds for 30,000 retained draws per chain
+and has higher bulk and tail ESS per second than NUTS on all 18 coordinates.
+Median NUTS/PMMH ratios are 0.378 (bulk) and 0.405 (tail). For the trend,
+bulk ESS per second is 0.00412 for NUTS and 0.01132 for longer PMMH.
+Some coordinates still have elevated R-hat; these are descriptive estimates,
+not proof of convergence or a controlled hardware benchmark. They do not
+support a computing-time advantage for this NUTS implementation.
+
+Every retained main-run NUTS trajectory reaches depth 5, with a mean of
+30.999625 integration steps and no recorded U-turn. Each integration step
+evaluates both the particle-filter likelihood and a DMOP force. Forward-mode
+forces are already enabled. The earlier depth-5/depth-6 screen did not show
+a clear improvement from longer trajectories. A shorter-depth comparison
+should assess ESS per second, not merely update speed or local displacement;
+no new sampler or change to the ongoing control was made for this audit.
 
 `batch.py` records the wall time of one update of all four chains in each
 chain's `iteration_seconds` array. Count that time once, not four times.

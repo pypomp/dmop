@@ -1,5 +1,21 @@
 # Handoff
 
+## October 19: ESS per second audit
+
+- Added `code/bayesian/corrected/ess_timing.py` to combine the frozen
+  main-comparison diagnostics with checkpoint batch wall times. Executed
+  successfully, checking report draws against all four chains, target
+  metadata and shared timing arrays. Generated CSV/JSON stays ignored under
+  results/paper; input hashes recorded. Updated results/timing.md.
+- Main NUTS needs80,836s for2,000retained/chain; PMMH needs3,368s for2,000
+  and47,339s for30,000. Against longer PMMH, median NUTS/PMMH ESS/sec ratios
+  are.378bulk/.405tail; NUTS loses both on all18coordinates. Trend bulk
+  rates.00412/.01132. GPU loads differ and incomplete mixing limits ESS.
+- All8,000retained main NUTS trajectories reach depth5; mean31integration
+  steps, no U-turns. Forward-mode forces already enabled; earlier depth6
+  screen inconclusive. Shorter depths are a potential ESS/sec experiment,
+  not a demonstrated speedup. No new runs or manuscript changes in this audit.
+
 ## October 19: pilot-proposal citation
 
 - Pulled main (already current) and added Dahlin and Schon (2019), p.29,
