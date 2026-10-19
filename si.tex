@@ -1914,7 +1914,7 @@ We choose our specific choice of notation and definitions to be in line with tha
 
 \paragraph{\bf Total variation distance:} The total variation distance between two measures $\mu$ and $\nu$ on $\gX$ is
 \begin{equation}
-\|\mu-\nu\|_{\mathrm{TV}}=\sup _{\|h\|_{\infty} \leq 1 / 2}|\mu(h)-\nu(h)|=\sup _{\operatorname{osc}(h) \leq 1}|\mu(h)-\nu(h)|.    
+\|\mu-\nu\|_{\mathrm{TV}}=\sup _{\|h\|_{\infty} \leq 1 / 2}|\mu(\phi)-\nu(\phi)|=\sup _{\operatorname{osc}(h) \leq 1}|\mu(h)-\nu(h)|.    
 \end{equation}
 
 \paragraph{\bf Dobrushin contraction:} The Dobrushin contraction coefficient $\beta_{\text{TV}}$ of a Markov kernel $M$ is given by
@@ -1987,7 +1987,7 @@ Equipped with the above formalisms and results, we are now in a position to prov
 
 
 
-Here, we prove Theorem~{\thmMopTargeting} by deriving more general results, from which it will be clear that MOP-$\alpha$ targets the filtering distribution and is strongly consistent for the likelihood.
+Here, we prove Theorem~{\thmMopTargeting} by deriving more general result, from which it will be clear that MOP-$\alpha$ targets the filtering distribution and is strongly consistent for the likelihood.
 We will prove a strong law of large numbers for triangular arrays of particles with off-parameter resampling, meaning that we resample the particles according to an arbitrary resampling rule that is not necessarily in proportion to the target distribution of interest. 
 Using weights that encode the cumulative discrepancy between the resampling distribution and the target distribution (instead of resampling to equal weights, as in the basic particle filter) provides a sufficient correction to ensure almost sure convergence.
 We now introduce the precise definition of an off-parameter resampled particle filter. 
@@ -2108,107 +2108,47 @@ We state Lemma~\ref{lem:change-measure-proper-weights} assuming multinomial resa
 
 \noindent \textbf{Remark:} Note that Lemma \ref{lem:change-measure-proper-weights} permits $\pi_{1:J}$ to depend on $\{(X_j,u_j)\}$ as long as the resampling is carried out independently of $\{(X_j,u_j)\}$, conditional on $\pi_{1:J}$.
 
-
 \begin{lem}[Particle Marginals]
-\label{lem:marginal-proper-weights}
-Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
-Also suppose that conditional on $(\tilde X_m^J,U_m^J)_{m=1}^J$,
-the variables $\tilde Z_1^J,\ldots,\tilde Z_J^J$ are independent, with
-$\tilde Z_j^J\sim f_{Z|X}(\cdot\mid\tilde X_j^J)$,
-where $f_{Z|X}$ is a conditional probability density function corresponding
-to a joint density $f_{X,Z}$ with marginal densities $f_X$ and $f_Z$.
-Then, if the $U_j^J$ are uniformly bounded above and away from zero,
-$\{(\tilde Z_j^J,U_j^J)\}$ targets $f_Z$.
+    \label{lem:marginal-proper-weights}
+    Suppose that $\{(\tilde X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$. Also suppose that $\tilde Z_j^J \sim f_{Z|X}(\cdot | \tilde X_j^J)$ where $f_{Z|X}$ is a conditional probability density function corresponding to a joint density $f_{X,Z}$ with marginal densities $f_X$ and $f_Z$. Then, if the $U_j^J$ are bounded, $\{(\tilde Z_j^J,U_j^J)\}$ targets $f_Z$.
 \end{lem}
-
 \begin{proof}[Proof.]
-We want to show that, for any measurable bounded $h$,
-\begin{equation}
- \frac{\sum_j h(\tilde Z_j^J)\,U_j^J}{\sum_j U_j^J}
- \stackrel{a.s.}{\to}\E_{f_Z}[h(Z)]
- =\E_{f_X}\big[\E_{f_{Z|X}}[h(Z)\mid X]\big].
-\end{equation}
-By assumption, for any measurable and bounded functional $g$ with domain $\gX$,
-\begin{equation}\label{eq:lemma2:g}
- \frac{\sum_j g(\tilde X_j^J)\,U_j^J}{\sum_j U_j^J}
- \stackrel{a.s.}{\to}\E_{f_X}[g(X)].
-\end{equation}
-Let $\bar U_j^J=JU_j^J/\sum_j U_j^J$.
-For constants $0<c\le U_j^J\le C<\infty$, uniformly in $j,J$,
-we have $\bar U_j^J\le C/c$.
-Examine the numerator and denominator of the quantity
-\begin{equation}
- \frac{J^{-1}\sum_j h(\tilde Z_j^J)\,U_j^J}{J^{-1}\sum_j U_j^J}
- =\frac{J^{-1}\sum_j h(\tilde Z_j^J)\,\bar U_j^J}
- {J^{-1}\sum_j\bar U_j^J}.
-\end{equation}
-The denominator converges to $1$ almost surely. The numerator, on the other hand, is
-\begin{equation}\label{eq:lemma6:numerator}
- \frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J.
-\end{equation}
-Set
-\[
- D_J=\frac1J\sum_j\bar U_j^J
- \bigl\{h(\tilde Z_j^J)-\E[h(Z)\mid X=\tilde X_j^J]\bigr\}.
-\]
-Conditioning on $(\tilde X_j^J,U_j^J)_{j=1}^J$, we apply the fourth-moment
-argument of Lemma~\ref{lem:change-measure-proper-weights} to the centered, uniformly bounded summands, obtaining
-\[
- \E[D_J^4]\le\frac{C_h}{J^2},\qquad
- \mathbb P(|D_J|>\epsilon)\le\frac{C_h}{\epsilon^4J^2},
-\]
-for some $C_h<\infty$ independent of $J$ and every $\epsilon>0$.
-Thus $D_J\stackrel{a.s.}{\to}0$ by Borel--Cantelli.
-For the expectation of (\ref{eq:lemma6:numerator}), the tower property gives
-\begin{align}
- \lim_{J\to\infty}\E\left[\frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J\right]
- &=\lim_{J\to\infty}\E\left[\frac1J\sum_j
- \E\big[h(\tilde Z_j^J)\,\bar U_j^J\mid\tilde X_j^J,\bar U_j^J\big]\right]
- \\
- &=\lim_{J\to\infty}\E\left[\frac1J\sum_j
- \E\big[h(Z)\mid X=\tilde X_j^J\big]\,\bar U_j^J\right].
-\end{align}
-Applying (\ref{eq:lemma2:g}) with $g(x)=\E[h(Z)\mid X=x]$, the average on the
-right hand side converges almost surely to
-$\E\{\E[h(Z)\mid X]\}=\E[h(Z)]$.
-It remains to swap the limit and expectations. We can do so with the bounded
-convergence theorem. The almost-sure convergence of this average,
-together with $D_J\stackrel{a.s.}{\to}0$, gives
-\begin{equation}
- \frac1J\sum_j h(\tilde Z_j^J)\,\bar U_j^J
- \stackrel{a.s.}{\to}\E_{f_Z}[h(Z)].\qedhere
-\end{equation}
-\end{proof}
-
-\noindent\textbf{Remark.} The conditional independence assumption in Lemma~\ref{lem:marginal-proper-weights} holds for
-standard particle filters, and for our MOP filter it is guaranteed by step 1
-of Definition~\ref{defn:off-parameter-filter}. 
-
-\vspace{1mm}
-
-\noindent \textbf{Remark:}  The uniform boundedness condition in Lemma~\ref{lem:marginal-proper-weights} can be guaranteed by construction in the context of Definition~\ref{defn:off-parameter-filter} for suitable choices of the resampling probabilities $\pi_{1:J}$ at an earlier iteration.
-In the context of DMOP-$\alpha$, this is guaranteed if the measurement density is similarly bounded, which holds under Assumption (A2) for our theoretical analysis. 
-It is trivially true for MOP-$\alpha$ at $\theta=\phi$, since in this case the weights at each propagation step are equal.
-The smoothness assumption (A5) therefore also guarantees this condition in a neighborhood of $\theta=\phi$.
-
-\vspace{1mm}
-
-\noindent\textbf{Remark.} For nonnegative weights with positive sum, the weight condition in Lemma~\ref{lem:marginal-proper-weights} can be replaced by the weaker requirement
-\[
- \max_{1\le j\le J}\frac{JU_j^J}{\sum_mU_m^J}\le B<\infty,
-\]
-almost surely, for a constant $B$ independent of $J$. The same proof applies.
-
+    We want to show that, for any measurable bounded $h$, 
+     \begin{equation}
+     \frac{\sum_j h(\tilde Z_j^J) \, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_Z}[h(Z)] = \E_{f_X}\big[\E_{f_{Z|X}}[h(Z) | X]\big].
+     \end{equation}
+    By assumption, for any measurable and bounded functional $g$ with domain $\gX$,
+    \begin{equation}\label{eq:lemma2:g}
+    \frac{\sum_j g(\tilde X_j^J)\, U_j^J}{\sum_j U_j^J} \stackrel{a.s.}{\to} \E_{f_X}[g(X)].
+    \end{equation}
+    Let $\bar{U}_j^J = \frac{J \, U_j^J}{\sum_j U_j^J}$. Examine the numerator and denominator of the quantity \begin{equation}\frac{J^{-1}\sum_j h(\tilde Z_j^J) \, U_j^J}{J^{-1}\sum_j U_j^J} = \frac{J^{-1}\sum_j h(\tilde Z_j^J) \, \bar{U}_j^J}{J^{-1}\sum_j \bar{U}_j^J}.\end{equation}
+    The denominator converges to $1$ almost surely. The numerator, on the other hand, is
+    \begin{equation}
+    \frac{1}{J}\sum_j h(\tilde Z_j^J)\, \bar{U}_j^J,
+    \end{equation}
+    and by the same fourth moment argument to the above lemma, it converges almost surely to the limit of its expectation,
+    \begin{eqnarray}        
+    \lim_{J\to\infty} \E\left[\frac{1}{J}\sum_j h(\tilde Z_j^J)\, \bar{U}_j^J\right] 
+    &=& \lim_{J\to\infty} \E \left[\frac{1}{J}\sum_j  
+      \E\Big[ h(\tilde Z_j^J)\, \bar{U}_j^J\Big|\tilde X_j^J, \bar U_j^J\Big]
+    \right]
+    \\
+    &=& \lim_{J\to\infty} \E \left[\frac{1}{J}\sum_j  \E\Big[h(Z) \Big| X=\tilde X_j^J \Big] \, \bar U_j^J\right].
+    \end{eqnarray}
+    Applying (\ref{eq:lemma2:g}) with $g(x) = \E\big[h(Z) | X=x\big]$, the average on the right hand side converges almost surely to $\E\big\{\E[h(Z)|X]\big\}=\E[h(Z)].$
+    It remains to swap the limit and expectations. We can do so with the bounded convergence theorem, and therefore obtain   
+    \begin{equation}\frac{1}{J}\sum_j h(\tilde Z_j^J)\,\bar{U}_j^J \stackrel{a.s.}{\to} \E_{f_Z}[h(Z)].\end{equation} 
+    \end{proof}
 
 \begin{lem}[Particle Posteriors]
     \label{lem:posterior-proper-weights}
     Suppose that $\{(X_j^J,U_j^J),j=1,\dots,J\}$ targets $f_X$.
     Also suppose that $(X^{\prime J}_j,U^{\prime J}_j) = \big(X_j^J,U_j^J \, f_{Z|X}(z^*|X_j^J)\big)$. 
-    Then, if $x\mapsto f_{Z|X}(z^*|x)$ is bounded and $0<f_Z(z^*)<\infty$, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
+    Then, if $U_j^J \, f_{Z|X}(z^*|X_j^J)$ and $U_j^J \, f_{Z|X}(z^*|X_j^J) \big/ f_Z(z^*)$ are bounded, $\{(X^{\prime J}_j,U^{\prime J}_j)\}$ targets $f_{X|Z}(\cdot | z^*)$.
 \end{lem}
 
 \begin{proof}[Proof.]
-    Again, we want to show that, for any measurable bounded $h$,
+    Again, we want to show that
      \begin{equation}
      \frac{\sum_j h(X_j^J) \cdot U_j^J \cdot f_{Z|X}(z^*|X_j^J)}{\sum_j U_j^J \cdot f_{Z|X}(z^*|X_j^J)} \stackrel{a.s.}{\to} \E_{f_{X|Z}}\big[h(X)\big|z^*\big].
      \end{equation}
@@ -2222,12 +2162,11 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J)\,  {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}
     \times \left( \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \right)^{-1}.
     \end{equation}
-    The functions $x\mapsto f_{Z|X}(z^*|x)$ and $x\mapsto h(x)f_{Z|X}(z^*|x)$ are bounded.
     We will apply Equation (\ref{eq:lemma-posterior-hypothesis}) to the numerator and the denominator in the ratio above individually. The numerator converges to 
     \begin{equation}
-    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
+    \frac{J^{-1} \sum_j h(X_j^J) \, f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {u}_j^{J}} \stackrel{a.s.}{\to} \E_{f_X}\big[h(X)\, f_{Z|X}(z^*|X)\big],
     \end{equation}
-    while the denominator converges to
+    while the reciprocal of the denominator converges to 
     \begin{equation} 
     \frac{J^{-1} \sum_j f_{Z|X}(z^*|X_j^J) \, {U}_j^{J}}{J^{-1} \sum_j {U}_j^{J}}  \stackrel{a.s.}{\to} \E_{f_X}\big[f_{Z|X}(z^*|X)\big] = f_Z(z^*).
     \end{equation}
@@ -2254,8 +2193,6 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
     % where we can swap the limit and expectations with the bounded convergence theorem.
 \end{proof}
 
-
-\noindent\textbf{Remark.} In the MOP application, the boundedness and positivity conditions in Lemma~\ref{lem:posterior-proper-weights} follow from Assumption~\refAssumpBoundedMeasurement.
 
 % \begin{lem}[Change of Particle Marginal Measure]
 %     \label{lem:change-marginal-proper-weights}
@@ -2297,7 +2234,7 @@ almost surely, for a constant $B$ independent of $J$. The same proof applies.
 
 \begin{thm}[Off-Parameter Resampled Particle Filters Target the Filtering Distribution]
     \label{thm:off-parameter-targeting}
-    The off-parameter resampled particle filter of Definition \ref{defn:off-parameter-filter} targets the filtering distribution when the resampling probabilities $(p_{n,j})_{j=1}^J$ are chosen so that $g_{n,j}/p_{n,j}$ is uniformly bounded above and away from zero whenever $g_{n,j}>0$.
+    The off-parameter resampled particle filter as outlined in Definition \ref{defn:off-parameter-filter} targets the filtering distribution.
 \end{thm}
 \begin{proof}[Proof.]
     Recursively applying Lemmas \ref{lem:change-measure-proper-weights}, \ref{lem:marginal-proper-weights}, and \ref{lem:posterior-proper-weights}, we obtain that the off-parameter resampled particle filter targets the posterior.
@@ -2440,14 +2377,18 @@ For $F_J(\theta)=\eta_n^J(h_\theta)$, the conclusion is convergence to $\nabla_\
 Theorem~{\thmMopGradConsistency} follows by taking $F_J(\theta)=\hat\ell_J^1(\theta)$ and $h_\theta^*=\ell(\theta)$. Keep the reference parameter $\phi$ fixed throughout $K$. For $\alpha=1$, the off-parameter consistency result and Lemma~\ref{lem:lik-proper-weight} give $\hat\lik_J^1(\theta)\to\lik(\theta)>0$ almost surely for each fixed $\theta\in K$, not only at $\theta=\phi$. The continuous mapping theorem gives the corresponding convergence of the log likelihoods. The neighborhood form of Assumption~\refAssumpLocalBoundedDerivative\ supplies their uniform gradient and Hessian bounds, and Assumption~\refAssumpDifferentiableSimulator\ supplies their pathwise smoothness with the simulator draws and reference-filter resampling indices held fixed. Applying the theorem to these log likelihoods establishes score consistency at $\phi$ directly.
 
 
-\section{Variance Analysis for DMOP-$0$}
+\section{Proof of Theorem~{\thmMopBiasvar} (Bias-Variance Analysis)}
 \label{appendix:biasvar}
 
 
-We first study DMOP-$0$ to introduce the particle variance and covariance estimates used in Section~\ref{appendix:sharper-biasvar}.
-Under (A6-J), the measurement gradient is a bounded function of the current joint state, allowing a direct particle-cloud mixing argument.
-Under (A6), its dependence on simulator history requires the additional decomposition developed in Section~\ref{appendix:sharper-biasvar}.
-We distinguish these two arguments below; the general discounting and MSE bounds are established in Section~\ref{appendix:sharper-biasvar}.
+In this section, we prove various rates on the bias, variance, and MSE of DMOP-$\alpha$. 
+The earlier truncation argument is retained below for comparison.  The
+DMOP recursion discounts a time-$s$ derivative contribution by its actual
+age.  We prove the DMOP-$0$ result below and retain the former direct
+extension to $\alpha>0$ for comparison.  Section~
+\ref{appendix:sharper-biasvar} obtains the sharper result by first applying
+the finite-lag variance calculation and then recovering geometric
+discounting through an exact mixture identity.
 
 First, we relate cloud contraction to the strong-mixing coefficient used
 in the covariance bounds below.
@@ -2502,23 +2443,29 @@ Equation~(\ref{eq:lag-truncation-covariance-mixing-s13}); under (A6-J),
 use the joint cloud. The number of intervening transitions determines
 the lag in $a(\ell)$.
 
-Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} allow us to use the particle-filter forgetting results of \citet{karjalainen23}.
-To control the measurement gradients, we additionally require either (A6) or (A6-J), stated in Section~\ref{appendix:sharper-biasvar}.
-
-\begin{thm}[Variance of the DMOP-$0$ gradient estimate]
-\label{thm:dmop-zero-variance}
+As a warm-up, we consider a variance bound for DMOP-$0$.
+Note that we made Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} to leverage the results from \cite{karjalainen23} on the forgetting of the particle filter. 
+The $O\{N(1+\log J)^2/J\}$ variance bound for DMOP-$0$ additionally uses either (A6)
+or (A6-J), stated in Section~\ref{appendix:sharper-biasvar}. Under
+(A6-J) the derivative contribution is a bounded current function of the
+joint state--gradient pair; under (A6) we first expand its simulator
+history. The former truncation extension to $\alpha>0$ is retained for
+comparison.
+We start by decomposing the MOP-$\alpha$ estimator as follows, for the case $\theta=\phi$,
+\begin{equation}
+\hat{\mathcal{L}}(\theta):=\prod_{n=1}^N L_n^{A, \theta, \alpha}=\prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J w_{n, j}^{P, \theta}}\right)=\prod_{n=1}^N\left(L_n^\phi \cdot \frac{\sum_{j=1}^J w_{n, j}^{F, \theta}}{\sum_{j=1}^J (w_{n-1, j}^{F, \theta})^\alpha}\right).
+\end{equation}
+Now, to illustrate the proof strategy for the general case in an easier context, we first analyze the special case when $\alpha=0$.
+We now prove the variance bound for this case, presented below. To our knowledge, this result for the variance of the gradient estimate of \cite{naesseth18} is novel. 
+\begin{thm}[Variance of MOP-$0$ Gradient Estimate]
 Suppose the observations are fixed, $J\geq2$, $\theta=\phi$, Assumptions
 {\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
-{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is used.
-Then
-\begin{equation}
-\Var\{\nabla_\theta\hat\ell^0(\theta)\}
-\lesssim \frac{NpG'(\theta)^2}{J}
-\begin{cases}
-(1+\log J)^2, & \text{under (A6)},\\
-1+\log J, & \text{under (A6-J)}.
-\end{cases}
-\end{equation}
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. Suppose also that either (A6) or (A6-J) holds. Then the variance of DMOP-$0$, i.e.
+the algorithm of \cite{naesseth18}, is
+ \begin{equation}
+     \Var\big(\nabla_\theta \hat\ell^0(\theta)\big) \lesssim \frac{Np \, G'(\theta)^2(1+\log J)^2}{J}.
+ \end{equation}
 \end{thm}
 \begin{proof}[Proof.]
 First assume (A6-J). In this calculation, a current particle means the
@@ -2622,7 +2569,491 @@ The preceding calculation gives the order
 $NpG'(\theta)^2(1+\log J)^2/J$ for the DMOP-$0$ baseline.  It is not asserted
 to be a lower bound for every model or every value of $\alpha$.
 
-\section{Proof of Theorem~{\thmMopBiasvar} (Bias-Variance Analysis)}
+\iffalse
+Having obtained a variance bound for DMOP-$0$, we are now in a position to tackle a variance bound for DMOP-$\alpha$.
+We analyze the case for $\alpha \in (0,1)$, using the following proof strategy.
+Instead of directly analyzing the variance of the MOP-$\alpha$ gradient estimate, we will analyze the variance of a modified estimator where we truncate the weights at $k$ timesteps, so this estimator only looks at most $k$ timesteps back while accumulating the importance weights.
+We write
+\begin{equation}
+    \hat s_k^\alpha(\theta) := \sum_{n=1}^N \log\left(\frac{\sum_{j=1}^J\prod_{i=n-k}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}{\sum_{j=1}^J\prod_{i=n-k}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}\right)
+\end{equation}
+for the log-likelihood estimate from the $k$-truncated estimator with discount factor $\alpha$. It is the sum of components
+\begin{equation}
+\hat s_{n,k}^\alpha(\theta) := \frac{1}{J}\sum_{j=1}^J\sum_{i=n-k}^n \left(\alpha^{n-i} \log\left(g_{i,j}^{A,F,\theta}\right)- \alpha^{n-i+1} \nabla_\theta \log\left(g_{i-1,j}^{A,F,\theta}\right)\right)
+\end{equation} 
+over timesteps $N$.
+
+This enables us to establish strong mixing for the truncated estimator and its gradient, in order to get a bound on the variance that is $O(NJ^{-1})$.
+We emphasize that this truncated estimator is only a theoretical construct -- we do not actually use the truncated estimator.
+The truncated estimator, as we note in the discussion, possesses similar theoretical guarantees as the MOP-$\alpha$ estimator, but would require the user to specify the number of timesteps to truncate at instead of a discount factor. 
+
+Coupled with a bound ensuring that the $k$-truncated estimator provides an estimate that is close to that of MOP-$\alpha$ proper, we get a bound on the variance of MOP-$\alpha$ that comprises of the variance of the $k$-truncated estimator plus the error, for any $k \leq N$.
+It then holds that the final variance bound on MOP-$\alpha$ is given by the minimum over all $k$, and is never larger than $O(\psi(\alpha)+NJ^{-1})$ for some function $\psi$ increasing in $\alpha$. 
+
+
+\begin{thm}[Variance of DMOP-$\alpha$]
+    When $\alpha \in (0,1)$, the variance of the gradient estimate from MOP-$\alpha$ is
+    \begin{equation}\Var\big(\nabla_\theta \hat\ell^\alpha(\theta)\big) \lesssim \min_{k\leq N} \left(\frac{k^2G'(\theta)^2Np}{(1-\alpha)^2J} + \frac{\alpha^{2k}}{(1-\alpha)^2}Np \, G'(\theta)^2 \right).
+    \end{equation}
+\end{thm}
+\begin{proof}[Proof.]
+Using the derivative of the logarithm and that $w_{n,j}^{F,\theta,\alpha} = w_{n,j}^{F,\theta,\alpha,k} = 1$ when $\theta=\phi$,
+\begin{align}
+    &\left\lVert\nabla_\theta\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha}\right)-\nabla_\theta\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}\right)\right\rVert_2\\
+    &= \left\lVert\frac{\nabla_\theta\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha}}{{\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha}}}-\frac{\nabla_\theta\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}}{{\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}}}\right\rVert_2 \\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{n,j}^{F,\theta,\alpha}-\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{n,j}^{F,\theta,\alpha,k}\right\rVert_2 \\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \frac{\nabla_\theta w_{n,j}^{F,\theta,\alpha}}{w_{n,j}^{F,\theta,\alpha}}-\frac{1}{J}\sum_{j=1}^J \frac{\nabla_\theta w_{n,j}^{F,\theta,\alpha,k}}{w_{n,j}^{F,\theta,\alpha,k}}\right\rVert_2\\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log\left(w_{n,j}^{F,\theta,\alpha}\right)-\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log\left(w_{n,j}^{F,\theta,\alpha,k}\right)\right\rVert_2.
+\end{align}
+
+This lets us bound the cumulative weight discrepancies by
+\begin{align}
+    &  \left\lVert\nabla_\theta\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha}\right)-\nabla_\theta\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}\right)\right\rVert_2
+    \nonumber \\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log\left(w_{n,j}^{F,\theta,\alpha}\right)-\frac{1}{J}\sum_{j=1}^J \nabla_\theta \log\left(w_{n,j}^{F,\theta,\alpha,k}\right)\right\rVert_2 \\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta \left(\log\left(w_{n,j}^{F,\theta,\alpha}\right)-\log\left(w_{n,j}^{F,\theta,\alpha,k}\right)\right)\right\rVert_2\\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta \left(\sum_{i=1}^n\alpha^{(n-i)}\log\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right) - \sum_{i=n-k}^n{\alpha^{(n-i)}}\log\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)\right)\right\rVert_2 \\
+    &= \left\lVert\frac{1}{J}\sum_{j=1}^J \nabla_\theta \left(\sum_{i=1}^{n-k}\alpha^{(n-i)}\log\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right) \right)\right\rVert_2\\
+    &\leq \frac{1}{J}\sum_{j=1}^J \sum_{i=1}^{n-k}\alpha^{(n-i)}\left\lVert\nabla_\theta\log\left(g_{i,j}^{A,F,\theta} \right)\right\rVert_2\\
+    &\leq \frac{1}{J}\sum_{j=1}^J \sum_{i=1}^{n-k}\alpha^{(n-i)}p \, G'(\theta)^2\\
+    &\leq \sqrt{p} \, G'(\theta)\frac{\alpha^k-\alpha^n}{1-\alpha},
+\end{align}
+where the second-last line follows from Assumption~{\refAssumpBoundedMeasurement}.
+
+% We can then bound $\|\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta)\|$ as follows:
+% {\small
+% \begin{align}
+%     &\left\lVert\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta) \right\rVert_2
+%     \nonumber
+%     \\ \nonumber
+%     &= \left\lVert\sum_{n=1}^N \nabla_\theta \log\left(\frac{\sum_{j=1}^J\prod_{i=1}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}{\sum_{j=1}^J\prod_{i=1}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}\right) - \sum_{n=1}^N \nabla_\theta\log\left(\frac{\sum_{j=1}^J\prod_{i=n-k}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}{\sum_{j=1}^J\prod_{i=n-k}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}\right) \right\rVert_2
+%     \\ \nonumber
+%     &= \Bigg\lVert\sum_{n=1}^N \nabla_\theta \Bigg(\log\left(\sum_{j=1}^J\prod_{i=1}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}\right)- \log\left(\sum_{j=1}^J\prod_{i=1}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}\right)
+%     \\
+%     &\qquad\qquad -\log\left(\sum_{j=1}^J\prod_{i=n-k}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}\right) + \log\left(\sum_{j=1}^J\prod_{i=n-k}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}\right)\Bigg)\Bigg\rVert_2
+%     \\ 
+%     &= \left\lVert\sum_{n=1}^N \nabla_\theta \Bigg(\!\log\!\left(\sum_{j=1}^Jw_{n,j}^{F,\theta,\alpha}\right) \!-\! \log\!\left(\sum_{j=1}^Jw_{n,j}^{F,\theta,\alpha,k}\right)
+%     \!-\! \log\!\left(\sum_{j=1}^Jw_{n-1,j}^{A, F,\theta,\alpha}\right) \!+\! \log \! \left(\sum_{j=1}^Jw_{n-1,j}^{A, F,\theta,\alpha,k}\right)\!\Bigg)\right\rVert_2
+%     \nonumber \\
+%     \nonumber
+%     &\leq \sum_{n=1}^N \left\lVert\nabla_\theta \left(\log\left(\sum_{j=1}^Jw_{n,j}^{F,\theta,\alpha}\right)- \log\left(\sum_{j=1}^Jw_{n,j}^{F,\theta,\alpha,k}\right)\right)\right\lVert_{\infty}
+%     \\ 
+%     & \qquad\qquad +\sum_{n=1}^N \left\lVert\nabla_\theta \left(\log\left(\sum_{j=1}^Jw_{n-1,j}^{A, F,\theta,\alpha}\right) + \log\left(\sum_{j=1}^Jw_{n-1,j}^{A, F,\theta,\alpha,k}\right)\right)\right\rVert_2,
+% \end{align}
+% }
+% and each of these two terms is bounded by $\frac{\alpha^k}{1-\alpha}N\sqrt{p} \, G'(\theta)$. So we now know that
+% \begin{equation}\left\lVert\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta) \right\rVert_2 \leq  \frac{2\alpha^k}{1-\alpha}N\sqrt{p} \, G'(\theta),\end{equation}
+% which is unfortunately loose. 
+
+
+% idea: instead of bounding deterministically, why not just bound the variance of the discrepancy? that should get you there!
+
+
+
+Now, we bound the variance of $\nabla_\theta \hat s_k^\alpha(\theta)$. 
+Recall that we defined
+\begin{eqnarray}
+\nabla_\theta \hat s_k^\alpha(\theta) &=& \sum_{n=1}^N \nabla_\theta\log\left(\frac{\sum_{j=1}^J\prod_{i=n-k}^n\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}{\sum_{j=1}^J\prod_{i=n-k}^{n-1}\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right)^{\alpha^{(n-i)}}}\right) 
+\\
+&=& \sum_{n=1}^N \nabla_\theta \left(\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}\right)-\log\left(\sum_{j=1}^J w_{n-1,j}^{A, F,\theta, \alpha, k}\right)\right).
+\end{eqnarray}
+We can then decompose this expression with the derivative of the logarithm while noting that $w_{n,j}^{F,\theta,\alpha,k} = 1$ whenever $\theta=\phi$, to see that
+\begin{align}
+    \nabla_\theta \hat s_k^\alpha(\theta) 
+    &= \sum_{n=1}^N \nabla_\theta \left(\log\left(\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}\right)-\log\left(\sum_{j=1}^J w_{n-1,j}^{A, F,\theta, \alpha, k}\right)\right) \\
+    &= \sum_{n=1}^N \left(\frac{\sum_{j=1}^J \nabla_\theta w_{n,j}^{F,\theta,\alpha,k}}{\sum_{j=1}^J w_{n,j}^{F,\theta,\alpha,k}}-\frac{\sum_{j=1}^J \nabla_\theta w_{n-1,j}^{A,F,\theta,\alpha, k}}{\sum_{j=1}^J w_{n-1,j}^{A,F,\theta,\alpha, k}}\right) \\
+    &= \sum_{n=1}^N \left(\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{n,j}^{F,\theta,\alpha,k}-\frac{1}{J}\sum_{j=1}^J \nabla_\theta w_{n-1,j}^{A,F,\theta,\alpha, k}\right)\\
+    &= \frac{1}{J}\sum_{n=1}^N \sum_{j=1}^J \nabla_\theta \left(w_{n,j}^{F,\theta,\alpha,k}- w_{n-1,j}^{A,F,\theta,\alpha, k}\right).
+\end{align}
+It now follows that we need to bound the variance at a single timestep, namely
+\begin{equation}
+\Var\left(\frac{1}{J}\sum_{j=1}^J\nabla_\theta \left(w_{n,j}^{F,\theta,\alpha,k}- w_{n-1,j}^{A,F,\theta,\alpha, k}\right)\right).
+\end{equation}
+We use the derivative of the logarithm yet again to find, noting that $w_{n,j}^{F,\theta,\alpha,k}=1$ when $\theta=\phi$, that
+\begin{align}
+    \nabla_\theta w_{n,j}^{F,\theta,\alpha,k} = \frac{\nabla_\theta w_{n,j}^{F,\theta,\alpha,k}}{w_{n,j}^{F,\theta,\alpha,k}} = \nabla_\theta \log(w_{n,j}^{F,\theta,\alpha,k}) &= \sum_{i=n-k}^n \alpha^{n-i} \nabla_\theta \log\left(\frac{g_{i,j}^{A,F,\theta}}{g_{i,j}^{A,F,\phi}} \right) 
+    \\
+    &= \sum_{i=n-k}^n \alpha^{n-i} \nabla_\theta \log\left(g_{i,j}^{A,F,\theta}\right).
+\end{align}
+Then,
+\begin{align}
+    &\Var\left(\nabla_\theta \big(w_{n,j}^{F,\theta,\alpha,k}- w_{n-1,j}^{A,F,\theta,\alpha, k}\big)\right) 
+    \\
+    &\qquad = \Var\left(\nabla_\theta \left(\sum_{i=n-k}^n \alpha^{n-i} \nabla_\theta \log\left(g_{i,j}^{A,F,\theta}\right)- \sum_{i=n-k-1}^{n-1} \alpha^{n-i} \nabla_\theta \log\left(g_{i,j}^{A,F,\theta}\right)\right)\right) \\
+    &\qquad = \Var \left(\sum_{i=n-k}^n \nabla_\theta\left(\alpha^{n-i} \log\left(g_{i,j}^{A,F,\theta}\right)- \alpha^{n-i+1}\log\left(g_{i-1,j}^{A,F,\theta}\right)\right)\right).
+\end{align}
+Note that 
+\begin{equation}
+\nabla_\theta \hat s_{n,k}^\alpha(\theta) := \frac{1}{J}\sum_{j=1}^J\sum_{i=n-k}^n \nabla_\theta\left(\alpha^{n-i} \log\left(g_{i,j}^{A,F,\theta}\right)- \alpha^{n-i+1} \nabla_\theta \log\left(g_{i-1,j}^{A,F,\theta}\right)\right)
+\end{equation} 
+is a function bounded by $C\frac{G'(\theta)(1-\alpha^k)}{1-\alpha} =: CG'(\theta)r$ in each coordinate for some constant $C$ (by Assumption~{\refAssumpBoundedMeasurement}) that depends only on $k$ timesteps, and not $n$. 
+Subsequently, we suppress vector and matrix notation for the coordinates of $\theta$ and its derivatives, and their variances and covariances, with the variance of a vector interpreted as the sum of the variance of its components.
+Lemma~2.3 of \cite{karjalainen23} gives the required prediction-empirical
+$L^4$ bound.  For a filtered empirical average, the conditional
+multinomial-resampling and Bayes-ratio calculation in
+Equations~(\ref{eq:conditional-filter-resampling-fourth-moment})--
+(\ref{eq:filtered-particle-l4}) gives the same order.  After centering by
+Equation~(\ref{eq:l4-centering-bridge}), the $L^2$ error of each of the
+$k$ functionals from time $n-k$ to time $n$ is therefore bounded by
+$Cr\sqrt{p}G'(\theta)J^{-1/2}k$.
+That is, we have that
+\begin{equation}\E\left[\|\nabla_\theta \hat s_{n,k}^\alpha(\theta) - \E_{\pi}\nabla_\theta \hat s_{n,k}^\alpha(\theta)\|_2^2\right]^{1/2} \leq \frac{Cr\sqrt{p}G'(\theta) k}{\sqrt{J}}.\end{equation}
+
+
+By the bias-variance decomposition, this in turn bounds the variance at a single timestep by $C^2r^2p \, G'(\theta)^2J^{-1}k^2$. Concretely, we have that
+\begin{equation}\Var\left(\frac{1}{J}\sum_{j=1}^J\sum_{i=n-k}^n \nabla_\theta\left(\alpha^{n-i} \log\left(g_{i,j}^{A,F,\theta}\right)- \alpha^{n-i+1} \log\left(g_{i-1,j}^{A,F,\theta}\right)\right)\right) \lesssim \frac{r^2k^2p2G'(\theta)^2}{J}.\end{equation}
+
+It now remains to bound the variance of $\nabla_\theta \hat s_k^\alpha(\theta)$ by considering the covariance of each of the $N$ terms that comprise it. 
+We decompose
+\begin{align}
+    \Var\big(\nabla_\theta \hat s_k^\alpha(\theta)\big) &= \Var\left(\sum_{n=1}^N \frac{1}{J}\sum_{j=1}^J\sum_{i=n-k}^n \nabla_\theta\left(\alpha^{n-i} \log\left(g_{i,j}^{A,F,\theta}\right)- \alpha^{n-i+1} \log\left(g_{i-1,j}^{A,F,\theta}\right)\right)\right)
+    \nonumber \\
+    &= \sum_{n=1}^N\Var\big(\nabla_\theta \hat s_{n,k}^\alpha(\theta)\big)+ 2\sum_{m<n}\Cov\big(\nabla_\theta \hat s_{m,k}^\alpha(\theta), \nabla_\theta \hat s_{n,k}^\alpha(\theta)\big) \\
+    &\lesssim \frac{r^2k^2p \, G'(\theta)^2N}{J} + 2\sum_{m<n}\Cov\big(\nabla_\theta \hat s_{m,k}^\alpha(\theta), \nabla_\theta \hat s_{n,k}^\alpha(\theta)\big).
+\end{align}
+
+Similarly to the proof of the MOP-$0$ case, we use Assumptions~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement} that ensure strong mixing. We know from Theorem 3.1 of \cite{karjalainen23} that when $\textbf{M}_{n,n+k}$ is the $k$-step Markov operator from timestep $n$ and $\beta_{\text{TV}}(M) = \sup _{x, y \in E}\|M(x, \cdot)-M(y, \cdot)\|_{\mathrm{TV}}=\sup _{\mu, \nu \in \mathcal{P}, \mu \neq \nu} \frac{\|\mu M-\nu M\|_{\mathrm{TV}}}{\|\mu-\nu\|_{\mathrm{TV}}}$ is the Dobrushin contraction coefficient of a Markov operator,
+\begin{equation}
+\beta_{\text{TV}}(\textbf{M}_{n,n+k}) \leq (1-\epsilon)^{\floor{k/(c\log(J))}},
+\end{equation}
+i.e. the mixing time of the particle filter is $O(\log(J))$, where $\epsilon$ and $c$ depend on $\bar{M}, \underbar{M}, \bar{G}, \underbar{G}$ in~{\refAssumpBoundedProcess} and~{\refAssumpBoundedMeasurement}. By Lemma \ref{lem:dobrushin-implies-alpha-mixing}, the particle filter itself is strongly mixing, with $\alpha$-mixing coefficients $a(l) \leq (1-\epsilon)^{\floor{l/(c\log(J))}}$. Therefore, functions of particles are strongly mixing as well, with $\alpha$-mixing coefficients bounded by the original (to see this, observe that the $\sigma$-algebra of the functionals is contained within the original $\sigma$-algebra).
+
+We now derive the $\alpha$-mixing coefficients of $(\nabla_\theta \hat s_{n,k}^\alpha(\theta))_{n=1}^N$. Observe that $\nabla_\theta \hat s_{n,k}^\alpha$ is strong mixing at lag $k+1$, as all weights beyond $k$ timesteps are truncated. We therefore have that the mixing time of $\nabla_\theta \hat s_{n,k}^\alpha(\theta)$ is $O(1+k+\log(J))$, and that the $\alpha$-mixing coefficients for $(\nabla_\theta \hat s_{n,k}^\alpha(\theta))_{n=1}^N$ are given by $a(l) \leq (1-\epsilon)^{\floor{l/(c(1+k+\log(J)))}}$.
+Therefore, by Davydov's inequality and the centered $L^4$ bound just
+described, we find that
+\begin{equation}
+\Cov\big(\nabla_\theta \hat s_{m,k}^\alpha(\theta), \nabla_\theta \hat s_{n,k}^\alpha(\theta)\big) \lesssim (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|}{c(1+k+\log(J))}}}\frac{r^2p \, G'(\theta)^2}{J}.
+\end{equation}
+Concretely, Davydov's inequality, applied to the centered variables,
+gives
+\begin{align}
+    &\left|\Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta),
+    \nabla_\theta\hat s_{n,k}^\alpha(\theta)\big)\right| \\
+    &\quad\leq C a(n-m)^{1/2}
+    \left\|\nabla_\theta\hat s_{m,k}^\alpha(\theta)
+    -\E\nabla_\theta\hat s_{m,k}^\alpha(\theta)\right\|_{L^4}
+    \left\|\nabla_\theta\hat s_{n,k}^\alpha(\theta)
+    -\E\nabla_\theta\hat s_{n,k}^\alpha(\theta)\right\|_{L^4}.
+\end{align}
+The predictor-to-filtered calculation cited above and
+Equation~(\ref{eq:l4-centering-bridge}) give, for $q=m,n$,
+\begin{equation}
+\left\|\nabla_\theta\hat s_{q,k}^\alpha(\theta)
+-\E\nabla_\theta\hat s_{q,k}^\alpha(\theta)\right\|_{L^4}
+\lesssim \frac{r\sqrt p\,G'(\theta)}{\sqrt J}.
+\end{equation}
+Substitution in Davydov's inequality gives
+\begin{equation}\Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta), \nabla_\theta\hat s_{n,k}^\alpha(\theta)\big) \leq (1-\epsilon)^{\frac{1}{2}\floor{\frac{|n-m|}{c(1+k+\log(J))}}}\frac{r^2p \, G'(\theta)^2}{J}.\end{equation}
+Putting it all together, we see that
+\begin{align}
+    \Var\big(\nabla_\theta \hat s_{k}(\theta)\big) &= \sum_{n=1}^N \Var\big(\nabla_\theta\hat s_{n,k}^\alpha(\theta)\big) + 2\sum_{m<n} \Cov\big(\nabla_\theta\hat s_{m,k}^\alpha(\theta),\nabla_\theta\hat s_{n,k}^\alpha(\theta)\big)
+    \\
+    &\leq \frac{Nr^2pk^2G'(\theta)^2}{J} + 2\sum_{n=1}^{N-1} (N-n)(1-\epsilon)^{\frac{1}{2}\floor{\frac{n}{c(1+k+\log(J))}}}\frac{r^2p \, G'(\theta)^2}{J} 
+    \\
+    &\leq \frac{r^2pk^2G'(\theta)^2}{J} \left(N + 2\sum_{n=1}^{N-1} (N-n) (1-\epsilon)^{\frac{1}{2}\floor{\frac{n}{c(1+k+\log(J))}}}\right) 
+    \\
+    &\lesssim \frac{k^2r^2p \, G'(\theta)^2N}{J}.
+\end{align}
+
+
+To continue, define the per-time truncation discrepancy
+\[
+        \Delta_{n,k}(\theta)
+        :=
+        \nabla_\theta \hat\ell^\alpha_n(\theta)
+        -
+        \nabla_\theta \hat s^\alpha_{n,k}(\theta),
+\]
+so that
+\[
+        \nabla_\theta \hat\ell^\alpha(\theta)
+        -
+        \nabla_\theta \hat s^\alpha_k(\theta)
+        =
+        \sum_{n=1}^N \Delta_{n,k}(\theta).
+\]
+The pointwise calculation above shows that each coordinate of the tail satisfies
+\[
+        \|\Delta_{n,k}(\theta)\|_2
+        \lesssim
+        \frac{\alpha^k}{1-\alpha}\sqrt p\,G'(\theta).
+\]
+However, we do not use the deterministic bound
+\[
+        \left\|\sum_{n=1}^N \Delta_{n,k}(\theta)\right\|_2
+        \le
+        \sum_{n=1}^N \|\Delta_{n,k}(\theta)\|_2,
+\]
+since this would introduce an unnecessary factor of \(N^2\) after squaring.
+
+Instead, we bound the variance of the cumulative truncation error. By Assumptions (A2)--(A3) and the forgetting bound of Karjalainen et al. (2023), the underlying particle process is strongly mixing. Since \(\Delta_{n,k}\) is a geometrically weighted tail functional of bounded score increments, the same covariance-summation argument used for the truncated estimator gives
+\[
+        \left|
+        \Cov\!\left(\Delta_{m,k}(\theta),\Delta_{n,k}(\theta)\right)
+        \right|
+        \lesssim
+        \frac{\alpha^{2k}}{(1-\alpha)^2}
+        pG'(\theta)^2\,
+        \rho(|n-m|)
+\]
+for some summable sequence \(\rho(\cdot)\), with
+\[
+        \sum_{\ell\ge 0}\rho(\ell) \lesssim 1.
+\]
+Consequently,
+\[
+\begin{aligned}
+        \Var\!\left(
+        \nabla_\theta \hat\ell^\alpha(\theta)
+        -
+        \nabla_\theta \hat s^\alpha_k(\theta)
+        \right)
+        &=
+        \Var\!\left(\sum_{n=1}^N \Delta_{n,k}(\theta)\right)  \\
+        &=
+        \sum_{n=1}^N \Var(\Delta_{n,k}(\theta))
+        +
+        2\sum_{m<n}
+        \Cov(\Delta_{m,k}(\theta),\Delta_{n,k}(\theta))       \\
+        &\lesssim
+        N\frac{\alpha^{2k}}{(1-\alpha)^2}
+        pG'(\theta)^2 .
+\end{aligned}
+\]
+
+% We will now use this result to bound $\Var\big(\nabla_\theta \hat s_k^\alpha(\theta)\big)$. 
+% For random variables $X,Y$ where $|X-Y|$ is bounded almost surely by some $M$, we have that 
+% \begin{equation}
+% X-\E X - 2M \leq Y - \E Y \leq X - \E X + 2M\end{equation}
+% so,
+% \begin{equation}
+% (Y-\E Y)^2 \leq (X-\E X - 2M)^2 + (X-\E X +2M)^2.\end{equation}
+% Taking expectations, we get
+% \begin{equation}
+% \Var(Y) \leq 2\Var(X) + 8M^2.
+% \end{equation}
+% It follows from this result and the result we proved earlier, namely that
+% \begin{equation}
+% \big\|\nabla_\theta\hat\ell^\alpha(\theta) - \nabla_\theta \hat s_k^\alpha(\theta)\big\|_2^2 \leq \frac{4\alpha^{2k}}{(1-\alpha)^2}N^2p \, G'(\theta)^2,
+% \end{equation}
+% that the variance of MOP-$\alpha$ proper is bounded by, for any $k \leq N$,
+
+We now compare the variance of the full estimator to the variance of the
+truncated estimator. For any random vectors \(X,Y\),
+\[
+        \Var(Y)
+        \le
+        2\Var(X) + 2\Var(Y-X).
+\]
+Applying this with
+\[
+        Y=\nabla_\theta \hat\ell^\alpha(\theta),
+        \qquad
+        X=\nabla_\theta \hat s^\alpha_k(\theta),
+\]
+and using the covariance-summation bound above yields
+\[
+\begin{aligned}
+        \Var\!\left(\nabla_\theta \hat\ell^\alpha(\theta)\right)
+        &\le
+        2\Var\!\left(\nabla_\theta \hat s^\alpha_k(\theta)\right)
+        +
+        2\Var\!\left(
+        \nabla_\theta \hat\ell^\alpha(\theta)
+        -
+        \nabla_\theta \hat s^\alpha_k(\theta)
+        \right)                                               \\
+        &\lesssim
+        \frac{k^2 NpG'(\theta)^2}{(1-\alpha)^2J}
+        +
+        \frac{\alpha^{2k}}{(1-\alpha)^2}
+        NpG'(\theta)^2 .
+\end{aligned}
+\]
+Since this holds for every \(k\le N\), the result follows by minimizing over \(k\).
+
+
+% that the variance of MOP-$\alpha$ proper is bounded by
+% \begin{equation}
+% \Var\big(\nabla_\theta \hat\ell^\alpha(\theta)\big) \lesssim \frac{k^2r^2G'(\theta)^2Np}{J} + \frac{\alpha^{k}}{1-\alpha}Np \, G'(\theta)^2.
+% \end{equation}
+% As the above holds for any $k \leq N$,
+% \begin{equation}
+% \Var\big(\nabla_\theta \hat\ell^\alpha(\theta)\big) \lesssim \min_{k\leq N} \left(\frac{k^2 \, G'(\theta)^2Np}{(1-\alpha)^2J} + \frac{\alpha^{2k}}{(1-\alpha)^2}N^2 p \, G'(\theta)^2 \right).\end{equation}
+\end{proof}
+\fi
+
+\iffalse
+Write $\nabla_\theta\ell^\alpha(\theta)$ for the deterministic
+population DMOP-$\alpha$ score defined in
+Section~\ref{appendix:sharper-biasvar}.
+
+\begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
+\label{thm:dmop-alpha-truncation-mse}
+Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1)$,
+$\theta=\phi$, Assumptions
+{\refAssumpBoundedProcess}, {\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. There are constants $C<\infty$ and $\varrho\in(0,1)$, independent of
+$N,J$, and $\alpha$, such that
+\begin{align}
+&\E\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2                                                    \notag\\
+&\quad\lesssim
+pG'(\theta)^2
+\left[
+\frac1J\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}
++\frac{N^2}{J^2}
++N^2\left\{
+\frac{\varrho(1-\alpha)}
+{(1-\varrho)(1-\alpha\varrho)}
+\right\}^2
+\right],
+\label{eq:dmop-alpha-conservative-mse}
+\\
+&\Var\left(\nabla_\theta\hat\ell^\alpha(\theta)\right)
+\lesssim
+pG'(\theta)^2
+\min\left\{
+N^2,
+\frac1J\left\{
+\sum_{t=1}^{N-1}(1-\alpha^t)^2
++\left(\sum_{r=0}^{N-1}\alpha^r\right)^2
+\right\}
+\right\}.
+\label{eq:dmop-alpha-conservative-variance}
+\end{align}
+For $0\leq\alpha<1$, Equation~
+(\ref{eq:dmop-alpha-conservative-mse}) implies
+\begin{equation}
+\E\left\|
+\nabla_\theta\ell(\theta)-\nabla_\theta\hat\ell^\alpha(\theta)
+\right\|_2^2
+\lesssim
+pG'(\theta)^2
+\left\{
+\frac{N}{J}
++\frac{1}{J(1-\alpha)^2}
++N^2(1-\alpha)^2
++\frac{N^2}{J^2}
+\right\}.
+\label{eq:dmop-alpha-conservative-mse-simplified}
+\end{equation}
+\end{thm}
+
+\begin{proof}[Proof.]
+Theorem~\ref{thm:refined-dmop-alpha-mse}, proved in
+Section~\ref{appendix:sharper-biasvar}, gives
+Equation~(\ref{eq:dmop-alpha-conservative-mse}). Lemma~
+\ref{lem:dmop-alpha-variance} gives Equation~
+(\ref{eq:dmop-alpha-conservative-variance}). Finally, Equation~
+(\ref{eq:refined-mse-geometric-simplifications}) gives Equation~
+(\ref{eq:dmop-alpha-conservative-mse-simplified}).
+\end{proof}
+
+\fi
+
+\begin{thm}[MSE and variance bounds for DMOP-$\alpha$]
+\label{thm:dmop-alpha-truncation-mse}
+Suppose the observations are fixed, $J\geq2$, $\alpha\in[0,1]$,
+$\theta=\phi$, Assumptions {\refAssumpBoundedProcess},
+{\refAssumpBoundedMeasurement}, and
+{\refAssumpDifferentiableSimulator} hold, and multinomial resampling is
+used. Suppose also that either (A6) or (A6-J), stated in
+Section~\ref{appendix:sharper-biasvar}, holds. Then
+\begin{align}
+\max\left\{
+\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell^\alpha(\theta)
+\right\|_2^2,
+\Var\left\{\nabla_\theta\hat\ell^\alpha(\theta)\right\}
+\right\}
+&\lesssim
+pG'(\theta)^2
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2.
+\label{eq:verified-theorem-five-variance}
+\end{align}
+For $0\leq\alpha<1$,
+\begin{align}
+&\E\left\|
+\nabla_\theta\hat\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2^2                                                \notag\\*
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
+\left(\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right)
+\left(\sum_{r=0}^{N-1}\alpha^r\right)^2\\
+&+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
+{(1+\sqrt{2(1-\varrho)})^2}
+\left\{
+N-1+\sum_{q=1}^{N-2}(N-1-q)
+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
+\right\}^2\Bigg]
+\end{aligned}                                               \notag\\
+&\quad\lesssim pG'(\theta)^2
+\begin{aligned}[t]
+\Bigg[&
+\frac{N(1+\log J)^2}{J(1-\alpha)^2}
++\frac{N^2}{J^2(1-\alpha)^2}\\
+&+N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\end{aligned}
+\label{eq:verified-theorem-five-mse}
+\end{align}
+For the same range of $\alpha$, the population component of the
+fixed-observation bias satisfies
+\begin{equation}
+\left\|
+\nabla_\theta\ell^\alpha(\theta)
+-\nabla_\theta\ell(\theta)
+\right\|_2
+\leq
+2(N-1)\sqrt p\,G'(\theta)
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+{3-2\varrho-\alpha(2\varrho-1)}.
+\label{eq:verified-theorem-five-population-bias}
+\end{equation}
+Here $\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$ is the same
+constant as in Equation~(\ref{eq:population-forgetting-varrho}).
+The sum beginning at $q=1$ is empty for $N\leq2$; at
+$\varrho=\tfrac12$ the displayed population terms are zero.
+The constants suppressed by $\lesssim$ depend only on the fixed model
+bounds and not on $N,J$, or $\alpha$.
+The constants may additionally depend on (A6) or (A6-J).
+The endpoints satisfy Equations~(\ref{eq:verified-dmop-zero-mse-bound})
+and (\ref{eq:verified-dmop-one-mse-bound}); in particular,
+\[
+\E\|\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
+\lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
+\]
+The population inequality itself needs neither additional condition.
+Section~\ref{appendix:sharper-biasvar} gives the complete proof.  The
+particle argument first bounds each finite lag truncation and then uses the
+exact geometric-mixture identity; it does not replace DMOP-$\alpha$ by a
+hard-cutoff estimator.
+\end{thm}
+
+\begin{proof}[Proof.]
+Lemma~\ref{lem:dmop-alpha-variance} proves Equation~
+(\ref{eq:verified-theorem-five-variance}).  Theorem~
+\ref{thm:refined-dmop-alpha-mse} proves Equation~
+(\ref{eq:verified-theorem-five-mse}), and Lemma~
+\ref{lem:dmop-population-discount-bias} proves Equation~
+(\ref{eq:verified-theorem-five-population-bias}).
+\end{proof}
+
+\section{Sharper Bias-Variance Analysis}
 \label{appendix:sharper-biasvar}
 
 Write $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th conditional score
@@ -2837,7 +3268,7 @@ h_k
 \label{eq:actual-path-score}
 \end{equation}
 for the measurement gradient on an ancestral path. Following
-\citet{delmoral18}, let
+\citet{chanDelMoral18}, let
 \begin{equation}
 m(\xi_t)
 =
@@ -5117,7 +5548,7 @@ manuscript's prediction-cloud notation and put
 Thus we condition on all prediction clouds through time $t$, but not on
 the complete predicted genealogies $\xi_{t,1:J}^P$.
 The exact backward representation of a randomly selected ancestral line
-in Equation~(3.3) of \citet{delmoral18} has, from time $s$ to time
+in Equation~(3.3) of \citet{chanDelMoral18} has, from time $s$ to time
 $s-1$, the transition
 \begin{align}
 &\sum_{j=1}^{J}
@@ -5134,7 +5565,7 @@ f_{X_s\mid X_{s-1}}
 \delta_{x_{s-1,j}^{P}}(dx_{s-1}).
 \label{eq:dmop-particle-backward-kernel}
 \end{align}
-In the notation of \citet{delmoral18}, the density in their backward
+In the notation of \citet{chanDelMoral18}, the density in their backward
 transition is
 $H'_s(x_{s-1},x_s)=G'_{s-1}(x_{s-1})M'_s(x_{s-1},x_s)$.
 Taking $m(\xi'_{s-1})$ to be the empirical prediction cloud,
@@ -5144,7 +5575,7 @@ M'_s(x_{s-1,j}^P,x_s)
 =f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1,j}^P;\theta)
 \end{equation*}
 gives exactly Equation~(\ref{eq:dmop-particle-backward-kernel}).
-Equation~(3.3) of \citet{delmoral18} uses the uniform terminal
+Equation~(3.3) of \citet{chanDelMoral18} uses the uniform terminal
 empirical measure.  Selecting its terminal state instead with
 probability proportional to $g_{t,j}$ gives
 $\Psi_t\{m(\xi_t^P)\}$ and changes only the terminal distribution, not
@@ -5194,7 +5625,7 @@ This is the point at which the additional current-function premise in
 Lemma~\ref{lem:dmop-alpha-variance} is used.  It makes $h_{u,i}$
 measurable with respect to $X_u$, and it makes $h_{s,i}$ a bounded
 function at the endpoint of the backward composition.  Equation~(3.3)
-of \citet{delmoral18} supplies the conditional genealogy law, but by
+of \citet{chanDelMoral18} supplies the conditional genealogy law, but by
 itself it would not give the following covariance decay for arbitrary
 functionals of the ancestral path.  In particular, the factor $\alpha$
 does not repair this step: it weights the inputs only after the covariance
@@ -6448,7 +6879,7 @@ Section~\ref{appendix:feynman}, and
 \label{eq:historical-filter-bayes-target}
 \end{equation}
 The prediction genealogies $\xi_t^P$ form the historical particle model
-of \citet{delmoral18}: conditionally on the time-$(t-1)$ prediction
+of \citet{chanDelMoral18}: conditionally on the time-$(t-1)$ prediction
 cloud, multinomial selection with $G_{t-1}$ followed by $M_t$ produces
 the $J$ time-$t$ prediction paths independently.  Their conditions (A1)
 and (A2) follow from Assumptions {\refAssumpBoundedProcess} and
@@ -6468,9 +6899,9 @@ F=R+\bar f.
 \end{equation}
 Then $0\leq F\leq2R$ and
 $m(\xi_t^P)(f)-\eta_t(f)=m(\xi_t^P)(F)-\eta_t(F)$.
-Theorem~3.1 of \citet{delmoral18}, applied to $F$ and $F^2$,
-and the $q=2$ comparison following their Equation~(3.10), which is also
-the $q=2$ case of their Theorem~3.3, give, for $J\geq ct$,
+Theorem~3.3 of \citet{chanDelMoral18}, applied to $F$ and $F^2$,
+and the $q=2$ comparison following their Equation~(3.9), which is also
+the $q=2$ case of their Theorem~3.5, give, for $J\geq ct$,
 \begin{align}
 \left|\E m(\xi_t^P)(F)-\eta_t(F)\right|
 &\leq C\frac tJ\eta_t(F),
@@ -6975,8 +7406,8 @@ For the first brace, condition on $\eta_a^J$. Let
 $\nu=m(\xi_b^P)$ and $\mu=\Phi_{a,b}(\eta_a^J)$ on the prediction
 window. The first prediction following selection from $\eta_a^J$
 has conditionally independent particles with common law
-$\Phi_{a,a+1}(\eta_a^J)$. To apply Theorems~3.1 and~3.3 of
-\citet{delmoral18}, first note that future normalizers depend on the current
+$\Phi_{a,a+1}(\eta_a^J)$. To apply Theorems~3.3 and~3.5 of
+\citet{chanDelMoral18}, first note that future normalizers depend on the current
 physical state and satisfy
 Equation~(\ref{eq:weak-bias-uniform-normalizer-ratio}). For a bounded
 function $\psi(X_b,\omega_b)$ of the last state and its innovation,
@@ -6999,7 +7430,7 @@ innovation-augmented marginal has a summable forgetting bound, with a
 one-step delay. For prediction histories, omit the terminal $G_b$:
 the final bracket becomes $\E[\psi(X_b,\omega_b)\mid X_{b-1}=\mathord\cdot]$,
 and the same contraction argument gives the corresponding summable bound.
-Apply the path construction of \citet{delmoral18} to this marginal.
+Apply the path construction of \citet{chanDelMoral18} to this marginal.
 Under (A6-J), use the joint marginal and its transition bounds instead,
 as in Lemma~\ref{lem:lagwise-weak-error}. The cited theorems now apply
 over at most $b-a$ updates, uniformly in $a$.
@@ -7022,8 +7453,8 @@ Then $\mu(\bar f+c)=c$, and
 \label{eq:lag-truncation-prediction-diagonal-expansion-s13}
 \end{align}
 The diagonal terms are at most $\operatorname{osc}(f)^2$.
-Theorem~3.3 bounds the first difference in the second identity by
-$C(b-a)\operatorname{osc}(f)^2/J$; Theorem~3.1 bounds each remaining
+Theorem~3.5 bounds the first difference in the second identity by
+$C(b-a)\operatorname{osc}(f)^2/J$; Theorem~3.3 bounds each remaining
 difference by $C(b-a)\operatorname{osc}(f)/J$, and
 $|c|\leq\operatorname{osc}(f)$. Thus, initially for
 $J\geq c_0(b-a+1)$,
@@ -8770,8 +9201,8 @@ $1\ll(1-\alpha)^{-1}\ll\min(N,J)$, which proves Equation~
 \end{proof}
 
 \begin{remark}[DMOP-$0$ and the fixed-lag calculation]
-The DMOP-$0$ argument in Section~
-\ref{appendix:biasvar} remains valid.  With the manuscript's
+The DMOP-$0$ argument given before Theorem~
+\ref{thm:dmop-alpha-truncation-mse} remains valid.  With the manuscript's
 convention that $\lesssim$ suppresses the particle-system mixing-time
 factor, it gives
 \begin{equation}
@@ -9679,7 +10110,7 @@ consequence of Assumptions {\refAssumpBoundedMeasurement} and
 stability theorem of \citet{tadicHigher20} and the
 time-uniform results for the $O(J^2)$ backward derivative estimator
 \citep{delMoral15derivative,tadic18} do not establish it for the $O(J)$
-DMOP genealogy. The finite-horizon result of \citet{delmoral18} gives
+DMOP genealogy. The finite-horizon result of \citet{chanDelMoral18} gives
 the factor $n/J$ in Lemma~\ref{lem:lagwise-weak-error}. It cannot be applied
 only to the last $r+1$ steps of the actual DMOP coefficient because the
 total reparameterized-simulator derivative carried at time $n-r$ already
@@ -10201,7 +10632,7 @@ therefore gives $N^2G'(\theta)^2/J$, not $N^3/J$.
 
 Larger powers can still arise if one begins from a less specialized
 path-space theorem. A norm-one historical estimate with MSE order $N/J$,
-such as the finite-horizon estimate of \citet{delmoral18}, becomes
+such as the finite-horizon estimate of \citet{chanDelMoral18}, becomes
 $N^3G'(\theta)^2/J$ after the additional $N^2G'(\theta)^2$ rescaling. A
 generic norm-one RMSE bound of order $N/\sqrt J$, as in the direct
 path-space bound of \citet{delMoral03}, similarly gives
@@ -11308,7 +11739,7 @@ variance-sensitive two- and four-lineage estimates still requiring a
 proof.  They are not needed for the direct bound in Lemma~
 \ref{lem:dmop-alpha-variance}.  The current-cloud oscillation result of
 \citet{karjalainen23} does not supply the joint-lineage estimate, and the
-first-order path-space estimates of \citet{delmoral18} do not by
+first-order path-space estimates of \citet{chanDelMoral18} do not by
 themselves control the required joint-time centered covariance.
 \end{remark}
 \fi
@@ -12410,96 +12841,9 @@ uniform-in-parameter versions of the additional finite-particle estimates
 identified after Theorem~\ref{thm:refined-dmop-alpha-mse}.
 \fi
 
-\section{Implementation and Figures for Bayesian Inference}
+\section{Figures for Bayesian Inference}
 \label{appendix:bayes}
 
-\subsection{Sampling calculation and empirical priors}
-
-The code and four saved chains underlying Figure~\refFigNutsEb\ are
-available in \texttt{code/bayesian}, together with the script producing
-Table~\ref{tab:bayesian-diagnostics} and their original \texttt{diffPomp}
-source revision.
-This earlier calculation fixes the initial state proportions and uses
-19 finite transformed parameter coordinates, denoted by $z$.
-Positive rates and noise scales are represented by their logarithms,
-the trend coordinate is $100\beta_{\mathrm{trend}}$, and the seasonal
-coefficients are unchanged. The two remaining stored coordinates fix
-$\rho=0$ and $c=1$. An additional coordinate $\log\omega$ is retained
-in the fitted prior although the seasonal environmental force of infection
-replaces this constant in the simulator.
-
-For each chain $c$, we ran 40 IF2 iterations with 10,000 particles from
-a random starting point. The perturbation standard deviation was initially
-0.02 on the transformed scale and decreased by a factor of 0.95 per iteration.
-We selected the swarm with the highest monitored likelihood and initialized
-NUTS at its mean. If its particles are $z_{c,1},\ldots,z_{c,K}$, with
-$K=10,000$, the empirical prior was the joint Gaussian kernel estimate
-\[
- \widehat\pi_c(z)=\frac{1}{K}\sum_{k=1}^K
- \phi_{19}(z;z_{c,k},h^2 S_c),\qquad
- h=K^{-1/(19+4)}\simeq0.670,
-\]
-where $S_c$ is the sample covariance of the swarm. This is the default
-Scott bandwidth used by \texttt{jax.scipy.stats.gaussian\_kde}.
-The prior is defined on the transformed coordinates, so no additional
-change-of-variables factor enters the calculation in $z$.
-Each chain has its own fitted prior. The observations are therefore used
-both to construct that prior and to evaluate the likelihood, with the
-fitted density subsequently held fixed.
-
-The numerical log potential supplied to NUTS was
-\begin{equation}
- a_c(z;u)=\frac{\widehat\ell_J(z;u)+\log\widehat\pi_c(z)}{N},
- \qquad N=600,\quad J=1,000,
- \label{eq:bayes-numerical-potential}
-\end{equation}
-where $\widehat\ell_J$ is the forward particle-filter log objective
-returned by the MOP routine, including its measurement-density stabilization,
-and $u$ denotes the simulation random numbers.
-The archived sampling code uses $\alpha=0.95$ for its DMOP derivative.
-Thus the supplied potential corresponds numerically to a tempered density
-proportional to $\{\exp(\widehat\ell_J)\widehat\pi_c\}^{1/N}$,
-rather than the untempered empirical-prior posterior.
-The resampling genealogy is recalculated at each candidate parameter;
-the stop-gradient operations freeze the resampling measurements only
-for differentiation. The code draws its simulation seed and systematic
-resampling offsets using NumPy during JAX tracing, so these random
-numbers are reused by the compiled computation. They are not part of
-an augmented Markov-chain state, and no separate pseudo-marginal update
-is applied. This construction does not establish exact posterior sampling.
-
-We used TensorFlow Probability's JAX \texttt{NoUTurnSampler}, with step
-size 0.05, maximum tree depth 5, and maximum energy difference 1,000.
-There was no step-size adaptation. Each run saved 1,500 draws; the figures
-discard the first 500. The library's NUTS transition uses the supplied
-potential and its AD force, without an additional likelihood correction.
-Only the parameter draws were saved. The fitted prior clouds, kernel
-diagnostic traces and computation times were not archived, so prior
-overlays, divergence counts, tree-depth saturation and ESS per second
-cannot be recovered from these files.
-
-Table~\ref{tab:bayesian-diagnostics} summarizes the retained draws.
-The between-chain differences include differences in fitted priors, so
-$\widehat R$ here describes disagreement between runs and cannot establish
-convergence to a common posterior. We calculate ESS and MCSE separately
-within each chain; these estimates also require approximate stationarity.
-
-\begin{table}[htbp]
-\centering
-\input{code/bayesian/results/diagnostics}
-\caption{Diagnostics for the four archived empirical-prior NUTS runs,
-using 1,000 retained draws per run. The rank-normalized split
-$\widehat R$ compares all four runs, whose fitted priors differ.
-Bulk and tail ESS are the smallest within-chain values, and MCSE is
-the largest within-chain Monte~Carlo standard error of the mean.
-All quantities use the displayed transformed coordinates. The fixed
-coordinates $\rho=0$ and $c=1$ are excluded. Divergences and tree-depth
-diagnostics were not saved.}
-\label{tab:bayesian-diagnostics}
-\end{table}
-\FloatBarrier
-
-\subsection{Additional sampling figures}
 
 \begin{figure}[H]
 \centering
@@ -12518,7 +12862,7 @@ diagnostics were not saved.}
     \centering
     \includegraphics[width=\textwidth/\real{1.3}]{imgs/pmcmc/nuts.png}
     \caption{Convergence diagnostics for a No-U-Turn Sampler (NUTS) with uniform priors on a compact set, on the trend parameter in the Dhaka cholera model of \cite{king08}. The NUTS sampler explores more of the posterior than the Metropolis-Hastings sampler, but fails to converge quickly.
-      Comparison with Fig.~{\refFigNutsEb} in the main text suggests that the empirical prior assists exploration, though it also changes the sampling target.
+      This poor convergence, compared with Fig.~{\refFigNutsEb} in the main text, demonstrates the value of the empirical prior for obtaining successful convergence.
 }
     \label{fig:nuts}
 \end{figure}
@@ -12533,7 +12877,7 @@ diagnostics were not saved.}
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Trend_in_Force_of_Infection.png}
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Noise_in_Force_of_Infection.png}
     \includegraphics[scale=0.30]{imgs/pmcmc/nuts_eb/Measurement_Noise.png}
-    \caption{Marginal sample distributions from NUTS powered by MOP-$\alpha$, with a separate empirical prior fitted to each chain's IF2 parameter cloud. The calculation and diagnostics are given above.}
+    \caption{Posterior estimates from NUTS powered by MOP-$\alpha$ with the informative nonparametric empirical prior obtained from a kernel density estimator on the IF2 parameter cloud. The posterior estimates from each chain are largely in agreement.}
     \label{fig:posteriors}
 \end{figure}
 
@@ -12743,817 +13087,6 @@ The half-violin plots show the distributions of all 50 final log-likelihood esti
 IFAD-0.97 and IFAD-1 have similar distributions, with generally higher log-likelihoods than MPIF and IFAD-0.}
 \label{fig:daphnia-raincloud}
 \end{figure}
-
-\clearpage
-\section{Comparison with Other Methods for the Dhaka Model}
-\label{sec:dhaka-competitors}
-
-We compared IFAD with the transition-density method of \citet{ditlevsen19}
-(DS19) and the differentiable particle filter of \citet{corenflos21}
-(CTDD21) on the Dhaka
-cholera model. We tested whether these methods could find high-likelihood
-parameter estimates from the wide range of starting points used in the
-main text, and whether they could improve estimates obtained by IF2.
-We describe our implementations below.
-
-\subsection{Methods}
-
-\paragraph{DS19.}
-The method of \citet{ditlevsen19} combines an approximate transition density
-with particle smoothing and stochastic approximation expectation
-maximization (SAEM). Their construction assumes that one smooth state
-coordinate is observed directly and that noise acts directly on the
-remaining coordinates. Applying it to Dhaka requires some modifications:
-the six state coordinates $(S,I,R^1,R^2,R^3,M)$ are driven by one Brownian
-motion, and the monthly death counts are observed with measurement error.
-
-The SAEM objective includes the process log-density, which DS19 must
-therefore be able to evaluate. Replacing the
-SAEM maximization with a score update retains this requirement: the score
-includes derivatives of the process log-density, evaluated along the
-imputed path. Our backward smoother also evaluates the transition density
-to sample that path. For Dhaka, a single Euler step is driven by one
-Brownian increment and has no density with respect to Lebesgue measure
-on the six-dimensional state space. Composing 20 Euler steps gives a
-monthly transition that we can
-simulate, but whose density we cannot evaluate directly after integrating
-out the intermediate states. IF2 and IFAD use this simulator without
-evaluating its transition density; IFAD additionally differentiates
-through the simulation. They retain the Euler discretization error but
-do not require a separate approximation to the monthly transition density.
-
-We approximate the transition over each month by a Gaussian distribution.
-The local strong-order-1.5 approximation has a covariance matrix of rank
-at most two, so it does not have a density in the six-dimensional state
-space. We instead calculate the mean and covariance over a full month by
-propagating the second-order mean and covariance through 20 time steps.
-We linearize the dynamics at each step and integrate out the intermediate
-states. The resulting monthly covariance matrix can have full rank,
-although it remains poorly conditioned. To stabilize the calculation,
-we add $10^{-12}$ times its largest diagonal entry to each diagonal entry.
-This gives a monthly transition density that differs from the Euler
-approximation used to evaluate the final parameter estimates.
-
-The rank deficiency also affects parameter updates on an augmented path.
-At a fixed interior state, the range of the unregularized local covariance is
-\[
- \operatorname{span}\left\{
- (-1,1,0,0,0,0)^{\mathsf T},\;
- (0,-\gamma-m,\gamma,0,0,m)^{\mathsf T}
- \right\}.
-\]
-This follows by writing the diffusion vector as $g=q(-1,1,0,0,0,0)^{\mathsf T}$:
-its diffusion derivatives are parallel to $g$, while the drift derivative
-$(Db)g$ supplies the second direction. The plane depends on $m/\gamma$.
-Changing this ratio changes the support of the local Gaussian transition,
-so augmenting the states at every internal step does not provide an
-ordinary full-state density for parameter optimization. Changes in the
-transition mean can also change its affine support. An augmentation in
-terms of driving noise would require a different parameter-update scheme.
-Our implementation adds the covariance floor only after composing the
-monthly transition, not at each internal step.
-
-There is a separate difficulty with finely augmented paths even when the
-transition densities are nonsingular. As the time step decreases, transitions
-become concentrated and observations at intermediate steps are uninformative,
-which can make particle resampling and backward sampling ineffective
-\citep{karppinen24}. This concerns mixing of the path sampler and does not
-by itself establish mutual singularity of path laws at different parameter
-values. Our smoother samples monthly endpoints, so it does not assess
-this fine-grid behavior. We restrict the comparison to this implementable
-adaptation of DS19; constructing and validating a different augmented-path
-method is beyond the present comparison.
-
-We use each month's observation to guide the particle filter toward states
-that are consistent with the observed death count. For each particle, we
-calculate the measurement variance using the predicted monthly death count
-and hold this variance fixed when conditioning on the observation.
-This gives a Gaussian distribution from which we sample the next state.
-We weight each sample by the original measurement density multiplied by
-the ratio of the transition density to the proposal density.
-
-At each optimization step, we run the particle filter through the data,
-then sample a trajectory of monthly states backward through the stored
-particles. We differentiate the complete-data log-likelihood of this
-trajectory and average the resulting scores using stochastic approximation.
-For the 23-parameter Dhaka model, these searches use averaged-score ascent.
-This differs from averaging and maximizing the complete-data objective in
-SAEM. Section~\ref{sec:ds19-update-equations} gives both updates and describes
-the separate numerical-SAEM comparison. We clip the scores and use
-backtracking, with periodic checks of the log-likelihood under the monthly
-Gaussian transition approximation. The 100- and 1,000-particle fits use
-100 particles for these checks; the separately tuned 5,000-particle
-experiment uses 5,000.
-We also checked the particle filter on the harmonic oscillator example of
-\citet{ditlevsen19}, for which an analytic Gaussian filter is available.
-With 100 particles and 1,000 observations, the root mean squared difference
-between the particle and analytic filtered means was 0.00523.
-
-\paragraph{CTDD21.}
-The method of \citet{corenflos21} uses entropy-regularized optimal transport
-to make particle resampling differentiable. We implemented it using the
-same Euler simulator as in the main text, with 20 steps per month.
-The transport calculation uses all six state coordinates, scaled as in
-the published implementation. We solve the transport problem using
-Sinkhorn iterations, gradually decreasing the regularization parameter
-to 0.25 with an annealing scale of 0.75. We use a convergence tolerance
-of $10^{-3}$ and a maximum of 100 Sinkhorn iterations. To calculate
-derivatives, we hold the converged potentials fixed and differentiate
-through one further fixed-point update. As in the published implementation,
-we clip each component of the derivative propagated through the transport
-step to $[-1,1]$. We resample when the effective sample size falls below
-half the number of particles.
-
-We maximize the resulting log-likelihood estimate using Adam, with new
-random numbers for the particle filter at each iteration and a gradient
-norm limited to 100. If a search becomes invalid or repeatedly deteriorates,
-we return to its best valid parameter estimate, reset the Adam moments,
-and halve the learning rate. We allow at most six such restarts.
-Entropic resampling changes the particle filter's likelihood approximation,
-so the objective used for optimization can differ from the ordinary
-particle filter estimate used to evaluate the results.
-
-\subsection{Experimental settings}
-
-For each method, we performed 100 global searches from starting parameter
-vectors drawn uniformly from the same wide bounding box as in the main
-text. We tested 100 and 1,000 particles, using learning rates of 0.02 for
-CTDD21 and 0.10 for DS19. We allowed each search 800 seconds and
-selected parameter estimates at approximately 700 seconds. For CTDD21,
-we selected the saved estimate with the highest fitting objective before
-700 seconds. If none was valid, we used another valid saved estimate or
-the initial parameter vector. For DS19, we selected the first saved
-estimate at or after 700 seconds, or the last estimate if the search ended
-earlier. Thus a DS19 search could exceed the selection time by one
-iteration.
-
-To assess the benefit of an IF2 warm start, we also initialized both
-methods at the 100 IF2 estimates used to initialize IFAD-0.97 in the main
-text's comparable computational effort experiment. We used these estimates
-directly, including those outside the initial bounding box. The IF2 stage
-used 175 iterations and 5,000 particles, taking 92.160 seconds under the
-timing procedure described in the main text. We then allowed each method
-400 iterations or another 850.657 seconds, giving a total time limit of
-942.817 seconds. The learning rates were 0.0002 for CTDD21 and 0.0005
-for DS19, at both 100 and 1,000 particles. We selected the last valid
-CTDD21 estimate before the time limit and the first DS19 estimate
-at or after it, or the last estimate if the search ended earlier.
-
-We kept the other optimization settings fixed when increasing the number
-of particles from 100 to 1,000. The 1,000-particle experiments ran
-sequentially on one RTX 3090 GPU, as did the 100-particle experiments
-initialized by IF2. The 100-particle DS19 global searches ran four at
-a time on that GPU. Consequently, both the particle count and GPU
-scheduling affect the number of iterations completed within the time limit.
-We also ran DS19 with 5,000 particles from the global starting points.
-For that experiment, we separately tuned the learning rate to 0.20 and
-began decreasing the stochastic approximation step size earlier.
-
-We evaluated all selected parameter vectors independently using the Euler
-approximation with 20 steps per month, including estimates from searches
-that ended early. Each evaluation used 36 particle filter replicates with
-5,000 particles. We averaged the likelihood estimates before taking the
-logarithm. For the optimization progress plots, we also evaluated each
-saved iterate using one replicate with 5,000 particles. These plots show
-the iterates visited during optimization, which can differ from the
-estimates selected for the final comparison. As in the main text, we
-excluded the additional evaluations from the reported computation times.
-
-\subsection{Results}
-
-Our findings are summarized in Tables~\ref{tab:dhaka-competitors}
-and~\ref{tab:dhaka-competitors-paired} and
-Figures~\ref{fig:dhaka-competitors-final}--\ref{fig:dhaka-competitors-parameters}.
-The figures show CTDD21 with 100 particles and DS19 with 1,000,
-using the same particle count for each method with and without an IF2
-warm start. IFAD-0.97 uses 5,000 particles. The tables include all particle
-counts tested.
-
-Both methods attained lower median log-likelihoods than IFAD-0.97 in the
-global searches. At the particle counts shown in the figures, the medians
-were $-4554.67$ for CTDD21 and $-3998.93$ for DS19, compared with
-$-3744.40$ for IFAD-0.97. Increasing the number of particles did not
-consistently improve performance within the allotted time. For CTDD21,
-increasing from 100 to 1,000 particles reduced the median number of updates
-from 255 to 28, and the median log-likelihood fell to $-6312.89$.
-For DS19, the median improved from $-4100.34$ with 100 particles to
-$-3998.93$ with 1,000 particles, while the median number of updates rose
-from 55 to 147. This comparison also includes the change in GPU scheduling
-described above. With 5,000 particles and separately tuned settings,
-DS19 attained a median of $-4100.40$ after a median of 47 updates.
-
-\begin{table}[htbp!]
-\centering
-\small
-\input{imgs/competitors/results_table.tex}
-\caption{Log-likelihoods from 100 searches per method and particle count
-for the Dhaka model. $J$ is the number of particles used for optimization.
-Box denotes initialization from the bounding box, and IF2 denotes an IF2
-warm start. Median and maximum use independent particle filter evaluations
-with 20 Euler steps per month. Updates gives the median number of
-optimization updates. The IF2 checkpoint row reports the 175 iterations
-used for initialization; the IFAD-0.97 row reports the 400 subsequent
-gradient updates. The 5,000-particle DS19 experiment used separate
-tuning, as described in the text.}
-\label{tab:dhaka-competitors}
-\end{table}
-
-Starting from IF2 estimates substantially improved the final log-likelihoods
-of both methods, but neither consistently improved on the IF2 estimates
-themselves. With 100 particles, CTDD21 improved on 45 of the 100 starting
-estimates and DS19 improved on 18. The median changes were $-0.10$
-and $-1.78$ log-likelihood units, respectively. With 1,000 particles, these
-counts were 48 and 24, and the median changes were $-0.03$ and $-1.15$.
-CTDD21 completed a median of 213 updates with 100 particles and 20 with
-1,000 particles; DS19 completed 252 and 171, respectively.
-IFAD-0.97 continued from the same IF2 estimates to a median log-likelihood
-of $-3744.40$, compared with $-3766.64$ at the end of IF2.
-
-\begin{table}[htbp!]
-\centering
-\input{imgs/competitors/paired_table.tex}
-\caption{Changes during optimization from an IF2 warm start. For each search,
-we subtract the value at its IF2 starting point from the value at its
-selected parameter estimate. Fitting change and Euler-20 change give the
-medians of these differences for the fitting objective and the independently
-evaluated log-likelihood. Improved is the number of searches whose
-independently evaluated log-likelihood increased.}
-\label{tab:dhaka-competitors-paired}
-\end{table}
-
-For both methods and both particle counts, the median change in the fitting
-objective was positive even though the median change in the independently
-evaluated log-likelihood was negative (Table~\ref{tab:dhaka-competitors-paired}).
-The two evaluations use different likelihood approximations: DS19
-fits the monthly Gaussian transition model, while CTDD21 uses entropic
-resampling. The fitting objectives are also estimated using a single
-particle filter, and the updates depend on clipping and the numerical
-safeguards described above. These experiments do not determine how much
-each of these factors contributes to the disagreement.
-
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/likelihood_if2warm_comparison_r20.pdf}
-\caption{Raincloud plots of the log-likelihoods found in 100 searches for the
-Dhaka model, with and without an IF2 warm start. CTDD21 uses 100 particles,
-DS19 1,000, and IFAD-0.97 5,000 during optimization. The IF2 checkpoint
-shows the starting estimates for the warm starts. The plot shows
-log-likelihoods between $-4800$ and $-3735$; all 100 searches contribute to
-the densities, medians, and quartiles. Each half-violin is scaled to the
-same maximum height.}
-\label{fig:dhaka-competitors-final}
-\end{figure}
-
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/optimization_if2warm_elapsed_full_r20.pdf}
-\caption{Optimization progress for the Dhaka model, with and without an IF2
-warm start. CTDD21 uses 100 particles, DS19 1,000, and IFAD-0.97
-5,000 during optimization. Heavy lines show the median log-likelihood,
-and shaded regions cover the area between the 10th and 100th percentiles.
-The vertical dotted line indicates the end of IF2 at 92.160 seconds.
-The plot shows log-likelihoods between $-4800$ and $-3735$; all 100 searches
-contribute to the percentiles. Each saved iterate is evaluated with one
-particle filter replicate, compared with 36 replicates for the selected
-estimates in Table~\ref{tab:dhaka-competitors}, using 5,000 particles in
-both cases.}
-\label{fig:dhaka-competitors-progress}
-\end{figure}
-
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/optimization_if2warm_elapsed_r20.pdf}
-\caption{Optimization progress with an IF2 warm start, showing log-likelihoods
-between $-3820$ and $-3735$. Particle counts, lines, and shading are as in
-Figure~\ref{fig:dhaka-competitors-progress}. Elapsed time includes the
-92.160-second IF2 stage.}
-\label{fig:dhaka-competitors-continuation}
-\end{figure}
-
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth]{imgs/competitors/corenflos100_ditlevsen1000/parameter_if2warm_comparison_r20.pdf}
-\caption{Density plots of the final parameter estimates across 100 searches
-for nine selected parameters of the Dhaka model. Each panel has its own
-density scale. CTDD21 uses 100 particles and DS19 1,000, with and
-without an IF2 warm start; IFAD-0.97 uses 5,000 particles. The IF2 checkpoint
-shows the starting estimates for the warm starts.}
-\label{fig:dhaka-competitors-parameters}
-\end{figure}
-
-\subsection{Reproducibility}
-
-Source code and algorithmic settings are available at
-\href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}, in the
-\texttt{ditlevsen/} and \texttt{corenflos/} directories.
-The file \path{imgs/competitors/README.md} gives instructions for reproducing
-the tables and figures, identifies the numerical results used, and links
-to plots showing the full range of log-likelihoods. The repository includes
-the tables and figures needed to compile the supplement. Instructions for
-retrieving archived parameter estimates and evaluations at individual
-iterations are in \path{artifacts/README.md}.
-
-\clearpage
-\section{Comparisons Across Models}
-\label{sec:cross-model-benchmarks}
-
-We compared IFAD, IF2, DS19, and CTDD21 on the harmonic oscillator of
-\citet{ditlevsen19}, the two-dimensional linear Gaussian model of
-\citet{corenflos21}, and the Pypomp library implementation of a stochastic
-volatility model at \texttt{pypomp.models.spx}, subsequently called
-\texttt{spx}, in addition to the Daphnia and Dhaka models.
-For each example, we used the same starting parameter vectors for all
-methods and evaluated the resulting estimates under the same model.
-The two Gaussian examples have analytic likelihoods, allowing us to
-assess maximization error without Monte~Carlo evaluation error.
-
-Table~\ref{tab:ds19-models} summarizes the DS19 implementation for each
-panel. All five implementations evaluate process transition densities.
-For the linear Gaussian model and \texttt{spx}, these
-densities are available directly. For the oscillator, all methods fit
-the same order-1.5 Gaussian approximation, whose likelihood we evaluate
-by Kalman filtering. Thus these three comparisons use the same transition
-model for fitting and evaluation.
-
-For Daphnia and Dhaka, we also use moments from the order-1.5 expansion,
-but compose them over smaller time steps and approximate the transition
-between observations by a Gaussian distribution. This composition adds
-a linearization of the nonlinear dynamics. It does not imply that the
-resulting Gaussian approximation has strong order 1.5 over the full
-observation interval. For Dhaka, a single local Gaussian approximation
-has covariance rank at most two in six dimensions, as explained in
-Section~\ref{sec:dhaka-competitors}. Composing the local covariances allows
-noise to propagate into additional state directions. For Daphnia, we
-compose moments at the 0.25-day simulation step rather than apply a
-single Taylor expansion across the five-day observation interval.
-We have not tested the accuracy of such a single coarse step.
-Both models are evaluated using their original Euler simulators, so the
-Gaussian approximation introduces a difference between the fitting and
-evaluation likelihoods.
-
-\begin{table}[htbp]
-\centering
-\small
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}
->{\raggedright\arraybackslash}p{0.29\textwidth}
->{\raggedright\arraybackslash}p{0.21\textwidth}
->{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
-\toprule
-Model & DS19 transition density & Parameter update & Likelihood evaluation \\
-\midrule
-A: Harmonic oscillator
-& Order-1.5 Gaussian approximation at the observation interval
-& SAEM; numerical maximization of averaged sufficient statistics
-& Kalman likelihood of the same approximation \\
-\addlinespace
-B: Linear Gaussian
-& Exact Gaussian density of the specified discrete-time model
-& SAEM; explicit maximization using averaged sufficient statistics
-& Kalman likelihood of the same model \\
-\addlinespace
-C: SPX
-& \texttt{spx} transition law: Gaussian above the variance floor, with a point mass at the floor
-& Averaged scores and Adam
-& Particle-filter likelihood of the same \texttt{spx} model \\
-\addlinespace
-D: Daphnia
-& Gaussian approximation across each observation interval, composed from local order-1.5 moments
-& Averaged scores and Adam
-& Particle-filter likelihood of the original Euler model; transition and boundary rules differ \\
-\addlinespace
-E: Dhaka
-& Monthly Gaussian approximation composed from local order-1.5 moments
-& Averaged scores and Adam; numerical SAEM in a separate comparison
-& Particle-filter likelihood of the original Euler model; transition differs \\
-\bottomrule
-\end{tabular}
-\caption{DS19 implementations for panels A--E of
-Figure~\ref{fig:benchmark-final-likelihoods}.
-Each uses transition-density evaluation for backward smoothing and either
-maximization or differentiation of a complete-data objective.
-For SPX, the density includes a discrete mass and is exact for the
-implemented model, not for a continuous-time diffusion.
-The Daphnia and Dhaka covariances are regularized as described below.
-The separate Dhaka SAEM comparison retains the same Gaussian transition.}
-\label{tab:ds19-models}
-\end{table}
-
-\subsection{SAEM and averaged-score updates}
-\label{sec:ds19-update-equations}
-
-Stochastic approximation expectation maximization (SAEM) alternates
-imputation of the latent states with maximization of an averaged
-complete-data log-likelihood.
-Let $x$ denote a latent trajectory and write
-$C(\vartheta;x)=\log\widetilde p_\vartheta(x,y)$ for the complete-data
-objective of the fitted model. The tilde allows for a transition-density
-approximation. Deterministic initial states are functions of the candidate
-parameter; only random states are imputed. At iteration $m$, a particle
-filter followed by backward
-simulation draws one trajectory $X^{(m)}$ from an approximation to the
-smoothing distribution at $\vartheta_{m-1}$.
-SAEM updates a function of the candidate parameter $\vartheta$:
-\begin{align}
- \overline Q_m(\vartheta)
- &= (1-\rho_m)\overline Q_{m-1}(\vartheta)
-       +\rho_m C(\vartheta;X^{(m)}),
- \label{eq:benchmark-saem-q}\\
- \vartheta_m &\in
-       \mathop{\mathrm{argmax}}_{\vartheta}\overline Q_m(\vartheta).
- \label{eq:benchmark-saem-m}
-\end{align}
-In the maximization step, we hold the imputed paths and their averaging
-weights fixed. This maximization can be carried out numerically; a step
-that increases $\overline Q_m$ without maximizing it gives a generalized
-EM update.
-
-The averaged-score implementation instead calculates
-\begin{align}
- g_m &= \left.\nabla_\vartheta C(\vartheta;X^{(m)})
-                         \right|_{\vartheta=\vartheta_{m-1}},
- \label{eq:benchmark-path-score}\\
- \overline g_m &=(1-\rho_m)\overline g_{m-1}+\rho_m g_m,
- \label{eq:benchmark-score-average}
-\end{align}
-then uses the clipped $\overline g_m$ in an Adam step.
-Derivatives hold the imputed path fixed; they do not pass through the
-particle filter or backward sampler.
-With exact smoothing, the conditional expectation of $g_m$ is the score
-of the fitted model's observed-data likelihood.
-The particle smoother approximates this expectation.
-Before clipping or safeguard resets, the distinction between the two
-averages can be written as
-\begin{align}
- \nabla\overline Q_m(\vartheta)
-   &=\sum_{r=1}^m w_{mr}\nabla_\vartheta C(\vartheta;X^{(r)}),
- &\overline g_m
-   &=\sum_{r=1}^m w_{mr}
-       \nabla_\vartheta C(\vartheta_{r-1};X^{(r)}),
- \label{eq:benchmark-q-versus-score}\\
- w_{mr}&=\rho_r\prod_{k=r+1}^m(1-\rho_k).\nonumber
-\end{align}
-The SAEM gradient evaluates all path contributions at the same candidate
-parameter, whereas $\overline g_m$ averages gradients evaluated at the
-parameter values used in earlier iterations. Consequently,
-$\overline g_m$ generally differs from the gradient of $\overline Q_m$
-at the current parameter.
-Our gain schedule is $\rho_m=1$ for $m\leq b$ and
-$\rho_m=(m-b)^{-0.9}$ thereafter.
-We use $b=30$ for the Gaussian SAEM and averaged-score runs, and $b=3$
-for numerical SAEM on Dhaka.
-Clipping and Adam act on the existing estimation scales.
-In the Dhaka score implementation, the clipped average is also carried
-into the next iteration, and failed safeguard checks can reset it.
-
-\paragraph{Linear Gaussian model: explicit SAEM.}
-The latent states satisfy
-$X_t=\operatorname{diag}(a_1,a_2)X_{t-1}+\varepsilon_t$,
-with $\varepsilon_t\sim\mathcal N(0,0.5I)$,
-$Y_t\mid X_t\sim\mathcal N(X_t,0.1I)$, and
-$X_0\sim\mathcal N(0,I)$.
-For a fixed path, the terms depending on $a=(a_1,a_2)$ are
-\[
- C(a;x)=-\frac{1}{2(0.5)}
-     \sum_{t=1}^T\sum_{d=1}^2(x_{t,d}-a_dx_{t-1,d})^2
-     +\text{constant}.
-\]
-For each coordinate, the sufficient statistics are
-\[
- S_{00,d}(x)=\sum_t x_{t-1,d}^2,
- \qquad S_{10,d}(x)=\sum_t x_{t,d}x_{t-1,d}.
-\]
-We update their averages by
-$\overline S_m=(1-\rho_m)\overline S_{m-1}+\rho_m S(X^{(m)})$.
-The M-step is
-\begin{equation}
- a_{d,m}=\operatorname{clip}_{[-0.98,0.98]}
-       \left(\frac{\overline S_{10,d,m}}{\overline S_{00,d,m}}\right).
- \label{eq:benchmark-linear-mstep}
-\end{equation}
-Each iteration therefore requires a particle filter and backward
-simulation of one path, after which the maximization reduces to two
-scalar ratios.
-
-\paragraph{Harmonic oscillator: SAEM with a numerical M-step.}
-Write $x_t=(v_t,u_t)^\mathsf T$, where the positions $v_t$ are observed
-without measurement error and the velocities $u_t$ are imputed.
-For $\theta=(D,\gamma,\sigma)$ and observation interval $\Delta=0.02$,
-the fitted Gaussian transition has
-\begin{align*}
- A_\theta&=\begin{pmatrix}0&1\\-D&-\gamma\end{pmatrix},
- &F_\theta&=I+\Delta A_\theta+\tfrac12\Delta^2 A_\theta^2,\\
- Q_\theta&=\sigma^2
- \begin{pmatrix}
- \Delta^3/3&\Delta^2/2-\gamma\Delta^3/3\\
- \Delta^2/2-\gamma\Delta^3/3&
-       \Delta-\gamma\Delta^2+\gamma^2\Delta^3/3
- \end{pmatrix}.
-\end{align*}
-Conditional on the first position, $U_0\sim\mathcal N(0,v_\theta)$,
-where $v_\theta=\sigma^2/(2\gamma)$.
-Let $S_{ij}=\sum_{t=1}^T x_{t-1+i}x_{t-1+j}^\mathsf T$ for
-$(i,j)=(0,0),(1,0),(1,1)$, and let $h=u_0^2$.
-We average these quantities using the recursion above, giving the
-following objective up to constants independent of $\theta$:
-\begin{equation}
- \overline Q_m(\theta)=-\tfrac12\left\{
-  \log v_\theta+\frac{\overline h_m}{v_\theta}
-  +T\log\det Q_\theta
-  +\operatorname{tr}\!\left(Q_\theta^{-1}\overline R_m(\theta)\right)
- \right\},
- \label{eq:benchmark-oscillator-mstep}
-\end{equation}
-where
-\[
- \overline R_m(\theta)=\overline S_{11,m}
-     -F_\theta\overline S_{10,m}^{\mathsf T}
-     -\overline S_{10,m}F_\theta^{\mathsf T}
-     +F_\theta\overline S_{00,m}F_\theta^{\mathsf T}.
-\]
-We use L-BFGS-B on $(\log D,\log\gamma,\log\sigma)$, retaining a finite
-step only if this objective does not decrease, up to numerical tolerance.
-To reduce numerical cancellation, we evaluate this quadratic form using
-accumulated state increments. The M-step thus uses averaged sufficient
-statistics of the imputed paths.
-
-\paragraph{SPX: averaged complete-data scores.}
-Let $r_t$ be the observed return and $v_t$ the latent variance.
-The \texttt{spx} conditional variance transition has Gaussian mean
-and standard deviation
-\[
- m_t(v)=v+\kappa(\bar v-v)+\xi\rho(r_{t-1}-\mu+v/2),
- \qquad s(v)=\xi\sqrt{v(1-\rho^2)},
-\]
-followed by a floor $\epsilon=10^{-32}$.
-Writing $\phi(z;m,s^2)$ for a Gaussian density and $\Phi$ for the
-standard normal distribution function, its transition is
-\[
- f_{\theta,t}(v'\mid v)=
- \begin{cases}
-  \phi(v';m_t(v),s(v)^2),&v'>\epsilon,\\
-  \Phi((\epsilon-m_t(v))/s(v)),&v'=\epsilon.
- \end{cases}
-\]
-The second case is a probability mass; the reference measure is Lebesgue
-measure plus an atom at $\epsilon$.
-The complete-path objective is
-\begin{equation}
- C(\theta;v)=\sum_{t=1}^T\left\{
-    \log f_{\theta,t}(v_t\mid v_{t-1})
-    +\log\phi(r_t;\mu-v_t/2,v_t)\right\}.
- \label{eq:benchmark-spx-score-objective}
-\end{equation}
-The initial variance $v_0=V_0$ is a parameter, so its current candidate
-value enters the first transition when differentiating.
-For $v>0$, $\xi>0$, and $|\rho|<1$, the conditional transition variance
-$\xi^2v(1-\rho^2)$ is positive. This scalar latent process therefore has
-no missing covariance direction in the interior; its boundary atom is
-included explicitly in the density above.
-For this example, we update the parameters with Adam using the averaged
-scores in Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average}),
-without a SAEM maximization step.
-We obtain these complete-data derivatives by AD while holding the imputed
-path fixed. This avoids differentiation through the filtering and resampling
-calculations, but does not avoid AD itself. The runtime difference from
-IFAD also reflects the particle counts and optimization settings below.
-
-\paragraph{Daphnia: averaged scores for the Gaussian block approximation.}
-For mesocosm $u$, let $m_{\theta,u,t}$ and $\Sigma_{\theta,u,t}$ be the
-mean and covariance obtained by composing the local Gaussian transitions
-over an observation interval, including the inoculation in the first interval.
-Let $g_{\theta,u}$ be the product of the four negative-binomial measurement
-probabilities in Section~S10.
-For the eight imputed mesocosm paths, the complete-path objective is
-\begin{equation}
- C(\theta;x)=\sum_{u=1}^{8}\sum_{t=1}^{10}
- \left\{\log\phi_8\!\left(x_{u,t};
- m_{\theta,u,t}(x_{u,t-1}),\Sigma_{\theta,u,t}(x_{u,t-1})\right)
-       +\log g_{\theta,u}(y_{u,t}\mid x_{u,t})\right\}.
- \label{eq:benchmark-daphnia-score-objective}
-\end{equation}
-Initial states are fixed. The covariance uses a relative diagonal floor
-of $10^{-8}$ on scaled states. The particle filter uses the observations
-to guide proposals, with the original negative-binomial measurement
-probabilities in the importance weights.
-We approximate each observation interval by one eight-dimensional
-Gaussian transition, composing local moments over 24 steps for the first
-interval and 20 thereafter. The step size is 0.25 days, so these
-transitions cover six days initially and five days between observations.
-This approximates the distribution produced by the nonlinear dynamics
-over the whole interval. Boundary handling also differs: we assign zero
-weight to Gaussian proposals outside the allowed state range, whereas
-the Euler simulator resets an offending state to zero and assigns a
-log weight of $-150$ to that particle at the next observation.
-Both differences can change the likelihood being maximized.
-The local covariance need not be rank deficient in this model.
-At a strictly positive state, the six independent noises span the six
-directly forced coordinates. The integrated juvenile noises contribute
-two further directions through maturation into susceptible adults, with
-nonzero coefficients $\lambda_J\sigma_J^{\mathrm n}J^{\mathrm n}$ and
-$\lambda_J\sigma_J^{\mathrm i}J^{\mathrm i}$.
-The implemented order-1.5 covariance is therefore full rank in this
-interior when the six fitted noise coefficients are positive, and its
-range is independent of the parameter values there. At the specified
-initial state several populations are zero, and the local covariance has
-rank three. Daphnia thus differs from Dhaka's rank-two interior covariance.
-The algebra and numerical checks, including parameter perturbations at
-fixed states, are provided in \path{code/benchmarks/covariance_support.py}
-and its accompanying note.
-After backward simulation of one path per mesocosm, we differentiate this
-sum with respect to the 38 estimated parameters and update them with
-Adam using the averaged scores. As for SPX, we do not carry out a SAEM
-maximization step. We evaluate the resulting parameter estimates using
-the original Euler model from Section~S10.
-
-\paragraph{Dhaka: score updates and numerical generalized SAEM.}
-We compare score updates with numerical SAEM using the monthly Gaussian transition described in
-Section~\ref{sec:dhaka-competitors}, with 20 internal time steps and
-a relative covariance floor of $10^{-12}$.
-Let $\mathcal R x$ reset the accumulated monthly deaths to zero, and
-write $d_t=P_tM_t$ for the predicted deaths at a sampled endpoint.
-Here $P_t$ is the population and $M_t$ is the accumulated death count
-divided by population. Both methods use the complete-data objective
-\begin{align}
- C(\theta;x)=\sum_{t=1}^T\big\{&
-   \log\phi_6\!\left(x_t;m_{\theta,t}(\mathcal R x_{t-1}),
-                     \Sigma_{\theta,t}(\mathcal R x_{t-1})\right)
-   \nonumber\\[-2pt]
-   &+\log[\phi(y_t;d_t,(\tau d_t+\delta)^2)+\delta]\big\},
- \qquad \delta=10^{-18}.
- \label{eq:benchmark-dhaka-objective}
-\end{align}
-The initial state $x_0=x_0(\theta)$ is recalculated at each candidate
-parameter, while the sampled monthly endpoints are held fixed.
-For the score updates, we use the gradient average in
-Equation~(\ref{eq:benchmark-score-average}), with Adam and the safeguards
-described above.
-For numerical SAEM, we retain the paths and weights to calculate
-$\overline Q_m(\theta)=\sum_{r=1}^m w_{mr}C(\theta;X^{(r)})$.
-Each L-BFGS-B evaluation recalculates every retained path's objective
-and gradient at the same candidate $\theta$.
-Within each M-step, we divide the objective and its gradient by the fixed
-scale $\max\{1,\|\nabla\overline Q_m(\theta_{m-1})\|_\infty\}$.
-This reduces numerical line-search failures without changing the maximizer.
-We allow at most 25 L-BFGS-B iterations per M-step and retain a candidate
-only if it is finite and increases or leaves unchanged this fixed
-$\overline Q_m$. An M-step interrupted by the time limit is discarded.
-This gives a generalized-SAEM update when an explicit maximizer in terms
-of sufficient statistics is unavailable.
-We evaluate both methods with the Euler likelihood, so the evaluation
-model differs from the monthly Gaussian approximation used for fitting.
-
-\paragraph{Computation times for the Gaussian examples.}
-We used 500 particles for DS19, IFAD, and IF2 in both Gaussian examples.
-DS19 ran for 80 SAEM iterations, IFAD for 100 IF2 iterations followed by
-300 gradient iterations, and IF2 for 600 iterations.
-CTDD21 used 25 particles and 300 gradient iterations.
-The common particle count for DS19, IFAD, and IF2 therefore does not
-imply equal computational effort.
-
-DS19 runs a particle filter and samples one trajectory by backward
-simulation at every iteration, and both are included in its computation
-time. Its maximization step is inexpensive for these models: the linear
-Gaussian model has an explicit update, while the oscillator requires
-optimization over three parameters using averaged sufficient statistics.
-Neither maximization requires differentiation through the particle filter.
-The analytic likelihoods are used only to evaluate the fitted parameters.
-For all methods, we wait for the numerical calculations to finish before
-recording the time, excluding compilation and likelihood evaluation.
-IFAD, IF2, and DS19 used four efficiency cores of an Intel Core i9-13900K;
-CTDD21 used two performance cores with four hardware threads.
-Concurrent batches used separate core groups. These hardware differences
-also affect the comparison of computation times.
-
-\subsection{Search and evaluation settings}
-\label{sec:benchmark-settings}
-
-We ran 20 searches per method for the oscillator, linear Gaussian, SPX,
-and Daphnia models, using the same starting parameter vectors for each
-method. For Dhaka, we used the 100 searches from
-Section~\ref{sec:dhaka-competitors}.
-
-For SPX, we used 500 particles for IFAD and IF2, 100 for DS19, and 25
-for CTDD21. IFAD used $\alpha=0.97$ and ran for 100 IF2 iterations followed by 300 gradient
-iterations, IF2 for 600 iterations, and DS19 and CTDD21 for 300 updates
-each. The Adam learning rates started at $0.001$ for IFAD and $0.01$
-for DS19 and CTDD21, decreasing to one tenth of these values by cosine decay.
-
-For Daphnia, we used 1,000 particles per mesocosm for MPIF and IFAD,
-and 100 for DS19 and CTDD21. We ran MPIF for 680 iterations.
-IFAD used a separate 200-iteration MPIF warm start followed by 200
-gradient steps. To compare refinement of the same starting estimate,
-we initialized DS19 and CTDD21 at this MPIF warm start and allowed each
-the time taken by the IFAD gradient stage, with a maximum of 2,000 updates.
-Their learning rates decreased from $0.001$ to $0.0001$ by cosine decay
-over the allotted time. We discarded updates completed after the time
-limit and included the common MPIF warm start in the computation times
-for all three methods.
-
-We evaluated the final SPX estimates using 24 independent particle-filter
-replicates with 5,000 particles. For Daphnia, we used 10 replicates with
-2,000 particles per mesocosm under the original Euler model.
-We averaged the likelihood estimates for each mesocosm before taking
-logarithms, then summed the log-likelihoods over mesocosms, combining
-their independent Monte~Carlo errors.
-For the optimization trajectories, we used four replicates with 1,000
-particles for SPX and two replicates with 500 particles per mesocosm
-for Daphnia. All these evaluations were independent of fitting;
-we did not use them to select the reported parameter estimates.
-
-SPX fits used two performance cores with four hardware threads, except
-for one recovered starting point for which all four methods used four
-efficiency cores. Daphnia fits used four efficiency cores.
-These runs used the same processor as the Gaussian comparisons.
-The archived Dhaka comparison used GPU computations as described in
-Section~\ref{sec:dhaka-competitors}.
-
-\subsection{Repeated-search results}
-
-IFAD and DS19 both approached the maximum likelihood for the two
-Gaussian models (Table~\ref{tab:benchmark-results} and
-Figure~\ref{fig:benchmark-final-likelihoods}). DS19 did so more quickly,
-benefiting from the inexpensive maximization steps described above.
-IF2 gave more variable results, while CTDD21 attained lower likelihoods,
-particularly for the oscillator. DS19 also had the highest median
-log-likelihood and shortest median computation time for SPX.
-We therefore found no consistent improvement from IFAD on these examples.
-
-For Daphnia, IFAD attained the highest maximum and median log-likelihoods.
-The median was $-861.30$, compared with $-864.98$ for MPIF, $-867.02$
-for DS19, and $-865.03$ for CTDD21.
-Figure~\ref{fig:benchmark-optimization-detail} shows IFAD continuing to
-improve after the common MPIF warm start, while DS19 and CTDD21 made
-less progress with the same time allowance.
-The full trajectories are shown in Figure~\ref{fig:benchmark-optimization-full};
-the shaded regions in both figures cover the 10th through 100th
-percentiles, as in Section~\ref{sec:dhaka-competitors}.
-We retained the last finite estimate from one DS19 search that stopped
-prematurely. For Dhaka, the differences were larger: IFAD attained a
-median log-likelihood of $-3744.40$, compared with $-3755.41$ for IF2,
-$-3769.04$ for DS19, and $-3765.91$ for CTDD21.
-
-The Daphnia comparison does not determine how much of the DS19 shortfall
-comes from the Gaussian transition approximation. Smoothing error and
-optimization may also contribute. DS19 used 100 particles per mesocosm,
-compared with 1,000 for IFAD, and estimated each gradient from one
-backward-sampled path per mesocosm for the 38-parameter optimization.
-Moreover, the Daphnia implementation uses averaged-score Adam updates,
-whereas the Gaussian examples use SAEM maximization with sufficient
-statistics. We have not compared these updates with numerical SAEM on
-Daphnia. Evaluating both the Gaussian fitting objective and the Euler
-likelihood along the same searches would help assess the effect of the
-transition approximation: improvement in the former accompanied by
-deterioration in the latter would indicate that improving the approximate
-objective need not improve the likelihood of interest. We have not
-carried out this diagnostic.
-
-The Gaussian examples provide useful numerical checks because their
-likelihoods are available analytically. Once methods repeatedly approach
-these maxima, the examples offer limited evidence about further
-improvements in likelihood maximization. The SPX comparison still shows
-differences between methods and is not saturated in this sense.
-Daphnia and Dhaka retain difficulties encountered in scientific
-applications, including many estimated parameters, nonlinear dynamics,
-partially observed states, and, for Daphnia, multiple experimental units.
-Assessing methods for such applications requires benchmarks that retain
-these difficulties alongside tractable examples used to verify implementations.
-
-\subsection{Score updates and numerical SAEM on Dhaka}
-
-To assess whether the score updates accounted for the poor performance
-of DS19 on Dhaka, we repeated the comparison using numerical SAEM with
-the same monthly Gaussian transition approximation and particle smoother.
-We used 1,000 particles and allowed 850 seconds per search, starting
-from 20 global parameter vectors and 20 IF2 estimates.
-Numerical SAEM gave higher Euler log-likelihoods than the score updates
-for only two of the 20 global starts
-(Figure~\ref{fig:dhaka-saem-ab} and Table~\ref{tab:dhaka-saem-ab}).
-The median paired difference was $-608.83$ log-likelihood units, taking
-numerical SAEM minus score updates. The numerical M-steps were expensive:
-SAEM completed a median of 15.5 outer iterations in the allotted time,
-compared with 86 for the score updates.
-
-Starting from the IF2 estimates reduced this difference substantially.
-The median paired difference was $-0.62$ log-likelihood units, although
-one SAEM search finished $39.59$ units below its score counterpart.
-SAEM gave higher likelihoods in four of the 20 pairs.
-Neither method improved on the IF2 estimates at the median, with changes
-of $-0.27$ for score updates and $-1.37$ for numerical SAEM.
-Thus numerical maximization of the SAEM objective did not improve the
-Dhaka results.
-Both methods retained the same monthly Gaussian transition and particle
-smoother, so this comparison does not measure the effect of the transition
-approximation. Increasing the number of particles can improve the
-particle approximation to this Gaussian model, but does not remove its
-difference from the Euler model. The results therefore leave open the
-relative contributions of transition approximation, smoothing error,
-numerical conditioning, and optimization cost to the Dhaka shortfall.
-
-\clearpage
-\input{imgs/benchmarks/figures.tex}
-\input{imgs/benchmarks/saem_ab_figures.tex}
 
 \clearpage
 \bibliography{bib-ifad}

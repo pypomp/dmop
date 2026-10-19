@@ -79,13 +79,6 @@ def _read(path: Path) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
-def _save(plot: ggplot, output: Path, name: str, width: float, height: float,
-          save_pdf: bool = False) -> None:
-    for extension in (("png", "pdf") if save_pdf else ("png",)):
-        plot.save(output / f"{name}.{extension}", width=width, height=height,
-                  dpi=220, verbose=False)
-
-
 def _likelihood_frame(args: argparse.Namespace) -> pd.DataFrame:
     rows: list[pd.DataFrame] = []
     sources = (
@@ -111,17 +104,10 @@ def _likelihood_frame(args: argparse.Namespace) -> pd.DataFrame:
     return pd.concat(rows, ignore_index=True)
 
 
-def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
-                    minimum=-4300, methods=None, limits=None,
-                    name="likelihood_if2warm_comparison_r20", save_pdf=False,
-                    best_known=BEST_KNOWN) -> None:
-    labels = DISPLAY_LABELS if display_labels is None else display_labels
-    methods = METHODS if methods is None else methods
-    frame = frame.loc[np.isfinite(frame["logLik"]) & frame["Model"].isin(methods)].copy()
-    if minimum is not None:
-        frame = frame.loc[frame["logLik"].ge(minimum)].copy()
-    frame["Model"] = pd.Categorical(frame["Model"], categories=methods, ordered=True)
-    positions = {method: float(index) for index, method in enumerate(methods)}
+def plot_likelihood(frame: pd.DataFrame, output: Path) -> None:
+    frame = frame.loc[np.isfinite(frame["logLik"]) & frame["logLik"].ge(-4300)].copy()
+    frame["Model"] = pd.Categorical(frame["Model"], categories=METHODS, ordered=True)
+    positions = {method: float(index) for index, method in enumerate(METHODS)}
     frame["model_number"] = frame["Model"].map(positions).astype(float)
     frame["violin_number"] = frame["model_number"] + 0.05
     frame["box_number"] = frame["model_number"] - 0.10
@@ -137,9 +123,6 @@ def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
             aes(x="violin_number", group="Model"),
             data=distribution,
             style="right",
-            # Equal-area scaling collapses broad distributions when another
-            # method has a sharply concentrated likelihood distribution.
-            scale="width",
             width=1.0,
             alpha=0.6,
             show_legend=False,
@@ -155,15 +138,19 @@ def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
             show_legend=False,
         )
         + geom_point(aes(x="point_number"), alpha=0.6, size=1.5, show_legend=False)
-        + coord_flip(ylim=limits)
+        + geom_hline(
+            yintercept=BEST_KNOWN,
+            color="red",
+            linetype="dotted",
+            size=1.2,
+        )
+        + coord_flip()
         + scale_x_continuous(
             breaks=list(positions.values()),
-            labels=[labels.get(method, method) for method in methods],
-            # Allow the top half-violin (center + .05, half-width .5).
-            limits=(-0.5, len(methods) - 0.35),
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
+            limits=(-0.5, len(METHODS) - 0.5),
         )
-        + (scale_y_continuous(breaks=list(range(-4300, -3699, 100)))
-           if minimum == -4300 else scale_y_continuous())
+        + scale_y_continuous(breaks=list(range(-4300, -3699, 100)))
         + scale_color_manual(values=COLORS)
         + scale_fill_manual(values=COLORS)
         + labs(x="", y="Log-Likelihood")
@@ -179,9 +166,13 @@ def plot_likelihood(frame: pd.DataFrame, output: Path, *, display_labels=None,
             panel_grid_minor_x=element_blank(),
         )
     )
-    if best_known is not None:
-        plot += geom_hline(yintercept=best_known, color="red", linetype="dotted", size=1.2)
-    _save(plot, output, name, 10.2 if display_labels else 8.2, 4.1, save_pdf)
+    plot.save(
+        output / "likelihood_if2warm_comparison_r20.png",
+        width=8.2,
+        height=4.1,
+        dpi=220,
+        verbose=False,
+    )
 
 
 def _parameter_frame(args: argparse.Namespace) -> pd.DataFrame:
@@ -212,9 +203,7 @@ def _parameter_frame(args: argparse.Namespace) -> pd.DataFrame:
     return pd.concat(rows, ignore_index=True)
 
 
-def plot_parameters(frame: pd.DataFrame, output: Path, *, display_labels=None,
-                    save_pdf=False) -> None:
-    labels = DISPLAY_LABELS if display_labels is None else display_labels
+def plot_parameters(frame: pd.DataFrame, output: Path) -> None:
     long = frame.melt(
         id_vars="source",
         value_vars=PARAMETERS,
@@ -239,12 +228,12 @@ def plot_parameters(frame: pd.DataFrame, output: Path, *, display_labels=None,
         + scale_color_manual(
             values=COLORS,
             breaks=METHODS,
-            labels=[labels.get(method, method) for method in METHODS],
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
         )
         + scale_fill_manual(
             values=COLORS,
             breaks=METHODS,
-            labels=[labels.get(method, method) for method in METHODS],
+            labels=[DISPLAY_LABELS.get(method, method) for method in METHODS],
         )
         + theme_minimal()
         + theme(
@@ -260,7 +249,13 @@ def plot_parameters(frame: pd.DataFrame, output: Path, *, display_labels=None,
         )
         + labs(x="Parameter Value Estimate", y="Density")
     )
-    _save(plot, output, "parameter_if2warm_comparison_r20", 10.2, 6.2, save_pdf)
+    plot.save(
+        output / "parameter_if2warm_comparison_r20.png",
+        width=10.2,
+        height=6.2,
+        dpi=220,
+        verbose=False,
+    )
 
 
 def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
@@ -314,15 +309,13 @@ def _optimization_frame(args: argparse.Namespace) -> pd.DataFrame:
     )
 
 
-def _optimization_plot(frame: pd.DataFrame, order: list[str], *,
-                       display_labels=None, best_known=BEST_KNOWN) -> ggplot:
+def _optimization_plot(frame: pd.DataFrame, order: list[str]) -> ggplot:
     frame = frame.loc[frame["source"].isin(order)].copy()
     frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
     linetypes = {source: "solid" for source in order}
     linetypes["Corenflos + IF2"] = "dashed"
-    display_labels = DISPLAY_LABELS if display_labels is None else display_labels
-    labels = [display_labels.get(source, source) for source in order]
-    plot = (
+    labels = [DISPLAY_LABELS.get(source, source) for source in order]
+    return (
         ggplot(frame, aes(x="elapsed_seconds", y="median", color="source"))
         + geom_ribbon(
             aes(ymin="q10", ymax="maximum", fill="source"),
@@ -334,6 +327,12 @@ def _optimization_plot(frame: pd.DataFrame, order: list[str], *,
         + geom_line(aes(y="q10"), alpha=0.2, size=0.6, show_legend=False)
         + geom_line(aes(y="maximum"), alpha=0.2, size=0.6, show_legend=False)
         + geom_vline(xintercept=OFFSET, color="black", linetype="dotted", size=1.0)
+        + geom_hline(
+            yintercept=BEST_KNOWN,
+            color="red",
+            linetype="dotted",
+            size=1.2,
+        )
         + scale_color_manual(values=COLORS, breaks=order, labels=labels)
         + scale_fill_manual(values=COLORS, breaks=order, labels=labels)
         + scale_linetype_manual(values=linetypes, breaks=order, labels=labels)
@@ -351,24 +350,23 @@ def _optimization_plot(frame: pd.DataFrame, order: list[str], *,
             panel_grid_minor=element_blank(),
         )
     )
-    if best_known is not None:
-        plot += geom_hline(yintercept=best_known, color="red", linetype="dotted", size=1.2)
-    return plot
 
 
-def plot_optimization(frame: pd.DataFrame, output: Path, *, display_labels=None,
-                      save_pdf=False, best_known=BEST_KNOWN) -> None:
+def plot_optimization(frame: pd.DataFrame, output: Path) -> None:
     order = ["IF2 warm start", "IFAD-0.97", "Ditlevsen + IF2", "Corenflos + IF2"]
-    focused = (
-        _optimization_plot(frame, order, display_labels=display_labels, best_known=best_known)
+    (
+        _optimization_plot(frame, order)
         + scale_y_continuous(breaks=list(range(-3820, -3734, 10)))
         + coord_cartesian(xlim=(0, TOTAL), ylim=TRACE_LIMITS)
+    ).save(
+        output / "optimization_if2warm_elapsed_r20.png",
+        width=7.5,
+        height=4.0,
+        dpi=220,
+        verbose=False,
     )
-    _save(focused, output, "optimization_if2warm_elapsed_r20",
-          10.0 if display_labels else 7.5, 4.0, save_pdf)
     overview = (
-        _optimization_plot(frame, order + ["Ditlevsen", "Corenflos"],
-                           display_labels=display_labels, best_known=best_known)
+        _optimization_plot(frame, order + ["Ditlevsen", "Corenflos"])
         + geom_line(
             aes(y="maximum"),
             data=frame.loc[frame["source"].isin(["Ditlevsen", "Corenflos"])],
@@ -379,8 +377,13 @@ def plot_optimization(frame: pd.DataFrame, output: Path, *, display_labels=None,
         + scale_y_continuous(breaks=list(range(-4800, -3799, 200)))
         + coord_cartesian(xlim=(0, TOTAL), ylim=OVERVIEW_LIMITS)
     )
-    _save(overview, output, "optimization_if2warm_elapsed_full_r20",
-          10.0 if display_labels else 7.5, 4.0, save_pdf)
+    overview.save(
+        output / "optimization_if2warm_elapsed_full_r20.png",
+        width=7.5,
+        height=4.0,
+        dpi=220,
+        verbose=False,
+    )
 
 
 def _objective_mismatch_frame(args: argparse.Namespace) -> pd.DataFrame:
@@ -437,15 +440,9 @@ def _objective_mismatch_frame(args: argparse.Namespace) -> pd.DataFrame:
     return pd.concat(rows, ignore_index=True)
 
 
-def plot_objective_mismatch(frame: pd.DataFrame, output: Path, *,
-                            display_labels=None, save_pdf=False) -> None:
-    labels = DISPLAY_LABELS if display_labels is None else display_labels
-    sources = ("Corenflos + IF2", "Ditlevsen + IF2")
-    order = [labels[source] for source in sources]
+def plot_objective_mismatch(frame: pd.DataFrame, output: Path) -> None:
+    order = [DISPLAY_LABELS[source] for source in ("Corenflos + IF2", "Ditlevsen + IF2")]
     frame = frame.copy()
-    frame["source"] = frame["source"].replace(
-        {DISPLAY_LABELS[source]: labels[source] for source in sources}
-    )
     frame["source"] = pd.Categorical(frame["source"], categories=order, ordered=True)
     medians = frame.groupby("source", observed=True)[["training_delta", "euler_delta"]].median()
     summary = medians.reset_index().melt(
@@ -471,7 +468,7 @@ def plot_objective_mismatch(frame: pd.DataFrame, output: Path, *,
         panel_grid_major=element_line(color="#e5e5e5", size=0.8),
         panel_grid_minor=element_blank(),
     )
-    bars = (
+    (
         ggplot(summary, aes(x="objective", y="median_change", fill="objective"))
         + geom_col(width=0.6, show_legend=False)
         + geom_hline(yintercept=0.0, color="black", size=0.6)
@@ -480,12 +477,14 @@ def plot_objective_mismatch(frame: pd.DataFrame, output: Path, *,
         + labs(x="", y="Median paired log-likelihood change")
         + theme_minimal()
         + styling
+    ).save(
+        output / "objective_mismatch_if2warm_medians_r20.png",
+        width=9.4, height=4.3, dpi=220, verbose=False,
     )
-    _save(bars, output, "objective_mismatch_if2warm_medians_r20", 9.4, 4.3, save_pdf)
     frame["marker"] = "Warm starts"
     medians = medians.reset_index()
     medians["marker"] = "Marginal medians"
-    scatter = (
+    (
         ggplot(frame, aes(x="training_delta", y="euler_delta", color="source"))
         + geom_vline(xintercept=0.0, color="#666666", linetype="dashed", size=0.6)
         + geom_hline(yintercept=0.0, color="#666666", linetype="dashed", size=0.6)
@@ -496,7 +495,7 @@ def plot_objective_mismatch(frame: pd.DataFrame, output: Path, *,
         )
         + facet_wrap("source", nrow=1)
         + scale_color_manual(
-            values={labels[source]: COLORS[source] for source in sources},
+            values={DISPLAY_LABELS[source]: COLORS[source] for source in ("Corenflos + IF2", "Ditlevsen + IF2")},
             guide=None,
         )
         + scale_shape_manual(values={"Warm starts": "o", "Marginal medians": "D"})
@@ -504,8 +503,10 @@ def plot_objective_mismatch(frame: pd.DataFrame, output: Path, *,
         + theme_minimal()
         + styling
         + theme(panel_spacing_x=0.055)
+    ).save(
+        output / "objective_mismatch_if2warm_paired_r20.png",
+        width=9.4, height=4.5, dpi=220, verbose=False,
     )
-    _save(scatter, output, "objective_mismatch_if2warm_paired_r20", 9.4, 4.5, save_pdf)
 
 
 def build_parser() -> argparse.ArgumentParser:
