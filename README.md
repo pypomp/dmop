@@ -25,6 +25,7 @@ From the repository root, with NumPy, pandas, and Matplotlib installed:
 
 ```sh
 python code/fig1a/plot.py
+python artifacts/restore_results.py --prefix corenflos/results --prefix ditlevsen/results
 python code/competitor_results.py
 ```
 
@@ -34,10 +35,11 @@ comparison setup, fitting, evaluation, and plotting are documented in
 [code/competitor_reproduction.md](code/competitor_reproduction.md).
 
 A fresh clone includes the figures and tables needed to compile the manuscript
-and supplement. Some commands that regenerate comparison figures or audit
-individual iterations also need archived traces. The existing archive is
-local to the research machine; it is not yet a public download. See the
-[archive instructions](artifacts/README.md) for its contents and access.
+and supplement. Saved result files are bundled under `artifacts/packed/` to
+keep the repository below Overleaf's file limit. Before regenerating figures
+or auditing a run, restore its result directory with
+[the archive helper](artifacts/COMPACT_HISTORY.md). Older bulk outputs that
+were already untracked remain in the separate local October 6 archive.
 
 ## Earlier versions
 

@@ -1,0 +1,57 @@
+{
+  "purpose": "Primary untempered NUTS vs PMMH comparison with deterministic GPU execution and lower-noise likelihood estimates",
+  "particles": 10000,
+  "force_particles": 1000,
+  "precision": "float64",
+  "force_precision": "float32",
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "batch_size": 4,
+  "warmup": 500,
+  "fixed_metric": true,
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "inputs_dir": "../gpu-comparison-v1/inputs",
+  "initialization": "Reuse the identical four starts and covariance from gpu-comparison-v1. No new optimization or fitted prior. Account for its shared preparation costs.",
+  "nuts": {
+    "gpu": 0,
+    "seeds": [
+      2026110600,
+      2026110601,
+      2026110602,
+      2026110603
+    ],
+    "draws": 2000,
+    "step_size": 0.03,
+    "max_depth": 5,
+    "checkpoint": 1
+  },
+  "pmrw": {
+    "gpu": 1,
+    "seeds": [
+      2026110700,
+      2026110701,
+      2026110702,
+      2026110703
+    ],
+    "draws": 10000,
+    "step_size": 0.5,
+    "max_depth": 5,
+    "checkpoint": 25
+  },
+  "evidence": {
+    "determinism": "batch-continuation-check-v1/optimized-verification.json: all checkpoint arrays except times match bitwise across interrupted warmup on four real Dhaka chains",
+    "particles": "posterior-noise-check-v1/expanded-summary.json:128 replicates at sticky state; loglik variances1.0105 vs.3027, ratio3.338 with bootstrap95%[2.391,4.694]",
+    "cost": "optimized deterministic J5000/G1000 timing median75.18s per four-chain15-step batch under shared GPU load; J10000 production cost still to be measured"
+  },
+  "interpretation": "Increasing particle count changes the estimator used by pseudo-marginal sampling, not its intended parameter posterior. The local diagnostic does not establish particle adequacy everywhere.",
+  "checks": "Four independent chains; all18 Rhat<=1.01, bulk/tail ESS>=400, zero NUTS divergences; visual trace checks and prior/particle sensitivity. Completion alone is insufficient.",
+  "retention": "Retire the old nondeterministic NUTS warmup only after finite v2 checkpoints; preserve all its files. Keep J5000 PMMH for particle-count sensitivity. Do not pool old and new chains.",
+  "timing": "Both RTX3090s share unrelated workloads. Include preparation cost, count batch walltime once, and obtain controlled timings before making any speedup claim.",
+  "inputs_sha256": {
+    "initial1.npy": "8f2531b0215f28f25bad5be6eb1646fcf4974497d5b0d731096b9e44fdd61452",
+    "initial2.npy": "ed966f3e522e931e9f2073f831e89c6dffcd6e7ac47c082de798b4151657dcf3",
+    "initial0.npy": "11f267ff171b104f616eac222364edabd60eaa4aa47ff98238a2ad3bb96fc448",
+    "initial3.npy": "7d19213d6d634ef7a5244612ca838c611df6f93536e0a451fa8d63e7a8a96e82",
+    "chol.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6"
+  }
+}

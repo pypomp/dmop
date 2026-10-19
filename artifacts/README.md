@@ -1,5 +1,9 @@
 # Archived experiment outputs
 
+The current compact snapshot and restore commands are documented in
+[COMPACT_HISTORY.md](COMPACT_HISTORY.md). The October 6 archive below remains
+available for older bulk outputs; it does not include the later Bayesian runs.
+
 The working result directories stay in place. Git tracks compact configurations,
 summary tables, selected-start inputs, and figures; per-update evaluations,
 checkpoints, full optimization traces, global-search pickles, and compiled

@@ -1,5 +1,31 @@
 # Handoff
 
+## October 19: compact history candidate
+
+- User reaffirmed publication approval after the explicit payload question,
+  then required fewer than2000files including history. Result directories are
+  ignored by default. Candidate removes four result prefixes from all branch
+  histories and retains6985result files in195verified archives, with73readable
+  guides/launch settings/table inputs left individually accessible.
+- Original all-ref Git bundle is verified outside the repo at
+  ../dmop-history-backup-20261019/repository-before.bundle. Live working files
+  and sampler are untouched while this separate candidate is prepared.
+- New Overleaf branch0448 included stale deletions of code, comparisons,
+  shortened-theorem edits and corrected Bayesian sections. Retained current
+  code/assets/SI/theory and common-target Bayesian text; merged nonconflicting
+  author prose in ms.tex. Original Overleaf snapshot remains on its filtered
+  branch. Do not reintroduce the old empirical-prior claims or long theorem.
+- artifacts/restore_results.py verifies hashes and restores selected studies;
+  .github/workflows/file-budget.yml checks current and historical path counts
+  with an1800filebudget. See artifacts/COMPACT_HISTORY.md before updating refs.
+- Verification: all6985archive members match their recorded Git bytes; the
+  restore helper passes a separate-output restoration. Main and SI pass
+  draft-mode compilation with no undefined references/citations. Candidate
+  has624tracked files and669distinct historical paths before this note.
+- Remote rewritten history is not published yet. Force-pushing all branch
+  histories changes commit IDs; preserve other collaborators' work and use
+  explicit leases on the recorded remote tips.
+
 ## October 19: push blocked by automatic review
 
 - Pull and merges are complete; both manuscript PDFs compile. Local main

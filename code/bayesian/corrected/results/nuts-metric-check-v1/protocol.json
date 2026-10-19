@@ -1,0 +1,92 @@
+{
+  "particles": 10000,
+  "force_particles": 1000,
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "force_mode": "forward",
+  "force_precision": "float32",
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "jax": "0.9.0.1",
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "source_sha256": {
+    "test_force_modes.py": "de1d7a0965535a3df183c9a15925889ae7f4b639b0c2377d5f9e310947c9484e",
+    "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "sensitivity.py": "a28f47d871ed3c8a9db0ab181bd3eab25d3d756b06430031985023db6ca13166",
+    "force_modes.py": "50e2a3fc42bbb460ee60e4f9a9465982e6a7a6af21b037a9b5765d471a545029",
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "test_batch_extend.py": "833b82eed8cd0e9b9ae4826fbf0c828bf14df701c731bb4c1639ba9532fd6c0c",
+    "extend.py": "8ca296d3cf513f5e187bf64130fc48f95a2c760a62bf430084c2de6e3a8528ac",
+    "test_sensitivity.py": "9ff6f3ee848af8dba51f9d1ad9e89f63f90cf0a121f5bc85c4ac9fa3331eec20",
+    "test_model.py": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "batch_extend.py": "59aff6d38c56e16ffec68f86786f7c8438af2f72565c33a4bcba3c4d2694f8ff",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "batch.py": "783545331e9c8c26b868e34eee48e46aa77499ed51638e5b3620502dc10bdb66",
+    "report.py": "946c958a07c6d2c0684c6ed0757621d27159c1462a1fe2b90f36faffcaa4d9cc",
+    "test_noise_check.py": "d43896866ded4580a7ebf64c97e80e6b04faff42c506f9c57e70624371318378",
+    "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+    "run.py": "1ecda9f8d66d7b7be82cb0f2468cc32130f42a23704f68fab94b9c4701fec3a1",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "noise_check.py": "6b0981402545090021f7dfa84c0da4e679d91eac14adc6db29a44e793c4f52b1",
+    "test_recovery.py": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
+    "compare.py": "dfac7a38daa353093bb5b0d0aab4aac125f89667f36e79d7fa7e9a006a1fe981",
+    "test_batch.py": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+    "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
+    "device_check.py": "3dbc75981a06f97092bf6757a3f4a4b15ff6db632284219e259529bf06979183"
+  },
+  "utc": "2026-10-16T02:46:24.338637+00:00",
+  "compile_seed": 2026111300,
+  "trial_seeds": [
+    2026111301,
+    2026111302,
+    2026111303,
+    2026111304,
+    2026111305,
+    2026111306
+  ],
+  "gpu": 1,
+  "input_iterations": [
+    54,
+    54,
+    54,
+    54
+  ],
+  "input_checkpoint_sha256": [
+    "4f48992b769980ece350e27079928c72e971ed64115d071c486199a099c9f9ab",
+    "973051e78d6578f9739da99dcbb5f9fcca73af25c9fee5b6054772cba1fd2c67",
+    "fd569e1c14d4f9ee85b9abc7c542496c74c68e55c194f32797c5cd54c75e7b6b",
+    "fef2b9a0451ffc99a0a85b942c3851404989f4a7fc720d6d72920fb24158cd46"
+  ],
+  "reference": "code/bayesian/corrected/results/gpu-comparison-v1/review-pmrw-5000/posterior_draws.npz",
+  "reference_sha256": "089e31e78b902da8a1d9cf68eb61a293f4113fdaaf8bc3f101a893108f8b7353",
+  "inputs_sha256": {
+    "inputs.npz": "138cace2c3d4e54a56ba24564bae8d83bbe6e3359dde05f99998db1eb01e638a"
+  },
+  "interpretation": "Local one-step screen at the same four frozen update54 states as the depth check. The proposed metric is fitted from unconverged PMMH output, solely for proposal tuning; target/prior unchanged. Cyclic candidate order and paired random seeds. Not ESS/sec or posterior convergence.",
+  "decision": "Consider a candidate only for >=50% geometric-mean movement-rate gain, acceptance>=0.5, zero divergences, and no lower point rate for bs3 or omegas5. Inspect paired uncertainty and all coordinate losses before a production decision. No automatic restart.",
+  "parent_protocol_sha256": "d6d92a6638d5c553c036b1232db34acd087c0392f878261dce6081ba1fb47f6b",
+  "covariance_reference": "code/bayesian/corrected/results/gpu-comparison-v2/review-pmrw-5000",
+  "covariance_reference_sha256": "a9a1efd134f4a4d4c00048b08aa30ca85985df24ca049280630f8df244612cb0",
+  "covariance_formula": "0.75 * pooled standardized-coordinate covariance from the unconverged primary PMMH snapshot + 0.25 * old metric; rescale to the old trace",
+  "candidates": [
+    {
+      "name": "baseline",
+      "metric": "chol",
+      "step_multiplier": 1.0
+    },
+    {
+      "name": "covariance",
+      "metric": "candidate_chol",
+      "step_multiplier": 1.0
+    },
+    {
+      "name": "covariance_2x",
+      "metric": "candidate_chol",
+      "step_multiplier": 2.0
+    }
+  ],
+  "max_depth": 5
+}

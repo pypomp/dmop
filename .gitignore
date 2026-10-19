@@ -151,3 +151,34 @@ renv
 
 # Automatically generated control comparison awaits visual review before archiving.
 /code/bayesian/corrected/results/identity-adapt-nuts-v1/comparison/
+
+# Result trees are local by default. Archive verified outputs under artifacts/;
+# never force-add a whole results directory. Keep only readable run guides,
+# launch settings and the exact table input used by the manuscript.
+/corenflos/results/**
+!/corenflos/results/**/
+!/corenflos/results/**/*.md
+!/corenflos/results/**/launch.py
+!/corenflos/results/**/resume.py
+!/corenflos/results/**/protocol.json
+/ditlevsen/results/**
+!/ditlevsen/results/**/
+!/ditlevsen/results/**/*.md
+!/ditlevsen/results/**/launch.py
+!/ditlevsen/results/**/resume.py
+!/ditlevsen/results/**/protocol.json
+/code/benchmarks/results/**
+!/code/benchmarks/results/**/
+!/code/benchmarks/results/**/*.md
+!/code/benchmarks/results/**/launch.py
+!/code/benchmarks/results/**/resume.py
+!/code/benchmarks/results/**/protocol.json
+/code/bayesian/corrected/results/**
+!/code/bayesian/corrected/results/**/
+!/code/bayesian/corrected/results/**/*.md
+!/code/bayesian/corrected/results/**/launch.py
+!/code/bayesian/corrected/results/**/resume.py
+!/code/bayesian/corrected/results/**/protocol.json
+!/code/bayesian/corrected/results/paper/diagnostics.tex
+!/ditlevsen/results/saem_ab_scaled/report/comparison.pdf
+!/ditlevsen/results/saem_ab_scaled/report/table.tex
