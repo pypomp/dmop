@@ -12516,9 +12516,11 @@ are available in \texttt{code/bayesian}.
 We ran four chains of each method from the same four starting points,
 obtained by optimization followed by a pilot PMMH run.
 Figure~\refFigNutsEb\ compares the first 2,000 retained iterations of each
-chain, after 500 warmup iterations. A longer PMMH run provides 30,000
+chain, after 500 warmup iterations. \kevin{Figure~\ref{fig:mh} shows the
+marginal sample distributions of the individual chains over this window.}
+A longer PMMH run provides 30,000
 retained iterations per chain for comparison of the marginal distributions
-(Figure~\ref{fig:mh}).
+\sout{(Figure~\ref{fig:mh})}\kevin{(available with the code)}.
 
 Both methods use fixed covariance matrices estimated from preliminary
 PMMH runs. The PMMH covariance uses 1\% diagonal shrinkage and a $10^{-6}I$ ridge.
@@ -12540,7 +12542,7 @@ Almost all trajectories reach the depth limit of 5, corresponding to
 establishing convergence of all coordinates.
 
 The longer PMMH runs give broadly similar marginal distributions
-(Figure~\ref{fig:mh}); their largest $\widehat R$ is 1.014 and smallest bulk
+\sout{(Figure~\ref{fig:mh})}; their largest $\widehat R$ is 1.014 and smallest bulk
 ESS is 202. Doubling all prior standard deviations has little effect on
 the sampled trend standard deviation (0.112 versus 0.115), but gives wider
 lower tails for some seasonal environmental-transmission coefficients.
@@ -12560,8 +12562,8 @@ issue visible.
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_reference.pdf}
-\caption{Marginal sample distributions for all 18 estimation coordinates, pooled over four chains of each method. NUTS uses 2,000 retained iterations per chain (blue fill). To reduce serial dependence in the displayed PMMH sample, we take every 25th retained draw from each 30,000-iteration run, giving 1,200 draws per chain (orange dashed curve). Both curves use the Gaussian-kernel bandwidth selected by Scott's rule for the thinned PMMH sample. Diagnostics use all draws, and so thinning is only for this display. Both methods use the common prior and untempered target.}
+\includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_chains.pdf}
+\caption{\sout{Marginal sample distributions for all 18 estimation coordinates, pooled over four chains of each method. NUTS uses 2,000 retained iterations per chain (blue fill). To reduce serial dependence in the displayed PMMH sample, we take every 25th retained draw from each 30,000-iteration run, giving 1,200 draws per chain (orange dashed curve). Both curves use the Gaussian-kernel bandwidth selected by Scott's rule for the thinned PMMH sample. Diagnostics use all draws, and so thinning is only for this display. Both methods use the common prior and untempered target.}\kevin{Marginal sample distributions for the four NUTS chains (blue solid) and four PMMH chains (orange dashed), using all 2,000 retained iterations per chain after 500 warmup iterations. Each curve represents one chain. For each coordinate, all eight density estimates use the same Gaussian-kernel bandwidth, selected by Scott's rule from the pooled draws of both methods. The prior, target and iteration window are those of Table~\ref{tab:bayesian-diagnostics}.}}
 \label{fig:mh}
 \end{figure}
 \FloatBarrier

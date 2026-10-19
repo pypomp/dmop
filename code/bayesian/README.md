@@ -66,7 +66,11 @@ The script checks matching models/targets and the PMMH prefix before plotting.
 - `results/paper/diagnostics.tex`: SI table, all 18 coordinates
   at that same 2,000-iteration window. Bold cells select R-hat closest to 1,
   higher bulk/tail ESS or lower mean MCSE; displayed ties are both bold.
-- `imgs/pmcmc/common_target_reference.pdf`: SI marginal comparison with the
+- `imgs/pmcmc/common_target_chains.pdf`: SI Figure S-1, separate densities
+  for all four chains per method, using all 2,000 retained draws per chain.
+  All eight curves share one absolute bandwidth per coordinate, selected by
+  Scott's rule from the pooled draws of both methods. No thinning.
+- `imgs/pmcmc/common_target_reference.pdf`: supplementary saved comparison with the
   30,000-iteration PMMH reference. Pool chains separately by method. For this
   display alone, retain PMMH iterations 25, 50, ..., 30000 (1,200 per chain).
   NUTS has 2,000 retained draws per chain. PMMH is dark orange/dashed;
@@ -78,8 +82,8 @@ The script checks matching models/targets and the PMMH prefix before plotting.
 
 PNG previews accompany the vector PDFs. `results/paper/manifest.json`
 records input hashes, windows, plotting conventions and bold-cell choices.
-All four figures and their placement in the compiled documents were visually
-checked. The figure script, not an external notebook, is their source.
+The manuscript figures and their placement in the compiled documents were
+visually checked. The figure script, not an external notebook, is their source.
 
 The primary NUTS run is complete at 500 warmup + 2,000 retained iterations
 per chain. Trend R-hat is 1.014 and bulk ESS is 333. Across coordinates,

@@ -1,5 +1,22 @@
 # Handoff
 
+## October 19: S-1 compares individual chains without thinning
+
+- Replaced S-1's pooled NUTS2000/PMMH30000 overlay with eight individual
+  chain densities at the same first2000retained iterations after500warmup.
+  All draws and all18coordinates are included. User explicitly requested
+  no thinning. Each coordinate uses a common absolute Gaussian bandwidth,
+  Scott's rule on the pooled16000draws from both methods.
+- paper_figures.py reproduces the new common_target_chains.pdf and retains
+  the original longer-run comparison as a separate saved reference. Updated
+  SI caption and related figure references with kevin additions/strikeouts.
+  No new main-text prose, runtime statements or diagnostics changes.
+- Preserved concurrent Overleaf cleanup3759fd17e while merging the directory
+  move. Current main and SI compile; native document sessions unavailable.
+  Visually inspected all18panels and compiled S-1 page64. No new warnings.
+  The existing theoretical overfull box in ms remains. Figures reproduced
+  from archived draws in a separate tree without any corrected/ alias.
+
 ## October 19: Bayesian code flattened
 
 - The current implementation is directly in code/bayesian, with no tracked

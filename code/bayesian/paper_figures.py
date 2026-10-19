@@ -104,9 +104,14 @@ def main():
     # Fixed display thinning; diagnostics and numerical comparisons use all draws.
     reference_display = rd[:, 24::25, :]
     assert reference_display.shape == (4, 1200, 18)
-    for kind in ('marginals', 'traces', 'reference'):
+    for kind in ('marginals', 'traces', 'reference', 'chains'):
         fig, axes = plt.subplots(6, 3, figsize=(7.2, 9.0), layout='constrained')
-        if kind == 'reference':
+        if kind == 'chains':
+            fig.legend(handles=[
+                Line2D([], [], color='#0072B2', lw=1., label='NUTS: four chains'),
+                Line2D([], [], color='#A33D00', lw=1., ls='--', label='PMMH: four chains')],
+                loc='outside upper center', ncol=2, frameon=False)
+        elif kind == 'reference':
             fig.legend(handles=[
                 Patch(facecolor='#0072B2', edgecolor='#0072B2', alpha=.25,
                       label='NUTS'),
@@ -120,7 +125,15 @@ def main():
             fig.supxlabel('Retained iteration', fontsize=8)
         for j, ax in enumerate(axes.flat):
             grid = grid_for(nd[:, :, j], rd[:, :, j]) if kind == 'reference' else grid_for(nd[:, :, j])
-            if kind == 'reference':
+            if kind == 'chains':
+                grid = grid_for(nd[:, :, j], pd_[:, :, j])
+                pooled = np.concatenate([nd[:, :, j].ravel(), pd_[:, :, j].ravel()])
+                bandwidth = float(np.sqrt(gaussian_kde(pooled).covariance[0, 0]))
+                for draws, color, line in ((nd, '#0072B2', '-'), (pd_, '#A33D00', '--')):
+                    for chain in draws[:, :, j]:
+                        kde = gaussian_kde(chain, bw_method=bandwidth / np.std(chain, ddof=1))
+                        ax.plot(grid, kde(grid), color=color, ls=line, lw=.9, alpha=.85)
+            elif kind == 'reference':
                 nuts_values = nd[:, :, j].ravel()
                 pm_values = reference_display[:, :, j].ravel()
                 # Use a common absolute bandwidth so visual differences are not
@@ -181,6 +194,8 @@ def main():
                                   for p in paths.values() for f in ('audit.json', 'posterior_draws.npz', 'diagnostics.csv')},
                 'main_window': 'First 2000 retained draws after 500 warmup updates, both methods',
                 'reference_window': 'All 30000 retained PMMH draws for diagnostics; display uses iterations 25,50,...,30000 after warmup (1200 per chain)',
+                'chain_window': 'First2000 retained draws after500warmup, all four chains of both methods, no thinning or pooling of displayed curves',
+                'chain_density': 'One KDE per chain. Within each coordinate all eight curves use the same absolute Gaussian bandwidth, Scott rule on pooled16000draws from both methods.',
                 'scales': 'Linear; main figure shares axes by column',
                 'density': 'Main/prior panels: separate Gaussian KDE per chain, scipy Scott bandwidth. Reference overlay: pool four chains per method; PMMH display thinned by25, Scott bandwidth from thinned PMMH, same absolute bandwidth for NUTS.',
                 'timing': 'Equal-iteration main comparison; no runtime claim',
@@ -188,7 +203,7 @@ def main():
                 'bold_cells': bold_cells,
                 'script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
-    print('Wrote four PDF/PNG figures and paired diagnostics to', out)
+    print('Wrote five PDF/PNG figures and paired diagnostics to', out)
 
 
 if __name__ == '__main__':
