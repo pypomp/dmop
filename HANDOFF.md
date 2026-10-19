@@ -1,5 +1,16 @@
 # Handoff
 
+## October 19: Overleaf 2203 conflict resolved
+
+- Merged origin/overleaf-2026-10-19-2203 (988b1b7a3). Preserved the
+  author's SI caption and markup cleanup. The sole conflict overlapped the
+  identity diagnostic table's removed kevin wrapper and relocated input;
+  retained the cleaned wrapper/caption and code/bayesian/results path.
+- New unthinned S-1 figure/caption and all code changes remain intact.
+  Main/SI compile locally, no undefined references or new warnings. Native
+  compiler unavailable (no connected document sessions). File budget remains
+  607 tracked files and 777 distinct historical paths.
+
 ## October 19: S-1 compares individual chains without thinning
 
 - Replaced S-1's pooled NUTS2000/PMMH30000 overlay with eight individual

@@ -12573,8 +12573,7 @@ issue visible.
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_traces.pdf}
-\caption{\sout{Convergence diagnostics for a No-U-Turn Sampler (NUTS) with uniform priors on a compact set, on the trend parameter in the Dhaka cholera model of \mbox{\cite{king08}}. The NUTS sampler explores more of the posterior than the Metropolis-Hastings sampler, but fails to converge quickly.
-      Comparison with Fig.~{\refFigNutsEb} in the main text suggests that the empirical prior assists exploration, though it also changes the sampling target.}\kevin{NUTS traces for all 18 estimation coordinates. Colors identify the four chains, with 2,000 retained iterations per chain after 500 warmup iterations. The long excursions of some seasonal environmental-transmission coefficients are less apparent in the trend diagnostic alone.}}
+\caption{NUTS traces for all 18 estimation coordinates. Colors identify the four chains, with 2,000 retained iterations per chain after 500 warmup iterations. The long excursions of some seasonal environmental-transmission coefficients are less apparent in the trend diagnostic alone.}
 \label{fig:nuts}
 \end{figure}
 \FloatBarrier
@@ -12583,17 +12582,17 @@ issue visible.
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_marginals.pdf}
-\caption{\sout{Marginal sample distributions from NUTS powered by MOP-\mbox{$\alpha$}, with a separate empirical prior fitted to each chain's IF2 parameter cloud. The calculation and diagnostics are given above.}\kevin{Marginal sample distributions from the four NUTS chains for all 18 estimation coordinates, using 2,000 retained iterations per chain. Dashed curves show the common Gaussian prior. Density estimates use Gaussian kernels with Scott bandwidths. The prior is not fitted to the observations or to an IF2 parameter cloud.}}
+\caption{Marginal sample distributions from the four NUTS chains for all 18 estimation coordinates, using 2,000 retained iterations per chain. Dashed curves show the common Gaussian prior. Density estimates use Gaussian kernels with Scott bandwidths. }
 \label{fig:posteriors}
 \end{figure}
 
 \FloatBarrier
 \newpage
 
-\subsection{\kevin{Sampling without covariance tuning}}
+\subsection{Sampling without covariance tuning}
 \label{sec:bayes-identity-control}
 
-\kevin{To assess the effect of covariance tuning, we also ran NUTS with an
+To assess the effect of covariance tuning, we also ran NUTS with an
 identity metric on the estimation coordinates $x$ defined in
 Section~\ref{sec:bayes-common-target}, and PMMH with a fixed diagonal proposal.
 The model, prior, likelihood particle count and four starting points are the
@@ -12604,9 +12603,9 @@ fixed throughout the run. For NUTS, the metric is held fixed but the step
 size is adapted during 500 warmup iterations, starting at 0.002. The final
 step sizes are 0.000811, 0.001238, 0.001121 and 0.000963. The maximum tree
 depth remains 5, and the DMOP force uses 1,000 particles with discount
-parameter 0.95.}
+parameter 0.95.
 
-\kevin{Each chain has 1,500 iterations. We compare iterations 501--1,500
+Each chain has 1,500 iterations. We compare iterations 501--1,500
 for both methods, discarding the first 500 PMMH iterations for this
 comparison although PMMH has no adaptive warmup.
 Figure~\ref{fig:bayes-identity-trend} shows greater movement of the trend
@@ -12616,23 +12615,23 @@ remain for both methods (Figures~\ref{fig:bayes-identity-traces}
 and~\ref{fig:bayes-identity-marginals}). The largest $\widehat R$ is 3.491
 for NUTS and 2.580 for PMMH, and the smallest bulk ESS is 4.4 and 4.8,
 respectively (Table~\ref{tab:bayes-identity-diagnostics}). These runs do not
-provide reliable posterior summaries.}
+provide reliable posterior summaries.
 
-\kevin{There are no divergent NUTS transitions, but every retained
+There are no divergent NUTS transitions, but every retained
 trajectory reaches the depth limit. Thus removing divergences by adapting
 the step size does not ensure adequate exploration. PMMH accepts between
-9.8\% and 13.9\% of proposals during the displayed iterations.}
+9.8\% and 13.9\% of proposals during the displayed iterations.
 
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/results/paper/identity_diagnostics}}}
-\caption{\kevin{Diagnostics for identity-metric NUTS and diagonal PMMH,
+\resizebox{\textwidth}{!}{\input{code/bayesian/results/paper/identity_diagnostics}}
+\caption{Diagnostics for identity-metric NUTS and diagonal PMMH,
 using four chains and iterations 501--1,500 of each chain. The columns give
 rank-normalized split $\widehat R$, bulk and tail ESS, and MCSE of the mean
 on the estimation scale. Bold entries indicate the more favorable value
 within each pair, as in Table~\ref{tab:bayesian-diagnostics}. The large
 between-chain differences limit interpretation of ESS and MCSE; bold entries
-do not indicate convergence.}}
+do not indicate convergence.}
 \label{tab:bayes-identity-diagnostics}
 \end{table}
 \FloatBarrier
@@ -12640,12 +12639,12 @@ do not indicate convergence.}}
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{imgs/pmcmc/identity_control_trend_comparison.pdf}
-\caption{\kevin{Trend-coordinate diagnostics for identity-metric NUTS
+\caption{Trend-coordinate diagnostics for identity-metric NUTS
 (A--C) and diagonal PMMH (D--F). The columns show traces, marginal sample
 densities and autocorrelations for iterations 501--1,500. Colors identify
 the four chains; dashed curves in the density panels show the common prior.
 Corresponding panels have the same scales. The density estimates use a
-common Gaussian-kernel bandwidth across methods and chains.}}
+common Gaussian-kernel bandwidth across methods and chains.}
 \label{fig:bayes-identity-trend}
 \end{figure}
 \FloatBarrier
@@ -12653,10 +12652,10 @@ common Gaussian-kernel bandwidth across methods and chains.}}
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.93\textwidth,height=0.76\textheight,keepaspectratio]{imgs/pmcmc/identity_control_all_parameter_traces.pdf}
-\caption{\kevin{Traces for all 18 estimation coordinates under
+\caption{Traces for all 18 estimation coordinates under
 identity-metric NUTS (blue solid) and diagonal PMMH (orange dashed).
 Each method has four chains, shown over iterations 501--1,500. Several
-coordinates retain substantial differences between chains under both methods.}}
+coordinates retain substantial differences between chains under both methods.}
 \label{fig:bayes-identity-traces}
 \end{figure}
 \FloatBarrier
@@ -12664,14 +12663,14 @@ coordinates retain substantial differences between chains under both methods.}}
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.93\textwidth,height=0.76\textheight,keepaspectratio]{imgs/pmcmc/identity_control_all_parameter_marginals.pdf}
-\caption{\kevin{Marginal sample distributions for the chains in
+\caption{Marginal sample distributions for the chains in
 Figure~\ref{fig:bayes-identity-traces}. Blue solid curves show identity-metric
 NUTS, orange dashed curves show diagonal PMMH, and dotted curves show the
 common prior. Each curve uses all 1,000 retained draws from one chain. For
 each coordinate, all eight estimates use the same absolute Gaussian-kernel
 bandwidth, obtained by Scott's rule from the pooled draws. Differences
 between curves reflect incomplete mixing and cannot be interpreted as
-distinct posterior modes.}}
+distinct posterior modes.}
 \label{fig:bayes-identity-marginals}
 \end{figure}
 \FloatBarrier
