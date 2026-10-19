@@ -1,5 +1,22 @@
 # Handoff
 
+## October 19: shorter-trajectory pilot prepared
+
+- User requested shorter NUTS trajectories versus PMMH on ESS per second,
+  strictly outside manuscript/SI. Prepared short-trajectories-v1: depth2,
+  fresh PMMH, depth3 sequentially on GPU0; four chains each,1100iterations,
+  discard100 and report1000. Same four final primary NUTS parameter states
+  and target. Each method retains its own previously tuned covariance and
+  per-chain step sizes; no new warmup or covariance fitting.
+- Added optional per-chain step sizes to batch.py. Existing scalar/batched
+  NUTS and PMMH equivalence plus fixed-metric tests pass (3 tests). Prepared
+  inputs match complete parent checkpoints; source/input hashes are frozen
+  in protocol.json and a verified compact archive. Report checks completion,
+  fixed tuning, matching starts/targets and shared batch clocks.
+- launch.py runs each arm to completion then writes all18parameter ESS/sec,
+  Rhat and trajectory diagnostics plus comparison plots. No polling, automatic
+  retries/extensions or manuscript edits. See experiment README/protocol.
+
 ## October 19: remove unsolicited Bayesian runtime prose
 
 - User explicitly rejected the added NUTS runtime numbers and computing-time

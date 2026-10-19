@@ -1184,6 +1184,14 @@
       "files": 158,
       "source_revision": "e9fd1a4b19305a1ebad269dab78b0b4bdcf1b334",
       "description": "Completed identity-metric NUTS continuation and diagonal-PMMH comparison, October 19, 2026"
+    },
+    {
+      "path": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "66a4388f66e4e75cde566de6c6f7a0aec9b41464319752caa855ccdcdea426b1",
+      "bytes": 49180,
+      "files": 42,
+      "source_revision": "8e2e755579712ecc1aa560bb8f11ca2cf929e0b2",
+      "description": "Frozen source and inputs for shorter-trajectory pilot, October 19, 2026"
     }
   ],
   "files": [
@@ -58330,6 +58338,342 @@
       "bytes": 136,
       "mode": "100644",
       "git_blob": "4de3e29e797bed9d7f765e42b765ac13f360487c"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/initial0.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "9c0648cab11383e12a307c510e8c24f2eebce004f9d14495c16617d8637d21da",
+      "bytes": 272,
+      "mode": "100644",
+      "git_blob": "6702cacfca74e0e7e247830a1d8a44503d49dc1a"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/initial1.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7ff9c4a488cb4de304e14fcf2aa7c4aab58ffcb3b770d1a3dc4bc0c2a54e0f41",
+      "bytes": 272,
+      "mode": "100644",
+      "git_blob": "ae48a5fa0adc50749bbc0b9d06c2d47cbae71e53"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/initial2.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "8a1bff0f929c8b8eca3e565e847e57d0b7f8e907b05a283bdb14da7ed92b6782",
+      "bytes": 272,
+      "mode": "100644",
+      "git_blob": "62261ab000e38ad2b2ee29703ffdf516dbad8559"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/initial3.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "d9b070bb476d3c96b699a3bd514fb79a8b4bda6973bb175b831ca5120947d95d",
+      "bytes": 272,
+      "mode": "100644",
+      "git_blob": "3f3798a1e6c1b8cb14bd1eea3012878c86288203"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/nuts-chol0.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "affa7be6299d0580d098a40a5375a6d71b3fdba9"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/nuts-chol1.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "affa7be6299d0580d098a40a5375a6d71b3fdba9"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/nuts-chol2.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "affa7be6299d0580d098a40a5375a6d71b3fdba9"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/nuts-chol3.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "affa7be6299d0580d098a40a5375a6d71b3fdba9"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/pmrw-chol0.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "3027dd0bbdc0926ef64a6afe4677cd2c8e54b785"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/pmrw-chol1.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "3027dd0bbdc0926ef64a6afe4677cd2c8e54b785"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/pmrw-chol2.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "3027dd0bbdc0926ef64a6afe4677cd2c8e54b785"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/inputs/pmrw-chol3.npy",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+      "bytes": 2720,
+      "mode": "100644",
+      "git_blob": "3027dd0bbdc0926ef64a6afe4677cd2c8e54b785"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/batch.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "641492bfac1b4aa711eda7e5e7ce1b388ce9b1176bd8b88ff4c5097f2ac04719",
+      "bytes": 10364,
+      "mode": "100644",
+      "git_blob": "56490995d0dc95be8952afa8a57c4f12fb372bc1"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/batch_extend.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "59aff6d38c56e16ffec68f86786f7c8438af2f72565c33a4bcba3c4d2694f8ff",
+      "bytes": 14575,
+      "mode": "100644",
+      "git_blob": "58cb2d6fc22b03b24b327066bda074d19a47931b"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/compare.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "a9f2f5512dd4c87e3ccd5b3344cd89219104bdf9ddb482addc9f439f45f6fb8f",
+      "bytes": 7494,
+      "mode": "100644",
+      "git_blob": "0f288b96d2a4b8bd700e0e7cd51d4622be713ac9"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/conditional_force_check.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
+      "bytes": 2554,
+      "mode": "100644",
+      "git_blob": "ed6011f58c5d2a2fb14c72eddddb3eb9739680c2"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/coupling.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+      "bytes": 1411,
+      "mode": "100644",
+      "git_blob": "dc6f63a4bac6b691ca92837dcf0d8d82cfc7582b"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/device_check.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "3dbc75981a06f97092bf6757a3f4a4b15ff6db632284219e259529bf06979183",
+      "bytes": 5896,
+      "mode": "100644",
+      "git_blob": "1c114b8017bc8d930f18bce133dedf8d39089f12"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/ess_timing.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "436da8cb2be04d39270366a4cc8ba3ff8bad7317fdeddb508f62799d30fd7998",
+      "bytes": 4940,
+      "mode": "100644",
+      "git_blob": "295c5c2adb1c05396954cbdccef99b6775e0e972"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/extend.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "8ca296d3cf513f5e187bf64130fc48f95a2c760a62bf430084c2de6e3a8528ac",
+      "bytes": 11055,
+      "mode": "100644",
+      "git_blob": "6c643f97f4ac1e1d03951d523aa9f8b448d6b2a1"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/force_check.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+      "bytes": 3641,
+      "mode": "100644",
+      "git_blob": "82deaaffedf565c9f44984930bae93a2afe0dbb6"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/force_modes.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "50e2a3fc42bbb460ee60e4f9a9465982e6a7a6af21b037a9b5765d471a545029",
+      "bytes": 560,
+      "mode": "100644",
+      "git_blob": "99471d89dc26f8fe6acdf33ca93e06e05faaca40"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/identity_comparison.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "c412b38f857fce5495c54abe662a0e7e22fb67538a306ad078922b64b96f8a10",
+      "bytes": 13128,
+      "mode": "100644",
+      "git_blob": "138fedc972b25badd02e608744385f54bb8428aa"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/kernels.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+      "bytes": 5574,
+      "mode": "100644",
+      "git_blob": "71d954b12d6d57e765351bb9b71e053faf305d9f"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/metric.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+      "bytes": 1722,
+      "mode": "100644",
+      "git_blob": "831973076dc5dff7065d852b9125fd75cf3495c4"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/model.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+      "bytes": 7518,
+      "mode": "100644",
+      "git_blob": "cb37a95b60ba4cbb049d366424fe1d9a40a5d82b"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/noise_check.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "6b0981402545090021f7dfa84c0da4e679d91eac14adc6db29a44e793c4f52b1",
+      "bytes": 4680,
+      "mode": "100644",
+      "git_blob": "ad4fdb27b90d3f146db0b213a74dc7edde5cca1a"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/nuts.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+      "bytes": 2313,
+      "mode": "100644",
+      "git_blob": "f4fc9cceefaf2ae923c1d1db5abb020208d16e62"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/paper_figures.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "9e2a8bf3c2c9ccab108cc22f5052dfc48ebd46b325fa1da2a31d17ef1147019e",
+      "bytes": 9750,
+      "mode": "100644",
+      "git_blob": "4b448a5dd3cfe6589633044aaaa856442a254034"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/preflight.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+      "bytes": 2799,
+      "mode": "100644",
+      "git_blob": "2a7944b9bdd71d1f43cbb5daa9a0a4a86bfb22bd"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/report.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "86fba7f200061237d99c6c26b6cfba374b442f1a0915188eee57b75c0a6cd73b",
+      "bytes": 10568,
+      "mode": "100644",
+      "git_blob": "98226d09312942cf8095674a134c154fca0fbea2"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/run.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "1ecda9f8d66d7b7be82cb0f2468cc32130f42a23704f68fab94b9c4701fec3a1",
+      "bytes": 9257,
+      "mode": "100644",
+      "git_blob": "f99e10f3393f92e5ea4d04f8722fd6d305478f78"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/sensitivity.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "a28f47d871ed3c8a9db0ab181bd3eab25d3d756b06430031985023db6ca13166",
+      "bytes": 5906,
+      "mode": "100644",
+      "git_blob": "5111993707a1df9e61b4cb728effc3e24563a6cf"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_batch.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
+      "bytes": 2510,
+      "mode": "100644",
+      "git_blob": "f62362e2ad8086e23fd0ae870ea073ce18c9d21d"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_batch_extend.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "833b82eed8cd0e9b9ae4826fbf0c828bf14df701c731bb4c1639ba9532fd6c0c",
+      "bytes": 4830,
+      "mode": "100644",
+      "git_blob": "c705876272519fac395fa69deef670f961855ed7"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_force_modes.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "de1d7a0965535a3df183c9a15925889ae7f4b639b0c2377d5f9e310947c9484e",
+      "bytes": 1287,
+      "mode": "100644",
+      "git_blob": "3655e68fcee697d8419f3af908ca403c17de7798"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_kernels.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+      "bytes": 3769,
+      "mode": "100644",
+      "git_blob": "fc2d29919e30e0df2019b84881dab8df77346965"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_model.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
+      "bytes": 1832,
+      "mode": "100644",
+      "git_blob": "0c6028ad8b556021706feaabb1fc3f815b7d1800"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_noise_check.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "d43896866ded4580a7ebf64c97e80e6b04faff42c506f9c57e70624371318378",
+      "bytes": 950,
+      "mode": "100644",
+      "git_blob": "7e68c65a525a27866cc4b6436731d3e18d8b9b45"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_nuts.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+      "bytes": 2024,
+      "mode": "100644",
+      "git_blob": "6579afe765d4211c2da4e6ed0564434cc598e8f4"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_recovery.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
+      "bytes": 3938,
+      "mode": "100644",
+      "git_blob": "11f8f729877878f070224d719f707b3d51bb803b"
+    },
+    {
+      "path": "code/bayesian/corrected/results/short-trajectories-v1/source/test_sensitivity.py",
+      "archive": "code--bayesian--corrected--results--short-trajectories-inputs-20261019.tar.gz",
+      "sha256": "9ff6f3ee848af8dba51f9d1ad9e89f63f90cf0a121f5bc85c4ac9fa3331eec20",
+      "bytes": 1476,
+      "mode": "100644",
+      "git_blob": "4eaa0a5700508b24dfbbfbd606a4ec9c490b8ed5"
     }
   ]
 }

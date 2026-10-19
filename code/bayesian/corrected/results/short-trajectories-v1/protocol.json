@@ -1,0 +1,114 @@
+{
+  "utc": "2026-10-19T18:10:13.923959+00:00",
+  "gpu": 0,
+  "arms": [
+    [
+      "nuts-depth2",
+      "nuts",
+      2
+    ],
+    [
+      "pmmh",
+      "pmrw",
+      2
+    ],
+    [
+      "nuts-depth3",
+      "nuts",
+      3
+    ]
+  ],
+  "particles": 10000,
+  "force_particles": 1000,
+  "force_precision": "float32",
+  "force_mode": "forward",
+  "alpha": 0.95,
+  "prior_scale": 1.0,
+  "warmup": 0,
+  "draws": 1100,
+  "discard": 100,
+  "retained": 1000,
+  "checkpoint": 25,
+  "steps": {
+    "nuts": [
+      0.049496479379765305,
+      0.06020414638067355,
+      0.04795603137799527,
+      0.04993027220309959
+    ],
+    "pmrw": [
+      0.7455973825775967,
+      0.6765488592457065,
+      0.7378821373707612,
+      0.7671509584015328
+    ]
+  },
+  "seeds": [
+    2026101920,
+    2026101921,
+    2026101922,
+    2026101923
+  ],
+  "xla_flags": "--xla_gpu_deterministic_ops=true --xla_gpu_enable_scatter_determinism_expander=true",
+  "pypomp_revision": "d231517c4e84d2b270b7ba2a9461083cc0973ed3",
+  "parent_checkpoint_sha256": {
+    "code/bayesian/corrected/results/gpu-forward-nuts-v2/nuts/chain0/checkpoint.npz": "672691beddd5cde68c7c1273195e14c3fb3b55f3e49be2547368ed2f1787b510",
+    "code/bayesian/corrected/results/gpu-forward-nuts-v2/nuts/chain1/checkpoint.npz": "35d29ecb60cf820b418b81be948f0fcf882de1230ea9d18c4c110c53c1c0df6c",
+    "code/bayesian/corrected/results/gpu-forward-nuts-v2/nuts/chain2/checkpoint.npz": "c5a13766b2ad1960eb9413cb7d264c3f3833195c6d847986ae96713898b0e121",
+    "code/bayesian/corrected/results/gpu-forward-nuts-v2/nuts/chain3/checkpoint.npz": "224ade992c73319127512d7281a6f632a8c30a32da9f94442eff06f012173fff",
+    "code/bayesian/corrected/results/gpu-comparison-v2/pmrw-long/chain0/checkpoint.npz": "6e404090a7ad428e3cf275b0e8445a037c2bffdcdfc187c779a336def7ff9eb1",
+    "code/bayesian/corrected/results/gpu-comparison-v2/pmrw-long/chain1/checkpoint.npz": "f37f38e0d4321c8090e6f4347688a9694d05219393769e8a732da40b34fbfba5",
+    "code/bayesian/corrected/results/gpu-comparison-v2/pmrw-long/chain2/checkpoint.npz": "95deaa84c6e34f5852667dce3575bd13c7f6b15e8dbd81308d22d63bf3bb2097",
+    "code/bayesian/corrected/results/gpu-comparison-v2/pmrw-long/chain3/checkpoint.npz": "540facf83d68b687229a08d85e283892326454fdf0987260e5bed3067bf738eb"
+  },
+  "source_sha256": {
+    "test_force_modes.py": "de1d7a0965535a3df183c9a15925889ae7f4b639b0c2377d5f9e310947c9484e",
+    "force_check.py": "da36e44af411938dd0ed2735193f1adfecec13c6b95af79866af14e24ee4cf2d",
+    "sensitivity.py": "a28f47d871ed3c8a9db0ab181bd3eab25d3d756b06430031985023db6ca13166",
+    "force_modes.py": "50e2a3fc42bbb460ee60e4f9a9465982e6a7a6af21b037a9b5765d471a545029",
+    "coupling.py": "337d4ff3c672235e9fba352229c3e79b0e13462cb8e2fd4fc2393e8ad76a6ffa",
+    "test_batch_extend.py": "833b82eed8cd0e9b9ae4826fbf0c828bf14df701c731bb4c1639ba9532fd6c0c",
+    "extend.py": "8ca296d3cf513f5e187bf64130fc48f95a2c760a62bf430084c2de6e3a8528ac",
+    "test_sensitivity.py": "9ff6f3ee848af8dba51f9d1ad9e89f63f90cf0a121f5bc85c4ac9fa3331eec20",
+    "identity_comparison.py": "c412b38f857fce5495c54abe662a0e7e22fb67538a306ad078922b64b96f8a10",
+    "test_model.py": "7dc579f56c458f8f9c38ee97f88617fc36b566297aa9ff6beed1b11286b5a389",
+    "test_kernels.py": "29b461f97527b849804aa77339628bd1de6c3d41c92467ef88ed5c2d3a7160a8",
+    "ess_timing.py": "436da8cb2be04d39270366a4cc8ba3ff8bad7317fdeddb508f62799d30fd7998",
+    "kernels.py": "39a6d9a54fc2f85e5b8ae8644cf9335c9cff387d49813e717329549a683a2636",
+    "batch_extend.py": "59aff6d38c56e16ffec68f86786f7c8438af2f72565c33a4bcba3c4d2694f8ff",
+    "preflight.py": "05daf96d16d0b529b71b3e1a2ff4dcf0bd1b166bfef2c900c2e4c3464d41c269",
+    "model.py": "c4804a1b44da1203f98f1306b1a346dd58e55c397f9e809e91d29684968e4664",
+    "batch.py": "641492bfac1b4aa711eda7e5e7ce1b388ce9b1176bd8b88ff4c5097f2ac04719",
+    "report.py": "86fba7f200061237d99c6c26b6cfba374b442f1a0915188eee57b75c0a6cd73b",
+    "test_noise_check.py": "d43896866ded4580a7ebf64c97e80e6b04faff42c506f9c57e70624371318378",
+    "nuts.py": "c0e1bbb8b4c58f8d14a5f31c7954007ed84762a0bad01844c38000c1f789d35f",
+    "run.py": "1ecda9f8d66d7b7be82cb0f2468cc32130f42a23704f68fab94b9c4701fec3a1",
+    "test_nuts.py": "af8aaed8fcd6a86909b705101441fd38b9e20a75c7f7d013cc47737fa298e021",
+    "noise_check.py": "6b0981402545090021f7dfa84c0da4e679d91eac14adc6db29a44e793c4f52b1",
+    "test_recovery.py": "f4d3783c7242992ee2b6c35a799bf1e954e3a1853775da08c94011eaa732277e",
+    "compare.py": "a9f2f5512dd4c87e3ccd5b3344cd89219104bdf9ddb482addc9f439f45f6fb8f",
+    "test_batch.py": "718b69ffde45d2e56eaab9b3fc17210020b96d6d8b6d57181fc4a74a0b3d9aa8",
+    "metric.py": "8ace30943734e99ad8a710818cae9c88f878bf1e2dbf334dab455b095bdb9c26",
+    "conditional_force_check.py": "98fc34a7a634c897a341cd0910acea4b9638f4c4705d4f3aabab2a1f7ae44984",
+    "paper_figures.py": "9e2a8bf3c2c9ccab108cc22f5052dfc48ebd46b325fa1da2a31d17ef1147019e",
+    "device_check.py": "3dbc75981a06f97092bf6757a3f4a4b15ff6db632284219e259529bf06979183"
+  },
+  "input_sha256": {
+    "pmrw-chol2.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+    "pmrw-chol3.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+    "nuts-chol1.npy": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+    "initial1.npy": "7ff9c4a488cb4de304e14fcf2aa7c4aab58ffcb3b770d1a3dc4bc0c2a54e0f41",
+    "initial2.npy": "8a1bff0f929c8b8eca3e565e847e57d0b7f8e907b05a283bdb14da7ed92b6782",
+    "initial0.npy": "9c0648cab11383e12a307c510e8c24f2eebce004f9d14495c16617d8637d21da",
+    "initial3.npy": "d9b070bb476d3c96b699a3bd514fb79a8b4bda6973bb175b831ca5120947d95d",
+    "pmrw-chol0.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+    "pmrw-chol1.npy": "7fa65bcfbddcfc0af97341b9e0853ba15e1f2d5a2981da2da7c0dd377f809ba6",
+    "nuts-chol3.npy": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+    "nuts-chol2.npy": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016",
+    "nuts-chol0.npy": "3c98a9c895e93af4ba02283c88312c671be6e4f58333b88c88d8ff47258c0016"
+  },
+  "initialization": "Same four final primary NUTS parameter states in all arms; fresh filter randomness. Each method retains its previously tuned matrix and lane-specific step sizes.",
+  "timing": "Sequential on GPU0 outside MPS. Exclude first100 updates from ESS and retained timing; report their cost separately. Pilot preparation excluded. Other host GPU workloads may change.",
+  "assessment": "Report all18 bulk/tail ESS per second, Rhat, divergences and depth saturation. Small ESS or between-chain separation prevents a firm efficiency conclusion. No selection or extension from interim results.",
+  "manuscript": "No automatic manuscript/SI text or figure changes."
+}

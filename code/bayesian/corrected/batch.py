@@ -54,7 +54,10 @@ def main():
     p.add_argument('--max-depth', type=int, default=4)
     p.add_argument('--warmup', type=int, default=500)
     p.add_argument('--draws', type=int, default=1000)
-    p.add_argument('--step-size', type=float, required=True)
+    step_args = p.add_mutually_exclusive_group(required=True)
+    step_args.add_argument('--step-size', type=float)
+    step_args.add_argument('--step-sizes', type=float, nargs='+',
+                           help='One supplied step size per chain, in lane order')
     p.add_argument('--max-step-size', type=float, default=2.)
     p.add_argument('--checkpoint', type=int, default=5)
     p.add_argument('--fixed-metric', action='store_true',
@@ -63,8 +66,11 @@ def main():
     n = len(a.seeds)
     if n != len(a.initials) or n != len(a.metrics) or len(set(a.seeds)) != n:
         p.error('Supply equal numbers of initial vectors, factors and distinct seeds')
+    eps = np.asarray(a.step_sizes if a.step_sizes is not None else [a.step_size]*n)
+    if eps.shape != (n,) or not np.isfinite(eps).all() or np.any(eps <= 0):
+        p.error('Supply one positive finite step size per chain')
     if min(a.particles, a.force_particles, a.max_depth, a.draws,
-           a.checkpoint, a.step_size, a.prior_scale) <= 0 or a.warmup < 0:
+           a.checkpoint, a.prior_scale) <= 0 or a.warmup < 0:
         p.error('Counts/scales must be positive; warmup may be zero')
     if not jax.config.jax_enable_x64:
         p.error('The acceptance target must use float64')
@@ -101,7 +107,7 @@ def main():
         for f in Path(__file__).parent.glob('*.py'):
             shutil.copy2(f, source/f.name)
         cfg = {k: v for k, v in vars(a).items() if k not in ['output', 'initials', 'metrics', 'seeds']}
-        cfg.update(meta, output=str(folder), seed=a.seeds[c], initial=str(a.initials[c]),
+        cfg.update(meta, step_size=float(eps[c]), output=str(folder), seed=a.seeds[c], initial=str(a.initials[c]),
                    metric=str(a.metrics[c]), optimize=0, optimize_particles=a.particles,
                    sort_particles=False, steps=4, batch_chain_index=c,
                    source_sha256={f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in source.glob('*.py')})
@@ -125,7 +131,6 @@ def main():
         raise ValueError('Initial particle filter collapsed')
     initialize_seconds = time.monotonic()-start
     advance = batched_transition(kernel)
-    eps = np.full(n, a.step_size)
     metric_traces = np.sum(chols**2, axis=(1, 2))
     traces, infos, steps, times = [], [], [], []
     metrics = [[] for _ in range(n)]
