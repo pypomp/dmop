@@ -9,6 +9,7 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import shutil
 
 import arviz as az
 import matplotlib
@@ -61,6 +62,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for key in ['nuts', 'pmmh', 'parent', 'output']:
         parser.add_argument('--'+key, required=True, type=Path)
+    parser.add_argument('--paper', action='store_true',
+                        help='Copy the three SI figures and diagnostic table into manuscript paths')
     args = parser.parse_args()
     nc, na, nf, nh = read_batch(args.nuts, 'nuts')
     pc, pa, pf, ph = read_batch(args.pmmh, 'pmrw')
@@ -102,6 +105,26 @@ def main():
                              mcse_mean=float(az.mcse(x, method='mean'))))
     table = pd.DataFrame(rows)
     table.to_csv(out/'diagnostics.csv', index=False)
+    tex = [r'\begin{tabular}{lrrrrrrrr}', r'\toprule',
+           r'& \multicolumn{4}{c}{Identity-metric NUTS} & \multicolumn{4}{c}{Diagonal PMMH} \\',
+           r'\cmidrule(lr){2-5}\cmidrule(lr){6-9}',
+           r'Coordinate & $\widehat R$ & Bulk ESS & Tail ESS & MCSE & $\widehat R$ & Bulk ESS & Tail ESS & MCSE \\',
+           r'\midrule']
+    for name, label in zip(NAMES, LABELS):
+        pair = table[table.parameter == name].set_index('method')
+        cells = []
+        for method, other in [('nuts', 'pmmh'), ('pmmh', 'nuts')]:
+            for field, fmt in [('rhat', '.3f'), ('ess_bulk', '.1f'),
+                               ('ess_tail', '.1f'), ('mcse_mean', '.3g')]:
+                value, reference = pair.loc[method, field], pair.loc[other, field]
+                better = (abs(value-1) < abs(reference-1) if field == 'rhat'
+                          else value < reference if field == 'mcse_mean'
+                          else value > reference)
+                cell = format(value, fmt)
+                cells.append(r'\textbf{'+cell+'}' if better else cell)
+        tex.append(label+' & '+' & '.join(cells)+r' \\')
+    tex += [r'\bottomrule', r'\end{tabular}']
+    (out/'diagnostics.tex').write_text('\n'.join(tex)+'\n')
     summary = {}
     for method, arrays in [('nuts', na), ('pmmh', pa)]:
         t = table[table.method == method]
@@ -197,6 +220,13 @@ def main():
         comparison='Equal iterations, not equal computing time. PMMH discard is not adaptation.',
         visual_review='pending', posterior_draws_sha256=sha(out/'posterior_draws.npz'))
     (out/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    if args.paper:
+        repo = Path(__file__).resolve().parents[3]
+        for name in ['trend_comparison', 'all_parameter_traces', 'all_parameter_marginals']:
+            shutil.copyfile(out/f'{name}.pdf', repo/'imgs/pmcmc'/f'identity_control_{name}.pdf')
+        target = Path(__file__).resolve().parent/'results/paper/identity_diagnostics.tex'
+        target.parent.mkdir(exist_ok=True)
+        shutil.copyfile(out/'diagnostics.tex', target)
     print(json.dumps(summary, indent=2), flush=True)
 
 

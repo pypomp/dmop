@@ -4,9 +4,11 @@ Run outputs are ignored by default. Keep source, manuscript assets, small run
 instructions/settings and required LaTeX table inputs as ordinary files.
 Do not force-add entire result directories or duplicate source snapshots.
 
-`packed/manifest.json` lists 6,985 previously tracked result files, their
-original paths, sizes, Git blob IDs and SHA-256 hashes. The 195 compressed
-archives contain their exact bytes at the recorded source revision. Each
+The original compact snapshot contains 6,985 previously tracked result files
+in 195 archives. The October 19 identity-metric NUTS completion adds 158 files
+in one 6.9 MB archive, including final checkpoints and comparison outputs.
+`packed/manifest.json` lists all 7,143 files with their original paths, sizes,
+Git blob IDs and SHA-256 hashes. The archives contain their exact bytes. Each
 archive is smaller than 20 MB. All members have been independently verified.
 
 Restore only the study needed for a reproduction, for example:
@@ -20,7 +22,7 @@ The figure script also needs `gpu-comparison-v2`; restore that prefix first.
 Restoration preserves the original directory layout and refuses to overwrite
 different local files. Use `--destination /path/to/staging` to inspect a
 separate restoration; `--verify-only` checks hashes without writing files.
-Run without `--prefix` to restore all 6,985 files. Files stay ignored locally.
+Run without `--prefix` to restore all archived files. Files stay ignored locally.
 The separate October 6 archive described in README.md still holds older bulk
 outputs that were already untracked before this snapshot.
 

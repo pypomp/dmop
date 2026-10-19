@@ -1,5 +1,26 @@
 # Handoff
 
+## October 19: identity-metric comparison added to SI
+
+- Added Section S8.4 with all prose, captions and the diagnostic table inside
+  `\kevin{}`. Existing manuscript prose is unchanged. Three vector figures
+  show trend traces/densities/ACFs and all18parameter traces/marginals; the
+  table reports Rhat, bulk/tail ESS and MCSE for both methods. Text describes
+  fixed metrics, adapted NUTS steps, PMMH proposal, comparison window,
+  divergences, poor mixing and recorded timing limitations.
+- `identity_comparison.py --paper` now reproduces the table and copies the
+  three SI PDFs. Ran it successfully with the real final chains; all existing
+  completion, common-target, exact-prefix and frozen-tuning checks pass.
+- Added158verified final result files in one6.9MB archive. Existing9matching
+  records were preserved. Restored165continuation/comparison files into a
+  separate temporary directory and verified checksums. Raw outputs stay
+  ignored; only three PDFs, one required table, one run README and the archive
+  are new tracked assets. Restore commands are in the run README.
+- Local SI compilation passes; native compiler unavailable (no document
+  sessions). Visually reviewed added text/table and all three figure pages.
+  Shared comparison-figure macro updated from S-10 to S-13 after insertion.
+  No sampler changes or additional simulations.
+
 ## October 19: identity-metric comparison complete
 
 - Identity-metric NUTS and its worker finished successfully; comparison ready

@@ -108,8 +108,8 @@ Compare with the completed diagonal PMMH control in
 `results/historical-proposal-control-v1/pmrw` (fixed standardized SD .02,
 no adaptation, 1,500 iterations). Use iterations 501--1500 for both methods,
 with full traces showing the first 500 separately. The first 500 PMMH draws
-are discarded for this comparison, not an adaptive warmup. The additional
-SI figure is pending completion of the replacement NUTS control. This is a
+are discarded for this comparison, not an adaptive warmup. The completed
+comparison is in SI Section S8.4. This is a
 comparison of identity-metric NUTS with adapted steps versus fixed diagonal
 PMMH; do not describe it as a replication of the archived NUTS settings.
 The October 17 batch was interrupted by the shared GPU fault described in
@@ -126,7 +126,10 @@ frozen tuning, common targets and identical starting points before using
 iterations 501--1500 from both methods. It writes trend traces/densities/ACFs,
 full trend traces, all-parameter traces and marginals, and all-parameter
 R-hat/ESS/MCSE diagnostics into `identity-adapt-nuts-v1/comparison`.
-Those generated outputs are ignored until reviewed and explicitly archived.
+The reviewed outputs and completed checkpoints are archived in one bundle
+under `artifacts/packed`; generated files remain ignored. The run's
+[README](results/identity-adapt-nuts-v1/README.md) gives restoration and
+reproduction commands. Use `--paper` to update the three SI figures and table.
 All diagnostics and densities use all 1,000 retained draws per chain.
 
 The isolated dependencies and durable log live under ignored `.runtime/`.
