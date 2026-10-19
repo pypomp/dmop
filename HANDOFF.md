@@ -1,5 +1,17 @@
 # Handoff
 
+## October 19: requested status check
+
+- Identity-adapt NUTS is no longer running: host PID613935 is absent and
+  nvidia-smi reports no compute processes. Its /tmp launch log is unavailable.
+- All four saved checkpoints contain exactly 500 iterations (the configured
+  warmup), with complete=false. No retained posterior draws are saved. The
+  last batch status reports 22442 seconds; the reason for termination is
+  unknown. Do not report this run as complete or infer a posterior comparison.
+- No restart was attempted. Resume requires preserving these checkpoints and
+  the frozen step sizes; no automatic restart/polling is authorized. Diagonal
+  PMMH is complete; the new NUTS/PMMH comparison remains pending.
+
 ## October 17: Bayesian artifact cleanup
 
 - Consolidated reproducibility records for identity-adapt-nuts-v1/nuts,
