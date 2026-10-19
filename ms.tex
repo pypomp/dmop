@@ -569,7 +569,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
 In our runs, particle Metropolis-Hastings, with or without said prior, explored the parameter space slowly.
 We display these results in the supplement (Section~\suppSecBayesFigs). 
 These preliminary results suggest that combining gradient estimates with empirical priors could accelerate particle Bayesian computation for complex scientific models.
-Differences in the priors, tempering and model formulations preclude interpreting the iteration counts as a matched-target speedup or as evidence of convergence to a common posterior.}\kevin{With the same prior and starting points, NUTS explores the trend parameter more rapidly per iteration than particle Metropolis--Hastings (Figure~\ref{fig:nuts-eb}). Table~\ref{tab:bayes-main-diagnostics} gives quantitative comparisons for all estimated parameters. These preliminary results suggest that DMOP gradient estimates could accelerate particle Bayesian computation for complex scientific models. Some seasonal parameters require longer runs, and the comparison does not establish a computing-time advantage (Supplementary Section~\suppSecBayesFigs).}
+}\kevin{With the same prior and starting points, NUTS explores the trend parameter more rapidly per iteration than particle Metropolis--Hastings (Figure~\ref{fig:nuts-eb}). Table~\ref{tab:bayes-main-diagnostics} gives quantitative comparisons for all estimated parameters. These preliminary results suggest that DMOP gradient estimates could accelerate particle Bayesian computation for complex scientific models. Some seasonal parameters require longer runs (Supplementary Section~\suppSecBayesFigs).}
 
 
 \begin{table}[tb]

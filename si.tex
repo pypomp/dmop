@@ -12570,9 +12570,8 @@ There was no step-size adaptation. Each run saved 1,500 draws; the figures
 discard the first 500. The library's NUTS transition uses the supplied
 potential and its AD force, without an additional likelihood correction.
 Only the parameter draws were saved. The fitted prior clouds, kernel
-diagnostic traces and computation times were not archived, so prior
-overlays, divergence counts, tree-depth saturation and ESS per second
-cannot be recovered from these files.}
+diagnostic traces were not archived, so prior overlays, divergence counts
+and tree-depth saturation cannot be recovered from these files.}
 
 \sout{Table~\mbox{\ref{tab:bayesian-diagnostics}} summarizes the retained draws.
 The between-chain differences include differences in fitted priors, so
@@ -12616,9 +12615,7 @@ the sampled trend standard deviation (0.112 versus 0.115), but gives wider
 lower tails for some seasonal environmental-transmission coefficients.
 These tails also mix slowly, so the comparison does not establish prior
 insensitivity. The prior overlays in Figure~\ref{fig:posteriors} make this
-issue visible. The calculations were run on shared GPUs, and preparation
-of both samplers used optimization and pilot runs. The iteration comparison
-therefore does not measure a computing-time speedup.}
+issue visible.}
 
 \begin{table}[htbp]
 \centering
@@ -12699,12 +12696,7 @@ provide reliable posterior summaries.}
 \kevin{There are no divergent NUTS transitions, but every retained
 trajectory reaches the depth limit. Thus removing divergences by adapting
 the step size does not ensure adequate exploration. PMMH accepts between
-9.8\% and 13.9\% of proposals during the displayed iterations. The retained
-iterations take 10.6 hours for the four NUTS chains together and 0.60 hours
-for PMMH. These recorded times exclude preparation and warmup and were
-obtained under different GPU workloads. The comparison illustrates
-sensitivity to proposal settings; it does not establish a computing-time
-advantage for NUTS.}
+9.8\% and 13.9\% of proposals during the displayed iterations.}
 
 \begin{table}[H]
 \centering

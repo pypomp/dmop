@@ -1,5 +1,18 @@
 # Handoff
 
+## October 19: remove unsolicited Bayesian runtime prose
+
+- User explicitly rejected the added NUTS runtime numbers and computing-time
+  caveats. Removed them from both manuscript and SI, including obsolete
+  struck text mentioning ESS per second. Verified neither Bayesian section
+  retains these statements; local main/SI compilation passes.
+- Standing boundary: runtime/ESS-per-second experiments and reports belong
+  in code and chat unless the user explicitly requests manuscript inclusion.
+  Do not add or restore such manuscript caveats without that request.
+- Shorter-trajectory experiment remains requested: depths2/3 with frozen
+  tuned covariance/steps and fresh PMMH control. GPUs were idle at the
+  preparation check. No new run has launched yet.
+
 ## October 19: identity-metric comparison added to SI
 
 - Added Section S8.4 with all prose, captions and the diagnostic table inside
