@@ -1,5 +1,17 @@
 # Handoff
 
+## October 19: Overleaf 2044 conflict resolved
+
+- Merged origin/overleaf-2026-10-19-2044 (090208737). Kept the author's
+  revised Bayesian discussion, removal of the main diagnostic table and
+  approximate-gradient target-error sentence, and theory introduction edit.
+  Resolved the overlapping Bayesian paragraph in favor of the new Overleaf
+  wording; retained all newer SI, experiment and code changes from main.
+- Main and SI compile locally without undefined references or citations.
+  Native compiler unavailable (no connected document sessions). Existing
+  theory overfull box remains. File budget: 635 tracked files and 683
+  historical paths; no history rewrite or experiment changes.
+
 ## October 19: shorter-trajectory pilot prepared
 
 - Launched worker1892072/create1792433476.79 on GPU0 under80ce73d5e.
