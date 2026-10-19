@@ -12508,7 +12508,7 @@ Equation~\ref{eq:bayes-common-target} and the common prior.
 The force and likelihood are therefore separate numerical calculations.
 Step sizes are adapted during 500 warmup iterations and then held fixed.
 The implementation, prior specification and checks of the sampling kernels
-are available in \texttt{code/bayesian/corrected}.
+are available in \texttt{code/bayesian}.
 
 \subsection{\sout{Archived sampling calculation and empirical priors}\kevin{Sampling settings and diagnostics}}
 
@@ -12596,7 +12596,7 @@ Only the scalar step size is adapted during warmup, with target acceptance
 probabilities 0.65 for NUTS and 0.234 for PMMH. Initial step sizes are 0.07
 and 0.5, respectively. The final NUTS step sizes range from 0.048 to 0.060.
 The proposal matrices, starting points, random seeds and software versions
-are saved with the code in \texttt{code/bayesian/corrected}.}
+are saved with the code in \texttt{code/bayesian}.}
 
 \kevin{Table~\ref{tab:bayesian-diagnostics} gives diagnostics for all 18
 coordinates in the 2,000-iteration comparison. For the trend coordinate,
@@ -12619,7 +12619,7 @@ issue visible.}
 
 \begin{table}[htbp]
 \centering
-\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/corrected/results/paper/diagnostics}}}
+\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/results/paper/diagnostics}}}
 \caption{\sout{Diagnostics for the four archived empirical-prior NUTS runs,
 using 1,000 retained draws per run. The rank-normalized split
 \mbox{$\widehat R$} compares all four runs, whose fitted priors differ.
@@ -12700,7 +12700,7 @@ the step size does not ensure adequate exploration. PMMH accepts between
 
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/corrected/results/paper/identity_diagnostics}}}
+\resizebox{\textwidth}{!}{\kevin{\input{code/bayesian/results/paper/identity_diagnostics}}}
 \caption{\kevin{Diagnostics for identity-metric NUTS and diagonal PMMH,
 using four chains and iterations 501--1,500 of each chain. The columns give
 rank-normalized split $\widehat R$, bulk and tail ESS, and MCSE of the mean

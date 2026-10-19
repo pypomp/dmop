@@ -1,7 +1,7 @@
 """Verify and restore selected archived results without overwriting local work.
 
 Run from any directory: python artifacts/restore_results.py --prefix
-code/bayesian/corrected/results/gpu-forward-nuts-v2
+code/bayesian/results/gpu-forward-nuts-v2
 Omit --prefix to restore all archived results. Restored outputs are ignored.
 """
 import argparse
@@ -9,11 +9,18 @@ import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import os
+import subprocess
 import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKED = ROOT/'artifacts/packed'
+
+
+def restored_path(path):
+    """Keep archive bytes unchanged while restoring the current source layout."""
+    old = 'code/bayesian/corrected/'
+    return 'code/bayesian/' + path[len(old):] if path.startswith(old) else path
 
 
 def sha(path):
@@ -27,21 +34,31 @@ def main():
     p.add_argument('--verify-only', action='store_true')
     a = p.parse_args()
     manifest = json.loads((PACKED/'manifest.json').read_text())
+    prefixes = [restored_path(x.rstrip('/')+'/').rstrip('/') for x in a.prefix]
     chosen = {r['path']: r for r in manifest['files']
-              if not a.prefix or any(r['path'].startswith(x.rstrip('/')+'/') or r['path']==x.rstrip('/') for x in a.prefix)}
+              if not prefixes or any(restored_path(r['path']).startswith(x+'/') or restored_path(r['path'])==x for x in prefixes)}
     if not chosen:
         p.error('No archived files match the prefix')
     archives = {r['archive'] for r in chosen.values()}
     dest = a.destination.resolve()
+    # Current guides, launchers and tables take precedence over archived copies.
+    # Different untracked result files still cause an error rather than overwrite.
+    tracked = set()
+    if dest == ROOT:
+        tracked = set(subprocess.check_output(
+            ['git', '-C', str(ROOT), 'ls-files', '-z']).decode().split('\0'))
+    outputs = {path: restored_path(path) for path in chosen}
+    if len(set(outputs.values())) != len(outputs):
+        raise ValueError('Archive paths collide after relocation')
     # Check existing files before writing anything. Refuse to overwrite differences.
     for path, record in chosen.items():
-        rel = PurePosixPath(path)
+        rel = PurePosixPath(outputs[path])
         if rel.is_absolute() or '..' in rel.parts:
             raise ValueError('Unsafe archive path')
         output = dest.joinpath(*rel.parts)
         if not output.resolve().is_relative_to(dest) or output.is_symlink():
             raise ValueError(f'Unsafe destination: {output}')
-        if not a.verify_only and output.exists() and sha(output)!=record['sha256']:
+        if not a.verify_only and output.exists() and outputs[path] not in tracked and sha(output)!=record['sha256']:
             raise ValueError(f'Existing file differs; restore into a new --destination: {output}')
     seen = set()
     for archive in manifest['archives']:
@@ -61,7 +78,7 @@ def main():
                 if hashlib.sha256(data).hexdigest()!=record['sha256'] or len(data)!=record['bytes']:
                     raise ValueError(f'Member checksum mismatch: {member.name}')
                 seen.add(member.name)
-                output = dest/member.name
+                output = dest/outputs[member.name]
                 if a.verify_only or output.exists():
                     continue
                 output.parent.mkdir(parents=True, exist_ok=True)

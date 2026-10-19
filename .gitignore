@@ -135,22 +135,22 @@ renv
 # Bayesian samplers write these continuously or copy them into every chain.
 # Commit batch-level source/, reproducibility.json, configs and launch inputs.
 # Reviewed checkpoints/reports are explicitly archived; existing tracked data stays tracked.
-/code/bayesian/corrected/results/**/*safeBackup*
-/code/bayesian/corrected/results/**/chain*/source/
-/code/bayesian/corrected/results/**/chain*/checkpoint*.npz
-/code/bayesian/corrected/results/**/status.json
-/code/bayesian/corrected/results/**/metrics.json
-/code/bayesian/corrected/results/**/completion.json
-/code/bayesian/corrected/results/**/chain*/optimization.npy
-/code/bayesian/corrected/results/**/chain*/warm_start.npy
-/code/bayesian/corrected/results/**/chain*/initial.npy
-/code/bayesian/corrected/results/**/chain*/initial_chol.npy
+/code/bayesian/results/**/*safeBackup*
+/code/bayesian/results/**/chain*/source/
+/code/bayesian/results/**/chain*/checkpoint*.npz
+/code/bayesian/results/**/status.json
+/code/bayesian/results/**/metrics.json
+/code/bayesian/results/**/completion.json
+/code/bayesian/results/**/chain*/optimization.npy
+/code/bayesian/results/**/chain*/warm_start.npy
+/code/bayesian/results/**/chain*/initial.npy
+/code/bayesian/results/**/chain*/initial_chol.npy
 
 # Local isolated Python dependencies, GPU isolation and durable run logs.
-/code/bayesian/corrected/.runtime/
+/code/bayesian/.runtime/
 
 # Automatically generated control comparison awaits visual review before archiving.
-/code/bayesian/corrected/results/identity-adapt-nuts-v1/comparison/
+/code/bayesian/results/identity-adapt-nuts-v1/comparison/
 
 # Result trees are local by default. Archive verified outputs under artifacts/;
 # never force-add a whole results directory. Keep only readable run guides,
@@ -173,13 +173,16 @@ renv
 !/code/benchmarks/results/**/launch.py
 !/code/benchmarks/results/**/resume.py
 !/code/benchmarks/results/**/protocol.json
-/code/bayesian/corrected/results/**
-!/code/bayesian/corrected/results/**/
-!/code/bayesian/corrected/results/**/*.md
-!/code/bayesian/corrected/results/**/launch.py
-!/code/bayesian/corrected/results/**/resume.py
-!/code/bayesian/corrected/results/**/protocol.json
-!/code/bayesian/corrected/results/paper/diagnostics.tex
-!/code/bayesian/corrected/results/paper/identity_diagnostics.tex
+/code/bayesian/results/**
+!/code/bayesian/results/**/
+!/code/bayesian/results/**/*.md
+!/code/bayesian/results/**/launch.py
+!/code/bayesian/results/**/resume.py
+!/code/bayesian/results/**/protocol.json
+!/code/bayesian/results/paper/diagnostics.tex
+!/code/bayesian/results/paper/identity_diagnostics.tex
 !/ditlevsen/results/saem_ab_scaled/report/comparison.pdf
 !/ditlevsen/results/saem_ab_scaled/report/table.tex
+
+# Temporary local alias for the already-running Bayesian sampler; never publish.
+/code/bayesian/corrected

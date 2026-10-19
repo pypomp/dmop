@@ -1,5 +1,26 @@
 # Handoff
 
+## October 19: Bayesian code flattened
+
+- The current implementation is directly in code/bayesian, with no tracked
+  corrected/ directory or parallel notebook implementation. Old notebook
+  files remain in Git history at54deaa36b and a local backup outside dmop.
+- Updated SI inputs, guides, ignore rules, launchers and figure output roots.
+  Archive members/hashes and frozen protocols remain unchanged; restoration
+  maps their old prefix into code/bayesian/results. Current tracked guides
+  take precedence; changed untracked results still refuse overwrite.
+- Restored406files to a fresh temporary tree without the old directory and
+  reproduced all seven manuscript/control plots and both diagnostic tables.
+  Three CPU batch tests pass; main/SI compile. File budget606tracked/776paths.
+- The existing shorter-trajectory worker1892072 and sampler2108782 were
+  briefly paused for the move, then resumed; depth3 is advancing. An ignored
+  local corrected -> . alias preserves their existing paths. Cleanup2420825
+  blocks on the worker's pidfd and removes that alias at exit, with no polling.
+  Log: code/bayesian/.runtime/layout-cleanup.log. No sampling settings changed.
+- New user request: S-1 should expose mixing differences. Its existing pooled
+  overlay compares NUTS2000 with PMMH30000. Prepare separate-chain densities
+  at2000retained iterations for both, retaining the long-run reference asset.
+
 ## October 19: Overleaf 2044 conflict resolved
 
 - Merged origin/overleaf-2026-10-19-2044 (090208737). Kept the author's

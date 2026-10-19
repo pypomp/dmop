@@ -15,13 +15,15 @@ archive is smaller than 20 MB. All members have been independently verified.
 Restore only the study needed for a reproduction, for example:
 
 ```sh
-python artifacts/restore_results.py --prefix code/bayesian/corrected/results/gpu-forward-nuts-v2
-python code/bayesian/corrected/paper_figures.py
+python artifacts/restore_results.py --prefix code/bayesian/results/gpu-forward-nuts-v2
+python code/bayesian/paper_figures.py
 ```
 
 The figure script also needs `gpu-comparison-v2`; restore that prefix first.
-Restoration preserves the original directory layout and refuses to overwrite
-different local files. Use `--destination /path/to/staging` to inspect a
+Restoration maps the archived `code/bayesian/corrected/` prefix to
+`code/bayesian/`; archive members and checksums remain unchanged. Current
+tracked guides, launchers and tables take precedence over archived copies.
+Restoration refuses to overwrite different untracked result files. Use `--destination /path/to/staging` to inspect a
 separate restoration; `--verify-only` checks hashes without writing files.
 Run without `--prefix` to restore all archived files. Files stay ignored locally.
 The separate October 6 archive described in README.md still holds older bulk
