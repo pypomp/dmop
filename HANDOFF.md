@@ -1,5 +1,17 @@
 # Handoff
 
+## October 19: push blocked by automatic review
+
+- Pull and merges are complete; both manuscript PDFs compile. Local main
+  preserves upstream author edits and resolves the stale Overleaf ancestry.
+- Automatic approval review rejected git push origin main: it treats the
+  request to push intermediate edits as insufficient approval to publish the
+  pending Bayesian posterior draws/checkpoints and research artifacts to the
+  public repository. Do not bypass or retry without explicit payload approval.
+- Closed obsolete Overleaf PR #3 separately: its exact tree was already an
+  ancestor of published main. No local research data were published by that
+  action. GitHub main has not received these local intermediate commits.
+
 ## October 19: intermediate publication authorized
 
 - User explicitly requested pulling and pushing the intermediate edits. This
