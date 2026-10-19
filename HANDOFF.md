@@ -1,5 +1,23 @@
 # Handoff
 
+## October 19: compact history published
+
+- Published the requested history cleanup atomically to all nine remote
+  branches with explicit force-with-lease checks. Main now includes the
+  intermediate edits and resolved Overleaf history. Old history is preserved
+  in the verified external Git bundle; the live sampler's files were not
+  removed or changed by filtering.
+- Current tree:624files. Union of paths in all published branch histories:
+  669. Result outputs are ignored by default; CI and the local budget helper
+  enforce1800files, including history. Detached local backup worktrees are
+  excluded from that check because they are not published branch histories.
+- All6985archived result members are verified; selective restoration works.
+  Main/SI draft-mode builds pass with no undefined references/citations.
+  See artifacts/COMPACT_HISTORY.md for restoration and collaborator resync.
+- Latest Overleaf0448 prose was merged while preserving the corrected Bayesian
+  target/figures, compact theorem statement, SI comparisons and all code.
+  Do not merge old unfiltered branches back into this compact history.
+
 ## October 19: compact history candidate
 
 - User reaffirmed publication approval after the explicit payload question,
