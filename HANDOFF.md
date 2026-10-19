@@ -11,7 +11,10 @@
 - Merged main/SI compile successfully with the local make targets. Incoming
   author prose and macros are preserved. The open Overleaf PR #3 contains
   only an unmerged historical merge commit, with no additional text changes;
-  integrate its ancestry so GitHub can close the stale sync PR.
+  Its tree is byte-identical to its second parent07530f188, already an ancestor
+  of main. A normal merge encountered old criss-cross history conflicts and
+  was aborted cleanly. An ancestry-only merge retains the current tree and
+  resolves this stale PR without reintroducing October1 files.
 - The identity-metric NUTS continuation and its queued comparison remain
   separate from this Git synchronization; no sampler settings changed.
 
