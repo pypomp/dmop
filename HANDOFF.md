@@ -1,5 +1,18 @@
 # Handoff
 
+## October 20: approved prose cleanup
+
+- Applied the 16 approved wording edits in ms.tex and si.tex on main.
+  Mathematics, assumptions, remaining comment markup and inactive arguments
+  are unchanged. Covariance-MSE improvements remain deferred to their branch.
+- Rebuilt both PDFs with Tectonic: main 22 pages, SI 100 pages. Compared
+  against a clean HEAD build: display mathematics, label numbers and
+  bibliographies are unchanged, with no new compiler warnings. Visually
+  checked the affected pages and adjacent page breaks.
+- Root ms.pdf and si.pdf remain ignored by repository policy. Delivery copies
+  are in the parent workspace's output/pdf directory. No further prose edits
+  are authorized by this review.
+
 ## October 19: Overleaf 2203 conflict resolved
 
 - Merged origin/overleaf-2026-10-19-2203 (988b1b7a3). Preserved the

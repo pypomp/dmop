@@ -1575,9 +1575,8 @@ oscillation one, therefore gives the explicit Feynman--Kac corollary
 \end{equation}
 for every $F$ with $\operatorname{osc}(F)>0$ and every $u\in(0,1/2]$.
 If $F$ is constant, $(\rho_N^J-\rho_N)(F)=0$ identically.
-Equations~\ref{eq:s2-explicit-constant}--
-\ref{eq:s2-scalar-concentration} replace all unnamed model-dependent
-concentration constants.
+We use the constants in Equations~\ref{eq:s2-explicit-constant}--
+\ref{eq:s2-scalar-concentration} in the concentration bounds below.
 
 \begin{lem}[Explicit concentration of the DMOP-$1$ gradient]
 \label{lemma:grad_bound}
@@ -1626,9 +1625,9 @@ $2NG'(\theta)\sqrt p\,u_g(J,\delta)\leq\epsilon$ gives
 \eqref{eq:s2-gradient-particle-count}.
 \end{proof}
 
-The next result treats the actual particle Hessian.  It retains the
-outer-product and empirical-mean terms created by differentiating the logarithm
-of the terminal empirical average.
+The next result bounds the particle Hessian, including the outer-product
+and empirical-mean terms produced by differentiating the logarithm of the
+terminal empirical average.
 
 \begin{lem}[Explicit concentration of the DMOP-$1$ particle Hessian]
 \label{lemma:hess_bound}
@@ -1873,10 +1872,9 @@ Iteration gives the $q^m$ conclusion in the theorem, while
 substituting $f=-\ell$.
 \end{proof}
 
-The result is deliberately restricted to DMOP-$1$.  For $\alpha<1$, the
-population limit is a discounted gradient.  A theorem for that case must add a
-finite-sample bound for the discount bias relative to the exact score; choosing
-$\alpha$ close to one does not by itself provide such a bound.
+The result covers DMOP-$1$. For $\alpha<1$, the population limit is a
+discounted gradient, so extending the theorem requires a finite-sample bound
+on the discount bias relative to the exact score.
 
 
 
@@ -1978,7 +1976,6 @@ for some $\epsilon$ dependent on $\bar{G}, \underbar{G}, \bar{M}, \underbar{M}$ 
 
 \vspace{3mm}
 
-Equipped with the above formalisms and results, we are now in a position to provide guarantees on the performance of MOP-$\alpha$ itself. 
 
 
 
@@ -2391,7 +2388,7 @@ $L^{B,\theta}$ should generally be preferred in practice, since there is no reas
 
 
 
-We now show that, under sufficient local regularity conditions, one can interchange differentiation and the particle limit. We retain the Arzel\`a--Ascoli argument, working on a compact neighborhood of the evaluation parameter. Consistency is used for the estimates themselves: differentiating a weighted particle estimate also differentiates its particles, weights, and normalizer, so boundedness alone does not make its derivative an empirical average to which Theorem \ref{thm:off-parameter-targeting} applies.
+We now show that, under sufficient local regularity conditions, one can interchange differentiation and the particle limit. We apply Arzel\`a--Ascoli, working on a compact neighborhood of the evaluation parameter. Consistency is used for the estimates themselves: differentiating a weighted particle estimate also differentiates its particles, weights, and normalizer, so boundedness alone does not make its derivative an empirical average to which Theorem \ref{thm:off-parameter-targeting} applies.
 
 \begin{thm}[Off-Parameter Particle Filters Yield Strongly Consistent Estimates of Derivatives of Functionals]
 \label{thm:consistent-derivatives}
@@ -13450,9 +13447,9 @@ included explicitly in the density above.
 For this example, we update the parameters with Adam using the averaged
 scores in Equations~(\ref{eq:benchmark-path-score})--(\ref{eq:benchmark-score-average}),
 without a SAEM maximization step.
-We obtain these complete-data derivatives by AD while holding the imputed
-path fixed. This avoids differentiation through the filtering and resampling
-calculations, but does not avoid AD itself. The runtime difference from
+We obtain these complete-data derivatives by AD with the imputed path fixed,
+without differentiating through the filtering and resampling calculations.
+The runtime difference from
 IFAD also reflects the particle counts and optimization settings below.
 
 \paragraph{Daphnia: averaged scores for the Gaussian block approximation.}

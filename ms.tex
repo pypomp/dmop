@@ -96,7 +96,7 @@ The particle filter, also known as sequential Monte Carlo, serves as the foundat
 
 An inference algorithm for a POMP model is said to be plug-and-play if it does not need to evaluate the transition density of the latent Markov process, enabling an arbitrary model simulator to be plugged into the algorithm, a convenient property that facilitates scientific discovery \citep{he10}.
 Some plug-and-play methods depend on the construction of low-dimensional summary statistics \citep{wood10,toni09}, sacrificing statistical efficiency for computational convenience.
-Here, our mission is to extend current computational capability among methods that maintain statistical efficiency and the plug-and-play property.
+We develop computational methods that maintain statistical efficiency and the plug-and-play property.
 Plug-and-play methods are sometimes called likelihood-free \citep{owen15}, and it may be counter-intuitive that likelihood-based inference is possible using likelihood-free methods. 
 Basic particle filters, also known as boostrap filters, possess the plug-and-play property.
 Iterated particle filtering algorithms, such as IF1 and IF2, have shown that plug-and-play likelihood maximization is practical in various scientific investigations \citep{king08,blake14,pons-salort18,subramanian21,fox22,drake23}.
@@ -118,13 +118,12 @@ However, the variance rapidly reduces as $\alpha$ decreases, and so a choice of 
 
 In practice, likelihood optimization via gradient descent with DMOP-$\alpha$ converges quickly within a neighborhood of the maximum but struggles to reach this neighborhood in the presence of local minima and saddle points.
 By contrast, iterated filtering algorithms provide a relatively fast and stable way to identify this neighborhood.
-We therefore build a simple but effective hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
+We therefore build a hybrid algorithm called {\it Iterated Filtering with Automatic Differentiation} (IFAD) that warm-starts first-order or second-order gradient methods with a preliminary solution obtained from iterated filtering.
 We implement our algorithm using JAX \citep{jax}, which also enables us to take advantage of graphical processing unit (GPU) hardware.
 Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
 Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
 IFAD also outperforms marginalized panel iterated filtering on a challenging ecological panel problem, the 38-parameter \textit{Daphnia} model of \citet{yang25daphnia}.
-\newEdit{\editClaim}
 \newEdit{\editPlugAndPlay}
 %The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
@@ -176,7 +175,7 @@ This can be achieved using the {\it stop-gradient} capability that appears in Al
   \centering
     \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/mop.png}
     \includegraphics[width=\textwidth/\real{2.2}]{imgs/095/biasvar.png}
-    \caption{\textbf{A:} Non‐differentiable likelihood estimates and smooth off‐parameter approximations that hold locally around the baseline parameter $\phi$. \textbf{B:} Illustration of the bias-variance tradeoff induced by the discounting hyperparameter $\alpha$. We display the MSE of score estimates for the recovery rate at the MLE for the Dhaka cholera model of \cite{king08}. Our novel contribution of $\alpha \in (0,1)$ significantly improves the quality of the likelihood approximation and the score estimates.}
+    \caption{\textbf{A:} Non‐differentiable likelihood estimates and smooth off‐parameter approximations that hold locally around the baseline parameter $\phi$. \textbf{B:} Illustration of the bias-variance tradeoff induced by the discounting hyperparameter $\alpha$. We display the MSE of score estimates for the recovery rate at the MLE for the Dhaka cholera model of \cite{king08}. In this example, intermediate values of $\alpha$ improve the likelihood approximation and the score estimates.}
     \label{fig:biasvar}
 \end{figure}
 
@@ -277,7 +276,7 @@ The before-resampling estimate $L_n^{B,\theta,\alpha}$ is preferable in practice
 \subsection{Discounted Weights and a Bias-Variance Tradeoff}
 
 Heuristically, $\alpha$ controls the exponentially decaying memory of MOP and DMOP.
-Importantly, $\alpha$ is irrelevant for MOP at $\theta=\phi$ when the weights are always 1 and therefore also irrelevant for the function evaluation in the first pass of DMOP, but crucially not in the second when the gradients are evaluated.
+At $\theta=\phi$, the weights equal one, so $\alpha$ does not affect the function evaluation in the first pass of DMOP. It does affect the gradients evaluated in the second pass.
 If $\alpha=1$, the gradient of the weights, $w^{P,\theta}_{n,j}$ and $w^{F,\theta}_{n,j}$, accumulates as $n$ increases.
 This leads to numerical instability and high variance unless $N$ is small.
 For $\alpha<1$, the weights from previous timesteps are discounted as in Equation~(\ref{eq:weighting-scheme}), allowing for lower variance at the expense of bias in the gradient estimate.
@@ -536,7 +535,7 @@ Conversely, we encountered many failed searches with gradient descent alone.
 This is a difficult, nonconvex, and noisy problem with $23$ estimated parameters, and gradient descent without a warm-start gets stuck in local minima and saddle points.
 
 IFAD, by comparison, approaches the MLE quickly due to the IF2 warm-start (Figure \ref{fig:optim}) and also succeeds at refining the coarse solution found by the warm-start with DMOP gradient steps to find the MLE.
-IFAD therefore successfully combines the best qualities of IF2 and DMOP, outperforming either of them alone.
+In this experiment, combining IF2 initialization with DMOP refinement outperforms either method alone.
 Monte~Carlo replication is appropriate for IFAD, or any Monte Carlo algorithm used to solve a challenging numerical problem, but Figure~\ref{fig:optim} shows that IFAD can find higher likelihood values more quickly and more reliably than the previous state-of-the-art. 
 Since replicated searches are inevitably needed for Monte~Carlo maximization of this challenging likelihood maximization task, it is important to give extra consideration to the right tail of the distributions in Figure~\ref{fig:boxplot} when comparing the capabilities of the methods. 
 
@@ -547,7 +546,7 @@ Since replicated searches are inevitably needed for Monte~Carlo maximization of 
 Particle MCMC \citep{andrieu10} is arguably the most popular method for full-information plug-and-play Bayesian inference for POMP models.
 However, particle Metropolis-Hastings often mixes slowly, requiring long burn-in periods.
 For instance, \cite{fasiolo16} ran $1.4$ million iterations and discarded the first half as burn-in for a modified version of the \cite{king08} model, using a different transition scheme, process noise and observation distribution.
-To alleviate this, we demonstrate a No U-Turn Sampler (NUTS) \citep{hoffman14} powered by DMOP-$\alpha$, with a Gaussian prior common to NUTS and particle Metropolis--Hastings.
+To alleviate this, we demonstrate a No-U-Turn Sampler (NUTS) \citep{hoffman14} using DMOP-$\alpha$ gradients, with a Gaussian prior common to NUTS and particle Metropolis--Hastings.
 The prior has independent Gaussian distributions on the estimation scale, including logarithms for the five positive parameters. Each mean is the midpoint of the corresponding parameter search interval, and each standard deviation is half its width, where we note that these intervals do not truncate the prior. Particle Metropolis--Hastings uses a Gaussian random walk with a full covariance matrix estimated from preliminary runs \citep[p.~29]{dahlin19}, proposing fresh particle-filter random numbers at each iteration. This adapted proposal was crucial for convergence -- we provide additional results in Supplementary Section~\suppSecBayesFigs that depict slow mixing otherwise. NUTS uses DMOP-$\alpha$ gradients to construct trajectories conditional on the filter random numbers, which are updated separately by a Metropolis step. Its preconditioning matrix is also estimated from preliminary PMMH runs. Both matrices are held fixed, with scalar step sizes adapted during the 500 warmup iterations.  Supplementary Section~\suppSecBayesFigs\ gives the prior parameters and proposal settings.
 
 Using NUTS with DMOP-$\alpha$ gives promising preliminary results for parameter-space exploration after discarding $500$ iterations (Figure \ref{fig:nuts-eb}).
@@ -739,12 +738,12 @@ Section~\suppSecProofBiasVar\ develops the covariance argument for DMOP-$0$; Sec
 
 \section{Computational Efficiency} \label{sec:efficiency}
 
-DMOP-$\alpha$ and IFAD are fast algorithms, both in theory and practice: the cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter.
+The cheap gradient principle of \cite{kakade2019provably} suggests that a gradient estimate from DMOP-$\alpha$ should take no more than 6 times that of the runtime of the particle filter.
 We found the empirical value of this factor to be 3.75, using the implementation of our methods in the Pypomp library \citep{abkemeier25}.
 DMOP-$\alpha$ and IFAD therefore share the same $O(NJ)$ time complexity as the particle filter, unlike the $O(NJ^2)$ complexity of \cite{corenflos21} and Algorithm 2 in \citep{poyiadjis11, scibior21}.
 
 Implementation of the particle filter, IF2, and DMOP-$\alpha$ in JAX \citep{jax} takes advantage of just-in-time compilation and GPU acceleration.
-While CPU-based implementations of the particle filtering methods can effectively leverage multiple cores by parallelizing over independent replications of a given method, Pypomp can effectively leverage tens of thousands of GPU cores by vectorizing over both particles and independent method replications.
+While CPU-based implementations of the particle filtering methods use multiple CPU cores by parallelizing over independent replications of a given method, Pypomp uses tens of thousands of GPU cores by vectorizing over both particles and independent method replications.
 To examine the performance improvement on the Dhaka model, we ran 1 instance of IF2 with 60 iterations and 5000 particles using 1 CPU core and compared this with running 100 replications on a GPU.
 The results in Table \ref{table:speedup} show that, despite running 100 times as many replications, the GPU finishes 26.0 times faster, giving it a throughput 2597.2 times greater than the single CPU core.
 
@@ -777,7 +776,6 @@ Monte~Carlo adjusted profile methods can help to acommodate maximization and eva
 Improving the process of model fitting has practical consequences for the ability of scientists to evaluate hypotheses.
 We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which provides a high-quality log-likelihood maximization in the complex benchmark model of \cite{king08}.
 The \textit{Daphnia} application in the supplement (Section S10) demonstrates that these gains also extend to complex panel data.
-We anticipate that this will promote scientific advances in all domains where complex POMP models arise.
 
 
 If the simulator is discontinuous in $\theta$, DMOP-$\alpha$ no longer applies.
