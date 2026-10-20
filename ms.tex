@@ -678,97 +678,106 @@ The result describes the bias-variance tradeoff as $\alpha$ varies between zero 
 
 \begin{thm}[Error bounds for DMOP-$\alpha$]
 \label{thm:mop-biasvar}
-Suppose (A2), (A3), (A5), and either (A6) or (A6-J) hold.
+\kevin{Suppose (A2), (A3), (A5), and either (A6) or (A6-J) hold.
 Fix the observations, use multinomial resampling, and let $J\geq2$ and $\theta=\phi$.
-Write $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$,
-using the after-resampling likelihood estimate.
-For $0\leq\alpha<1$,
-\begin{equation}
-\label{eq:mop-mse}
-\E\|\nabla_\theta\hat\ell_J^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-\lesssim pG'(\theta)^2
-\left[
-\left\{\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right\}
-H_N(\alpha)^2+N^2(1-\alpha)^2
-\right].
-\end{equation}
-At $\alpha=1$,
-\begin{equation}
-\label{eq:mop-one-mse}
-\E\|\nabla_\theta\hat\ell_J^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-\lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
-\end{equation}
-\kevin{Proposed replacement, using the joint-covariance calculation
-in the supplement. For $0\leq\alpha<1$,
+The following bounds hold for either the before- or after-resampling
+likelihood estimate. Write
+\[
+H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r
+=\begin{cases}(1-\alpha^N)/(1-\alpha),&0\leq\alpha<1,\\N,&\alpha=1,\end{cases}
+\qquad
+\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1).
+\]
+For $0\leq\alpha\leq1$,
 \begin{align}
-&\E\|\nabla_\theta\hat\ell_J^\alpha(\theta)
-              -\nabla_\theta\ell(\theta)\|_2^2\notag\\
-&\quad\lesssim pG'(\theta)^2\left[
- \frac{NH_N(\alpha)+\{N-H_N(\alpha)\}(1+\log J)^2}{J}
- +\frac{N^2}{J^2}+N^2(1-\alpha)^2\right].
+&\E\|\nabla_\theta\hat\ell_J^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
+\notag\\
+&\quad\lesssim pG'(\theta)^2\Bigg[
+\frac{N\min\{H_N(\alpha),J\}}{J}+\frac{N^2}{J^2}
+\notag\\[-2pt]
+&\hspace{58pt}
++N^2\left\{
+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
+\frac{(1-\alpha)(3-2\varrho)}
+ {3-2\varrho-\alpha(2\varrho-1)}
+\right\}^2\Bigg].
+\label{eq:mop-mse}
 \end{align}
-At $\alpha=1$, the bound is $pG'(\theta)^2N^2/J$.
-The supplement retains the sharper $\varrho$-dependent population
-term. Under (A6), enlarge $G'(\theta)$ to bound the separate partial
-parameter derivatives in that assumption, as specified in the proof
-of Lemma S13. These are finite-$J$ bounds under the same assumptions.}
-The constants depend on the model and the stated stability bounds, independently of $N,J,\alpha$.
-Expectations are over the particle-filter randomness.
+At the endpoints, this gives
+\begin{align}
+\E\|\nabla_\theta\hat\ell_J^0-\nabla_\theta\ell\|_2^2
+&\lesssim pG'(\theta)^2\left[
+\frac NJ+\frac{N^2}{J^2}
++N^2\left\{\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}\right\}^2
+\right],\notag\\
+\E\|\nabla_\theta\hat\ell_J^1-\nabla_\theta\ell\|_2^2
+&\lesssim pG'(\theta)^2
+\min\left\{\frac{N^2}{J},\,N+\frac{N^2}{J^2}\right\}.
+\label{eq:mop-one-mse}
+\end{align}
+The constants depend on the model and stability bounds, independently
+of $N,J,\alpha$. Under (A6), enlarge $G'(\theta)$ to bound its separate
+partial parameter derivatives, as specified in Lemma S13.
+Expectations are over the particle-filter randomness.}
 \end{thm}
 
-The bound separates particle approximation error from population discount bias.
-The first term in Equation~\ref{eq:mop-mse} controls the error relative to the population DMOP-$\alpha$ score, while the second controls its squared difference from the full score.
-Increasing the number of particles reduces the particle error, but note that it does not remove the population bias introduced by discounting.
-
-Table~\ref{tab:dmop-error-bounds} summarizes the bounds.
-We suppress the common factor $pG'(\theta)^2$, write $L_J=1+\log J$, and take $J\geq N$.
-The population bias is the bias remaining as $J\to\infty$.
+\kevin{The first two terms in Equation~\ref{eq:mop-mse} bound the particle
+error. The last term is the squared population discount bias, which
+need not vanish as $J$ increases. Thus an $N/J$ particle-error rate for
+DMOP-$0$ does not imply an $N/J$ full-score MSE rate.
+\endgraf
+For $0\leq\alpha<1$, using $H_N(\alpha)\leq(1-\alpha)^{-1}$ gives the
+simpler full-score bound
+\[
+pG'(\theta)^2\left[
+\frac{N}{J(1-\alpha)}+\frac{N^2}{J^2}+N^2(1-\alpha)^2
+\right],
+\]
+up to fixed model constants, with the explicit $\varrho$ dependence retained in
+Equation~\ref{eq:mop-mse}. Table~\ref{tab:dmop-error-bounds} summarizes
+the full-score bounds, suppressing $pG'(\theta)^2$ and fixed model
+constants. For the tuning comparison, take $\tfrac12<\varrho<1$.}
 
 \begin{table}[htbp!]
 \centering
-\begin{tabular}{@{}lccc@{}}
+\kevin{Full-score rates, with fixed model constants suppressed:
+\endgraf
+\begin{tabular}{@{}lc@{}}
 \toprule
-& \multicolumn{2}{c}{Particle MSE} & Squared population \\
-\cmidrule(lr){2-3}
-Choice of $\alpha$ & Under (A6) & Under (A6-J) & bias \\
+Choice & Full-score MSE upper bound\\
 \midrule
-$\alpha=0$ & $N/J$ & $N/J$ & $N^2$ \\
-Fixed $0<\alpha<1$ & $\dfrac{NL_J^2}{J(1-\alpha)^2}$
-& $\dfrac{NL_J}{J(1-\alpha)^2}$ & $N^2(1-\alpha)^2$ \\[8pt]
-$\alpha=1$ & $N^3/J$ & $N^3/J$ & $0$ \\
+$\alpha=0$ & $N/J+N^2/J^2+N^2$\\
+Fixed $0<\alpha<1$ & $N/\{J(1-\alpha)\}+N^2/J^2+N^2(1-\alpha)^2$\\
+$\alpha=1$ & $\min\{N^2/J,\,N+N^2/J^2\}$\\
+Tuned $\alpha$, $J\leq\sqrt N$ & $N^2/J^2$\\
+Tuned $\alpha$, $\sqrt N<J<N^2$ & $N^{4/3}/J^{2/3}$\\
+Tuned $\alpha$, $J\geq N^2$ & $N^2/J$\\
 \bottomrule
-\end{tabular}
-\caption{Upper bounds for DMOP-$\alpha$ with $J\geq N$, omitting the common factor $pG'(\theta)^2$, model-dependent constants, and logarithmic factors.
-The particle MSE bounds also bound the variance; adding the population term bounds the full-score MSE up to a constant.}
+\end{tabular}\endgraf}
+\caption{\kevin{Finite-particle full-score MSE upper bounds under either
+(A6) or (A6-J), with multinomial resampling. The tuned rows are
+attainable upper-bound orders, not claims about actual optimal MSE.
+The supplement retains the sharper finite population-discount sum.}}
 \label{tab:dmop-error-bounds}
 \end{table}
-\kevin{Proposed table and discussion update: under either assumption,
-the $\alpha=1$ entry becomes $N^2/J$. For fixed $0<\alpha<1$ and
-$J\geq N$, use $N\{(1-\alpha)^{-1}+L_J^2\}/J$ as a common
-particle-MSE bound. Leave the population-bias column and the
-$\alpha=0$ discussion unchanged. Replace $N^3/J$ by $N^2/J$ in
-the DMOP-$1$ paragraph below.}
 
-For DMOP-$0$, the particle error grows at most linearly with the number of observations, apart from logarithmic factors.
-The joint mixing assumption (A6-J) gives one fewer factor of $1+\log J$ in this case.
-However, DMOP-$0$ can retain population bias even with arbitrarily many particles.
-
-For any fixed $0<\alpha<1$, the particle bound has the same dependence on $N$ and $J$, with a constant that increases as $\alpha$ approaches one.
-The population bias bound decreases at the same time.
-The exact memory factor is $H_N(\alpha)\leq\min\{N,(1-\alpha)^{-1}\}$, so the finite-horizon particle bound remains finite as $\alpha$ approaches one.
-
-For DMOP-$1$, the population discount bias is zero, and the MSE tends to zero as $J$ increases for fixed $N$.
-Its $N^3/J$ upper bound allows substantially greater particle error for long series.
-These bounds explain the potential benefit of discounting, but do not establish the actual error rates or imply that discounting improves every model.
-
-We analyze geometrically discounted scores through an exact weighted average of scores truncated at finite lags.
-Posterior forgetting controls the population discount bias, while particle approximation and covariance bounds control the Monte Carlo error.
-
-The main difficulties are that measurement gradients depend on simulated histories and that resampling creates dependence between particles and across time.
-Under (A6), we expand each measurement gradient according to the age of its simulator contributions.
-Their geometric decay permits us to sum bounds for finite histories using mixing of the physical particle cloud.
-Under (A6-J), the measurement gradient is already a bounded function of the current state--derivative pair, so we apply the particle bounds directly to that joint process.
-Section~\suppSecProofBiasVar\ develops the covariance argument for DMOP-$0$; Section~\suppSecProofSharperBiasVar\ handles general discounting and proves the theorem.
+\kevin{For DMOP-$1$, the population discount bias is zero. The endpoint
+bound improves on the $N^2/J$ order when $J\to\infty$ and $J/N\to0$.
+In the middle regime, $1-\alpha\asymp(NJ)^{-1/3}$ attains the table's
+discounted bound. The endpoint $\alpha=1$ already attains the first
+and last rows of the tuning comparison. These comparisons concern
+upper bounds and do not establish that one estimator has smaller
+actual MSE.
+\endgraf
+The proof sums the predictable particle errors before taking their
+second moments, then separately bounds the variance of the conditional
+genealogy. Under (A6), the chain rule decomposes each measurement
+gradient by the age of its simulator contributions. Their geometric
+decay permits summation over ages. Under (A6-J), the measurement
+gradient is a bounded function of the current state--gradient pair.
+Section~\suppSecProofBiasVar\ retains the DMOP-$0$ variance argument.
+Section~\suppSecProofSharperBiasVar\ gives the sharper particle-MSE
+calculation and combines it with population forgetting.}
 
 
 \section{Computational Efficiency} \label{sec:efficiency}

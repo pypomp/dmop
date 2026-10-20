@@ -1,5 +1,198 @@
 # Handoff
 
+## October 19: incorporated audited proof on covariance-mse
+
+- Kevin requested incorporation in `\\kevin{}` comments, consistent
+  theorem/corollary/remark updates, rebuilt PDFs, and a push to the branch
+  only. Pulled successfully before editing. Do not merge to main.
+- The main theorem now covers both actual multinomial estimators and
+  includes the capped linear-memory particle MSE, unchanged explicit
+  varrho population term, and both alpha endpoints. Its table reports
+  full-score MSE throughout, including the three tuning regimes.
+- Replaced the prior blue joint-block proposal inside S13 with the audited
+  direct proof, using the manuscript's score notation instead of a new
+  score symbol. Retained an explicit nodewise conditional-contribution
+  formula. Updated the particle-bias corollary, SI full-score theorem and
+  proof, normalization/tuning remarks, neutral-example interpretation,
+  and deterministic-lag specialization consistently in blue comments.
+- Verified byte-for-byte unchanged: original variance calculation,
+  population-bias lemma/proof, and Arzela-Ascoli argument. The number of
+  existing iffalse blocks remains 22. No original variance proof was
+  hidden or removed. The N^2/J^2 remainder is not reclassified as solely
+  squared bias or deleted from a separate variance bound.
+- Full-score bounds suppressing fixed model factors: alpha=0 has
+  N/J+N^2/J^2+N^2; general alpha has N min{sum(alpha^r),J}/J+N^2/J^2
+  plus the explicit squared population term; alpha=1 has
+  min{N^2/J,N+N^2/J^2}. Tuned attainable orders are N^2/J^2,
+  N^(4/3)/J^(2/3), N^2/J across boundaries sqrt(N) and N^2.
+  These remain upper bounds, not actual-MSE dominance or optimality.
+- Rebuilt ms.pdf (23 pages) and si.pdf (100 pages), inspected the changed
+  theorem/proof/corollary/remark pages visually, and checked references.
+  No new overflow or undefined-reference warnings. One unchanged main
+  proof overflow at lines 651-658 and existing hyperref destination
+  warnings remain outside this edit. `git diff --check` passed.
+- Updated tracked PDFs in output/pdf/ms-covariance-review.pdf and
+  output/pdf/si-covariance-review.pdf. Regenerated output/covariance-review.patch
+  against c7556a6 for bib-ifad.bib, ms.tex, and si.tex. Standalone audited
+  note remains local in output/multinomial-before-bound/.
+
+## October 19: fresh audit of the log-free bound completed
+
+- Current request supersedes the earlier population-bias research task:
+  Kevin asked to leave further improvements aside, pull, and independently
+  audit the log-free finite-J bound before considering promotion to main.
+  No promotion was requested. Do not describe the still-open general
+  population-bias improvement below as completed.
+- `git pull --ff-only` succeeded. `covariance-mse` remains at f8cebcb,
+  equal to origin/covariance-mse. The fetch advanced origin/main to f1778e9;
+  its new changes were inspected but not merged into this branch.
+- Three fresh-context reviewers independently reconstructed the proof:
+  audit_martingale_new checked the DDS telescope, predictability, bridge
+  integration and weak bias; audit_genealogy_new checked nodewise reverse
+  variance and actual coalescing-pair before/after transfer under both A6
+  alternatives; audit_scope_rates_new checked Algorithm 2, assumptions,
+  boundary cases, tuning and manuscript scope. All approved after a second
+  pass on the revised text. No unresolved mathematical blocker was found.
+- Expanded the separate proof note with the state-only conditioning
+  sigma-algebra, conditional parent/innovation product law, synthetic
+  endpoint probabilities, bridge-integrated function, D/Q operators,
+  exact measure disintegration and finite telescope. Added the explicit
+  A6 suffix-conditioning calculation and clarified initial-history cases.
+  These are proof clarifications, not additional assumptions or a CLT.
+- Verified result: both actual multinomial scores have particle MSE at
+  most C p G'^2 [N min{H_N(alpha),J}/J + N^2/J^2] under the existing
+  assumptions. Weak bias is C N sqrt(p) G'/J. Population S14 is unchanged.
+  The N^2/J^2 remainder is not proved to be solely squared bias and cannot
+  be deleted from a separate variance statement.
+- At alpha=1, the bound is min{N^2/J, N+N^2/J^2}. Its order improves
+  on N^2/J if J tends to infinity and J/N tends to zero. The inequality
+  J<N alone is not sufficient for a strict asymptotic-order improvement.
+  Tuning compares attainable upper bounds, not actual-MSE dominance.
+  At J<=sqrt(N), a common ratio remainder obscures the first-term
+  discount benefit; the endpoint is rate-achieving, not proved optimal.
+- Verification: final eight-page main.pdf rebuilt with Tectonic; all
+  eight rendered pages visually inspected. No overfull boxes or undefined
+  references. `git diff --check` passed. The final two wording changes
+  implement the genealogy reviewer's precise suffix/history corrections.
+- The audited files remain in output/multinomial-before-bound/. The
+  manuscript ms.tex/si.tex and their PDFs are unchanged and still contain
+  the older logarithmic proposal. Incorporation and cross-reference/rate
+  consistency checks are needed before promoting the manuscript itself.
+  Nothing committed, pushed, or merged in this audit. These files remain
+  local pending Kevin's decision on incorporation.
+
+## October 19: scope correction after the log-free bound
+
+- Kevin's requested outcome is a meaningful improvement in the tuned
+  FULL-score MSE, especially the population-discount contribution. The
+  log-free particle lemma below is only partial progress and does not
+  complete that request. Do not substitute artifact completion or removal
+  of logarithms for the requested rate improvement.
+- Rechecked DDS Definition 5.1 and (7.1): only the predictable linear
+  empirical errors are forward martingale differences. Their functions
+  use empirical past kernels and exact future kernels, not future sampled
+  clouds. Ratio errors and the fixed-data population bias are not MDS.
+- No general sharper population-discount rate has been proved in this
+  pass. Control of the signed first-order lag sum remains unresolved.
+  Do not invoke random-observation orthogonality or present a model-specific
+  cancellation as the requested general improvement.
+
+## October 19: log-free multinomial before-score MSE
+
+- Kevin clarified that the requested tighter bound is for multinomial
+  resampling. Systematic-resampling extensions are out of scope. Ignore
+  the intervening NUTS question, which was addressed to another agent.
+- Proved a stronger general finite-J particle-MSE bound for BOTH actual
+  before- and after-resampling scores under the existing S13 assumptions:
+  C p G'^2 [N min{H_N(alpha),J}/J + N^2/J^2]. No logarithms. The
+  uniform weak bias remains N sqrt(p) G'/J. No new assumption, model
+  example, CLT, or random-observation argument.
+- Key change: aggregate predictable DDS local ratio linear terms over all
+  creation times and endpoints BEFORE applying forward martingale
+  orthogonality. Their combined oscillation is uniformly bounded per
+  layer. Conditional iid fourth moments bound the ratio remainder in L2
+  by N/J. Separately, the reverse nodewise genealogy calculation retains
+  min{1,C(b-u+2)/J}; censored-geometric endpoint weights give min{H_N,J}.
+  Do not condition the forward martingale calculation on all clouds.
+- Fresh independent reviews checked the global calculation and the exact
+  before/after transfer. The latter uses the conditional empirical spread
+  and actual coalescing backward paths, including A6 derivative-age blocks.
+  It does not assume full-score Rao--Blackwellization or discard mixed
+  covariances with future score increments.
+- The result is an MSE bound, not a proof that the separate variance bound
+  loses its N^2/J^2 remainder. Population S14 terms are unchanged.
+  At alpha=1 it gives min{N^2/J, N+N^2/J^2} directly. Attainable tuning
+  orders: J<=sqrt(N): N^2/J^2 (endpoint already suffices); sqrt(N)<=J<=N^2:
+  N^(4/3)/J^(2/3); J>=N^2: N^2/J. These compare upper bounds only.
+- Full derivation and patch guidance are in output/multinomial-before-bound/
+  (main.tex, proof.tex, main.pdf). Native and terminal compilation pass;
+  all seven pages visually inspected, with no undefined references or
+  overfull boxes. Final proof text independently checked from scratch.
+  Main/SI sources and PDFs remain unchanged. Nothing pushed this turn.
+
+## October 19: before-resampling covariance audit
+
+- Kevin rejected further model-specific examples and requested a general
+  bound for the actual before-resampling estimator, with a fresh review.
+  No manuscript, PDF, implementation, commit, or push changes in this pass.
+- Direct differentiation gives b_n=W_n(h_n+alpha*tau_previous)
+  -alpha*mean(tau_previous). If epsilon_n=a_n-b_n is the current
+  resampling error, D_B=D_A-sum(epsilon_n). With fresh unbiased resampling,
+  the epsilon_n are martingale differences and both estimators have the
+  same expectation. The full before estimator is not a conditional
+  expectation of the full after estimator. Mixed covariances between
+  epsilon_s and future after increments must not be discarded.
+- Fresh review established, for multinomial resampling under A6-J, the
+  finite-J transfer estimate
+  E||D_A-D_B||^2 <= C p G'^2/J sum_n sum_{q<n}
+  [alpha^2(1-c/J)]^q. Actual paired backward lineages, their meeting time,
+  and backward contraction prove the weighted empirical-gradient spread
+  estimate. A6 uses the existing summable derivative-age decomposition.
+  Thus a linear-memory after-score MSE bound transfers in order to before
+  scoring. This does not improve its tuned J exponent further.
+- Actual systematic selection has a dense offspring covariance: its
+  conditional variance is J^-2 d' K d with d_i=f_i-f_(i+1) and
+  K_il=min(r_i,r_l)-r_i*r_l, r_i=frac(J cumulative_weight_i).
+  Neither independent conditional parents nor the multinomial variance
+  identity may be imported. Direct independent-mutation calculations
+  bound the local before-score error by C(G'^2+alpha^2 empirical_spread)/J,
+  but global predictable drift and annealed ordered-cloud covariance
+  control remain open. Do not describe this as a systematic impossibility
+  theorem or a completed bound for the practical implementation.
+- code/bayesian/source is legacy. Current corrected/global-search paths
+  import pypomp. Do not attribute the legacy NumPy random-offset tracing
+  behavior to the current implementation without tracing its dependency.
+
+## October 19: fresh counterexample audit and signed-bias search
+
+- Research only. No manuscript/PDF changes or push. A fresh-context review
+  reconstructed the score from Algorithm 2, including the unresampled
+  denominator. The continuous two-coordinate counterexample's finite-J
+  covariance lower bound checks out for multinomial, after-resampling DMOP.
+  It is not a lower bound for the before-resampling or systematic variants.
+  Its particle-bias calculation is elementary and does not rely on S13.
+- Independent numerical falsification checks differentiated the actual
+  fixed-reference likelihood and integrated the U variance conditional on
+  genealogy. They support that restricted conclusion and show that the
+  displayed bound cannot be transferred to the other variants. Scripts and
+  reports: /private/tmp/dmop-falsification-gG1k5h/.
+- Found and independently checked a positive, model-specific result: two
+  independent binary chains with stays 2/3 and 5/6, initial P(X0=1)=3/4,
+  emissions (1/5,3/7) and (1/5,3/10), and shared scalar score
+  x1-(16/35)x2. For fixed observations (1,1) and reference theta=0,
+  Delta[n,r]=(3/70)[(9/35)^(r-1)-0.5(9/16)^(r-1)]. The exact population
+  discount bias has an interior zero alpha_N in (0.2,0.7) for N>=95.
+  Alpha_N tends to 20720/47223. The finite-N root removes the population
+  bias; that limiting constant alone leaves an O(1) boundary bias.
+- Given S13, this bounded-memory choice gives
+  O(N(1+log J)^2/J + N^2/J^2) MSE. The cancellation persists over an open
+  interval of the opposing score coefficient, rather than requiring a
+  zero first-order derivative at alpha=1. It is a scalar, fixed-data,
+  model-specific result, not a general replacement for Theorem S5, not a
+  method for finding the root in an intractable POMP, and not yet a strict
+  actual-MSE comparison with DMOP-1. Do not promote it without Kevin's
+  direction. The general improved tuning-rate request remains unresolved.
+
 ## October 19: nodewise proof details
 
 - Fast-forward pull of `covariance-mse` was already current. Kept this
