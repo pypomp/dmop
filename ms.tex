@@ -557,7 +557,7 @@ NUTS has been implemented with previous differentiable particle filters \citep{r
     \centering
     \vspace{1mm}
     \includegraphics[width=\textwidth]{imgs/pmcmc/common_target_trend.pdf}
-    \caption{\sout{Sampling diagnostics for NUTS with \mbox{$4$} chains, showing \mbox{$1000$} retained draws of the transformed trend coordinate \mbox{$100\beta_{\text{trend}}$} within the Dhaka cholera model of \mbox{\cite{king08}}. \textbf{A:} Histogram of retained draws. \textbf{B:} Density estimate from these draws. \textbf{C:} Autocorrelation plot using all \mbox{$1500$} iterations. \textbf{D:} Trace plot before and after the \mbox{$500$} discarded iterations. The empirical-prior calculations explore similar modal values of this parameter; the separate fitted priors and diagnostics for all sampled coordinates are described in Supplementary Section~\suppSecBayesFigs.}\kevin{Sampling diagnostics for the transformed trend coordinate $100\beta_{\mathrm{trend}}$ in the Dhaka cholera model of \cite{king08}. Four chains of each method have 2,000 retained iterations after 500 warmup iterations. Panels A--C show NUTS and D--F show particle Metropolis--Hastings: traces, marginal density estimates and autocorrelations, respectively. Corresponding panels use the same scales; dashed curves show the common prior.}}
+    \caption{Sampling diagnostics for the transformed trend coordinate $100\beta_{\mathrm{trend}}$ in the Dhaka cholera model of \cite{king08}. Four chains of each method have 2,000 retained iterations after 500 warmup iterations. Panels show the traces, marginal density estimates, and autocorrelations of NUTS (A--C) NUTS and particle Metropolis--Hastings (D--F) respectively. The common prior is depicted in panels B and E with dashed lines.}
     \label{fig:nuts-eb}
     \arxiv{}{\vspace*{-4mm}}
 \end{figure}
@@ -725,7 +725,7 @@ The exact memory factor is $H_N(\alpha)\leq\min\{N,(1-\alpha)^{-1}\}$, so the fi
 
 For DMOP-$1$, any bias introduced by population discounting is zero, and so the MSE tends to zero as $J$ increases for fixed $N$.
 Its $N^3/J$ upper bound allows substantially greater particle error for long series.
-These bounds explain the potential benefit of discounting, but do not establish the actual error rates or imply that discounting improves every model.
+
 
 We analyze geometrically discounted scores through an exact weighted average of scores truncated at finite lags.
 Posterior forgetting controls the population discount bias, while particle approximation and covariance bounds control the Monte Carlo error.
