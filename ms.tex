@@ -455,7 +455,7 @@ We ran IF2 for 1950 iterations, while IFAD-0.97 is run using a short IF2 warm-st
 IFAD-0 and IFAD-1 were run for 60 IF2 iterations followed by 410 and 425 Adam iterations, respectively.
 The cooling rate used for IF2 was slower than that used for the warm start in IFAD. 
 To assess whether other methods can catch up to IFAD-0.97 given more time, we separately ran the IF2-only approach for 4 times as many iterations and the IFAD variants with 4 times as many Adam iterations, slowing the cooling rate for each as well.
-A summary of the optimization settings is provided in the supplement (Section~\suppSecAlgorithmicParameters), and the complete source code to reproduce the numerical results is available at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
+A list of optimization settings is provided in the supplement (Section~\suppSecAlgorithmicParameters).
 
 \begin{table}[htbp!]
 \centering
@@ -788,6 +788,11 @@ This algorithm may be better suited to large discrete state spaces than either D
 Discounting the weights by some $\alpha \in [0,1]$ is not the only way to interpolate between the estimators of \cite{naesseth18} and \cite{poyiadjis11}. 
 As the proof of Theorem \ref{thm:mop-biasvar} implies, we can also truncate the weights at a fixed lag, corresponding to the MOP-$(1,k)$ algorithm mentioned. 
 The analysis is similar, with comparable rates but with a slightly less convenient implementation. 
+
+\section*{Reproducibility}
+
+Source code for this article is archived on Zenodo with DOI \href{https://doi.org/10.5281/zenodo.23538801}{10.5281/zenodo.23538801}.
+It is also available on GitHub at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
 
 
 \section*{Acknowledgments}
