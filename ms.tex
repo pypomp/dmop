@@ -122,14 +122,13 @@ We therefore build a hybrid algorithm called {\it Iterated Filtering with Automa
 We implement our algorithm using JAX \citep{jax}, which also enables us to take advantage of graphical processing unit (GPU) hardware.
 Our methodology is provided in an open-source software library, Pypomp \citep{abkemeier25}.
 
-Promising numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
+Numerical results indicate that IFAD beats IF2 (and by the numerical results of \cite{ionides15}, also IF1 and the Liu-West filter \citep{liuwest01}) on a challenging problem in epidemiology, the Dhaka cholera model of \cite{king08}.
 IFAD also outperforms marginalized panel iterated filtering on a challenging ecological panel problem, the 38-parameter \textit{Daphnia} model of \citet{yang25daphnia}.
 \newEdit{\editPlugAndPlay}
-%The choice of models and methods for benchmarking is justified in Section~\suppSecBaselineJustification. 
 
 We also present an exploratory application of DMOP-$\alpha$ to Bayesian computation.
-In Section~\ref{sec:bayes}, we use the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14} in conjunction with \sout{empirical priors estimated with IF2}\kevin{a common Gaussian prior}.
-The numerical results provide promising preliminary evidence of faster parameter-space exploration \kevin{per iteration} on the Dhaka cholera model of \cite{king08}, with the interpretation and limitations of this comparison discussed below.
+In Section~\ref{sec:bayes}, we demonstrate the DMOP-$\alpha$ gradient estimates within a No-U-Turn Sampler (NUTS) \citep{hoffman14}.
+The numerical results provide preliminary evidence of faster parameter-space exploration than a previous application of particle Markov chain Monte Carlo (PMCMC) on the Dhaka cholera model of \cite{king08}, though we also report that adaptive choice of the PMCMC proposal can recover much of the difference.
 
 \section{Problem Setup}
 
@@ -429,9 +428,10 @@ where $M_n= m\int_{t_{n-1}}^{t_n}I(s)\, ds$ is the modeled cholera deaths in tha
 
 We numerically solve this SDE using Euler's method with a time step of $1/20$ months, matching \citep{king08}.
 This example is a partially observed hypo-elliptical SDE, and methodology specific to this model class has been previously studied by \citet{ditlevsen19} (henceforth, DS19).
-Supplementary Section~{\suppSecComparison} compares IFAD with an adaptation of DS19 and the differentiable particle filter of \citet{corenflos21} (CTDD21), including the use of a warm start using IF2 that is found to assist both methods, on a range of examples. 
+Supplementary Section~{\suppSecMethodComparisonDhaka} compares IFAD with an adaptation of DS19 and the differentiable particle filter of \citet{corenflos21} (CTDD21), including the use of a warm start using IF2.
 %Our method applies to a class of latent Markov processes larger than the Gaussian SDEs, permitting the use of L\'{e}vy noise \citep{bhadra11} or other discontinuities.
-In these examples, the advantage of IFAD becomes clear on the more complex situations such as this Dhaka model. 
+Section~{\suppSecModelsComparison} expands the comparison to five models of varying complexity.
+IFAD is found to be advantageous on the more complex situations such as this Dhaka model. 
 The plug-and-play property also ensures that IFAD is readily applicable to a wide class of scientific models.
 
 \begin{figure}[htbp!]
@@ -547,7 +547,7 @@ Particle MCMC \citep{andrieu10} is arguably the most popular method for full-inf
 However, particle Metropolis-Hastings often mixes slowly, requiring long burn-in periods.
 For instance, \cite{fasiolo16} ran $1.4$ million iterations and discarded the first half as burn-in for a modified version of the \cite{king08} model, using a different transition scheme, process noise and observation distribution.
 To alleviate this, we demonstrate a No-U-Turn Sampler (NUTS) \citep{hoffman14} using DMOP-$\alpha$ gradients, with a Gaussian prior common to NUTS and particle Metropolis--Hastings.
-The prior has independent Gaussian distributions on the estimation scale, including logarithms for the five positive parameters. Each mean is the midpoint of the corresponding parameter search interval, and each standard deviation is half its width, where we note that these intervals do not truncate the prior. Particle Metropolis--Hastings uses a Gaussian random walk with a full covariance matrix estimated from preliminary runs \citep[p.~29]{dahlin19}, proposing fresh particle-filter random numbers at each iteration. This adapted proposal was crucial for convergence -- we provide additional results in Supplementary Section~\suppSecBayesFigs that depict slow mixing otherwise. NUTS uses DMOP-$\alpha$ gradients to construct trajectories conditional on the filter random numbers, which are updated separately by a Metropolis step. Its preconditioning matrix is also estimated from preliminary PMMH runs. Both matrices are held fixed, with scalar step sizes adapted during the 500 warmup iterations.  Supplementary Section~\suppSecBayesFigs\ gives the prior parameters and proposal settings.
+The prior has independent Gaussian distributions on the estimation scale, including logarithms for the five positive parameters. Each mean is the midpoint of the corresponding parameter search interval, and each standard deviation is half its width, where we note that these intervals do not truncate the prior. Particle Metropolis--Hastings uses a Gaussian random walk with a full covariance matrix estimated from preliminary runs \citep[p.~29]{dahlin19}, proposing fresh particle-filter random numbers at each iteration. This adapted proposal was crucial for convergence; we provide additional results in Supplementary Section~{\suppSecBayesFigs} that depict slow mixing otherwise. NUTS uses DMOP-$\alpha$ gradients to construct trajectories conditional on the filter random numbers, which are updated separately by a Metropolis step. Its preconditioning matrix is also estimated from preliminary PMMH runs. Both matrices are held fixed, with scalar step sizes adapted during the 500 warmup iterations.  Supplementary Section~{\suppSecBayesFigs} gives the prior parameters and proposal settings.
 
 Using NUTS with DMOP-$\alpha$ gives promising preliminary results for parameter-space exploration after discarding $500$ iterations (Figure \ref{fig:nuts-eb}).
 NUTS has been implemented with previous differentiable particle filters \citep{rosato22} but not in our plug-and-play context with control over the bias/variance tradeoff.
@@ -775,7 +775,7 @@ However, assessing the scientific potential of these variations requires likelih
 Monte~Carlo adjusted profile methods can help to acommodate maximization and evaluation error \citep{ionides17,ning21} but these methods are most effective when the maximized log-likelihood can be obtained within a few units.
 Improving the process of model fitting has practical consequences for the ability of scientists to evaluate hypotheses.
 We have demonstrated, for the first time, a plug-and-play maximum likelihood approach which provides a high-quality log-likelihood maximization in the complex benchmark model of \cite{king08}.
-The \textit{Daphnia} application in the supplement (Section S10) demonstrates that these gains also extend to complex panel data.
+The \textit{Daphnia} application in the supplement (Section~\suppSecDaphnia) demonstrates that these gains also extend to complex panel data.
 
 
 If the simulator is discontinuous in $\theta$, DMOP-$\alpha$ no longer applies.
@@ -793,7 +793,7 @@ The analysis is similar, with comparable rates but with a slightly less convenie
 \section*{Acknowledgments}
 This research was supported by National Science Foundation grants DMS-1761603, DEB-1933497 and  OAC-2607869. 
 We thank Nicolas Chopin for communications regarding the strong law of large numbers for off-parameter resampled particle filters, and other feedback. We thank Jun Chen and Arnaud Doucet for helpful discussions.
-Feedback from two anonymous referees and an associate editor has improved the manuscript.
+{\editAIstatement}
 
 %\bibliographystyle{abbrvnat}
 \bibliographystyle{apalike}
