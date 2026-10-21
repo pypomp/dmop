@@ -1,8 +1,8 @@
-# Automatic Differentiation Accelerates Inference for Partially Observed Markov Processes
+# Automatic Differentiation for Inference on Partially Observed Markov Processes Models
 
 This repository contains the manuscript, supplementary material, and numerical
-experiments for [the DMOP paper](https://doi.org/10.48550/arXiv.2407.03085).
-Development for the revision takes place here. The older
+experiments for the DMOP paper ([arXiv.2407.03085](https://doi.org/10.48550/arXiv.2407.03085)).
+Development for arXiv version v2 takes place here. The older
 `pypomp/quant/dacca_resubmission` directory is deprecated.
 
 ## Where to start
@@ -12,9 +12,9 @@ Development for the revision takes place here. The older
 | Manuscript and supplement | [ms.tex](ms.tex), [si.tex](si.tex) | Main text and SI |
 | MOP likelihood illustration | [code/fig1a/](code/fig1a/README.md) | Fig. 1A, `imgs/095/mop.png` |
 | Dhaka IF2/IFAD searches | [code/global_search/](code/global_search/) | Main Dhaka comparison |
-| DS19 comparison | [ditlevsen/](ditlevsen/README.md) | SI Section S11 |
-| CTDD21 comparison | [corenflos/](corenflos/README.md) | SI Section S11 |
-| Combined comparison tables and plots | [imgs/competitors/](imgs/competitors/README.md) | SI Tables S4–S5 and Figs. S6–S9 |
+| DS19 comparison | [ditlevsen/](ditlevsen/README.md) | SI Sections S11, S12 |
+| CTDD21 comparison | [corenflos/](corenflos/README.md) | SI Sections S11, S12 |
+| Combined comparison tables and plots | [imgs/competitors/](imgs/competitors/README.md) | SI Tables S7-S11 and Figs. S7–S16 |
 | Daphnia experiment | [code/daphnia/](code/daphnia/README.md) | SI Section S10 |
 | Other analysis code and older notebooks | [code/](code/README.md) | Code directory guide |
 | Bulk experiment outputs | [artifacts/](artifacts/README.md) | Archive inventory and restoration |
