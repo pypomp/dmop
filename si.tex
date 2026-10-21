@@ -12509,15 +12509,21 @@ are available in \texttt{code/bayesian}.
 
 \subsection{Sampling settings and diagnostics}
 
+\begin{table}
+\centering
+\resizebox{\textwidth}{!}{\input{code/bayesian/results/paper/diagnostics}}
+\caption{Diagnostics for four chains of each method, using 2,000 retained iterations per chain after 500 warmup iterations. Rank-normalized split $\widehat R$, bulk and tail ESS, and the Monte Carlo standard error of the mean (MCSE) are calculated across chains on the displayed estimation coordinates. All chains have the common prior and target specified above. Bold entries indicate $\widehat R$ closer to 1, larger ESS, or smaller MCSE.}
+\label{tab:bayesian-diagnostics}
+\end{table}
 
 We ran four chains of each method from the same four starting points,
 obtained by optimization followed by a pilot PMMH run.
 Figure~\refFigNutsEb\ compares the first 2,000 retained iterations of each
-chain, after 500 warmup iterations. \kevin{Figure~\ref{fig:mh} shows the
-marginal sample distributions of the individual chains over this window.}
-A longer PMMH run provides 30,000
-retained iterations per chain for comparison of the marginal distributions
-\sout{(Figure~\ref{fig:mh})}\kevin{(available with the code)}.
+chain, after 500 warmup iterations.
+Figure~\ref{fig:mh} shows the marginal sample distributions of the individual chains over this window.
+%A longer PMMH run provides 30,000
+%retained iterations per chain for comparison of the marginal distributions
+%(available with the code).
 
 Both methods use fixed covariance matrices estimated from preliminary
 PMMH runs. The PMMH covariance uses 1\% diagonal shrinkage and a $10^{-6}I$ ridge.
@@ -12547,27 +12553,21 @@ These tails also mix slowly, so the comparison does not establish prior
 insensitivity. The prior overlays in Figure~\ref{fig:posteriors} make this
 issue visible.
 
-\begin{table}[htbp]
-\centering
-\resizebox{\textwidth}{!}{\input{code/bayesian/results/paper/diagnostics}}
-\caption{Diagnostics for four chains of each method, using 2,000 retained iterations per chain after 500 warmup iterations. Rank-normalized split $\widehat R$, bulk and tail ESS, and the Monte Carlo standard error of the mean (MCSE) are calculated across chains on the displayed estimation coordinates. All chains have the common prior and target specified above. Bold entries indicate $\widehat R$ closer to 1, larger ESS, or smaller MCSE.}
-\label{tab:bayesian-diagnostics}
-\end{table}
-\FloatBarrier
 
 \subsection{Additional sampling figures}
 
-\begin{figure}[p]
+\begin{figure}
 \centering
 \includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_chains.pdf}
-\caption{\sout{Marginal sample distributions for all 18 estimation coordinates, pooled over four chains of each method. NUTS uses 2,000 retained iterations per chain (blue fill). To reduce serial dependence in the displayed PMMH sample, we take every 25th retained draw from each 30,000-iteration run, giving 1,200 draws per chain (orange dashed curve). Both curves use the Gaussian-kernel bandwidth selected by Scott's rule for the thinned PMMH sample. Diagnostics use all draws, and so thinning is only for this display. Both methods use the common prior and untempered target.}\kevin{Marginal sample distributions for the four NUTS chains (blue solid) and four PMMH chains (orange dashed), using all 2,000 retained iterations per chain after 500 warmup iterations. Each curve represents one chain. For each coordinate, all eight density estimates use the same Gaussian-kernel bandwidth, selected by Scott's rule from the pooled draws of both methods. The prior, target and iteration window are those of Table~\ref{tab:bayesian-diagnostics}.}}
+\caption{
+    Marginal sample distributions for the four NUTS chains (blue solid) and four PMMH chains (orange dashed), using all 2,000 retained iterations per chain after 500 warmup iterations. Each curve represents one chain. For each coordinate, all eight density estimates use the same Gaussian-kernel bandwidth, selected by Scott's rule from the pooled draws of both methods. The prior, target and iteration window are those of Table~\ref{tab:bayesian-diagnostics}.}
 \label{fig:mh}
 \end{figure}
 \FloatBarrier
 
 %\newpage
 
-\begin{figure}[p]
+\begin{figure}
 \centering
 \includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_traces.pdf}
 \caption{NUTS traces for all 18 estimation coordinates. Colors identify the four chains, with 2,000 retained iterations per chain after 500 warmup iterations. The long excursions of some seasonal environmental-transmission coefficients are less apparent in the trend diagnostic alone.}
@@ -12576,15 +12576,16 @@ issue visible.
 \FloatBarrier
 \newpage
 
-\begin{figure}[p]
+\begin{figure}
 \centering
 \includegraphics[width=0.93\textwidth,height=0.73\textheight,keepaspectratio]{imgs/pmcmc/common_target_marginals.pdf}
 \caption{Marginal sample distributions from the four NUTS chains for all 18 estimation coordinates, using 2,000 retained iterations per chain. Dashed curves show the common Gaussian prior. Density estimates use Gaussian kernels with Scott bandwidths. }
 \label{fig:posteriors}
 \end{figure}
 
-\FloatBarrier
-\newpage
+%\FloatBarrier
+%\newpage
+\clearpage
 
 \subsection{Sampling without covariance tuning}
 \label{sec:bayes-identity-control}
