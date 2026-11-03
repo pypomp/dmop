@@ -30,17 +30,6 @@
 % The OUP class sets crop stock before geometry; keep the physical PDF A4.
 \CROP@size{\paperwidth}{\paperheight}
 \crop[off,noinfo]
-% Leave the RSS title blocks intact; omit unassigned production metadata.
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\def\jrssbproductionyear{\ifx\@copyrightyear\@empty\else\@copyrightyear,\fi}
-\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
-\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\apptocmd{\ps@opening}{\def\@oddfoot{\hfil\normalfont\normalsize\thepage\hfil}\let\@evenfoot\@oddfoot}{}{}
 \renewcommand\subsubsecsize{\normalfont\normalsize\bfseries}
 % These class-specific macros bypass caption's font settings.
 \long\def\@figurecaption#1#2{\par\vspace{6pt}\begingroup
@@ -61,11 +50,11 @@
 \AtEndDocument{\refstepcounter{figure}\label{finalfig}}
 
 \begin{document}
-\journaltitle{Journal of the Royal Statistical Society: Series B}
-\DOI{}
-\copyrightyear{}
-\pubyear{}
-\access{}
+\journaltitle{Journals of the Royal Statistical Society}
+\DOI{DOI HERE}
+\copyrightyear{XXXX}
+\pubyear{XXXX}
+\access{Advance Access Publication Date: Day Month Year}
 \appnotes{Original article}
 \firstpage{1}
 \title[Differentiable particle filtering]{\articleTitle}
@@ -78,6 +67,9 @@
 \address[1]{\orgdiv{Department of Statistics}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
 \address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\country{USA}}}
 \corresp[$\ast$]{Address for correspondence: Edward L. Ionides, Department of Statistics, University of Michigan, 1085 South University Avenue, Ann Arbor, MI 48109-1107, USA. \href{mailto:ionides@umich.edu}{ionides@umich.edu}}
+\received{Date}{0}{Year}
+\revised{Date}{0}{Year}
+\accepted{Date}{0}{Year}
 \abstract{
 Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm, using AD to refine a coarse solution from an iterated filtering algorithm, shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
 }

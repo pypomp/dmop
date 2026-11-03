@@ -27,11 +27,11 @@ def main():
     body = body.replace(r'\end{document}', '\\clearpage\n' + '\n\\clearpage\n'.join(tables) + '\n\\end{document}')
     front = r'''
 \begin{document}
-\journaltitle{Journal of the Royal Statistical Society: Series B}
-\DOI{}
-\copyrightyear{}
-\pubyear{}
-\access{}
+\journaltitle{Journals of the Royal Statistical Society}
+\DOI{DOI HERE}
+\copyrightyear{XXXX}
+\pubyear{XXXX}
+\access{Advance Access Publication Date: Day Month Year}
 \appnotes{Original article}
 \firstpage{1}
 \title[Differentiable particle filtering]{\articleTitle}
@@ -44,6 +44,9 @@ def main():
 \address[1]{\orgdiv{Department of Statistics}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
 \address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\country{USA}}}
 \corresp[$\ast$]{Address for correspondence: Edward L. Ionides, Department of Statistics, University of Michigan, 1085 South University Avenue, Ann Arbor, MI 48109-1107, USA. \href{mailto:ionides@umich.edu}{ionides@umich.edu}}
+\received{Date}{0}{Year}
+\revised{Date}{0}{Year}
+\accepted{Date}{0}{Year}
 \abstract{
 '''
     keywords = r'''

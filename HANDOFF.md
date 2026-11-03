@@ -1,5 +1,44 @@
 # Handoff
 
+## November 3: retain original template placeholders; bias audits converged
+
+- User explicitly requested the original header, placeholders and all.
+  Removed the metadata suppression patches. Restored the template's exact
+  journal banner, DOI HERE, XXXX year, advance-access placeholder, received/
+  revised/accepted placeholders, gray logo and native copyright footer.
+  Rebuilt successfully (37 pages). Native footer retains its small 2.61pt
+  overfull box; no text clipping or undefined references. Independent visual
+  review converged; pages2--37 have identical text/coordinates to the previously
+  reviewed build. Final PDF sha256:
+  d2e6ce5f705c2a1d800d9a2d505326e6456b35b86a86190a681ce67f7a9b3e98.
+- Independent continuous-example audit confirmed the lower example below,
+  deriving both population algorithms directly including the denominator
+  subtraction. All rate-controlling constants are N-independent; A4's
+  fixed-horizon bounds may depend on N, e.g. G*=2N^2 and H*=8 sum n^2.
+- Independent data-averaged audit plus follow-up adversarial pass confirmed
+  E_theta||B_N||^2 <= C N p G'^2 (1-alpha)^2 at theta=phi=generating parameter,
+  for deterministic alpha, causal independent simulator innovations and
+  observation-uniform derivative/forgetting bounds. Past pathwise derivative
+  H_s projects onto X_s because future data are conditionally independent
+  of simulator history given X_s. Physical backward mixing then bounds each
+  lag increment; observation-filtration martingale orthogonality sums their
+  squared time increments. A6/A6-J are unnecessary for this population result.
+  No next-observation differentiation assumption is needed for the discrepancy
+  because the zero-lag contributions cancel. Finite-horizon latent-noise
+  differentiation still identifies the alpha=1 population score.
+- This is a recovered result, not a new unrecorded discovery: a proposition
+  giving the same N-scale bound is already inside the inactive iffalse block
+  at covariance-mse si.tex lines12387--12812 (proposition near12529).
+  The fresh audit simplified its proof. It does not hold automatically at
+  arbitrary candidate theta under a different generating law, or for alpha
+  selected using the complete observed dataset.
+- Combining with the sharper unmerged particle theorem under observation-
+  uniform assumptions gives full averaged MSE bounded by C p G'^2 times
+  [N min{H_N(alpha),J}/J + N^2/J^2 + N(1-alpha)^2]. The deterministic choice
+  1-alpha~J^(-1/3) attains O(N J^(-2/3)+N^2/J^2); compare the alpha=1 endpoint
+  for short horizons. This is an upper-bound choice, not an optimality claim.
+  No theorem/response/SI changes or branch merge were made.
+
 ## November 3: actual RSS title layout restored
 
 - Replaced the generic CTAN 1.5 class with the actual RSS July 2024 fork

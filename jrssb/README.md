@@ -47,9 +47,11 @@ sources and checksums.
 
 The generator uses the template's native title, author, address, correspondence,
 abstract, keywords and `\maketitle` commands. The native running heads are
-retained. Review-layout overrides in `preamble.tex` set the A4 crop stock,
-body/caption/float spacing and omit unassigned DOI, logo and publication
-copyright placeholders. They do not replace the native title layout.
+retained. At the author's request, the original journal banner, DOI/year/date
+placeholders, gray logo box and publisher copyright footer are retained
+exactly as in the template. Review-layout overrides in `preamble.tex` set
+the A4 crop stock and body/caption/float spacing. They do not replace the
+native title layout or publisher header.
 
 The OUP class needs packages beyond the original manuscript's dependencies.
 For a minimal TinyTeX installation, the additional packages used here are

@@ -29,17 +29,6 @@
 % The OUP class sets crop stock before geometry; keep the physical PDF A4.
 \CROP@size{\paperwidth}{\paperheight}
 \crop[off,noinfo]
-% Leave the RSS title blocks intact; omit unassigned production metadata.
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
-\def\jrssbproductionyear{\ifx\@copyrightyear\@empty\else\@copyrightyear,\fi}
-\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
-\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
-\apptocmd{\ps@opening}{\def\@oddfoot{\hfil\normalfont\normalsize\thepage\hfil}\let\@evenfoot\@oddfoot}{}{}
 \renewcommand\subsubsecsize{\normalfont\normalsize\bfseries}
 % These class-specific macros bypass caption's font settings.
 \long\def\@figurecaption#1#2{\par\vspace{6pt}\begingroup
