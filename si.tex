@@ -3258,12 +3258,171 @@ Equation~(\ref{eq:data-averaged-score-orthogonality}) proves the result.}
 \end{proof}
 
 \kevin{\normalfont\normalsize
-Thus averaging over observations replaces the squared sum of conditional
-errors by a sum of their squares. This uses the generating parameter:
-at a different evaluation parameter, the posterior expectations in
-Equation~(\ref{eq:data-average-posterior-law}) are not conditional
-expectations under the data law. The result also treats $\alpha$ as
-fixed before seeing the data.}
+At a different evaluation parameter, the posterior increments need not
+have conditional mean zero under the data-generating law. The following
+bound separates their centered fluctuations from the resulting drift.}
+
+\begin{prop}[Population error away from the generating parameter]
+\label{prop:population-offtruth}
+\kevin{\normalfont\normalsize
+Suppose the assumptions of Proposition~
+\ref{prop:dmop-alpha-data-averaged-score-discrepancy} hold uniformly on
+a convex neighborhood $\mathcal V$ of $\theta_0$. Let $B$ bound every
+coordinate of the full pathwise measurement derivative on this neighborhood,
+and put
+\[
+b=1-\underbar M/\bar M,\qquad
+K=\frac{2\sqrt p\,B}{(1-b)^2},\qquad
+L=\sqrt p\,B\left(1+\frac{2}{1-b}\right).
+\]
+Fix $\vartheta\in\mathcal V$ and $\alpha\in[0,1]$ independently of the
+data, and write $\delta=\|\vartheta-\theta_0\|_2$.
+Evaluate the discounted population score with reference
+$\phi=\vartheta$ held fixed during differentiation. Then
+\begin{align}
+&\left(\E_{\theta_0}\left\|
+\nabla_\theta\ell(\vartheta)-\nabla_\theta\ell^\alpha(\vartheta)
+\right\|_2^2\right)^{1/2}\notag\\*
+&\qquad\leq K(1-\alpha)
+\left\{\sqrt{N-1}+2L(N-1)\delta\right\}.
+\label{eq:population-offtruth-root-mse}
+\end{align}
+In particular, with fixed model constants the squared error is
+$O\{(1-\alpha)^2(N+N^2\delta^2)\}$. The explicit constants above retain
+the additional dependence on $pB^2$ in the drift term.}
+\end{prop}
+
+\begin{proof}
+\kevin{\normalfont\normalsize
+Write $e_n^\alpha(\vartheta)$ for the exact minus discounted conditional
+score. The score identities give
+\[
+e_n^\alpha(\vartheta)
+=\sum_{s<n}(1-\alpha^{n-s})
+\{\rho_n^\vartheta(h_s^\vartheta)
+ -\rho_{n-1}^\vartheta(h_s^\vartheta)\}.
+\]
+For each past in the generating support, we construct a bounded extension
+centered under the predictive law at $\vartheta$. We then bound its
+conditional mean under the generating law at $\theta_0$.
+\endgraf
+Fix a past $y_{1:n-1}$ in the support of the generating law.
+For each $s<n$, project its historical score onto $X_{n-1}$:
+\[
+H_{s,n-1}(x)=
+\E_\vartheta(h_s^\vartheta\mid X_{n-1}=x,Y_{1:n-1}=y_{1:n-1}).
+\]
+The backward-kernel contraction in
+Equation~(\ref{eq:posterior-backward-oscillation-contraction}) gives
+\[
+\sup_{x,x'}\|H_{s,n-1}(x)-H_{s,n-1}(x')\|_2
+\leq2\sqrt p\,B\,b^{n-s-1}.
+\]
+The exponent is zero when $s=n-1$, with the empty kernel product equal
+to the identity. Let $\pi$ be the law of $X_{n-1}$ given this past under $\vartheta$, and
+write $R_y(x)=p_\vartheta(y\mid X_{n-1}=x)$. Bayes' formula gives
+\[
+\rho_n^{\vartheta,y}(h_s^\vartheta)
+=\frac{\pi(H_{s,n-1}R_y)}{\pi(R_y)},
+\qquad \rho_{n-1}^\vartheta(h_s^\vartheta)=\pi(H_{s,n-1}).
+\]
+Here the superscript $y$ specifies the new observation. The first
+expectation reweights $\pi$ by the nonnegative function $R_y$, so the
+difference of these two expectations is at most the displayed diameter.
+Consequently, the historical-score
+formula defines $e_n^\alpha(\vartheta;y)$ for every next observation
+with positive predictive density under $\vartheta$, and
+\begin{align}
+\|e_n^\alpha(\vartheta;y)\|_2
+&\leq2\sqrt p\,B\sum_{r=1}^{n-1}(1-\alpha^r)b^{r-1}\notag\\*
+&\leq\frac{2\sqrt p\,B(1-\alpha)}{(1-b)(1-\alpha b)}
+\leq K(1-\alpha).
+\label{eq:offtruth-increment-bound}
+\end{align}
+Only historical measurement derivatives occur here. The bound therefore
+also applies to candidate observations outside the generating support.
+On that support the formula equals the score difference; elsewhere it
+provides a bounded extension without requiring a derivative of the current
+measurement density. If $\nu$ is the observation dominating measure,
+then $p_\vartheta(y\mid y_{1:n-1})=\pi(R_y)$ and
+$\int R_y(x)\,\nu(dy)=1$. Boundedness of $H_{s,n-1}$ therefore gives
+\[
+\int \rho_n^{\vartheta,y}(h_s^\vartheta)
+ p_\vartheta(y\mid y_{1:n-1})\,\nu(dy)
+=\pi\left(H_{s,n-1}\int R_y\,d\nu\right)
+=\rho_{n-1}^\vartheta(h_s^\vartheta).
+\]
+Subtracting the last term and summing the historical coefficients gives
+\[
+\int e_n^\alpha(\vartheta;y)
+ p_\vartheta(y\mid y_{1:n-1})\,\nu(dy)=0.
+\]
+\endgraf
+For any $\psi\in\mathcal V$, the same backward bound applied to the
+undiscounted conditional-score identity gives, on the generating support,
+\begin{align}
+\|\nabla_\psi\log p_\psi(y\mid y_{1:n-1})\|_2
+&\leq\sqrt p\,B+2\sqrt p\,B\sum_{r=1}^{n-1}b^{r-1}
+\leq L.
+\label{eq:offtruth-predictive-score-bound}
+\end{align}
+The fixed-horizon differentiation argument above justifies this score
+identity throughout $\mathcal V$. Integrating along the segment from
+$\theta_0$ to $\vartheta$ gives
+\[
+p_\vartheta(y\mid y_{1:n-1})
+\geq e^{-L\delta}p_{\theta_0}(y\mid y_{1:n-1}).
+\]
+For two densities $q,r$, their total variation distance is
+$1-\int\min(q,r)\,d\nu$. Thus the predictive distributions obey
+\begin{align}
+T_n
+&:=\|p_\vartheta(\cdot\mid y_{1:n-1})
+      -p_{\theta_0}(\cdot\mid y_{1:n-1})\|_{\mathrm{TV}}\notag\\*
+&\leq1-e^{-L\delta}\leq L\delta.
+\label{eq:offtruth-predictive-tv}
+\end{align}
+This argument only uses the density lower comparison on the generating
+support; candidate mass outside that support is included in $T_n$.
+\endgraf
+Now condition under the actual data law. The preceding centering and
+bounds imply
+\begin{align}
+d_n&:=\E_{\theta_0}
+ [e_n^\alpha(\vartheta)\mid\mathcal F_{n-1}^Y]\notag\\*
+&=\int e_n^\alpha(\vartheta;y)
+ \{p_{\theta_0}(y\mid Y_{1:n-1})
+   -p_\vartheta(y\mid Y_{1:n-1})\}\,\nu(dy),\notag\\
+\|d_n\|_2&\leq2K(1-\alpha)T_n
+\leq2KL(1-\alpha)\delta.
+\label{eq:offtruth-predictable-drift}
+\end{align}
+Put $m_n=e_n^\alpha(\vartheta)-d_n$. These are martingale differences
+under $P_{\theta_0}$, so
+\begin{align}
+\E_{\theta_0}\left\|\sum_{n=2}^N m_n\right\|_2^2
+&=\sum_{n=2}^N\E_{\theta_0}\|m_n\|_2^2\notag\\*
+&=\sum_{n=2}^N\left\{
+ \E_{\theta_0}\|e_n^\alpha(\vartheta)\|_2^2
+ -\E_{\theta_0}\|d_n\|_2^2\right\}\notag\\*
+&\leq(N-1)K^2(1-\alpha)^2.
+\end{align}
+Since $e_1^\alpha=0$, the $L^2$ triangle inequality gives
+\[
+\left\|\sum_{n=1}^N e_n^\alpha(\vartheta)\right\|_{L^2(P_{\theta_0})}
+\leq K(1-\alpha)\sqrt{N-1}
+   +2KL(1-\alpha)(N-1)\delta,
+\]
+which proves the bound. Squaring uses $(a+c)^2\leq2a^2+2c^2$.}
+\end{proof}
+
+\kevin{\normalfont\normalsize
+The linear order in $N$ therefore persists for fixed parameter sequences
+satisfying $\|\vartheta_N-\theta_0\|_2=O(N^{-1/2})$.
+At a fixed nonzero distance, the drift can contribute order $N^2$.
+The proposition is pointwise in the evaluation parameter. Applying it
+to an optimization iterate chosen using the same observations requires
+additional uniform control.}
 
 \begin{remark}[Fixed observations and random observations]
 \label{rem:continuous-population-sharpness}
@@ -3294,7 +3453,7 @@ observation signs $a=2Y_{2i-1}-1$ and $b=2Y_{2i}-1$, integration gives
 &=\int_0^1\!\int_0^1
 \frac{1+a\theta s(x)}2
 \left\{1+\tfrac12s(x)s(z)\right\}
-\frac{1+\tfrac12 b s(z)}2\,dz\,dx\notag\\
+\frac{1+\tfrac12 b s(z)}2\,dz\,dx\notag\\*
 &=\frac14\left(1+\frac{ab\theta}{36}\right),
 \label{eq:continuous-sharpness-pair-likelihood}
 \end{align}
@@ -3327,6 +3486,49 @@ with mean zero and variance one, giving
 \label{eq:continuous-averaged-data-sharpness}
 \end{equation}
 Both orders are consequently attained within the stated model class.
+\endgraf
+The same example shows that the additional $N^2\delta^2$ term in
+Proposition~\ref{prop:population-offtruth} is necessary. Allow both the
+generating parameter $\theta_0$ and the fixed evaluation/reference
+parameter $\vartheta$ to lie in $(-1/2,1/2)$. Write $c_i=a_i b_i$.
+The block likelihood in
+Equation~(\ref{eq:continuous-sharpness-pair-likelihood}) gives
+\[
+\Pr_{\theta_0}(c_i=c)=\frac{1+c\theta_0/36}{2},\qquad c\in\{-1,1\},
+\qquad
+Z_i(\vartheta)=\frac{c_i}{36+c_i\vartheta}
+\]
+for its exact score. The odd-time marginal probability is $1/2$ at every
+parameter, so its score and $\rho_{2i-1}^\vartheta(h_{2i-1}^\vartheta)$
+are zero. The even-time measurement has no parameter dependence.
+There is consequently only one nonzero lag contribution per block, and
+the discounted score is $\alpha Z_i(\vartheta)$. Summing the two possible
+values gives
+\begin{align}
+\E_{\theta_0}Z_i(\vartheta)
+&=\frac12\left\{\frac{1+\theta_0/36}{36+\vartheta}
+ -\frac{1-\theta_0/36}{36-\vartheta}\right\}
+=\frac{\theta_0-\vartheta}{1296-\vartheta^2},\notag\\
+\Var_{\theta_0}Z_i(\vartheta)
+&=\frac12\left\{\frac{1+\theta_0/36}{(36+\vartheta)^2}
+ +\frac{1-\theta_0/36}{(36-\vartheta)^2}\right\}
+ -\left(\frac{\theta_0-\vartheta}{1296-\vartheta^2}\right)^2
+=\frac{1296-\theta_0^2}{(1296-\vartheta^2)^2}.
+\end{align}
+For $N=2m$, independence of the blocks now gives the exact expression
+\begin{align}
+&\E_{\theta_0}\left|
+\nabla_\theta\ell(\vartheta)-\nabla_\theta\ell^\alpha(\vartheta)
+\right|^2\notag\\*
+&\quad=(1-\alpha)^2
+\frac{m(1296-\theta_0^2)+m^2(\theta_0-\vartheta)^2}
+     {(1296-\vartheta^2)^2}.
+\label{eq:continuous-offtruth-sharpness}
+\end{align}
+Thus both $N$ and $N^2\|\vartheta-\theta_0\|^2$ are attained, even
+with independent observation blocks. For $\alpha>0$, this example's
+discounted score has the same zeros and direction as the exact score;
+the quadratic term describes score error, not a failure of optimization.
 \endgraf
 To check the assumptions, transition densities lie in $[1/2,3/2]$,
 measurement probabilities in $[1/4,3/4]$, and the first two log-measurement

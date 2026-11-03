@@ -201,7 +201,7 @@ index af7a5d6f5..8f6a4640b 100644
  
  \section{Computational Efficiency} \label{sec:efficiency}
 diff --git a/si.tex b/si.tex
-index bae10a174..194c84746 100644
+index bae10a174..d3604945f 100644
 --- a/si.tex
 +++ b/si.tex
 @@ -2440,194 +2440,98 @@ For $F_J(\theta)=\eta_n^J(h_\theta)$, the conclusion is convergence to $\nabla_\
@@ -480,7 +480,7 @@ index bae10a174..194c84746 100644
  \begin{equation}
  \left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
  =
-@@ -2648,9768 +2552,1864 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
+@@ -2648,9768 +2552,2066 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
  +\log g_{n,k_j}^{\theta}-\log g_{n,k_j}^{\phi}.
  \label{eq:log-weight-recursion}
  \end{align}
@@ -1254,7 +1254,9 @@ index bae10a174..194c84746 100644
 -\end{align}
 -There are \(n-1-k=r-1\) backward kernels in this display. Moreover,
 -Equation~(\ref{eq:population-forgetting-score-bound}) gives
--\begin{align}
++Indeed, subtracting the common mass $\epsilon\pi_{s-1}$ leaves
++$(1-\epsilon)$ times a probability kernel. It follows that
+ \begin{align}
 -\|\bar h_{k,i}\|_\infty
 -&\leq
 -\|h_{k,i}\|_\infty
@@ -1269,9 +1271,7 @@ index bae10a174..194c84746 100644
 -If \(r=1\), Equation~(\ref{eq:iterated-backward-conditioning}) contains no
 -backward kernel. If \(r\geq2\), applying Equation~
 -(\ref{eq:posterior-backward-oscillation-contraction}) successively gives
-+Indeed, subtracting the common mass $\epsilon\pi_{s-1}$ leaves
-+$(1-\epsilon)$ times a probability kernel. It follows that
- \begin{align}
+-\begin{align}
 -&\operatorname{osc}\!\left[
 -\E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=\mathord\cdot\}
 -\right]                                                       \notag\\
@@ -1488,11 +1488,7 @@ index bae10a174..194c84746 100644
  &\leq
 -C\sqrt p\,G'(\theta)\varrho^0.
 -\label{eq:current-lag-vector-bound}
-+C\sqrt p\,G'(\theta)
-+\frac{\varrho(1-\alpha)}
-+{(1-\varrho)(1-\alpha\varrho)}.
-+\label{eq:dmop-population-discount-bias}
- \end{align}
+-\end{align}
 -Equations~(\ref{eq:lag-vector-geometric-bound}) and
 -(\ref{eq:current-lag-vector-bound}) prove
 -Equation~(\ref{eq:derivative-measure-forgetting}).
@@ -1528,6 +1524,11 @@ index bae10a174..194c84746 100644
 -current pair $(X_t,\partial_\theta X_t)$, with constants depending on the
 -joint-transition bounds. Under (A6), Lemma~\ref{lem:dmop-alpha-variance}
 -handles $h_t$ by decomposing its simulator history.
++C\sqrt p\,G'(\theta)
++\frac{\varrho(1-\alpha)}
++{(1-\varrho)(1-\alpha\varrho)}.
++\label{eq:dmop-population-discount-bias}
++\end{align}
 +For the full score,
 +\begin{align}
 +&\left\|
@@ -1965,7 +1966,13 @@ index bae10a174..194c84746 100644
 -\right|\mu
 -\right\}
 -\right|                                                       \notag\\
--&\quad\leq
++&\left\|
++\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
++-(1-\alpha)
++\left.\frac{\partial}{\partial\alpha}
++\nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}
++\right\|_2                                                   \notag\\*
+ &\quad\leq
 -R
 -\left[
 -\E\{\eta_p^J(d)^2\mid\mu\}
@@ -1976,12 +1983,9 @@ index bae10a174..194c84746 100644
 -\left[
 -\mu(d^2)\mu\{(q-1)^2\}
 -\right]^{1/2}                                                \notag\\
-+&\left\|
-+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
-+-(1-\alpha)
-+\left.\frac{\partial}{\partial\alpha}
-+\nabla_\theta\ell^\alpha(\theta)\right|_{\alpha=1}
-+\right\|_2                                                   \notag\\*
++2\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(1-\alpha^q)
++\left(\frac{2\varrho-1}{3-2\varrho}\right)^q                \notag\\
  &\quad\leq
 -\frac{C}{J}\varrho^{t-p}\operatorname{osc}(f).
 -\label{eq:weak-bias-one-complete-update}
@@ -1992,7 +1996,11 @@ index bae10a174..194c84746 100644
 -$\eta_t=\Phi_{1,t}(\eta_1)$,
 -\begin{align}
 -&\E\Psi_t(\eta_t^J)(f)-\Psi_t(\eta_t)(f)                    \notag\\
--&\quad=
++2(N-1)\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++(1-\alpha)
++\left\{\frac{3-2\varrho}{4(1-\varrho)}
++-\frac{3-2\varrho}{3-2\varrho-\alpha(2\varrho-1)}\right\}     \notag\\
+ &\quad=
 -\E\left[
 -\Psi_t\{\Phi_{1,t}(\eta_1^J)\}(f)
 --\Psi_t\{\Phi_{1,t}(\eta_1)\}(f)
@@ -2080,7 +2088,11 @@ index bae10a174..194c84746 100644
 -{(1-\alpha^2)(1-\alpha\varrho)}
 -\right\}^{1/2}.
 -\label{eq:full-score-particle-bias-direct}
--\end{align}
++(N-1)\sqrt p\,G'(\theta)
++\frac{(1-\sqrt{2(1-\varrho)})^2(3-2\varrho)(1-\alpha)^2}
++{2(1-\varrho)\{3-2\varrho-\alpha(2\varrho-1)\}}.
++\label{eq:population-bias-signed-remainder-bound}
+ \end{align}
 -\end{remark}
 -
 -\begin{proof}[Proof.]
@@ -2096,32 +2108,6 @@ index bae10a174..194c84746 100644
 -
 -For local sampling times $t$ after creation of $h_{s,i}$, their total
 -coefficient in the time-$n$ conditional score is bounded by
--\begin{align}
--&CG'(\theta)
--\sum_{t=1}^{n}\sum_{s=1}^{t}
--\alpha^{n-s}\varrho^{n-t}                                  \notag\\
-+2\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+(1-\alpha)\sum_{q=0}^{N-2}(N-1-q)(1-\alpha^q)
-+\left(\frac{2\varrho-1}{3-2\varrho}\right)^q                \notag\\
- &\quad\leq
--CG'(\theta)
--\left(\sum_{a=0}^{\infty}(\alpha\varrho)^a\right)
--\left(\sum_{b=0}^{\infty}\alpha^b\right)                  \notag\\
-+2(N-1)\sqrt p\,G'(\theta)\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+(1-\alpha)
-+\left\{\frac{3-2\varrho}{4(1-\varrho)}
-+-\frac{3-2\varrho}{3-2\varrho-\alpha(2\varrho-1)}\right\}     \notag\\
- &\quad=
--\frac{CG'(\theta)}{(1-\alpha\varrho)(1-\alpha)}.
--\label{eq:conditional-bias-past-local-sum}
-+(N-1)\sqrt p\,G'(\theta)
-+\frac{(1-\sqrt{2(1-\varrho)})^2(3-2\varrho)(1-\alpha)^2}
-+{2(1-\varrho)\{3-2\varrho-\alpha(2\varrho-1)\}}.
-+\label{eq:population-bias-signed-remainder-bound}
- \end{align}
--Here $a=n-t$ and $b=t-s$.  For local sampling times preceding creation
--of $h_{s,i}$, Equation~
--(\ref{eq:dmop-direct-future-score-two-contractions}) gives
 +The last equality uses
 +$2\varrho-1=(1-\sqrt{2(1-\varrho)})(1+\sqrt{2(1-\varrho)})$.
 +For $\varrho=\tfrac12$, the score difference and its signed derivative are
@@ -2129,18 +2115,17 @@ index bae10a174..194c84746 100644
 +In particular, the population bias is bounded by
  \begin{align}
 -&CG'(\theta)
--\sum_{t=1}^{n-1}\sum_{s=t+1}^{n}
--\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}                    \notag\\
+-\sum_{t=1}^{n}\sum_{s=1}^{t}
+-\alpha^{n-s}\varrho^{n-t}                                  \notag\\
 +&\|\nabla_\theta\ell(\theta)
 +-\nabla_\theta\ell^\alpha(\theta)\|_2                         \notag\\
  &\quad\leq
 -CG'(\theta)
--\left(\sum_{a=1}^{\infty}\varrho^a\right)
--\left(\sum_{b=0}^{\infty}(\alpha\varrho)^b\right)          \notag\\
+-\left(\sum_{a=0}^{\infty}(\alpha\varrho)^a\right)
+-\left(\sum_{b=0}^{\infty}\alpha^b\right)                  \notag\\
 -&\quad=
--\frac{CG'(\theta)\varrho}
--{(1-\varrho)(1-\alpha\varrho)}.
--\label{eq:conditional-bias-future-local-sum}
+-\frac{CG'(\theta)}{(1-\alpha\varrho)(1-\alpha)}.
+-\label{eq:conditional-bias-past-local-sum}
 +(1-\alpha)
 +\left\|\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r}\right\|_2
 ++
@@ -2149,6 +2134,22 @@ index bae10a174..194c84746 100644
 +{2(1-\varrho)\{3-2\varrho-\alpha(2\varrho-1)\}}.
 +\label{eq:population-bias-cancellation-bound}
  \end{align}
+-Here $a=n-t$ and $b=t-s$.  For local sampling times preceding creation
+-of $h_{s,i}$, Equation~
+-(\ref{eq:dmop-direct-future-score-two-contractions}) gives
+-\begin{align}
+-&CG'(\theta)
+-\sum_{t=1}^{n-1}\sum_{s=t+1}^{n}
+-\alpha^{n-s}\varrho^{s-t}\varrho^{n-s}                    \notag\\
+-&\quad\leq
+-CG'(\theta)
+-\left(\sum_{a=1}^{\infty}\varrho^a\right)
+-\left(\sum_{b=0}^{\infty}(\alpha\varrho)^b\right)          \notag\\
+-&\quad=
+-\frac{CG'(\theta)\varrho}
+-{(1-\varrho)(1-\alpha\varrho)}.
+-\label{eq:conditional-bias-future-local-sum}
+-\end{align}
 -Here $a=s-t$ and $b=n-s$.  The empirical second-moment identities in
 -Equation~(\ref{eq:dmop-direct-local-empirical-moments}) make every local
 -quadratic ratio remainder equal to its displayed coefficient times at
@@ -2379,12 +2380,171 @@ index bae10a174..194c84746 100644
 -Lemma~\ref{lem:lagwise-weak-error}, for
 -\(\alpha\in[0,1)\),
 +\kevin{\normalfont\normalsize
-+Thus averaging over observations replaces the squared sum of conditional
-+errors by a sum of their squares. This uses the generating parameter:
-+at a different evaluation parameter, the posterior expectations in
-+Equation~(\ref{eq:data-average-posterior-law}) are not conditional
-+expectations under the data law. The result also treats $\alpha$ as
-+fixed before seeing the data.}
++At a different evaluation parameter, the posterior increments need not
++have conditional mean zero under the data-generating law. The following
++bound separates their centered fluctuations from the resulting drift.}
++
++\begin{prop}[Population error away from the generating parameter]
++\label{prop:population-offtruth}
++\kevin{\normalfont\normalsize
++Suppose the assumptions of Proposition~
++\ref{prop:dmop-alpha-data-averaged-score-discrepancy} hold uniformly on
++a convex neighborhood $\mathcal V$ of $\theta_0$. Let $B$ bound every
++coordinate of the full pathwise measurement derivative on this neighborhood,
++and put
++\[
++b=1-\underbar M/\bar M,\qquad
++K=\frac{2\sqrt p\,B}{(1-b)^2},\qquad
++L=\sqrt p\,B\left(1+\frac{2}{1-b}\right).
++\]
++Fix $\vartheta\in\mathcal V$ and $\alpha\in[0,1]$ independently of the
++data, and write $\delta=\|\vartheta-\theta_0\|_2$.
++Evaluate the discounted population score with reference
++$\phi=\vartheta$ held fixed during differentiation. Then
++\begin{align}
++&\left(\E_{\theta_0}\left\|
++\nabla_\theta\ell(\vartheta)-\nabla_\theta\ell^\alpha(\vartheta)
++\right\|_2^2\right)^{1/2}\notag\\*
++&\qquad\leq K(1-\alpha)
++\left\{\sqrt{N-1}+2L(N-1)\delta\right\}.
++\label{eq:population-offtruth-root-mse}
++\end{align}
++In particular, with fixed model constants the squared error is
++$O\{(1-\alpha)^2(N+N^2\delta^2)\}$. The explicit constants above retain
++the additional dependence on $pB^2$ in the drift term.}
++\end{prop}
++
++\begin{proof}
++\kevin{\normalfont\normalsize
++Write $e_n^\alpha(\vartheta)$ for the exact minus discounted conditional
++score. The score identities give
++\[
++e_n^\alpha(\vartheta)
++=\sum_{s<n}(1-\alpha^{n-s})
++\{\rho_n^\vartheta(h_s^\vartheta)
++ -\rho_{n-1}^\vartheta(h_s^\vartheta)\}.
++\]
++For each past in the generating support, we construct a bounded extension
++centered under the predictive law at $\vartheta$. We then bound its
++conditional mean under the generating law at $\theta_0$.
++\endgraf
++Fix a past $y_{1:n-1}$ in the support of the generating law.
++For each $s<n$, project its historical score onto $X_{n-1}$:
++\[
++H_{s,n-1}(x)=
++\E_\vartheta(h_s^\vartheta\mid X_{n-1}=x,Y_{1:n-1}=y_{1:n-1}).
++\]
++The backward-kernel contraction in
++Equation~(\ref{eq:posterior-backward-oscillation-contraction}) gives
++\[
++\sup_{x,x'}\|H_{s,n-1}(x)-H_{s,n-1}(x')\|_2
++\leq2\sqrt p\,B\,b^{n-s-1}.
++\]
++The exponent is zero when $s=n-1$, with the empty kernel product equal
++to the identity. Let $\pi$ be the law of $X_{n-1}$ given this past under $\vartheta$, and
++write $R_y(x)=p_\vartheta(y\mid X_{n-1}=x)$. Bayes' formula gives
++\[
++\rho_n^{\vartheta,y}(h_s^\vartheta)
++=\frac{\pi(H_{s,n-1}R_y)}{\pi(R_y)},
++\qquad \rho_{n-1}^\vartheta(h_s^\vartheta)=\pi(H_{s,n-1}).
++\]
++Here the superscript $y$ specifies the new observation. The first
++expectation reweights $\pi$ by the nonnegative function $R_y$, so the
++difference of these two expectations is at most the displayed diameter.
++Consequently, the historical-score
++formula defines $e_n^\alpha(\vartheta;y)$ for every next observation
++with positive predictive density under $\vartheta$, and
++\begin{align}
++\|e_n^\alpha(\vartheta;y)\|_2
++&\leq2\sqrt p\,B\sum_{r=1}^{n-1}(1-\alpha^r)b^{r-1}\notag\\*
++&\leq\frac{2\sqrt p\,B(1-\alpha)}{(1-b)(1-\alpha b)}
++\leq K(1-\alpha).
++\label{eq:offtruth-increment-bound}
++\end{align}
++Only historical measurement derivatives occur here. The bound therefore
++also applies to candidate observations outside the generating support.
++On that support the formula equals the score difference; elsewhere it
++provides a bounded extension without requiring a derivative of the current
++measurement density. If $\nu$ is the observation dominating measure,
++then $p_\vartheta(y\mid y_{1:n-1})=\pi(R_y)$ and
++$\int R_y(x)\,\nu(dy)=1$. Boundedness of $H_{s,n-1}$ therefore gives
++\[
++\int \rho_n^{\vartheta,y}(h_s^\vartheta)
++ p_\vartheta(y\mid y_{1:n-1})\,\nu(dy)
++=\pi\left(H_{s,n-1}\int R_y\,d\nu\right)
++=\rho_{n-1}^\vartheta(h_s^\vartheta).
++\]
++Subtracting the last term and summing the historical coefficients gives
++\[
++\int e_n^\alpha(\vartheta;y)
++ p_\vartheta(y\mid y_{1:n-1})\,\nu(dy)=0.
++\]
++\endgraf
++For any $\psi\in\mathcal V$, the same backward bound applied to the
++undiscounted conditional-score identity gives, on the generating support,
++\begin{align}
++\|\nabla_\psi\log p_\psi(y\mid y_{1:n-1})\|_2
++&\leq\sqrt p\,B+2\sqrt p\,B\sum_{r=1}^{n-1}b^{r-1}
++\leq L.
++\label{eq:offtruth-predictive-score-bound}
++\end{align}
++The fixed-horizon differentiation argument above justifies this score
++identity throughout $\mathcal V$. Integrating along the segment from
++$\theta_0$ to $\vartheta$ gives
++\[
++p_\vartheta(y\mid y_{1:n-1})
++\geq e^{-L\delta}p_{\theta_0}(y\mid y_{1:n-1}).
++\]
++For two densities $q,r$, their total variation distance is
++$1-\int\min(q,r)\,d\nu$. Thus the predictive distributions obey
++\begin{align}
++T_n
++&:=\|p_\vartheta(\cdot\mid y_{1:n-1})
++      -p_{\theta_0}(\cdot\mid y_{1:n-1})\|_{\mathrm{TV}}\notag\\*
++&\leq1-e^{-L\delta}\leq L\delta.
++\label{eq:offtruth-predictive-tv}
++\end{align}
++This argument only uses the density lower comparison on the generating
++support; candidate mass outside that support is included in $T_n$.
++\endgraf
++Now condition under the actual data law. The preceding centering and
++bounds imply
++\begin{align}
++d_n&:=\E_{\theta_0}
++ [e_n^\alpha(\vartheta)\mid\mathcal F_{n-1}^Y]\notag\\*
++&=\int e_n^\alpha(\vartheta;y)
++ \{p_{\theta_0}(y\mid Y_{1:n-1})
++   -p_\vartheta(y\mid Y_{1:n-1})\}\,\nu(dy),\notag\\
++\|d_n\|_2&\leq2K(1-\alpha)T_n
++\leq2KL(1-\alpha)\delta.
++\label{eq:offtruth-predictable-drift}
++\end{align}
++Put $m_n=e_n^\alpha(\vartheta)-d_n$. These are martingale differences
++under $P_{\theta_0}$, so
++\begin{align}
++\E_{\theta_0}\left\|\sum_{n=2}^N m_n\right\|_2^2
++&=\sum_{n=2}^N\E_{\theta_0}\|m_n\|_2^2\notag\\*
++&=\sum_{n=2}^N\left\{
++ \E_{\theta_0}\|e_n^\alpha(\vartheta)\|_2^2
++ -\E_{\theta_0}\|d_n\|_2^2\right\}\notag\\*
++&\leq(N-1)K^2(1-\alpha)^2.
++\end{align}
++Since $e_1^\alpha=0$, the $L^2$ triangle inequality gives
++\[
++\left\|\sum_{n=1}^N e_n^\alpha(\vartheta)\right\|_{L^2(P_{\theta_0})}
++\leq K(1-\alpha)\sqrt{N-1}
++   +2KL(1-\alpha)(N-1)\delta,
++\]
++which proves the bound. Squaring uses $(a+c)^2\leq2a^2+2c^2$.}
++\end{proof}
++
++\kevin{\normalfont\normalsize
++The linear order in $N$ therefore persists for fixed parameter sequences
++satisfying $\|\vartheta_N-\theta_0\|_2=O(N^{-1/2})$.
++At a fixed nonzero distance, the drift can contribute order $N^2$.
++The proposition is pointwise in the evaluation parameter. Applying it
++to an optimization iterate chosen using the same observations requires
++additional uniform control.}
 +
 +\begin{remark}[Fixed observations and random observations]
 +\label{rem:continuous-population-sharpness}
@@ -2407,14 +2567,7 @@ index bae10a174..194c84746 100644
  \end{equation}
 -At \(\alpha=1\), the same argument gives
 +The observations are Bernoulli, with success probabilities
- \begin{equation}
--\left\|
--\E\nabla_\theta\hat\ell_n^1(\theta)
---\nabla_\theta\ell_n^1(\theta)
--\right\|_2
--\leq
--\frac{C\sqrt p\,G'(\theta)n^2}{J}.
--\label{eq:undiscounted-dmop-particle-bias}
++\begin{equation}
 +\Pr_\theta(Y_n=1\mid X_n=x)
 +=\begin{cases}
 +\tfrac12\{1+\theta s(x)\},&n\text{ odd},\\
@@ -2430,7 +2583,7 @@ index bae10a174..194c84746 100644
 +&=\int_0^1\!\int_0^1
 +\frac{1+a\theta s(x)}2
 +\left\{1+\tfrac12s(x)s(z)\right\}
-+\frac{1+\tfrac12 b s(z)}2\,dz\,dx\notag\\
++\frac{1+\tfrac12 b s(z)}2\,dz\,dx\notag\\*
 +&=\frac14\left(1+\frac{ab\theta}{36}\right),
 +\label{eq:continuous-sharpness-pair-likelihood}
 +\end{align}
@@ -2447,8 +2600,7 @@ index bae10a174..194c84746 100644
 +\nabla_\theta\ell(0)-\nabla_\theta\ell^\alpha(0)
 +=\frac{1-\alpha}{36}\sum_{i=1}^m a_i b_i.
 +\label{eq:continuous-sharpness-bias}
- \end{equation}
--\end{lem}
++\end{equation}
 +For the fixed sequence $Y_n=1$, the squared difference is exactly
 +\begin{equation}
 +\left|\nabla_\theta\ell(0)-\nabla_\theta\ell^\alpha(0)\right|^2
@@ -2464,6 +2616,49 @@ index bae10a174..194c84746 100644
 +\label{eq:continuous-averaged-data-sharpness}
 +\end{equation}
 +Both orders are consequently attained within the stated model class.
++\endgraf
++The same example shows that the additional $N^2\delta^2$ term in
++Proposition~\ref{prop:population-offtruth} is necessary. Allow both the
++generating parameter $\theta_0$ and the fixed evaluation/reference
++parameter $\vartheta$ to lie in $(-1/2,1/2)$. Write $c_i=a_i b_i$.
++The block likelihood in
++Equation~(\ref{eq:continuous-sharpness-pair-likelihood}) gives
++\[
++\Pr_{\theta_0}(c_i=c)=\frac{1+c\theta_0/36}{2},\qquad c\in\{-1,1\},
++\qquad
++Z_i(\vartheta)=\frac{c_i}{36+c_i\vartheta}
++\]
++for its exact score. The odd-time marginal probability is $1/2$ at every
++parameter, so its score and $\rho_{2i-1}^\vartheta(h_{2i-1}^\vartheta)$
++are zero. The even-time measurement has no parameter dependence.
++There is consequently only one nonzero lag contribution per block, and
++the discounted score is $\alpha Z_i(\vartheta)$. Summing the two possible
++values gives
++\begin{align}
++\E_{\theta_0}Z_i(\vartheta)
++&=\frac12\left\{\frac{1+\theta_0/36}{36+\vartheta}
++ -\frac{1-\theta_0/36}{36-\vartheta}\right\}
++=\frac{\theta_0-\vartheta}{1296-\vartheta^2},\notag\\
++\Var_{\theta_0}Z_i(\vartheta)
++&=\frac12\left\{\frac{1+\theta_0/36}{(36+\vartheta)^2}
++ +\frac{1-\theta_0/36}{(36-\vartheta)^2}\right\}
++ -\left(\frac{\theta_0-\vartheta}{1296-\vartheta^2}\right)^2
++=\frac{1296-\theta_0^2}{(1296-\vartheta^2)^2}.
++\end{align}
++For $N=2m$, independence of the blocks now gives the exact expression
++\begin{align}
++&\E_{\theta_0}\left|
++\nabla_\theta\ell(\vartheta)-\nabla_\theta\ell^\alpha(\vartheta)
++\right|^2\notag\\*
++&\quad=(1-\alpha)^2
++\frac{m(1296-\theta_0^2)+m^2(\theta_0-\vartheta)^2}
++     {(1296-\vartheta^2)^2}.
++\label{eq:continuous-offtruth-sharpness}
++\end{align}
++Thus both $N$ and $N^2\|\vartheta-\theta_0\|^2$ are attained, even
++with independent observation blocks. For $\alpha>0$, this example's
++discounted score has the same zeros and direction as the exact score;
++the quadratic term describes score error, not a failure of optimization.
 +\endgraf
 +To check the assumptions, transition densities lie in $[1/2,3/2]$,
 +measurement probabilities in $[1/4,3/4]$, and the first two log-measurement
@@ -2485,7 +2680,29 @@ index bae10a174..194c84746 100644
 +in $J$ and $\alpha$. The model and stability constants used in the rate
 +bounds are independent of $N$.}
 +\end{remark}
- 
++
++\subsection{Particle error}
++
++\kevin{\normalfont\normalsize
++\paragraph*{(A6) Measurement-sensitivity decay.}
++\label{assump:measurement-sensitivity}
++The simulator is $C^1$ in its incoming state. For a continuation
++$X_n^\theta(x_t,\omega_{t+1:n})$ from $x_t$, with $X_t^\theta(x_t)=x_t$,
+ \begin{equation}
+ \left\|
+-\E\nabla_\theta\hat\ell_n^1(\theta)
+--\nabla_\theta\ell_n^1(\theta)
++D_{x_t}\log f_{Y_n\mid X_n}
++\bigl(y_n^*\mid X_n^\theta(x_t,\omega_{t+1:n});\theta\bigr)
+ \right\|_2
+-\leq
+-\frac{C\sqrt p\,G'(\theta)n^2}{J}.
+-\label{eq:undiscounted-dmop-particle-bias}
++\leq C\kappa^{n-t},\qquad C<\infty,\quad 0<\kappa<1.
++\label{eq:measurement-sensitivity-assumption}
+ \end{equation}
+-\end{lem}
+-
 -\begin{proof}[Proof.]
 -At \(\theta=\phi\), the particles and resampling indices do not depend on
 -\(\alpha\). Taking expectations in
@@ -2533,8 +2750,7 @@ index bae10a174..194c84746 100644
 -which proves Equation~(\ref{eq:undiscounted-dmop-particle-bias}).
 -\end{proof}
 -\fi
-+\subsection{Particle error}
- 
+-
 -\begin{lem}[Full-score summation-by-parts identities]
 -\label{lem:dmop-full-score-summation-by-parts}
 -Suppose $\theta=\phi$ and $\alpha\in[0,1]$.  Then the particle and
@@ -2542,13 +2758,8 @@ index bae10a174..194c84746 100644
 -(\ref{eq:full-score-summation-by-parts}) and
 -(\ref{eq:population-full-score-summation-by-parts}) below.  Moreover,
 -for every coordinate $i$ and $t\leq N$,
-+\kevin{\normalfont\normalsize
-+\paragraph*{(A6) Measurement-sensitivity decay.}
-+\label{assump:measurement-sensitivity}
-+The simulator is $C^1$ in its incoming state. For a continuation
-+$X_n^\theta(x_t,\omega_{t+1:n})$ from $x_t$, with $X_t^\theta(x_t)=x_t$,
- \begin{equation}
- \left\|
+-\begin{equation}
+-\left\|
 -\sum_{k=1}^{t}\alpha^{t-k}h_{k,i}
 -\right\|_\infty
 -\leq
@@ -9239,9 +9450,7 @@ index bae10a174..194c84746 100644
 -\begin{align}
 -\left\|
 -\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
-+D_{x_t}\log f_{Y_n\mid X_n}
-+\bigl(y_n^*\mid X_n^\theta(x_t,\omega_{t+1:n});\theta\bigr)
- \right\|_2
+-\right\|_2
 -&\leq
 -m(\xi_N)\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)
 -+\rho_N\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)       \notag\\
@@ -9657,9 +9866,7 @@ index bae10a174..194c84746 100644
 -J(1+\log J)^2\gtrsim N^3&0&N^3/J.
 -\end{array}
 -\label{eq:alpha-tuning-soft-lag-regimes}
-+\leq C\kappa^{n-t},\qquad C<\infty,\quad 0<\kappa<1.
-+\label{eq:measurement-sensitivity-assumption}
- \end{equation}
+-\end{equation}
 -The first boundary is where the two particle coefficients have the
 -same order. In the middle regime, compare the balanced bound with the
 -independent terminal bound:
@@ -10061,7 +10268,10 @@ index bae10a174..194c84746 100644
 -\Pr(Y_2=1\mid X_1=0)&=\frac38,
 -\end{align}
 -so $\Pr(X_1=1\mid Y_1=Y_2=1)=5/8$.  Consequently,
--\begin{equation}
++Its final angle is uniform, and a fixed-random-number change in the
++incoming angle is preserved. Differentiating the displayed measurement
++probability therefore gives
+ \begin{equation}
 -\nabla_\theta\ell(0)-\nabla_\theta\ell^\alpha(0)
 -=(1-\alpha)\Delta_{2,1}
 -=\frac{1-\alpha}{4}.
@@ -10131,18 +10341,27 @@ index bae10a174..194c84746 100644
 -\label{eq:geometric-partial-smoother-average}
 -\end{align}
 -Its exact-score contribution is $\rho_N(h_s)$, so their difference is
-+Its final angle is uniform, and a fixed-random-number change in the
-+incoming angle is preserved. Differentiating the displayed measurement
-+probability therefore gives
- \begin{equation}
--(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q
--\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
--\label{eq:geometric-partial-smoother-error}
 +\E\left\|D_x\log f_{Y_n\mid X_n}
 +\bigl(1\mid X_n^\theta(x,\omega_{t+1:n});\theta\bigr)\right\|_2^2
 +=\frac{1}{2\pi\|x\|_2^2}
 +\int_0^{2\pi}\frac{\sin^2 u}{(2+\cos u)^2}\,du>0.
 +\label{eq:gradient-stability-rotation-nondecay}
++\end{equation}
++The right side is independent of $n-t$, so (A6) fails despite (A1)--(A5).
++Here $D_n^\theta=R_{\pi/2}X_n^\theta$, and the joint transition has the
++physical density relative to $dx'\,\delta_{R_{\pi/2}x'}(dv')$.
++Thus (A6-J) holds and the particle bounds still apply. In particular,
++(A6-J) does not imply (A6).
++\endgraf
++Under (A6-J), the measurement gradient is
+ \begin{equation}
+-(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q
+-\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
+-\label{eq:geometric-partial-smoother-error}
++h_{t,i}(x,v)=\partial_{\theta_i}\log f_{Y_t\mid X_t}(y_t^*\mid x;\theta)
+++\sum_{a=1}^d\partial_{x_a}\log f_{Y_t\mid X_t}(y_t^*\mid x;\theta)v_{ai},
++\qquad \theta=\phi,
++\label{eq:joint-current-measurement-gradient}
  \end{equation}
 -Thus geometric discounting averages partial smoothers with a geometrically
 -distributed smoothing time capped at $N-s$, whereas fixed lag uses one
@@ -10159,7 +10378,8 @@ index bae10a174..194c84746 100644
 -{(1-\varrho)(1-\alpha\varrho)}
 -}{
 -\dfrac{\varrho^{k+1}}{1-\varrho}
--}
++which is bounded by (A3).
+ }
 -&=
 -\frac{(1-\alpha)\varrho^{-k}}{1-\alpha\varrho}
 -\leq
@@ -10190,7 +10410,7 @@ index bae10a174..194c84746 100644
 -discount memory spans arbitrarily many mixing times.
 -\end{remark}
 -\fi
--
+ 
 -\iffalse
 -\begin{remark}[Fixed lag and geometric memory]
 -For $0\leq k<N$, the fixed-lag score and its population truncation error
@@ -10204,26 +10424,13 @@ index bae10a174..194c84746 100644
 -\label{eq:verified-fixed-lag-population-error}
 -\end{align}
 -Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
-+The right side is independent of $n-t$, so (A6) fails despite (A1)--(A5).
-+Here $D_n^\theta=R_{\pi/2}X_n^\theta$, and the joint transition has the
-+physical density relative to $dx'\,\delta_{R_{\pi/2}x'}(dv')$.
-+Thus (A6-J) holds and the particle bounds still apply. In particular,
-+(A6-J) does not imply (A6).
-+\endgraf
-+Under (A6-J), the measurement gradient is
- \begin{equation}
+-\begin{equation}
 -\left\|\operatorname{Bias}^{\rm pop}_k\right\|_2
 -\leq
 -C(N-k-1)\sqrt p\,G'(\theta)\frac{\varrho^{k+1}}{1-\varrho}.
 -\label{eq:verified-fixed-lag-population-bias}
-+h_{t,i}(x,v)=\partial_{\theta_i}\log f_{Y_t\mid X_t}(y_t^*\mid x;\theta)
-++\sum_{a=1}^d\partial_{x_a}\log f_{Y_t\mid X_t}(y_t^*\mid x;\theta)v_{ai},
-+\qquad \theta=\phi,
-+\label{eq:joint-current-measurement-gradient}
- \end{equation}
-+which is bounded by (A3).
-+}
- 
+-\end{equation}
+-
 -Under the additional current-location premise of Lemma~
 -\ref{lem:dmop-alpha-variance}, its genealogy calculation also gives the
 -particle bound
@@ -10376,7 +10583,9 @@ index bae10a174..194c84746 100644
 +\label{eq:simulator-gradient-chain-expansion}
  \end{equation}
 -Summing over the possible values of $d$ yields
--\begin{align}
++Under (A6), write the coordinate-$i$ measurement gradient as a sum
++over the age $r$ of its parameter derivative:
+ \begin{align}
 -\sum_{d=0}^{k}\varrho^d(k-d+1)^{1/2}
 -&\leq
 -(k+1)^{1/2}\sum_{d=0}^{\infty}\varrho^d
@@ -10480,12 +10689,12 @@ index bae10a174..194c84746 100644
 -
 -The scalar geometric-discount bias bound is an exact geometric mixture of
 -the fixed-lag scalar bounds:
-+Under (A6), write the coordinate-$i$ measurement gradient as a sum
-+over the age $r$ of its parameter derivative:
- \begin{align}
+-\begin{align}
 -\sum_{r=1}^{\infty}(1-\alpha^r)\varrho^r
 +h_{s,i}^{[0]}
-+&=
+ &=
+-\sum_{q=0}^{\infty}(1-\alpha)\alpha^q
+-\frac{\varrho^{q+1}}{1-\varrho}                            \notag\\
 +\left.\partial_{\theta_i}\log f_{Y_s\mid X_s}(y_s^*\mid x;\theta)
 +\right|_{x=X_s^\theta}
 ++\left.D_x\log f_{Y_s\mid X_s}(y_s^*\mid x;\theta)\right|_{x=X_s^\theta}
@@ -10493,8 +10702,9 @@ index bae10a174..194c84746 100644
 +\notag\\
 +h_{s,i}^{[r]}
  &=
--\sum_{q=0}^{\infty}(1-\alpha)\alpha^q
--\frac{\varrho^{q+1}}{1-\varrho}                            \notag\\
+-\frac{\varrho(1-\alpha)}
+-{(1-\varrho)(1-\alpha\varrho)}.
+-\label{eq:geometric-mixture-of-fixed-lag-bounds}
 +\left.
 +D_x\log f_{Y_s\mid X_s}
 +\bigl(y_s^*\mid X_s^\theta(x,\omega_{s-r+1:s});\theta\bigr)
@@ -10503,10 +10713,7 @@ index bae10a174..194c84746 100644
 +\quad 1\leq r<s,
 +\notag\\
 +h_{s,i}^{[s]}
- &=
--\frac{\varrho(1-\alpha)}
--{(1-\varrho)(1-\alpha\varrho)}.
--\label{eq:geometric-mixture-of-fixed-lag-bounds}
++&=
 +\left.
 +D_x\log f_{Y_s\mid X_s}
 +\bigl(y_s^*\mid X_s^\theta(x,\omega_{1:s});\theta\bigr)
@@ -10519,17 +10726,7 @@ index bae10a174..194c84746 100644
 +The first term includes the direct measurement derivative and the
 +current simulator derivative; the last includes the initial-state derivative.
 +Under (A6), enlarge $G'(\theta)$ if necessary so that
- \begin{equation}
--\frac12
--<
--\frac{(1-\alpha)\varrho^{-k}}{1-\alpha\varrho}
--\leq
--\varrho^{-k}.
--\label{eq:mixing-calibrated-geometric-fixed-lag-comparison}
--\end{equation}
--Thus the two scalar bounds are within fixed factors when
--$k|\log\varrho|=O(1)$.  This comparison does not turn geometric
--discounting into a hard cutoff: from the exact signed representation,
++\begin{equation}
 +\max\left\{
 + \|\partial_{\theta_i}X_0^\theta\|_2,\,
 + \|\partial_{\theta_i}\process_u(x;\theta,\omega_u)\|_2,\,
@@ -10541,38 +10738,12 @@ index bae10a174..194c84746 100644
 +partial derivatives. Under (A6-J), the original bound on $h_{s,i}$ suffices.
 +Multiplying Equation~(\ref{eq:simulator-gradient-chain-expansion}) by
 +the spatial log measurement derivative gives
- \begin{equation}
--\lim_{\alpha\uparrow1}
--\frac{\nabla_\theta\ell(\theta)
---\nabla_\theta\ell^\alpha(\theta)}{1-\alpha}
--=
--\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r},
--\label{eq:first-order-population-discount-bias}
++\begin{equation}
 +h_{s,i}=\sum_{r=0}^s h_{s,i}^{[r]},
 +\qquad
 +\|h_{s,i}^{[r]}\|_\infty\leq CG'(\theta)\kappa^r.
 +\label{eq:measurement-gradient-age-sum}
- \end{equation}
--and the assumptions do not force the right side to vanish.  Hence the
--generic geometric-discount population bias is first order in
--$1-\alpha$, even though its coefficient contains the forgetting powers
--$\varrho^r$.
--\end{remark}
--\fi
--
--\iffalse
--\begin{remark}[Fixed lag and historical particle error]
--For $0\leq k<N$, the fixed-lag score and its population truncation error
--are, respectively,
--\begin{align}
--&\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
--+m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),
--\label{eq:verified-fixed-lag-telescope}
--\\
--&\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
--\label{eq:verified-fixed-lag-population-error}
--\end{align}
--Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
++\end{equation}
 +For $r=0$ use (A6) with $t=s$ and the bounded partial derivatives;
 +for $1\leq r<s$ use it with $t=s-r$; for $r=s$ use $t=0$ and the
 +initial-gradient bound. For $r<s$, the displayed function depends only
@@ -10630,11 +10801,12 @@ index bae10a174..194c84746 100644
 +\]
 +For $2\leq u\leq N$, the conditional parent probabilities are
  \begin{equation}
--\left\|\operatorname{Bias}^{\rm pop}_k\right\|_2
+-\frac12
+-<
+-\frac{(1-\alpha)\varrho^{-k}}{1-\alpha\varrho}
 -\leq
--C(N-k-1)\sqrt p\,G'(\theta)
--\frac{\varrho^{k+1}}{1-\varrho}.
--\label{eq:verified-fixed-lag-population-bias}
+-\varrho^{-k}.
+-\label{eq:mixing-calibrated-geometric-fixed-lag-comparison}
 +B_u^J(j,l)=
 +\frac{g_{u-1,l}^{\phi}
 + f_{X_u\mid X_{u-1}}(X_{u,j}^{P,\phi}\mid X_{u-1,l}^{P,\phi};\phi)}
@@ -10642,12 +10814,9 @@ index bae10a174..194c84746 100644
 + f_{X_u\mid X_{u-1}}(X_{u,j}^{P,\phi}\mid X_{u-1,v}^{P,\phi};\phi)}.
 +\label{eq:logfree-backward}
  \end{equation}
--
--For the particle term, apply Equation~
--(\ref{eq:chan-historical-l2-specialization}) separately to every
--historical functional in Equation~
--(\ref{eq:verified-fixed-lag-telescope}) and use Minkowski's inequality.
--For $J\geq cN$, this gives
+-Thus the two scalar bounds are within fixed factors when
+-$k|\log\varrho|=O(1)$.  This comparison does not turn geometric
+-discounting into a hard cutoff: from the exact signed representation,
 +Under (A6-J), use the joint transition density. At the artificial last
 +layer, the transition density is one, and hence
 +\[
@@ -10731,13 +10900,55 @@ index bae10a174..194c84746 100644
 +Their ratio is $A_{u-1}$. At $u=1$, the exact initial prediction law
 +gives $A_0=\rho_b(h_{s,i}^{[r]})$; at $u=T$, $Q_{T,T}1=1$ and
 +$A_T$ is the conditional smoother. Thus, with $e_{u;s,b}=A_u-A_{u-1}$,
-+\begin{equation}
+ \begin{equation}
+-\lim_{\alpha\uparrow1}
+-\frac{\nabla_\theta\ell(\theta)
+--\nabla_\theta\ell^\alpha(\theta)}{1-\alpha}
+-=
+-\sum_{n=1}^{N}\sum_{r=1}^{n-1}r\Delta_{n,r},
+-\label{eq:first-order-population-discount-bias}
 +\E[m(\xi_b)(h_{s,i}^{[r]})\mid\mathcal C]
 + -\rho_b(h_{s,i}^{[r]})=\sum_{u=1}^{b+1}e_{u;s,b}.
 +\label{eq:logfree-dds}
-+\end{equation}
+ \end{equation}
+-and the assumptions do not force the right side to vanish.  Hence the
+-generic geometric-discount population bias is first order in
+-$1-\alpha$, even though its coefficient contains the forgetting powers
+-$\varrho^r$.
+-\end{remark}
+-\fi
+-
+-\iffalse
+-\begin{remark}[Fixed lag and historical particle error]
+-For $0\leq k<N$, the fixed-lag score and its population truncation error
+-are, respectively,
 +For its ratio expansion, put
  \begin{align}
+-&\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
+-+m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right),
+-\label{eq:verified-fixed-lag-telescope}
+-\\
+-&\sum_{s=1}^{N-k-1}\sum_{u=s+k+1}^{N}\Delta_{u,u-s}.
+-\label{eq:verified-fixed-lag-population-error}
++q_{u;b}&=\frac{Q_{u,b+1}1}{\mu_u(Q_{u,b+1}1)},
++&F_{u;s,b}&=\frac{D_{u,b+1}^Jf_{s,r}}{Q_{u,b+1}1},\notag\\
++d_{u;s,b}&=q_{u;b}\{F_{u;s,b}-\mu_u(q_{u;b}F_{u;s,b})\}.
+ \end{align}
+-Lemma~\ref{lem:derivative-measure-forgetting} therefore gives
+-\begin{equation}
+-\left\|\operatorname{Bias}^{\rm pop}_k\right\|_2
+-\leq
+-C(N-k-1)\sqrt p\,G'(\theta)
+-\frac{\varrho^{k+1}}{1-\varrho}.
+-\label{eq:verified-fixed-lag-population-bias}
+-\end{equation}
+-
+-For the particle term, apply Equation~
+-(\ref{eq:chan-historical-l2-specialization}) separately to every
+-historical functional in Equation~
+-(\ref{eq:verified-fixed-lag-telescope}) and use Minkowski's inequality.
+-For $J\geq cN$, this gives
+-\begin{align}
 -&\E\Bigg\|
 -\sum_{s=1}^{N-k-1}m(\xi_{s+k})(h_s)
 -+m(\xi_N)\left(\sum_{s=N-k}^{N}h_s\right)                 \notag\\
@@ -10752,10 +10963,7 @@ index bae10a174..194c84746 100644
 -+\sqrt N(k+1)
 -\right\}^2.
 -\label{eq:generic-fixed-lag-particle-bound}
-+q_{u;b}&=\frac{Q_{u,b+1}1}{\mu_u(Q_{u,b+1}1)},
-+&F_{u;s,b}&=\frac{D_{u,b+1}^Jf_{s,r}}{Q_{u,b+1}1},\notag\\
-+d_{u;s,b}&=q_{u;b}\{F_{u;s,b}-\mu_u(q_{u;b}F_{u;s,b})\}.
- \end{align}
+-\end{align}
 -Together with the pathwise $CpG'(\theta)^2N^2$ cap, this is at most
 -\begin{equation}
 -CpG'(\theta)^2\min\left\{N^2,\frac{N^3}{J}\right\}.
@@ -11213,7 +11421,19 @@ index bae10a174..194c84746 100644
  
 -\begin{proof}[Proof.]
 -For $1\leq r<n$, the definitions of $\rho_n$ and $h_{n-r}$ give
--\begin{align}
++
++\end{proof}
++
++\subsection{Full-score mean squared error}
++
++\begin{thm}[MSE bounds for DMOP-$\alpha$]
++\label{thm:refined-dmop-alpha-mse}
++\kevin{\normalfont\normalsize Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
++\ref{lem:dmop-population-discount-bias}, use either the before- or
++after-resampling estimator and take
++$\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$.
++For $\alpha\in[0,1]$,
+ \begin{align}
 -\rho_n(h_{n-r})
 -&=
 -\E_{\theta_0}(h_{n-r}\mid Y_{1:n}),                         \notag\\
@@ -11221,12 +11441,26 @@ index bae10a174..194c84746 100644
 -&=
 -\E_{\theta_0}(h_{n-r}\mid Y_{1:n-1}).
 -\label{eq:rho-as-observation-conditional-expectation}
--\end{align}
++&\E\|\nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
++\notag\\*
++&\quad\lesssim pG'(\theta)^2\Bigg[
++\frac{N}{J}\min\left\{\sum_{r=0}^{N-1}\alpha^r,J\right\}
+++\frac{N^2}{J^2}\notag\\*
++&\qquad+
++\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
++ {(1+\sqrt{2(1-\varrho)})^2}
++\left\{N-1+\sum_{q=1}^{N-2}(N-1-q)
++\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q\right\}^2
++\Bigg].
++\label{eq:verified-dmop-alpha-mse-finite-sum}
+ \end{align}
 -Apply conditional expectation given $Y_{1:n-1}$ to the definition of
 -$\Delta_{n,r}$ in Equation~(\ref{eq:lag-coefficient-definitions}).  The
 -tower property and Equation~
 -(\ref{eq:rho-as-observation-conditional-expectation}) give
--\begin{align}
++The sum beginning at $q=1$ is empty for $N\leq2$.
++For $0\leq\alpha<1$, a simpler bound is
+ \begin{align}
 -\E_{\theta_0}(\Delta_{n,r}\mid Y_{1:n-1})
 -&=
 -\E_{\theta_0}\left[
@@ -11241,7 +11475,7 @@ index bae10a174..194c84746 100644
 -&=0.
 -\label{eq:positive-lag-conditional-mean-zero}
 -\end{align}
- 
+-
 -It remains to treat $r=0$.  Conditional on $Y_{1:n-1}$, the simulated
 -$X_n^{\theta_0}$ and its gradient, the next observation has density
 -$f_{Y_n\mid X_n}(y\mid X_n^{\theta_0};\theta_0)$.  The derivative in
@@ -11271,11 +11505,22 @@ index bae10a174..194c84746 100644
 -\nabla_\theta 1
 -=0.
 -\label{eq:current-score-observation-integral-zero}
--\end{align}
++&\E\|\nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
++\notag\\*
++&\quad\lesssim pG'(\theta)^2\Bigg[
++\frac{N}{J(1-\alpha)}+\frac{N^2}{J^2}\notag\\*
++&\hspace{60pt}+N^2\left\{
++\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++\frac{(1-\alpha)(3-2\varrho)}
++ {3-2\varrho-\alpha(2\varrho-1)}
++\right\}^2\Bigg].
++\label{eq:verified-dmop-alpha-mse-bound}
+ \end{align}
 -Taking conditional expectations of Equation~
 -(\ref{eq:current-score-observation-integral-zero}) given
 -$Y_{1:n-1}$ and using the tower property yield
--\begin{align}
++The endpoint bounds are
+ \begin{align}
 -\rho_n(h_n)
 -&=
 -\E_{\theta_0}(h_n\mid Y_{1:n}),                              \notag\\
@@ -11286,7 +11531,19 @@ index bae10a174..194c84746 100644
 -\E_{\theta_0}(h_n\mid Y_{1:n-1})                            \notag\\
 -&=0.
 -\label{eq:zero-lag-conditional-mean-zero}
--\end{align}
++&\E\|\nabla_\theta\hat\ell^0(\theta)-\nabla_\theta\ell(\theta)\|_2^2
++\notag\\
++&\quad\lesssim pG'(\theta)^2\left[
++\frac NJ+\frac{N^2}{J^2}
+++(N-1)^2\left\{
++\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++\right\}^2\right],
++\label{eq:verified-dmop-zero-mse-bound}\\
++&\E\|\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
++\lesssim pG'(\theta)^2
++\min\left\{\frac{N^2}{J},\,N+\frac{N^2}{J^2}\right\}.
++\label{eq:verified-dmop-one-mse-bound}
+ \end{align}
 -Finally, Equation~
 -(\ref{eq:population-conditional-score-path-decomposition}) and the
 -finiteness of the lag sum give
@@ -11303,6 +11560,32 @@ index bae10a174..194c84746 100644
 -(\ref{eq:dmop-alpha-conditional-unbiasedness}).  Taking expectations and
 -summing the finite sequence proves Equation~
 -(\ref{eq:dmop-alpha-unbiased-estimating-equation}).
++At $\varrho=\tfrac12$ the population terms are zero. For every model,
++the population discount bias is zero at $\alpha=1$.
++Remark~\ref{rem:population-bias-cancellation} retains signed cancellation.}
++\end{thm}
++
++\begin{proof}
++\kevin{\normalfont\normalsize
++Insert Equations~(\ref{eq:review-alpha-particle-mse}) and
++(\ref{eq:population-discount-sharp-transition-bound}) into
++Equation~(\ref{eq:generic-mse-particle-population-split}). This proves
++Equation~(\ref{eq:verified-dmop-alpha-mse-finite-sum}). For $\alpha<1$,
++\begin{align*}
++\sum_{r=0}^{N-1}\alpha^r&\leq(1-\alpha)^{-1},\\
++\sum_{q=0}^{N-2}(N-1-q)
++ \left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
++&\leq\frac{(N-1)(3-2\varrho)}{3-2\varrho-\alpha(2\varrho-1)}.
++\end{align*}
++These inequalities give Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).
++At $\alpha=0$, the memory sum is one and only $q=0$ remains in the
++population sum. At $\alpha=1$, the population term vanishes and
++\[
++\frac{N\min\{N,J\}}J+\frac{N^2}{J^2}
++\leq\min\left\{\frac{3N^2}{2J},\,N+\frac{N^2}{J^2}\right\},
++\qquad J\geq2.
++\]
++This proves both endpoint bounds.}
  \end{proof}
  
 -\begin{proposition}[Data-averaged population-score discrepancy]
@@ -11338,152 +11621,6 @@ index bae10a174..194c84746 100644
 -{(1-\varrho)(1-\alpha\varrho)}
 -\right\}^2.
 -\label{eq:data-averaged-population-score-bound}
--\end{align}
--\end{proposition}
-+\subsection{Full-score mean squared error}
- 
--\begin{proof}[Proof.]
--Proposition~\ref{prop:dmop-alpha-unbiased-estimating-equation}, first at
--$\alpha$ and then at $\alpha=1$, gives
-+\begin{thm}[MSE bounds for DMOP-$\alpha$]
-+\label{thm:refined-dmop-alpha-mse}
-+\kevin{\normalfont\normalsize Under the conditions of Lemmas~\ref{lem:dmop-alpha-variance} and
-+\ref{lem:dmop-population-discount-bias}, use either the before- or
-+after-resampling estimator and take
-+$\varrho=1-\underbar M/(2\bar M)\in[\tfrac12,1)$.
-+For $\alpha\in[0,1]$,
- \begin{align}
--&\E_{\theta_0}\left[
--\nabla_\theta\ell_n^\alpha(\theta_0)
---\nabla_\theta\ell_n(\theta_0)
--\mid Y_{1:n-1}
--\right]
--=0.
--\label{eq:data-averaged-score-difference-centering}
-+&\E\|\nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-+\notag\\*
-+&\quad\lesssim pG'(\theta)^2\Bigg[
-+\frac{N}{J}\min\left\{\sum_{r=0}^{N-1}\alpha^r,J\right\}
-++\frac{N^2}{J^2}\notag\\*
-+&\qquad+
-+\frac{(1-\sqrt{2(1-\varrho)})^2(1-\alpha)^2}
-+ {(1+\sqrt{2(1-\varrho)})^2}
-+\left\{N-1+\sum_{q=1}^{N-2}(N-1-q)
-+\left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q\right\}^2
-+\Bigg].
-+\label{eq:verified-dmop-alpha-mse-finite-sum}
- \end{align}
--For $m<n$, the time-$m$ score difference is measurable with respect to
--$Y_{1:n-1}$.  Therefore the tower property and Equation~
--(\ref{eq:data-averaged-score-difference-centering}) give
-+The sum beginning at $q=1$ is empty for $N\leq2$.
-+For $0\leq\alpha<1$, a simpler bound is
- \begin{align}
--&\E_{\theta_0}\left[
--\{\nabla_\theta\ell_m^\alpha(\theta_0)
---\nabla_\theta\ell_m(\theta_0)\}^{\mathsf T}
--\{\nabla_\theta\ell_n^\alpha(\theta_0)
---\nabla_\theta\ell_n(\theta_0)\}
--\right]                                                     \notag\\
--&\quad=
--\E_{\theta_0}\left[
--\{\nabla_\theta\ell_m^\alpha(\theta_0)
---\nabla_\theta\ell_m(\theta_0)\}^{\mathsf T}
--\E_{\theta_0}\left\{
--\nabla_\theta\ell_n^\alpha(\theta_0)
---\nabla_\theta\ell_n(\theta_0)
--\mid Y_{1:n-1}
--\right\}
--\right]                                                     \notag\\
--&\quad=0.
--\label{eq:data-averaged-score-cross-term-zero}
-+&\E\|\nabla_\theta\hat\ell^\alpha(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-+\notag\\*
-+&\quad\lesssim pG'(\theta)^2\Bigg[
-+\frac{N}{J(1-\alpha)}+\frac{N^2}{J^2}\notag\\*
-+&\hspace{60pt}+N^2\left\{
-+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+\frac{(1-\alpha)(3-2\varrho)}
-+ {3-2\varrho-\alpha(2\varrho-1)}
-+\right\}^2\Bigg].
-+\label{eq:verified-dmop-alpha-mse-bound}
- \end{align}
--Expanding the squared Euclidean norm of the finite sum of conditional
--score differences and applying Equation~
--(\ref{eq:data-averaged-score-cross-term-zero}) proves Equation~
--(\ref{eq:data-averaged-score-orthogonality}).  Under the additional
--uniformity condition, Lemma~\ref{lem:dmop-population-discount-bias} gives,
--for every $n$,
-+The endpoint bounds are
- \begin{align}
--\left\|
--\nabla_\theta\ell_n^\alpha(\theta_0)
---\nabla_\theta\ell_n(\theta_0)
--\right\|_2^2
--&\leq
--CpG'(\theta_0)^2
--\left\{
--\frac{\varrho(1-\alpha)}
--{(1-\varrho)(1-\alpha\varrho)}
--\right\}^2.
-+&\E\|\nabla_\theta\hat\ell^0(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-+\notag\\
-+&\quad\lesssim pG'(\theta)^2\left[
-+\frac NJ+\frac{N^2}{J^2}
-++(N-1)^2\left\{
-+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+\right\}^2\right],
-+\label{eq:verified-dmop-zero-mse-bound}\\
-+&\E\|\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)\|_2^2
-+\lesssim pG'(\theta)^2
-+\min\left\{\frac{N^2}{J},\,N+\frac{N^2}{J^2}\right\}.
-+\label{eq:verified-dmop-one-mse-bound}
- \end{align}
--Taking expectations and summing this inequality in Equation~
--(\ref{eq:data-averaged-score-orthogonality}) proves Equation~
--(\ref{eq:data-averaged-population-score-bound}).
-+At $\varrho=\tfrac12$ the population terms are zero. For every model,
-+the population discount bias is zero at $\alpha=1$.
-+Remark~\ref{rem:population-bias-cancellation} retains signed cancellation.}
-+\end{thm}
-+
-+\begin{proof}
-+\kevin{\normalfont\normalsize
-+Insert Equations~(\ref{eq:review-alpha-particle-mse}) and
-+(\ref{eq:population-discount-sharp-transition-bound}) into
-+Equation~(\ref{eq:generic-mse-particle-population-split}). This proves
-+Equation~(\ref{eq:verified-dmop-alpha-mse-finite-sum}). For $\alpha<1$,
-+\begin{align*}
-+\sum_{r=0}^{N-1}\alpha^r&\leq(1-\alpha)^{-1},\\
-+\sum_{q=0}^{N-2}(N-1-q)
-+ \left(\alpha\frac{2\varrho-1}{3-2\varrho}\right)^q
-+&\leq\frac{(N-1)(3-2\varrho)}{3-2\varrho-\alpha(2\varrho-1)}.
-+\end{align*}
-+These inequalities give Equation~(\ref{eq:verified-dmop-alpha-mse-bound}).
-+At $\alpha=0$, the memory sum is one and only $q=0$ remains in the
-+population sum. At $\alpha=1$, the population term vanishes and
-+\[
-+\frac{N\min\{N,J\}}J+\frac{N^2}{J^2}
-+\leq\min\left\{\frac{3N^2}{2J},\,N+\frac{N^2}{J^2}\right\},
-+\qquad J\geq2.
-+\]
-+This proves both endpoint bounds.}
- \end{proof}
- 
--The uniform-observation condition in Proposition~
--\ref{prop:dmop-alpha-data-averaged-score-discrepancy} is needed only for
--the last deterministic upper bound.  The orthogonality identity requires
--only square integrability, and the uniform condition may be replaced by a
--random per-time bound whose second moment is uniformly bounded in $n$.
--The same proof applied to the fixed-lag tail gives, for $0\leq k<N$,
--\begin{align}
--&\E_{\theta_0}\left\|
--\sum_{n=1}^{N}\sum_{r=k+1}^{n-1}\Delta_{n,r}
--\right\|_2^2
--\leq
--CNpG'(\theta_0)^2
--\left\{\frac{\varrho^{k+1}}{1-\varrho}\right\}^2.
--\label{eq:data-averaged-fixed-lag-score-bound}
 +\begin{cor}[MSE averaged over data and particles]
 +\label{cor:data-averaged-full-mse}
 +\kevin{\normalfont\normalsize
@@ -11503,6 +11640,95 @@ index bae10a174..194c84746 100644
 +      +\frac{N^2}{J^2}+N(1-\alpha)^2\right\}.
 +\label{eq:data-averaged-full-mse}
  \end{align}
+-\end{proposition}
++Here the inner expectation is over the particle filter for the observed
++data, and the outer expectation is over the data-generating law.}
++\end{cor}
+ 
+-\begin{proof}[Proof.]
+-Proposition~\ref{prop:dmop-alpha-unbiased-estimating-equation}, first at
+-$\alpha$ and then at $\alpha=1$, gives
+-\begin{align}
+-&\E_{\theta_0}\left[
+-\nabla_\theta\ell_n^\alpha(\theta_0)
+--\nabla_\theta\ell_n(\theta_0)
+-\mid Y_{1:n-1}
+-\right]
+-=0.
+-\label{eq:data-averaged-score-difference-centering}
+-\end{align}
+-For $m<n$, the time-$m$ score difference is measurable with respect to
+-$Y_{1:n-1}$.  Therefore the tower property and Equation~
+-(\ref{eq:data-averaged-score-difference-centering}) give
+-\begin{align}
+-&\E_{\theta_0}\left[
+-\{\nabla_\theta\ell_m^\alpha(\theta_0)
+--\nabla_\theta\ell_m(\theta_0)\}^{\mathsf T}
+-\{\nabla_\theta\ell_n^\alpha(\theta_0)
+--\nabla_\theta\ell_n(\theta_0)\}
+-\right]                                                     \notag\\
+-&\quad=
+-\E_{\theta_0}\left[
+-\{\nabla_\theta\ell_m^\alpha(\theta_0)
+--\nabla_\theta\ell_m(\theta_0)\}^{\mathsf T}
+-\E_{\theta_0}\left\{
+-\nabla_\theta\ell_n^\alpha(\theta_0)
+--\nabla_\theta\ell_n(\theta_0)
+-\mid Y_{1:n-1}
+-\right\}
+-\right]                                                     \notag\\
+-&\quad=0.
+-\label{eq:data-averaged-score-cross-term-zero}
+-\end{align}
+-Expanding the squared Euclidean norm of the finite sum of conditional
+-score differences and applying Equation~
+-(\ref{eq:data-averaged-score-cross-term-zero}) proves Equation~
+-(\ref{eq:data-averaged-score-orthogonality}).  Under the additional
+-uniformity condition, Lemma~\ref{lem:dmop-population-discount-bias} gives,
+-for every $n$,
+-\begin{align}
+-\left\|
+-\nabla_\theta\ell_n^\alpha(\theta_0)
+--\nabla_\theta\ell_n(\theta_0)
+-\right\|_2^2
+-&\leq
+-CpG'(\theta_0)^2
+-\left\{
+-\frac{\varrho(1-\alpha)}
+-{(1-\varrho)(1-\alpha\varrho)}
+-\right\}^2.
+-\end{align}
+-Taking expectations and summing this inequality in Equation~
+-(\ref{eq:data-averaged-score-orthogonality}) proves Equation~
+-(\ref{eq:data-averaged-population-score-bound}).
++\begin{proof}
++\kevin{\normalfont\normalsize
++Average the particle/population decomposition in
++Equation~(\ref{eq:generic-mse-particle-population-split}) over the data.
++The uniform particle bound in
++Equation~(\ref{eq:review-alpha-particle-mse}) controls its first term,
++and Proposition~\ref{prop:dmop-alpha-data-averaged-score-discrepancy}
++controls its second.}
+ \end{proof}
+ 
+-The uniform-observation condition in Proposition~
+-\ref{prop:dmop-alpha-data-averaged-score-discrepancy} is needed only for
+-the last deterministic upper bound.  The orthogonality identity requires
+-only square integrability, and the uniform condition may be replaced by a
+-random per-time bound whose second moment is uniformly bounded in $n$.
+-The same proof applied to the fixed-lag tail gives, for $0\leq k<N$,
++\kevin{\normalfont\normalsize
++For $\alpha<1$, $H_N(\alpha)\leq(1-\alpha)^{-1}$. Balancing the
++corresponding particle term with the population term gives
+ \begin{align}
+-&\E_{\theta_0}\left\|
+-\sum_{n=1}^{N}\sum_{r=k+1}^{n-1}\Delta_{n,r}
+-\right\|_2^2
+-\leq
+-CNpG'(\theta_0)^2
+-\left\{\frac{\varrho^{k+1}}{1-\varrho}\right\}^2.
+-\label{eq:data-averaged-fixed-lag-score-bound}
+-\end{align}
 -Thus both discrepancies accumulate linearly in $N$.  Combining Equations~
 -(\ref{eq:mixing-calibrated-geometric-fixed-lag-comparison}),
 -(\ref{eq:data-averaged-population-score-bound}), and
@@ -11536,24 +11762,7 @@ index bae10a174..194c84746 100644
 -where the reference value in the population recursion is set equal to its
 -parameter argument.  Suppose also that the following limits hold under the
 -POMP law in Equation~(\ref{eq:original-pomp-data-generating-law}):
-+Here the inner expectation is over the particle filter for the observed
-+data, and the outer expectation is over the data-generating law.}
-+\end{cor}
-+
-+\begin{proof}
-+\kevin{\normalfont\normalsize
-+Average the particle/population decomposition in
-+Equation~(\ref{eq:generic-mse-particle-population-split}) over the data.
-+The uniform particle bound in
-+Equation~(\ref{eq:review-alpha-particle-mse}) controls its first term,
-+and Proposition~\ref{prop:dmop-alpha-data-averaged-score-discrepancy}
-+controls its second.}
-+\end{proof}
-+
-+\kevin{\normalfont\normalsize
-+For $\alpha<1$, $H_N(\alpha)\leq(1-\alpha)^{-1}$. Balancing the
-+corresponding particle term with the population term gives
- \begin{align}
+-\begin{align}
 -&\frac1{\sqrt N}\sum_{n=1}^{N}
 -\nabla_\theta\ell_n^\alpha(\theta_0)
 -\ \Rightarrow\
@@ -11622,6 +11831,24 @@ index bae10a174..194c84746 100644
 -\right]
 -\sqrt N(\widehat\theta_N^\alpha-\theta_0).
 -\label{eq:dmop-alpha-taylor-expansion}
+-\end{align}
+-Consistency of $\widehat\theta_N^\alpha$ and the uniform convergence in
+-Equation~(\ref{eq:dmop-alpha-sensitivity-limit}) imply that the matrix in
+-square brackets converges in probability to $-A_\alpha$.  Nonsingularity
+-and continuity of matrix inversion therefore give
+-\begin{align}
+-\sqrt N(\widehat\theta_N^\alpha-\theta_0)
+-&=
+-A_\alpha^{-1}
+-\frac1{\sqrt N}\sum_{n=1}^{N}
+-\nabla_\theta\ell_n^\alpha(\theta_0)
+-+o_p(1).
+-\label{eq:dmop-alpha-asymptotic-linearization}
+-\end{align}
+-Equation~(\ref{eq:dmop-alpha-sandwich-limit}) follows from
+-Equation~(\ref{eq:dmop-alpha-martingale-clt}), Slutsky's theorem, and
+-Equation~(\ref{eq:dmop-alpha-asymptotic-linearization}).
+-\end{proof}
 +N(2-J^{-1})
 ++\sum_{r=1}^{N-1}(N-r)\alpha^{2r}(1-J^{-1})^{r+1}
 +\right].
@@ -11643,8 +11870,14 @@ index bae10a174..194c84746 100644
 +when $J/N\to\infty$. This example does not establish sharpness of
 +every term in the general bound.}
 +\end{remark}
-+
-+
+ 
+-\begin{remark}[Mixing-calibrated discounting and parameter inference]
+-The preceding results have three distinct consequences.
+ 
+-First, suppose $0\leq\alpha<1$ and
+-$k=\lfloor\alpha/(1-\alpha)\rfloor<N$.  Equations~
+-(\ref{eq:mixing-calibrated-geometric-fixed-lag-comparison})--
+-(\ref{eq:mixing-calibrated-geometric-fixed-lag-lower-comparison}) give
 +\begin{remark}[Rates and normalization]
 +\kevin{\normalfont\normalsize Theorem~\ref{thm:refined-dmop-alpha-mse} bounds error relative to
 +the full likelihood score. DMOP-$0$ has the upper bound
@@ -11694,22 +11927,22 @@ index bae10a174..194c84746 100644
 +&\lesssim pG'(\theta)^2
 +\left\{\frac{N^{4/3}}{J^{2/3}}+\frac{N^2}{J^2}\right\}.
 +\label{eq:alpha-tuning-varrho-balance}
- \end{align}
--Consistency of $\widehat\theta_N^\alpha$ and the uniform convergence in
--Equation~(\ref{eq:dmop-alpha-sensitivity-limit}) imply that the matrix in
--square brackets converges in probability to $-A_\alpha$.  Nonsingularity
--and continuity of matrix inversion therefore give
--\begin{align}
--\sqrt N(\widehat\theta_N^\alpha-\theta_0)
--&=
--A_\alpha^{-1}
--\frac1{\sqrt N}\sum_{n=1}^{N}
--\nabla_\theta\ell_n^\alpha(\theta_0)
--+o_p(1).
--\label{eq:dmop-alpha-asymptotic-linearization}
++\end{align}
 +Comparing with the improved endpoint gives the following attainable
 +full-score bounds:
-+\begin{equation}
+ \begin{equation}
+-\frac12
+-<
+-\frac{
+-\dfrac{\varrho(1-\alpha)}
+-{(1-\varrho)(1-\alpha\varrho)}
+-}{
+-\dfrac{\varrho^{k+1}}{1-\varrho}
+-}
+-\leq
+-\varrho^{-k}
+-=exp\{k|\log\varrho|\}.
+-\label{eq:summary-mixing-calibrated-comparison}
 +\begin{array}{c|c|c}
 +\text{regime}&1-\alpha&
 +\text{MSE upper-bound order}/\{pG'(\theta)^2\}\\\hline
@@ -11718,7 +11951,12 @@ index bae10a174..194c84746 100644
 +J\geq N^2&0&N^2/J.
 +\end{array}
 +\label{eq:alpha-tuning-soft-lag-regimes}
-+\end{equation}
+ \end{equation}
+-Hence, whenever $k|\log\varrho|=O(1)$, the geometric and fixed-lag
+-scalar upper bounds are within fixed factors.  Equivalently, discount
+-memory spans only a fixed number of mixing e-folding times.  The same
+-comparison for the squared upper bounds has fixed factors obtained by
+-squaring Equation~(\ref{eq:summary-mixing-calibrated-comparison}).
 +Indeed, $N^{4/3}/J^{2/3}$ and $N^2/J^2$ agree at $J=\sqrt N$,
 +while $N^{4/3}/J^{2/3}$ and $N^2/J$ agree at $J=N^2$.
 +For $J\leq\sqrt N$, any choice $0\leq1-\alpha\leq J^{-1}$ also
@@ -11757,46 +11995,16 @@ index bae10a174..194c84746 100644
 +&\lesssim pG'(\theta)^2
 +\left\{\frac{N^{6/5}}{J^{4/5}}+\frac{N^2}{J^2}\right\},
 +\label{eq:alpha-tuning-signed-cancellation}
- \end{align}
--Equation~(\ref{eq:dmop-alpha-sandwich-limit}) follows from
--Equation~(\ref{eq:dmop-alpha-martingale-clt}), Slutsky's theorem, and
--Equation~(\ref{eq:dmop-alpha-asymptotic-linearization}).
--\end{proof}
++\end{align}
 +again compared with the endpoint bound. This last improvement requires
 +the stated cancellation condition.}
 +\end{remark}
++
++
  
--\begin{remark}[Mixing-calibrated discounting and parameter inference]
--The preceding results have three distinct consequences.
- 
--First, suppose $0\leq\alpha<1$ and
--$k=\lfloor\alpha/(1-\alpha)\rfloor<N$.  Equations~
--(\ref{eq:mixing-calibrated-geometric-fixed-lag-comparison})--
--(\ref{eq:mixing-calibrated-geometric-fixed-lag-lower-comparison}) give
--\begin{equation}
--\frac12
--<
--\frac{
--\dfrac{\varrho(1-\alpha)}
--{(1-\varrho)(1-\alpha\varrho)}
--}{
--\dfrac{\varrho^{k+1}}{1-\varrho}
--}
--\leq
--\varrho^{-k}
--=exp\{k|\log\varrho|\}.
--\label{eq:summary-mixing-calibrated-comparison}
--\end{equation}
--Hence, whenever $k|\log\varrho|=O(1)$, the geometric and fixed-lag
--scalar upper bounds are within fixed factors.  Equivalently, discount
--memory spans only a fixed number of mixing e-folding times.  The same
--comparison for the squared upper bounds has fixed factors obtained by
--squaring Equation~(\ref{eq:summary-mixing-calibrated-comparison}).
--
 -Second, expectation under Equation~
 -(\ref{eq:original-pomp-data-generating-law}) and martingale orthogonality
 -give Equation~(\ref{eq:data-averaged-population-score-bound}):
-+
 +\begin{remark}[Geometric discounting and lag truncation]
 +\kevin{\normalfont\normalsize For $0\leq k<N$, define the after-resampling lag truncation and its
 +population counterpart by
@@ -11812,6 +12020,29 @@ index bae10a174..194c84746 100644
 -{(1-\varrho)(1-\alpha\varrho)}
 -\right\}^2.
 -\label{eq:summary-data-averaged-population-score-bound}
+-\end{align}
+-Thus, as $\alpha\uparrow1$, this contribution is
+-$O\{N(1-\alpha)^2\}$ rather than the
+-$O\{N^2(1-\alpha)^2\}$ fixed-observation upper bound in Theorem~
+-\ref{thm:refined-dmop-alpha-mse}.  The improvement from $N^2$ to $N$
+-comes from the exact vanishing of all cross-time inner products in
+-Equation~(\ref{eq:data-averaged-score-cross-term-zero}); it is not an
+-additional mixing assumption.
+-
+-Third, for every fixed $\alpha\in[0,1]$, Proposition~
+-\ref{prop:dmop-alpha-parametric-inference} gives
+-\begin{equation}
+-\sqrt N(\widehat\theta_N^\alpha-\theta_0)
+-\ \Rightarrow\
+-\mathcal N\left(
+-0,A_\alpha^{-1}B_\alpha A_\alpha^{-\mathsf T}
+-\right).
+-\label{eq:summary-fixed-alpha-parametric-rate}
+-\end{equation}
+-Therefore fixed $\alpha$ retains the parametric $N^{-1/2}$ rate.  When
+-$\alpha<1$, the sandwich covariance may differ from the likelihood
+-covariance at $\alpha=1$, so the possible cost is statistical efficiency,
+-not a slower consistency rate.
 +\nabla_\theta\hat s_k^1&=\sum_{n=1}^N
 + \sum_{r=0}^{\min(k,n-1)}\Delta_{n,r}^J,&
 +\nabla_\theta s_k^1&=\sum_{n=1}^N
@@ -11855,29 +12086,7 @@ index bae10a174..194c84746 100644
 +\left\{\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}\right\}^2
 +\left(\frac{2\varrho-1}{3-2\varrho}\right)^{2k}
 +\Bigg].
- \end{align}
--Thus, as $\alpha\uparrow1$, this contribution is
--$O\{N(1-\alpha)^2\}$ rather than the
--$O\{N^2(1-\alpha)^2\}$ fixed-observation upper bound in Theorem~
--\ref{thm:refined-dmop-alpha-mse}.  The improvement from $N^2$ to $N$
--comes from the exact vanishing of all cross-time inner products in
--Equation~(\ref{eq:data-averaged-score-cross-term-zero}); it is not an
--additional mixing assumption.
--
--Third, for every fixed $\alpha\in[0,1]$, Proposition~
--\ref{prop:dmop-alpha-parametric-inference} gives
--\begin{equation}
--\sqrt N(\widehat\theta_N^\alpha-\theta_0)
--\ \Rightarrow\
--\mathcal N\left(
--0,A_\alpha^{-1}B_\alpha A_\alpha^{-\mathsf T}
--\right).
--\label{eq:summary-fixed-alpha-parametric-rate}
--\end{equation}
--Therefore fixed $\alpha$ retains the parametric $N^{-1/2}$ rate.  When
--$\alpha<1$, the sandwich covariance may differ from the likelihood
--covariance at $\alpha=1$, so the possible cost is statistical efficiency,
--not a slower consistency rate.
++\end{align}
 +The population error is zero at $k=N-1$, and at $\varrho=\tfrac12$
 +for every $k$. Put $\beta_k=(1-\alpha)\alpha^k$ for $k<N-1$ and
 +$\beta_{N-1}=\alpha^{N-1}$. Since $\sum_{k=r}^{N-1}\beta_k=\alpha^r$,

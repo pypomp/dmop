@@ -1,5 +1,38 @@
 # Handoff
 
+## November 3: off-truth proposition and example incorporated
+
+- User explicitly requested adding the audited off-truth bound/proof and
+  the example proving the N^2 term necessary, independent review, and PDF.
+  Added Proposition S3 (prop:population-offtruth) after the on-truth result
+  and extended the existing continuous-state example. All new prose is
+  inside normal-size \kevin{} comments. Main/submission remains unchanged.
+- Proposition gives root MSE <= K(1-alpha)[sqrt(N-1)+2L(N-1)delta], with
+  explicit K,L retaining dimension and derivative-bound dependence.
+  Its squared order is (1-alpha)^2[N+N^2 delta^2] for fixed model bounds.
+  The proof derives bounded historical-score extension, explicit Bayes
+  centering, predictive density overlap/TV, predictable drift, and centered
+  martingale variance. It covers candidate observations outside true support.
+- Example now derives arbitrary-parameter block scores and both moments,
+  then gives the exact squared error showing N and N^2 delta^2 terms.
+  It specifies that positive-alpha score scaling in this example preserves
+  zeros/direction, so magnitude error alone is not an optimization failure.
+- Two fresh-context reviewers separately audited the actual proposition,
+  support argument, model assumptions, actual DMOP block-score recursion,
+  constants and sharpness claim. Resolved one wording overstatement about
+  centering on candidate histories and expanded the Bayes integral step.
+  Reviewer quadrature/finite differences independently matched alpha Z
+  within 1.35e-10; moment identities agreed to floating-point precision.
+- Final targeted review and visual inspection of S-32--S-37 found no
+  blockers. Local latexmk succeeds with no errors, undefined references
+  or overflowing boxes. Native standalone compile was attempted and cannot
+  load the project's macros.tex; repository compilation is authoritative.
+  Final SI is 86 pages: proposition S-32, proof S-33--S-34, example
+  S-34--S-36; exact off-truth MSE is Equation S192 on S-36.
+- Refreshed output/pdf/si-covariance-review.pdf and cumulative patch against
+  c7556a655. No new tracked files, generated build files remain ignored.
+  Earlier audit-only entry below is historical; the extension is now in SI.
+
 ## November 3: independent score audits and off-truth extension
 
 - User requested fresh independent audits and asked whether evaluation
