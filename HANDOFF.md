@@ -1,5 +1,58 @@
 # Handoff
 
+## November 3: actual RSS title layout restored
+
+- Replaced the generic CTAN 1.5 class with the actual RSS July 2024 fork
+  recovered from diffPomp/paper at 9e5aaa2b. Its executable code matches the
+  publisher's OUP 1.1 bundle; only three RSS header comments differ.
+  Updated provenance/checksums and upstream manifest accordingly.
+- Generator now uses the template's native title/author/address/corresp,
+  abstract/keywords/maketitle and running heads. Removed the custom cover
+  and separate abstract page. Native front-matter font sizes are retained,
+  including the 9pt abstract; body remains 12pt/24pt on A4. Omitted unassigned
+  publisher DOI/logo/year and copyright-publication placeholders only.
+- Local latexmk build succeeds: 37 pages, no overfull boxes or undefined
+  references. Native document tool again reports no sessions. Main source,
+  SI and response unchanged; content/abstract/table equality verified.
+  Independent reviewer compared the native title with the actual Overleaf
+  preview and inspected all 37 pages; review converged. PDF sha256:
+  d9c245c3ce0462698030ccef1235689e0b11b1c9cb2bba42c55e9bd9a13d07db.
+
+## November 3: population discount scaling exploration (not inserted)
+
+- Current main still has the older N^3/J endpoint. Audited sharper particle
+  bounds remain on origin/covariance-mse at 6f9ca76d5, explicitly unmerged.
+- User questioned the discrete-state lower example. A continuous replacement
+  on [0,1] establishes uniform fixed-data sharpness of N^2(1-alpha)^2:
+  write s(x)=2x-1; odd transitions reset uniformly, even transition density
+  q(z|x)=1+s(x)s(z)/2. Odd Bernoulli success probability is
+  (1+theta*s(x))/2, even success probability is (1+s(x)/2)/2.
+  For theta=0, N=2m, all observations1, each independent pair contributes
+  full score1/36 and population discounted score alpha/36. Hence bias is
+  N(1-alpha)/72 and squared bias N^2(1-alpha)^2/5184 exactly.
+- Assumptions: q lies in [1/2,3/2] w.r.t. Lebesgue measure; for |theta|<=1/2,
+  measurement probabilities lie in [1/4,3/4], first/second log parameter
+  derivatives bounded by2/4. Simulator is independent of theta; inverse CDF
+  at even steps has incoming-state derivative at most1/2, odd steps0.
+  Log measurement state derivative <=2 gives A6 with C=2,kappa=1/2.
+  Joint process is (X,0), with common finite measure Lebesgue times delta0,
+  also satisfying A6-J. All constants independent of N. Smoothness holds
+  on a neighborhood of the state interval. A4 only requires fixed-N bounds.
+- Exact likelihood of an all-success pair is (1+theta/36)/4. Gauss-Legendre
+  population filtering/gradient recursion independently matched N*alpha/72
+  for N=2,10,100 and alpha=0,.5,.9,1, to numerical precision.
+- General improvement requires changing the probability statement: at the
+  data-generating parameter, Delta[n,s]=E[h_s|Y1:n]-E[h_s|Y1:n-1] are
+  observation-filtration martingale differences. The population bias is
+  sum_n e_n, e_n=sum_{s<n}(1-alpha^(n-s))*Delta[n,s]. If existing forgetting
+  bounds hold uniformly over observation values, ||e_n||<=C(1-alpha);
+  orthogonality gives E_theta||bias||^2<=C*N*(1-alpha)^2. This averages over
+  observations, unlike the manuscript's fixed-data result, and does not
+  apply unchanged at arbitrary candidate theta under a different true law.
+  In the continuous example each pair's bias is an independent sign times
+  (1-alpha)/36, so the averaged square is exactly N(1-alpha)^2/2592.
+  No paper edits or merger of these research findings are authorized yet.
+
 ## November 3: separate JRSSB review manuscript
 
 - Fast-forwarded main to 2c35cfc7b before work. Added `ms-jrssb.tex`, generated

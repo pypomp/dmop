@@ -1,11 +1,11 @@
 %%
-%% Copyright 2026 Oxford University Press
+%% Copyright 2024 OXFORD UNIVERSITY PRESS
 %%
-%% This file is part of the 'oup-authoring-template Bundle'.
+%% This file is a fork of the 'oup-authoring-template Bundle' for the Royal Statistical Society.
 %% ---------------------------------------------
 %%
 %% It may be distributed under the conditions of the LaTeX Project Public
-%% License, either version 1.3 of this license or (at your option) any
+%% License, either version 1.2 of this license or (at your option) any
 %% later version.  The latest version of this license is in
 %%    http://www.latex-project.org/lppl.txt
 %% and version 1.2 or later is part of all distributions of LaTeX
@@ -14,18 +14,14 @@
 %% The list of all files belonging to the 'oup-authoring-template Bundle' is
 %% given in the file `manifest.txt'.
 %%
-%% Template article for Oxford University Press's document class `oup-authoring-template'
+%% Template article for OXFORD UNIVERSITY PRESS's document class `oup-authoring-template'
 %% with bibliographic references
 %%
-%% Version 1.1, updated to reflect changes to OUP’s official page designs, 2022.
-%% Version 1.2, updated to reflect changes to OUPs official page designs, 2025.
-%% Version 1.3, bug fix relating to mathcal / mathbb elements in section titles.
-%% Version 1.4, added support for author bios in front matter, removed superfluous 'numbered' declaration in \documentclass examples, commented out superfluous society logo instruction in class file.
-%% Version 1.5, bug fix relating to \societylogo instruction.
+%% Version 1.0, created as a fork from OUP-authoring-template bundle 8-July-2024.
 
 \newcommand\classname{oup-authoring-template}
-\newcommand\lastmodifieddate{2026/07/14}
-\newcommand\versionnumber{1.5}
+\newcommand\lastmodifieddate{2022/03/18}
+\newcommand\versionnumber{1.1}
 
 \NeedsTeXFormat{LaTeX2e}[2001/06/01]
 \ProvidesClass{\classname}[\lastmodifieddate\space\versionnumber]
@@ -38,19 +34,16 @@
 %
 \newif\if@large\global\@largefalse
 \newif\if@medium\global\@mediumfalse
-\newif\if@mediumone\global\@mediumonefalse
 \newif\if@small\global\@smallfalse
 %
 \newif\if@numbib \@numbibtrue
 \newif\if@unnumsec\global\@unnumsecfalse
 \newif\if@final\global\@finalfalse
-\newif\if@weblink\global\@weblinkfalse
+\newif\if@weblink\@weblinkfalse
 \newif\if@proof\global\@prooffalse%
-\newif\if@otherarticle\global\@otherarticlefalse
 
 \if@compatibility\else
 \DeclareOption{namedate}{\PassOptionsToPackage{authoryear,round}{natbib}\global\@numbibfalse}
-\DeclareOption{numbered}{\PassOptionsToPackage{numbers,square}{natbib}\global\@numbibfalse}
 \DeclareOption{draft}{\PassOptionsToPackage{draft}{graphicx}}
 \DeclareOption{b4paper}{\PassOptionsToPackage{b4}{crop}}
 \DeclareOption{centre}{\PassOptionsToPackage{center}{crop}}
@@ -60,9 +53,8 @@
 \DeclareOption{noinfo}{\PassOptionsToPackage{noinfo}{crop}}
 \DeclareOption{final}{\global\@finaltrue}
 \DeclareOption{unnumsec}{\global\@unnumsectrue}
-\DeclareOption{otherarticle}{\global\@otherarticletrue}
 %
-\DeclareOption{webpdf}{\global\@weblinktrue}
+\DeclareOption{webpdf}{\@weblinktrue}
 %
 \DeclareOption{modern}{\global\@moderntrue}
 \DeclareOption{traditional}{\global\@traditionaltrue}
@@ -70,7 +62,6 @@
 %
 \DeclareOption{large}{\global\@largetrue}
 \DeclareOption{medium}{\global\@mediumtrue}
-\DeclareOption{mediumone}{\global\@mediumtrue\global\@mediumonetrue}
 \DeclareOption{small}{\global\@smalltrue}
 \fi
 \ExecuteOptions{b4paper,centre,info}%
@@ -78,12 +69,12 @@
 
 \if@modern
   \if@large
-    \setlength{\paperheight}{276truemm}
-    \setlength{\paperwidth}{210truemm}
+    \setlength{\paperheight}{278.83truemm}
+    \setlength{\paperwidth}{209.78truemm}
   \else
   \if@medium
-    \setlength{\paperheight}{246truemm}
-    \setlength{\paperwidth}{189truemm}
+    \setlength{\paperheight}{245.96truemm}
+    \setlength{\paperwidth}{188.88truemm}
   \else
   \if@small
     \setlength{\paperheight}{234truemm}
@@ -93,16 +84,16 @@
     \setlength{\paperwidth}{189truemm}
   \fi
   \fi
-  \fi
+\fi
 \else
 \if@traditional
     \if@large
-    \setlength{\paperheight}{276truemm}
-    \setlength{\paperwidth}{210truemm}
+        \setlength{\paperheight}{278.83truemm}
+        \setlength{\paperwidth}{215.78truemm}
     \else
     \if@medium
-        \setlength{\paperheight}{246truemm}
-        \setlength{\paperwidth}{189truemm}
+        \setlength{\paperheight}{245.96truemm}
+        \setlength{\paperwidth}{188.88truemm}
     \else
         \setlength{\paperheight}{234truemm}
         \setlength{\paperwidth}{156truemm}
@@ -111,18 +102,18 @@
 \else
 \if@contemporary
     \if@large
-        \setlength{\paperheight}{276truemm}
-        \setlength{\paperwidth}{210truemm}
+        \setlength{\paperheight}{275.84truemm}
+        \setlength{\paperwidth}{209.80truemm}
     \else
     \if@medium
-        \setlength{\paperheight}{246truemm}
-        \setlength{\paperwidth}{189truemm}
+        \setlength{\paperheight}{245.96truemm}
+        \setlength{\paperwidth}{188.88truemm}
     \else
     \if@small
         \setlength{\paperheight}{234truemm}
         \setlength{\paperwidth}{156truemm}
     \else
-        \setlength{\paperheight}{246truemm}
+        \setlength{\paperheight}{146truemm}
         \setlength{\paperwidth}{189truemm}
     \fi
     \fi
@@ -147,8 +138,8 @@
 \RequirePackage{chngpage}
 \RequirePackage{totcount}
 \RequirePackage{fix-cm}
-\RequirePackage[bottom]{footmisc}
 
+%\RequirePackage[LY1,mtbold]{mathtime}2015
 \def\sffamilyfont{\sffamily}
 \def\sffamilyfontitalic{\sffamily\itshape\selectfont}
 \def\sffamilyfontbold{\sffamily\bfseries\selectfont}
@@ -171,8 +162,8 @@
 
 \if@modern
   \if@large
-    \renewcommand\normalsize{\sffamilyfont%
-       \@setfontsize\normalsize{9bp}{11.5pt}%
+    \renewcommand\normalsize{%
+       \@setfontsize\normalsize{8bp}{11pt}%
        \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
        \abovedisplayshortskip \z@ \@plus3\p@
        \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
@@ -180,8 +171,8 @@
        \let\@listi\@listI}
   \else
   \if@medium
-    \renewcommand\normalsize{\sffamilyfont%
-       \@setfontsize\normalsize{9bp}{11.5pt}%
+    \renewcommand\normalsize{%
+       \@setfontsize\normalsize{8.5bp}{11.5pt}%
        \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
        \abovedisplayshortskip \z@ \@plus3\p@
        \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
@@ -189,8 +180,8 @@
        \let\@listi\@listI}
   \else
   \if@small
-    \renewcommand\normalsize{\sffamilyfont%
-       \@setfontsize\normalsize{9bp}{11.5pt}%
+    \renewcommand\normalsize{%
+       \@setfontsize\normalsize{8.5bp}{12pt}%
        \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
        \abovedisplayshortskip \z@ \@plus3\p@
        \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
@@ -204,7 +195,7 @@
 \if@traditional
     \if@large
         \renewcommand\normalsize{%
-           \@setfontsize\normalsize{9bp}{11.75pt}%
+           \@setfontsize\normalsize{9bp}{11.5pt}%
            \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
            \abovedisplayshortskip \z@ \@plus3\p@
            \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
@@ -213,7 +204,7 @@
     \else
     \if@medium
         \renewcommand\normalsize{%
-           \@setfontsize\normalsize{9bp}{11.75pt}%
+           \@setfontsize\normalsize{8.5bp}{10pt}%
            \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
            \abovedisplayshortskip \z@ \@plus3\p@
            \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
@@ -221,10 +212,10 @@
            \let\@listi\@listI}
     \else
         \renewcommand\normalsize{%
-           \@setfontsize\normalsize{9bp}{11.75bp}%
-           \abovedisplayskip 11.75\p@ \@plus2\p@ \@minus5\p@
+           \@setfontsize\normalsize{10.5bp}{12.5pt}%
+           \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
            \abovedisplayshortskip \z@ \@plus3\p@
-           \belowdisplayshortskip 11.75\p@ \@plus3\p@ \@minus3\p@
+           \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
            \belowdisplayskip \abovedisplayskip
            \let\@listi\@listI}
     \fi
@@ -233,31 +224,21 @@
 \if@contemporary
     \if@large
         \renewcommand\normalsize{%
-           \@setfontsize\normalsize{8bp}{11.5bp}%
-           \abovedisplayskip 11.5\p@ \@plus2\p@ \@minus5\p@
-           \abovedisplayshortskip \z@ \@plus3\p@
-           \belowdisplayshortskip 11.5\p@ \@plus3\p@ \@minus3\p@
-           \belowdisplayskip \abovedisplayskip
-           \let\@listi\@listI}
-    \else%
-    \if@medium
-        \renewcommand\normalsize{%
-           \@setfontsize\normalsize{8bp}{11.5bp}%
-           \abovedisplayskip 11.5\p@ \@plus2\p@ \@minus5\p@
-           \abovedisplayshortskip \z@ \@plus3\p@
-           \belowdisplayshortskip 11.5\p@ \@plus3\p@ \@minus3\p@
-           \belowdisplayskip \abovedisplayskip
-           \let\@listi\@listI}
-    \else%
-        \renewcommand\normalsize{%
-           \@setfontsize\normalsize{8bp}{11bp}%
+           \@setfontsize\normalsize{7.5bp}{10.5pt}%
            \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
            \abovedisplayshortskip \z@ \@plus3\p@
-           \belowdisplayshortskip 11\p@ \@plus3\p@ \@minus3\p@
+           \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
            \belowdisplayskip \abovedisplayskip
            \let\@listi\@listI}
-    \fi%
-    \fi%
+    \else
+        \renewcommand\normalsize{%
+           \@setfontsize\normalsize{7.5bp}{10.5pt}%
+           \abovedisplayskip 11\p@ \@plus2\p@ \@minus5\p@
+           \abovedisplayshortskip \z@ \@plus3\p@
+           \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+           \belowdisplayskip \abovedisplayskip
+           \let\@listi\@listI}
+    \fi
 \else
     \renewcommand\normalsize{%
        \@setfontsize\normalsize{8.5bp}{12pt}%
@@ -282,38 +263,14 @@
        \itemsep \parsep
        \topsep 4\p@ plus 2\p@ minus 2\p@}}
 
-\if@modern
-    \newcommand\footnotesize{%
-        \@setfontsize\footnotesize{7.5bp}{8}%
-        \abovedisplayskip 6\p@ minus 3\p@
-        \belowdisplayskip\abovedisplayskip
-        \abovedisplayshortskip \z@ plus 3\p@
-        \belowdisplayshortskip 6\p@ plus 3\p@ minus 3\p@
-        \def\@listi{\topsep 3\p@ plus 1\p@ minus 1\p@
-           \parsep 2\p@ plus 1\p@ minus 1\p@\itemsep \parsep}}
-\else
-\if@contemporary
-    \newcommand\footnotesize{%
-        \@setfontsize\footnotesize{6.5}{9.5}%
-        \abovedisplayskip 6\p@ minus 3\p@
-        \belowdisplayskip\abovedisplayskip
-        \abovedisplayshortskip \z@ plus 3\p@
-        \belowdisplayshortskip 6\p@ plus 3\p@ minus 3\p@
-        \def\@listi{\topsep 3\p@ plus 1\p@ minus 1\p@
-           \parsep 2\p@ plus 1\p@ minus 1\p@\itemsep \parsep}}
-\else
-\if@traditional
-    \newcommand\footnotesize{%
-        \@setfontsize\footnotesize{7.5bp}{9.5bp}%
-        \abovedisplayskip 9.5\p@ minus 3\p@
-        \belowdisplayskip\abovedisplayskip
-        \abovedisplayshortskip \z@ plus 3\p@
-        \belowdisplayshortskip 6\p@ plus 3\p@ minus 3\p@
-        \def\@listi{\topsep 9.5\p@ plus 1\p@ minus 1\p@
-           \parsep 2\p@ plus 1\p@ minus 1\p@\itemsep \parsep}}
-\fi
-\fi
-\fi
+\newcommand\footnotesize{%
+    \@setfontsize\footnotesize{8}{10}%
+    \abovedisplayskip 6\p@ minus 3\p@
+    \belowdisplayskip\abovedisplayskip
+    \abovedisplayshortskip \z@ plus 3\p@
+    \belowdisplayshortskip 6\p@ plus 3\p@ minus 3\p@
+    \def\@listi{\topsep 3\p@ plus 1\p@ minus 1\p@
+       \parsep 2\p@ plus 1\p@ minus 1\p@\itemsep \parsep}}
 
 \def\scriptsize{\@setfontsize\scriptsize{6.5pt}{9.5pt}}
 \def\tiny{\@setfontsize\tiny{5pt}{7pt}}
@@ -534,20 +491,7 @@
 \setlength\normallineskip{1\p@}
 \renewcommand\baselinestretch{}
 \setlength\parskip{0\p@}
-\if@contemporary%
-    \setlength\parindent{1em}%
-\else%
-\if@traditional
-    \setlength\parindent{8pt}%
-\else
-\if@modern
-    \setlength\parindent{12pt}%
-\else
-    \setlength\parindent{12pt}%
-\fi%
-\fi%
-\fi
-%
+\setlength\parindent{12pt}
 \setlength\smallskipamount{3\p@ \@plus 1\p@ \@minus 1\p@}
 \setlength\medskipamount{6\p@ \@plus 2\p@}
 \setlength\bigskipamount{12\p@ \@plus 4\p@ \@minus 4\p@}
@@ -567,14 +511,14 @@
 \if@modern
   \if@large
     \setlength\headheight{16\p@}
-    \setlength\topmargin{9.2mm}
+    \setlength\topmargin{2.6pc}
     \addtolength\topmargin{-1in}
     \setlength\topskip{10\p@}
-    \setlength\headsep{11.4\p@}
+    \setlength\headsep{8\p@}
     \setlength\footskip{16\p@}
     \setlength\maxdepth{.5\topskip}
     \setlength\textwidth{178mm}
-    \setlength\textheight{59\baselineskip}
+    \setlength\textheight{60\baselineskip}
     \setlength\marginparsep{3\p@}
     \setlength\marginparpush{3\p@}
     \setlength\marginparwidth{35\p@}
@@ -582,33 +526,33 @@
     \addtolength\oddsidemargin{-1in}
     \setlength\@tempdima{\paperwidth}
     \addtolength\@tempdima{-\textwidth}
-    \addtolength\@tempdima{-4pc}
+    \addtolength\@tempdima{-5.25pc}
     \setlength\evensidemargin{\@tempdima}
     \addtolength\evensidemargin{-1in}
-    \setlength\columnsep{6mm}
+    \setlength\columnsep{1.5pc}
     \setlength\columnseprule{0\p@}
   \else
   \if@medium
     \setlength\headheight{16\p@}
-    \setlength\topmargin{24pt}
+    \setlength\topmargin{2.44pc}
     \addtolength\topmargin{-1in}
     \setlength\topskip{10\p@}
-    \setlength\headsep{10.5\p@}
+    \setlength\headsep{6.2\p@}
     \setlength\footskip{0\p@}
     \setlength\maxdepth{.5\topskip}
-    \setlength\textwidth{157mm}
-    \setlength\textheight{52\baselineskip}
+    \setlength\textwidth{150.3mm}
+    \setlength\textheight{51\baselineskip}
     \setlength\marginparsep{3\p@}
     \setlength\marginparpush{3\p@}
     \setlength\marginparwidth{35\p@}
-    \setlength\oddsidemargin{17mm}
+    \setlength\oddsidemargin{4.57pc}
     \addtolength\oddsidemargin{-1in}
     \setlength\@tempdima{\paperwidth}
     \addtolength\@tempdima{-\textwidth}
-    \addtolength\@tempdima{-17mm}
+    \addtolength\@tempdima{-5.25pc}
     \setlength\evensidemargin{\@tempdima}
     \addtolength\evensidemargin{-.89in}
-    \setlength\columnsep{5mm}
+    \setlength\columnsep{14.5pt}
     \setlength\columnseprule{0\p@}
   \else
   \if@small
@@ -616,19 +560,19 @@
     \setlength\topmargin{2.25pc}
     \addtolength\topmargin{-1in}
     \setlength\topskip{10\p@}
-    \setlength\headsep{13.6\p@}
+    \setlength\headsep{8.6\p@}
     \setlength\footskip{16\p@}
     \setlength\maxdepth{.5\topskip}
-    \setlength\textwidth{124mm}
-    \setlength\textheight{49\baselineskip}
+    \setlength\textwidth{117.5mm}
+    \setlength\textheight{45\baselineskip}
     \setlength\marginparsep{3\p@}
     \setlength\marginparpush{3\p@}
     \setlength\marginparwidth{35\p@}
-    \setlength\oddsidemargin{17mm}
+    \setlength\oddsidemargin{4.57pc}
     \addtolength\oddsidemargin{-1in}
     \setlength\@tempdima{\paperwidth}
     \addtolength\@tempdima{-\textwidth}
-    \addtolength\@tempdima{-19.6mm}
+    \addtolength\@tempdima{-5.25pc}
     \setlength\evensidemargin{\@tempdima}
     \addtolength\evensidemargin{-.89in}
     \setlength\columnsep{14.5pt}
@@ -641,90 +585,68 @@
 \if@traditional
     \if@large
         \setlength\headheight{16\p@}
-        \setlength\topmargin{6.2mm}
+        \setlength\topmargin{2.92pc}
         \addtolength\topmargin{-1in}
         \setlength\topskip{10\p@}
-        \setlength\headsep{18.5\p@}
+        \setlength\headsep{12.9\p@}
         \setlength\footskip{16\p@}
         \setlength\maxdepth{.5\topskip}
-        \setlength\textwidth{178mm}
-        \setlength\textheight{58\baselineskip}
+        \setlength\textwidth{482pt}
+        \setlength\textheight{55\baselineskip}
         \setlength\marginparsep{3\p@}
         \setlength\marginparpush{3\p@}
         \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{17mm}
+        \setlength\oddsidemargin{4.475pc}
         \addtolength\oddsidemargin{-1in}
         \setlength\@tempdima{\paperwidth}
         \addtolength\@tempdima{-\textwidth}
-        \addtolength\@tempdima{-17mm}
+        \addtolength\@tempdima{-4.475pc}
         \setlength\evensidemargin{\@tempdima}
         \addtolength\evensidemargin{-1in}
-        \setlength\columnsep{6mm}
+        \setlength\columnsep{1pc}
         \setlength\columnseprule{0\p@}
     \else
-   \if@medium
-      \if@mediumone%RK-new
+    \if@medium
         \setlength\headheight{16\p@}
-        \setlength\topmargin{5.5mm}%%%RK-new
+        \setlength\topmargin{1.58pc}
         \addtolength\topmargin{-1in}
         \setlength\topskip{10\p@}
-        \setlength\headsep{20.4\p@}%%RK-new
+        \setlength\headsep{16.15\p@}
         \setlength\footskip{16\p@}
         \setlength\maxdepth{.5\topskip}
-        \setlength\textwidth{136mm}
-        \setlength\textheight{51\baselineskip}%RK-new
+        \setlength\textwidth{434pt}
+        \setlength\textheight{59\baselineskip}
         \setlength\marginparsep{3\p@}
         \setlength\marginparpush{3\p@}
         \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{28mm}%RK-new
+        \setlength\oddsidemargin{4.45pc}
         \addtolength\oddsidemargin{-1in}
         \setlength\@tempdima{\paperwidth}
         \addtolength\@tempdima{-\textwidth}
-        \addtolength\@tempdima{-28mm}%RK-new
+        \addtolength\@tempdima{-4.45pc}
         \setlength\evensidemargin{\@tempdima}
         \addtolength\evensidemargin{-1in}
         \setlength\columnsep{18pt}
         \setlength\columnseprule{0\p@}
-       \else
+    \else
         \setlength\headheight{16\p@}
-        \setlength\topmargin{5.5mm}%%%RK-new
+        \setlength\topmargin{1.58pc}
         \addtolength\topmargin{-1in}
         \setlength\topskip{10\p@}
-        \setlength\headsep{17.6\p@}%%RK-new
+        \setlength\headsep{17.7\p@}
         \setlength\footskip{16\p@}
         \setlength\maxdepth{.5\topskip}
-        \setlength\textwidth{160mm}
-        \setlength\textheight{51\baselineskip}%RK-new
+        \setlength\textwidth{360pt}
+        \setlength\textheight{45\baselineskip}
         \setlength\marginparsep{3\p@}
         \setlength\marginparpush{3\p@}
         \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{16mm}%RK-new
+        \setlength\oddsidemargin{3.75pc}
         \addtolength\oddsidemargin{-1in}
         \setlength\@tempdima{\paperwidth}
         \addtolength\@tempdima{-\textwidth}
-        \addtolength\@tempdima{-16mm}%RK-new
+        \addtolength\@tempdima{-4.45pc}
         \setlength\evensidemargin{\@tempdima}
-        \addtolength\evensidemargin{-1in}
-        \setlength\columnsep{18pt}
-        \setlength\columnseprule{0\p@}
-       \fi
-    \else
-        \setlength\headheight{16\p@}
-        \setlength\topmargin{5.5mm}
-        \addtolength\topmargin{-1in}
-        \setlength\topskip{10\p@}
-        \setlength\headsep{7.5mm}
-        \setlength\footskip{16\p@}
-        \setlength\maxdepth{2pt}
-        \setlength\textwidth{127truemm}
-        \setlength\textheight{48\baselineskip}
-%        \addtolength\textheight{-10bp}
-        \setlength\marginparsep{3\p@}
-        \setlength\marginparpush{3\p@}
-        \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{16mm}
-        \addtolength\oddsidemargin{-1in}
-        \setlength\evensidemargin{13mm}
         \addtolength\evensidemargin{-1in}
         \setlength\columnsep{18pt}
         \setlength\columnseprule{0\p@}
@@ -734,86 +656,70 @@
 \if@contemporary
     \if@large
         \setlength\headheight{16\p@}
-        \setlength\topmargin{7.1mm}
+        \setlength\topmargin{2.24pc}
         \addtolength\topmargin{-1in}
         \setlength\topskip{10\p@}
-        \setlength\headsep{5.8mm}
+        \setlength\headsep{13.8\p@}
         \setlength\footskip{16\p@}
-        \setlength\maxdepth{2pt}%.5\topskip}
-        \setlength\textwidth{185mm}
-        \setlength\textheight{58\baselineskip}
-%        \addtolength\textheight{-11bp}
+        \setlength\maxdepth{.5\topskip}
+        \setlength\textwidth{488.5pt}
+        \setlength\textheight{63\baselineskip}
         \setlength\marginparsep{3\p@}
         \setlength\marginparpush{3\p@}
         \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{12.5mm}
+        \setlength\oddsidemargin{4.55pc}
         \addtolength\oddsidemargin{-1in}
-        \setlength\evensidemargin{12.5mm}
-        \addtolength\evensidemargin{-1in}%
-        \setlength\columnsep{6mm}
+        \setlength\@tempdima{\paperwidth}
+        \addtolength\@tempdima{-\textwidth}
+        \addtolength\@tempdima{-4.475pc}
+        \setlength\evensidemargin{\@tempdima}
+        \addtolength\evensidemargin{-1in}
+        \setlength\columnsep{18pt}
         \setlength\columnseprule{0\p@}
     \else
   \if@medium
-    \if@mediumone
-        \setlength\headheight{16\p@}
-        \setlength\topmargin{9.4mm}
-        \addtolength\topmargin{-1in}
-        \setlength\topskip{10\p@}
-        \setlength\headsep{5.5mm}
-        \setlength\footskip{16\p@}
-        \setlength\maxdepth{2pt}%.5\topskip}
-        \setlength\textwidth{135mm}
-        \setlength\textheight{49\baselineskip}
-%        \addtolength\textheight{-11bp}
-        \setlength\marginparsep{3\p@}
-        \setlength\marginparpush{3\p@}
-        \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{27mm}
-        \addtolength\oddsidemargin{-1in}
-        \setlength\evensidemargin{27mm}
-        \addtolength\evensidemargin{-1in}%
-        \setlength\columnsep{5mm}
-        \setlength\columnseprule{0\p@}
-    \else
-        \setlength\headheight{16\p@}
-        \setlength\topmargin{9.4mm}
-        \addtolength\topmargin{-1in}
-        \setlength\topskip{10\p@}
-        \setlength\headsep{5.5mm}
-        \setlength\footskip{16\p@}
-        \setlength\maxdepth{2pt}%.5\topskip}
-        \setlength\textwidth{149mm}
-        \setlength\textheight{50\baselineskip}
- %       \addtolength\textheight{-11bp}
-        \setlength\marginparsep{3\p@}
-        \setlength\marginparpush{3\p@}
-        \setlength\marginparwidth{35\p@}
-        \setlength\oddsidemargin{20mm}
-        \addtolength\oddsidemargin{-1in}
-        \setlength\evensidemargin{20mm}
-        \addtolength\evensidemargin{-1in}%
-        \setlength\columnsep{5mm}
-        \setlength\columnseprule{0\p@}
-    \fi
-  \else
-  \if@small
     \setlength\headheight{16\p@}
-    \setlength\topmargin{6.4mm}
+    \setlength\topmargin{2.44pc}
     \addtolength\topmargin{-1in}
     \setlength\topskip{10\p@}
-    \setlength\headsep{4.5mm}
-    \setlength\footskip{16\p@}
-    \setlength\maxdepth{2pt}%.5\topskip}
-    \setlength\textwidth{126mm}
-    \setlength\textheight{51\baselineskip}
-%    \addtolength\textheight{-11bp}
+    \setlength\headsep{6.2\p@}
+    \setlength\footskip{0\p@}
+    \setlength\maxdepth{.5\topskip}
+    \setlength\textwidth{150.3mm}
+    \setlength\textheight{56\baselineskip}
     \setlength\marginparsep{3\p@}
     \setlength\marginparpush{3\p@}
     \setlength\marginparwidth{35\p@}
-    \setlength\oddsidemargin{15mm}
+    \setlength\oddsidemargin{4.57pc}
     \addtolength\oddsidemargin{-1in}
-    \setlength\evensidemargin{15mm}
-    \addtolength\evensidemargin{-1in}%
+    \setlength\@tempdima{\paperwidth}
+    \addtolength\@tempdima{-\textwidth}
+    \addtolength\@tempdima{-5.25pc}
+    \setlength\evensidemargin{\@tempdima}
+    \addtolength\evensidemargin{-.89in}
+    \setlength\columnsep{14.5pt}
+    \setlength\columnseprule{0\p@}
+  \else
+  \if@small
+    \setlength\headheight{16\p@}
+    \setlength\topmargin{2.25pc}
+    \addtolength\topmargin{-1in}
+    \setlength\topskip{10\p@}
+    \setlength\headsep{8.6\p@}
+    \setlength\footskip{16\p@}
+    \setlength\maxdepth{.5\topskip}
+    \setlength\textwidth{117.5mm}
+    \setlength\textheight{52\baselineskip}
+    \setlength\marginparsep{3\p@}
+    \setlength\marginparpush{3\p@}
+    \setlength\marginparwidth{35\p@}
+    \setlength\oddsidemargin{4.57pc}
+    \addtolength\oddsidemargin{-1in}
+    \setlength\@tempdima{\paperwidth}
+    \addtolength\@tempdima{-\textwidth}
+    \addtolength\@tempdima{-5.25pc}
+    \setlength\evensidemargin{\@tempdima}
+    \addtolength\evensidemargin{-.89in}
     \setlength\columnsep{14.5pt}
     \setlength\columnseprule{0\p@}
   \else
@@ -826,15 +732,7 @@
 \fi
 
 \addtolength\textheight{\topskip}
-\if@contemporary
-    \setlength\footnotesep{7\p@}
-\else
-\if@traditional
-    \setlength\footnotesep{6.5\p@}
-\else
-    \setlength\footnotesep{9\p@}
-\fi
-\fi
+\setlength\footnotesep{9\p@}
 \setlength{\skip\footins}{12\p@ \@plus 6\p@ \@minus 1\p@}
 \setcounter{totalnumber}{10}
 \setcounter{topnumber}{5}
@@ -873,150 +771,140 @@
   \let\@evenfoot\@empty%
   \if@traditional
     \if@large
-      \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont%
-            {\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\itshape\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}\hfill}}}%
-      \def\@oddhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont%
-            \hfill{{\itshape\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\textbf{\thepage}}}%
+      \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
+            {\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\itshape\strut\leftmark}\hfill}}}%
+      \def\@oddhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
+            \hfill{{\itshape\strut\rightmark}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\textbf{\thepage}}}%
             }}%
     \else
     \if@medium
       \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
-            {\fontsize{9bp}{12}\selectfont\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\itshape\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}\hfill}}}%
+            {\fontsize{9bp}{12}\selectfont\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\itshape\strut\leftmark}\hfill}}}%
       \def\@oddhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
-            \hfill{{\itshape\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\fontsize{9bp}{12}\selectfont\textbf{\thepage}}}%
+            \hfill{{\itshape\strut\rightmark}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\fontsize{9bp}{12}\selectfont\textbf{\thepage}}}%
             }}%
     \else
-      \def\@evenhead{\hbox to \textwidth{{\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}\hfill}}%
-      \def\@oddhead{\hbox to \textwidth{\hfill{\textit{\rightmark}, Volume \@vol, Issue \@issue}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}\textbf{\thepage}}%
-            }%
+      \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
+            {\fontsize{9bp}{12}\selectfont\textbf{\thepage}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\itshape\strut\leftmark}\hfill}}}%
+      \def\@oddhead{\vbox{\hbox to \textwidth{\fontsize{9.5bp}{12}\selectfont
+            \hfill{{\itshape\strut\rightmark}}{\hspace*{9pt}{\textbullet}\hspace*{9pt}}{\fontsize{9bp}{12}\selectfont\textbf{\thepage}}}%
+            }}%
     \fi
     \fi
   \else
   \if@contemporary
-      \def\@evenhead{\hbox to \textwidth{\sffamily\fontsize{8bp}{10bp}\selectfont%
-            {{\fontseries{m}\fontsize{9bp}{10bp}\selectfont\thepage}}\hspace*{4pt}\raisebox{-1.5pt}{\rule{.3pt}{8pt}}\hspace*{4pt}{\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}\hfill}}%
-      \def\@oddhead{\hbox to \textwidth{\hfill\sffamily\fontsize{8bp}{10bp}\selectfont
-            {{\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}\hspace*{4pt}\raisebox{-1.5pt}{\rule{.3pt}{8pt}}\hspace*{4pt}{{\fontseries{m}\fontsize{9bp}{10bp}\selectfont\thepage}}%
-            }}%
+      \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{7.8bp}{10}\selectfont\color{jnlclr}
+            {\hspace*{1pc}{\selectfont\thepage}}\hspace*{8pt}\raisebox{-1.5pt}{\rule{.3pt}{8pt}}\hspace*{8pt}{\strut\leftmark}\hfill}\vspace{5\p@}{\color{black!15}\rule{\textwidth}{2\p@}}}}%
+      \def\@oddhead{\vbox{\hbox to \textwidth{\hfill\fontsize{7.8bp}{10}\selectfont\color{jnlclr}
+            {{\strut\rightmark}}\hspace*{8pt}\raisebox{-1.5pt}{\rule{.3pt}{8pt}}\hspace*{8pt}{{\thepage}}\hspace*{1pc}}%
+            \vspace{5\p@}{\color{black!15}\rule{\textwidth}{2\p@}}}}%
   \else
-  \if@modern
-     \def\@evenhead{\vbox{\hbox to \textwidth{\if@medium\fontsize{6.5bp}{6.5}\selectfont\else\fontsize{8bp}{10}\selectfont\fi
-        {\sffamilyfontbold{\selectfont\thepage}}\hfill\sffamilyfontitalic{\fontshape{it}\selectfont
-        \strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}\if@medium\vspace{5.5\p@}\else\vspace{8\p@}\fi\color{black!60}\rule{\textwidth}{1\p@}}}%
-      \def\@oddhead{\vbox{\hbox to \textwidth{\if@medium\fontsize{6.5bp}{6.5}\selectfont\else\fontsize{8bp}{10}\selectfont\fi
-        {\sffamilyfontitalic{\fontshape{it}\selectfont\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}\hfill{\sffamilyfontbold{\thepage}}}%
-        \if@medium\vspace{5.5\p@}\else\vspace{8\p@}\fi\color{black!60}\rule{\textwidth}{1\p@}}}%
-   \else
       \def\@evenhead{\vbox{\hbox to \textwidth{\fontsize{8bp}{10}\selectfont
-        {\sffamilyfontbold{\selectfont\thepage}}\hfill\sffamilyfontitalic{\fontshape{it}\selectfont
-        \strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}\vspace{5\p@}\rule{\textwidth}{1\p@}}}%
+        {\sffamilyfontbold{\selectfont\thepage}}\hfill\sffamilyfontitalic{\fontshape{sl}\selectfont
+        \strut\leftmark}}\vspace{5\p@}\rule{\textwidth}{1\p@}}}%
       \def\@oddhead{\vbox{\hbox to \textwidth{\fontsize{8bp}{10}\selectfont
-        {\sffamilyfontitalic{\fontshape{it}\selectfont\strut\@journaltitle, \@pubyear,\ Volume \@vol,\ Issue \@issue}}\hfill{\sffamilyfontbold{\thepage}}}%
+        {\sffamilyfontitalic{\fontshape{it}\selectfont\strut\rightmark}}\hfill{\sffamilyfontbold{\thepage}}}%
         \vspace{5\p@}\rule{\textwidth}{1\p@}}}%
-  \fi\fi\fi
+  \fi\fi
   \def\titlemark##1{\markboth{##1}{##1}}%
+  \def\authormark##1{\gdef\leftmark{##1}}%
   }
-%%%% If you want to include society logo please use the below option
-%\if@modern%
-%\def\societylogo{\raisebox{10pt}{\includegraphics[scale=0.4]{PNAS-Nexus-Logo-CMYK}}}%
-%\else%
-%\def\societylogo{\raisebox{-12pt}{\includegraphics[scale=0.4]{PNAS-Nexus-Logo-CMYK}}}%
-%\fi%
-%%%% If you do not want to include society logo then please use the below option
-%\def\societylogo{}%
 
-\def\ps@opening{%
+\def\ps@opening
+  {%
   \if@modern
-      \def\@oddhead{\raisebox{-10.3mm}[0pt][0pt]{\hbox to \textwidth{%{\color{black!50}\rule{1.5mm}{19mm}}\hskip2.5mm%
-              {\vbox to 19mm{\hbox{}\vfill\hbox to \if@small108mm\else122mm\fi{{%
-              \parbox{290pt}{\raggedright{{\sffamily\fontsize{6.5bp}{9.5bp}\selectfont\textit{\@journaltitle},\ \@copyrightyear, \@volume,  \thepage--\thelastpage\par\vskip0pt}}
-              {\sffamily\fontsize{6.5bp}{9.bp}\selectfont\@DOI\par%
-              \ifx\@access\@empty\else\@access\par\fi\vskip0pt
-              \ifx\@specialissue\@empty\else\@specialissue\par\fi
-              \ifx\@appnotes\@empty\else\sffamily\fontsize{7bp}{9.bp}\textbf{\@appnotes}\par\fi
-              }
-                }}%
-              }\vfill\hbox{}}}\hfill{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule{45pt}{55pt}}}}}%
-    \def\@evenhead{\raisebox{-10.3mm}[0pt][0pt]{\hbox to \textwidth{%{\color{black!50}\rule{1.5mm}{19mm}}\hskip2.5mm%
-              {\vbox to 19mm{\hbox{}\vfill\hbox to \if@small108mm\else122mm\fi{{%
-              \parbox{290pt}{\raggedright{{\sffamily\fontsize{8bp}{10bp}\selectfont\textit{\@journaltitle},\ \@copyrightyear, \@volume, \thepage--\thelastpage\par\vskip0pt}}
-              {\sffamily\fontsize{7bp}{9bp}\selectfont\@DOI\par%
-              \ifx\@access\@empty\else\@access\par\fi\vskip0pt
-              \ifx\@specialissue\@empty\else\@specialissue\par\fi
-              \ifx\@appnotes\@empty\else\textbf{\@appnotes}\par\fi}
-                }}%
-              }\vfill\hbox{}}}\hfill{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule{45pt}{55pt}}}}}
-  \fi
-  \if@traditional
-    \def\@oddhead{\raisebox{\if@large-6pt\else\if@medium-6pt\else-6pt\fi\fi}[0pt][0pt]{%
-              \hbox to \textwidth{{%
-              \parbox{0.8\textwidth}{\raggedright\fontsize{7bp}{10bp}\selectfont
-              \textit{\@journaltitle},\ \@copyrightyear, pp. \thepage--\thelastpage\par
-              \@DOI\par\ifx\@access\@empty\else\@access\par\fi%
-              \ifx\@appnotes\@empty\else\textbf{\@appnotes}\par\fi}
-                }%
-              \hfill\hbox{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule[-7.5pt]{55pt}{20pt}}}}}%
-    \def\@evenhead{\raisebox{\if@large-6pt\else\if@medium-6pt\else-6pt\fi\fi}[0pt][0pt]{%
-              \hbox to \textwidth{{%
-              \parbox{0.8\textwidth}{\raggedright\fontsize{7bp}{10bp}\selectfont
-              \textit{\@journaltitle},\ \@copyrightyear, pp. \thepage--\thelastpage\par
-              \@DOI\par\ifx\@access\@empty\else\@access\par\fi%
-              \ifx\@appnotes\@empty\else\textbf{\@appnotes}\par\fi}
-                }%
-              \hfill\hbox{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule{55pt}{20pt}}}}}
-  \fi
-  \if@contemporary
-    \def\@oddhead{\raisebox{\if@large-18.8mm\else\if@medium-19.1mm\else-17mm\fi\fi}[0pt][0pt]{\hbox to \textwidth{{\color{black!50}\rule{1.5mm}{19mm}}\hskip2.5mm%
-              {\vbox to 19mm{\vskip2.5pt\hbox to \textwidth{{%
-              \parbox{290pt}{\raggedright{{\sffamily\fontsize{8bp}{10bp}\selectfont\textit{\@journaltitle},\ \@copyrightyear, pp. \thepage--\thelastpage\par\vskip3pt}}
-              {\sffamily\fontsize{7bp}{9bp}\selectfont\@DOI\par%
-              \ifx\@access\@empty\else\@access\par\fi\vskip3pt
-              \ifx\@appnotes\@empty\else\textbf{\@appnotes}\par\fi}
-                }}%
-              \hfill\hbox{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule{55pt}{20pt}}\hskip4mm}\vfill\hbox{}}}}}}%
-    \def\@evenhead{\raisebox{\if@large-18.8mm\else\if@medium-19.1mm\else-17mm\fi\fi}[0pt][0pt]{\hbox to \textwidth{{\color{black!50}\rule{1.5mm}{19mm}}\hskip2.5mm%
-              {\vbox to 19mm{\vskip2.5pt\hbox to \textwidth{{%
-              \parbox{290pt}{\raggedright{{\sffamily\fontsize{8bp}{10bp}\selectfont\textit{\@journaltitle},\ \@copyrightyear, pp. \thepage--\thelastpage\par\vskip3pt}}
-              {\sffamily\fontsize{7bp}{9bp}\selectfont\@DOI\par%
-              \ifx\@access\@empty\else\@access\par\fi\vskip3pt
-              \ifx\@appnotes\@empty\else\textbf{\@appnotes}\par\fi}
-                }}%
-              \hfill\hbox{\smash{\societylogo{}\hspace*{12pt}}\color{black!20}\rule{55pt}{20pt}}\hskip4mm}\vfill\hbox{}}}}}}
-    \fi
-%
-\if@modern
-    \def\@oddfoot{\parbox{\textwidth}{%\if@medium\if@mediumone\vspace*{0pt}\else\vspace*{-23.5pt}\fi\else\if@small\vspace*{0pt}\else\vspace*{-37.5pt}\fi\fi
-\textcolor{black!60}{\rule{\textwidth}{.5pt}}\par\vspace*{5pt}\fontsize{6.25bp}{8bp}\selectfont\@history\par\raggedright
-    \fontseries{m}\selectfont$\copyright$ The Author(s) \@pubyear. Copyright and licence statements to be updated by the publisher during production.
-    }}
-    \def\@evenfoot{\parbox{\textwidth}{%\if@medium\if@mediumone\vspace*{0pt}\else\vspace*{-23.5pt}\fi\else\if@small\vspace*{0pt}\else\vspace*{-37.5pt}\fi\fi
-\textcolor{black!60}{\rule{\textwidth}{.5pt}}\par\vspace*{5pt}\fontsize{6.25bp}{8bp}\selectfont\@history\par\raggedright
-    \fontseries{m}\selectfont$\copyright$ The Author(s) \@pubyear. Copyright and licence statements to be updated by the publisher during production.
-    }}
+    \if@small
+      \def\@oddfoot{{
+            \hbox to
+	    \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{332pt}{.5pt}\vspace*{1pt}\newline\sffamilyfontcn%
+            \fontsize{7}{9}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\small\sffamilyfontbold\thepage}}%
+            }}%
+      \def\@evenfoot{{
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{332pt}{.5pt}\vspace*{1pt}\newline\sffamilyfontcn\thepage\hfill
+              \fontsize{7}{9}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com}%
+            }}}%
     \else
-  \def\@evenfoot{\if@contemporary\raisebox{0mm}[0pt][0pt]{\parbox{\textwidth}{\noindent\rule{\textwidth}{.5pt}\par%
-  \vskip1.5pt\sffamily\fontsize{6.5bp}{9.5bp}\selectfont\@history\par\raggedright%
-  \noindent\copyright\space The Author(s) \@copyrightyear. Copyright and licence statements to be updated by the publisher during production.}}%
-  \else%
-  \if@traditional%
-    \raisebox{0mm}[0pt][0pt]{\parbox{\textwidth}{\noindent\rule{\textwidth}{.5pt}\par%
-  \vskip2.5pt\fontsize{6.25bp}{8.25bp}\selectfont\@history\par\raggedright%
-  \noindent\copyright\space The Author(s) \@copyrightyear. Copyright and licence statements to be updated by the publisher during production.}}%
-  \fi\fi%
-  }
-%
-  \def\@oddfoot{\if@contemporary\raisebox{0mm}[0pt][0pt]{\parbox{\textwidth}{\noindent\rule{\textwidth}{.5pt}\par%
-  \vskip1.5pt\sffamily\fontsize{6.5bp}{9.5bp}\selectfont\@history\par\raggedright%
-  \noindent\copyright\space The Author(s) \@copyrightyear. Copyright and licence statements to be updated by the publisher during production.}}%
-  \else%
-  \if@traditional%
-    \raisebox{0mm}[0pt][0pt]{\parbox{\textwidth}{\noindent\rule{\textwidth}{.5pt}\par%
-  \vskip2.5pt\fontsize{6.25bp}{8.25bp}\selectfont\@history\par\raggedright%
-  \noindent\copyright\space The Author(s) \@copyrightyear. Copyright and licence statements to be updated by the publisher during production.}}%
-  \fi\fi%
-  }
-\fi
-}
+    \if@medium
+      \def\@oddfoot{{
+            \hbox to
+	    \textwidth{\parbox{428pt}{\hspace*{1pt}\vspace*{3pt}\newline\rule{428pt}{.5pt}\vspace*{1pt}\newline\sffamilyfontcn%
+            \fontsize{7}{9}\fontshape{n}\selectfont \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\small\sffamilyfontbold\thepage}}%
+            }}%
+      \def\@evenfoot{{
+            \hbox to
+	    \textwidth{\parbox{428pt}{\hspace*{1pt}\vspace*{3pt}\newline\rule{428pt}{.5pt}\vspace*{1pt}\newline%
+\sffamilyfontcn\thepage\hfill
+              \fontsize{7}{9}\fontshape{n}\selectfont \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com}%
+            }}}%
+\else%
+      \def\@oddfoot{{
+            \hbox to
+	    \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{506pt}{.5pt}\vspace*{1pt}\newline\sffamilyfontcn%
+            \fontsize{7}{9}\fontshape{n}\selectfont \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\small\sffamilyfontbold\thepage}}%
+            }}%
+      \def\@evenfoot{{
+            \hbox to
+	    \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{506pt}{.5pt}\vspace*{1pt}\newline%
+\sffamilyfontcn\thepage\hfill
+              \fontsize{7}{9}\fontshape{n}\selectfont \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com}%
+            }}}%
+    \fi\fi
+  \else
+  \if@traditional
+    \if@large
+      \def\@oddfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{444pt}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright\ensuremath{\copyright}\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{18pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+      \def\@evenfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{444pt}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright\ensuremath{\copyright}\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{18pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+    \else
+    \if@medium
+        \def\@oddfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{444pt}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+      \def\@evenfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{3pt}\newline\rule{444pt}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+    \else
+        \def\@oddfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{-36pt}\newline\rule{\textwidth}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+      \def\@evenfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{-36pt}\newline\rule{\textwidth}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{7}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill{{\textbullet}\hspace*{9pt}}\textbf{\thepage}}}%
+            }}%
+    \fi
+    \fi
+  \else
+        \def\@oddfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{-0pt}\newline\rule{\textwidth}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{6.5}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill\color{jnlclr}\textbf{\thepage}}}%
+            }}%
+      \def\@evenfoot{{%
+            \hbox to \textwidth{\parbox{\textwidth}{\hspace*{1pt}\vspace*{-0pt}\newline\rule{\textwidth}{.5pt}\vspace*{2pt}\newline%
+            \fontsize{6.5}{8}\fontshape{n}\selectfont\raggedright \copyright\space The Author \@copyrightyear. Published by Oxford University Press. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com%
+              \hfill\vspace*{1pt}\newline\hspace*{1pt}\hfill\color{jnlclr}\textbf{\thepage}}}%
+            }}%
+  \fi
+  \fi
+  \let\@evenhead\relax
+  \let\@oddhead\relax}
 
 % Page range
 \newif\iflastpagegiven   \lastpagegivenfalse
@@ -1081,16 +969,12 @@
 \newcounter{figure}
 \newcounter{table}
 
-\newenvironment{tablenotes}{\if@traditional\fontsize{7.5bp}{9.5bp}\selectfont\else%
-\if@contemporary\if@large\fontsize{6.5bp}{8.5bp}\selectfont\else\fontsize{7bp}{9bp}\selectfont\fi
-\else\if@modern\fontsize{7.5bp}{9}\selectfont\else\fi\fi\fi%
-\list{}{\setlength{\labelsep}{0pt}%
+\newenvironment{tablenotes}{\if@traditional\fontsize{7.5bp}{9}\selectfont\else\if@contemporary\fontsize{6bp}{9}\selectfont\else\fi\fi\list{}{\setlength{\labelsep}{0pt}%
 \setlength{\labelwidth}{0pt}%
 \setlength{\leftmargin}{0pt}%
 \setlength{\rightmargin}{0pt}%
-\if@contemporary\if@large\setlength{\topsep}{1pt}\else\setlength{\topsep}{-6.5pt}\fi\setlength{\itemsep}{0pt}\fi%
-\if@traditional\setlength{\itemsep}{0pt}\setlength{\topsep}{3pt}\else%
-\if@modern\setlength{\itemsep}{2pt}\setlength{\topsep}{-6pt}\fi\fi%
+\setlength{\topsep}{-6pt}%
+\if@traditional\setlength{\itemsep}{0pt}\else\setlength{\itemsep}{2pt}\fi%
 \setlength{\partopsep}{0pt}%
 \setlength{\listparindent}{0em}%
 \setlength{\parsep}{0pt}}%
@@ -1115,7 +999,7 @@
 \newcommand\refname{References}
 \newcommand\bibname{References}
 \newcommand\indexname{Index}
-\newcommand\figurename{Figure}
+\newcommand\figurename{Fig.}
 \newcommand\tablename{Table}
 
 \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
@@ -1196,91 +1080,43 @@
 \setcounter{myhistorycount}{0}
 \regtotcounter{myhistorycount}
 
-\def\historycommasep{\ifnum\arabic{myhistorycount@totc}=\arabic{myhistorycount}\else.\ \fi}
+\def\historycommasep{\ifnum\arabic{myhistorycount@totc}=\arabic{myhistorycount}\else;\ \fi}
 
-\def\received#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount}\textbf{Received:} #1\ \myswitch{#2}\ #3\historycommasep}}
-\def\revised#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount} \textbf{Revised received:} #1\ \myswitch{#2}\ #3\historycommasep}}
-\def\accepted#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount} \textbf{Accepted:} #1\ \myswitch{#2}\ #3\historycommasep}}
+\def\received#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount}\if@modern FOR PUBLISHER ONLY Received on \else\if@traditional FOR PUBLISHER ONLY Submitted \else FOR PUBLISHER ONLY Received on \fi\fi#1\ \myswitch{#2}\ #3\historycommasep}}
+\def\revised#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount}\if@modern revised on \else\if@traditional Revised \else revised on \fi\fi #1\ \myswitch{#2}\ #3\historycommasep}}
+\def\accepted#1#2#3{\g@addto@macro\@history{\refstepcounter{myhistorycount}\if@modern accepted on \else\if@traditional revised version accepted \else accepted on \fi\fi#1\ \myswitch{#2}\ #3\historycommasep}}
 
-\def\abstract#1{\let\subheading\abstsubheading\global\def\@abstract{#1}}
-\def\subheading#1{#1}
+\def\abstract#1{\global\def\@abstract{#1}}
 
-\def\@fmaubio{}%
-\def\FMAUBIO#1#2{\begingroup\color{black}\g@addto@macro\@fmaubio{{\bgroup%
-\def\author##1{{\bfseries##1}}%
-\setbox\@authorfigbox=\hbox{#1}%
-\@authorfigboxdim=\wd\@authorfigbox%
-\vbox{\vspace*{3pt}\begin{wrapfigure}{l}[0pt]{\@authorfigboxdim}%
-\vspace*{-1.6\baselineskip}#1\end{wrapfigure}\normalfont\normalsize\noindent#2\par}\par\nointerlineskip\vskip12pt\nointerlineskip\egroup}}\color{black}\endgroup}%
-
-\def\abstsubheading#1{%
-\if@modern
-\par\vskip3pt\vskip3.5pt{\fontseries{b}\fontshape{it}\selectfont#1}\enspace%
-\else
-\if@traditional%
-    \par\vskip6.5pt{\itshape#1}\enspace%
-\else%
-\if@contemporary%
-    \par\vskip3pt{\sffamily\fontseries{b}\selectfont\itshape#1}\enspace%
-\fi\fi\fi}
-
-\def\@keywords{}
-
-\newcommand\keywords[2][Keywords]{\g@addto@macro\@keywords{%
+\def\keywords#1{\g@addto@macro\@abstract{%
 \if@modern%
-    \vskip6pt%
-\else%
-\if@traditional%
-    \vskip6.5pt%
-\else%
-    \vskip3pt
-\fi%
-\fi\par%
-\if@modern%
-    {{\sffamilyfont\fontseries{b}\fontsize{8.5bp}{11}#1}\enspace\fontseries{m}\selectfont#2}%
+    \vspace*{6pt}%
 \else%
 \if@traditional
-    {\fontsize{8.5bp}{11bp}\selectfont\textbf{#1:}\ #2\par}%
+    \vspace*{12pt}
 \else
-    {\sffamily\fontseries{b}\selectfont\itshape #1}\enspace#2%
+    \vspace*{8pt}
+\fi
+\fi\par%
+\if@modern
+{\sffamilyfontcnbold\fontsize{8bp}{11}\keywordsname\ \sffamilyfontcn#1}%
+\else%
+\if@traditional
+{\fontsize{8bp}{10}\textbf{\uppercase{Keywords}:}\ #1}%
+\else
+{\fontsize{8bp}{10}\textbf{{Key words}:}\ #1}%
 \fi\fi
 }}%
-
-\def\@nonabstract{}
-
-\newcommand\otherabstract[2][Other abstract heading]{\g@addto@macro\@nonabstract{%
-\if@contemporary%
-        \vskip14pt%
-        {\fontseries{b}\fontsize{12bp}{14bp}\selectfont\centering#1\par}%
-        \vskip3pt%
-    \noindent{{\sffamily\fontseries{b}\fontsize{8bp}{11bp}\selectfont#2\par}}%
-\else
-\if@traditional
-    \vskip4mm%
-    {\fontsize{11.5bp}{13.5bp}\fontseries{b}\selectfont\centering #1\par}\vskip5pt%
-    \noindent{\fontsize{9bp}{11.75bp}\selectfont#2\par}%
-\else
-\if@modern%
-    \vskip11pt
-    {\sffamily\bfseries\fontsize{13bp}{15}\selectfont#1\par\vskip6pt}
-    \noindent{{\sffamily\fontseries{b}\fontsize{9.5bp}{11.5bp}\selectfont#2\par}}%
-\fi%
-\fi%
-\fi%
-}
-}
 
 \def\@editor{}
 \def\editor#1{\global\def\@editor{#1}}
 \def\pubyear#1{\global\def\@pubyear{#1}}
 \def\copyrightyear#1{\global\def\@copyrightyear{#1}}
 \def\journaltitle#1{\global\def\@journaltitle{#1}}
-\def\volume#1{\global\def\@volume{#1}}\volume{}
-\def\issue#1{\global\def\@issue{#1}}\issue{}
 
 \def\@boxedtext{}
 \def\boxedtext{\@@boxedtext}%
-\newcommand{\@@boxedtext}[2]{\def\@boxedtext{\ifx#2\@empty\else\removelastskip\vskip2pt\nointerlineskip\fbox{\parbox{.97\textwidth}{\textbf{#1}\par#2\vspace{-8pt}}}\par\nointerlineskip\vskip8pt\nointerlineskip\fi}}
+\newcommand{\@@boxedtext}[1]{\def\@boxedtext{\ifx#1\@empty\else\removelastskip\vskip-2pc\fbox{\parbox{.97\textwidth}{\textbf{Key Messages}\par#1\vspace{-8pt}}}\par\vskip2pc\fi}}
 
 \def\orgdiv#1{#1}
 \def\orgname#1{#1}
@@ -1302,22 +1138,9 @@
 \newcommand{\@@address}[2][]{%
   \g@addto@macro\@address{%
     \refstepcounter{myaddcount}%
-       \if@modern%
-        \ifnum\arabic{myaddcount}>1\par\fi%
-        \ifx#1\@empty\else\textsuperscript{#1}\fi#2%
-      \else%
-      \if@contemporary%
-        \ifnum\arabic{myaddcount}>1\par\vskip2pt\fi%
-        \ifx#1\@empty\else\textsuperscript{#1}\fi#2%
-      \else%
-      \if@traditional
-        \ifx#1\@empty\else\textsuperscript{#1}\fi#2\par%
-      \else
-        \addressandsep\ifx#1\@empty\else\textsuperscript{#1}\fi#2\addresscommasep%
-      \fi%
-      \fi%
-      \fi}%
-      }%
+    \ifnum\arabic{myaddcount}=1\vspace*{5pt}\par\fi%
+      \addressandsep\ifx#1\@empty\else\textsuperscript{#1}\fi#2\addresscommasep}%
+                            }%
 \def\@corresp{}
 \def\corresp{\@@corresp}%
 \newcommand{\@@corresp}[2][]{%
@@ -1330,42 +1153,37 @@
 \definecolor{gray}{cmyk}{0, 0, 0, 0.15}
 \definecolor{grayfifty}{cmyk}{0, 0, 0, 0.5}
 \definecolor{graysixtyfive}{cmyk}{0, 0, 0, 0.65}
-\definecolor{graysevtyfive}{cmyk}{0, 0, 0, 0.75}
 \newlength{\extraspace}
-\setlength{\extraspace}{\if@traditional-12pt\else\if@modern\if@otherarticle-9pt\else\if@small10pt\else12pt\fi\fi\else\z@\fi\fi}
-
-\newcount\currentpageno%
+\setlength{\extraspace}{\z@}
 
 \newcommand\maketitle{\par
   \begingroup
-\global\currentpageno\c@page%
 \def\@latex@warning@no@line##1{}%
     \renewcommand\thefootnote{\@fnsymbol\c@footnote}%
     \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}%
-    \long\def\@makefntext##1{\parindent 3mm\noindent\@textsuperscript{\normalfont\@thefnmark}##1}%
+    \long\def\@makefntext##1{\parindent 3mm\noindent
+        \if@traditional\if@small\@hangfrom{{\normalfont\@thefnmark}\enskip}\else\@textsuperscript{\normalfont\@thefnmark}\fi\else\@textsuperscript{\normalfont\@thefnmark}\fi
+      ##1}%
     \if@twocolumn
       \ifnum \col@number=\@ne
         \@maketitle
       \else
-        \twocolumn[\thispagestyle{opening}\@maketitle]%%
-    \enlargethispage{-12pt}%
+        \twocolumn[\@maketitle]%
       \fi
     \else
       \newpage%
-    \thispagestyle{opening}%
-      \global\@topnum\z@%
+      \global\@topnum\z@   %
       \@maketitle
-    \enlargethispage{-12pt}%
-    \fi%
-    \@thanks%
+    \fi
+    \thispagestyle{opening}\@thanks
   \endgroup
   \setcounter{footnote}{0}%
   \global\let\thanks\relax
   \global\let\maketitle\relax
-%  \global\let\@maketitle\relax
-%  \global\let\@address\@empty
-%  \global\let\@corresp\@empty
-%  \global\let\@history\@empty
+  \global\let\@maketitle\relax
+  \global\let\@address\@empty
+  \global\let\@corresp\@empty
+  \global\let\@history\@empty
   \global\let\@editor\@empty
   \global\let\@thanks\@empty
   \global\let\@author\@empty
@@ -1373,7 +1191,7 @@
   \global\let\@subtitle\@empty
   \global\let\@title\@empty
   \global\let\@boxedtext\@empty
-  %\global\let\@pubyear\@empty
+  \global\let\@pubyear\@empty
   \global\let\address\relax
   \global\let\boxedtext\relax
   \global\let\history\relax
@@ -1381,7 +1199,7 @@
   \global\let\title\relax
   \global\let\author\relax
   \global\let\date\relax
-  %\global\let\pubyear\relax
+  \global\let\pubyear\relax
   \global\let\@copyrightline\@empty
   \global\let\and\relax
   \@afterindentfalse\@afterheading
@@ -1396,13 +1214,10 @@
 \def\appnotes#1{\gdef\@appnotes{#1}}
 \appnotes{}
 
-\def\specialissue#1{\gdef\@specialissue{#1}}
-\specialissue{}
-
 \newlength{\titlepagewd}
 \if@modern
     \if@large
-    \setlength{\titlepagewd}{\textwidth}
+    \setlength{\titlepagewd}{36.5pc}
     \else
     \if@medium
     \setlength{\titlepagewd}{36.5pc}
@@ -1426,171 +1241,343 @@
 \definecolor{jnlruleclr}{cmyk}{.45,.06,.05,0}
 
 \def\@maketitle{%
-  \let\footnote\thanks%
-  \clearemptydoublepage%%
-  \if@modern\vspace*{13pt}%
-    \if@large\noindent\textcolor{black!60}{\rule{\textwidth}{1\p@}}\else%
-    \if@medium\noindent\textcolor{black!60}{\rule{\textwidth}{1\p@}}\else%
-    \if@small\noindent\textcolor{black!60}{\rule{\textwidth}{1\p@}}\else%
+  \let\footnote\thanks
+  \clearemptydoublepage
+    \checkoddpage\ifcpoddpage\setlength{\aboveskipchk}{-28.6pt}\else\setlength{\aboveskipchk}{-28.6pt}\fi%for checking oddpage or evenpage top skip%%
+  \vspace*{\aboveskipchk}%
+  \vspace{\dropfromtop}%
+  \if@modern
+    \if@large\vspace*{18pt}\else
+    \if@medium\vspace*{21pt}\else\fi\fi
+  \else
+  \if@traditional
+    \if@large\vspace*{7.2pt}\else
+    \if@medium\vspace*{-5pt}\else
+    \vspace*{-6pt}
+    \fi\fi
+  \else
+  \if@contemporary
+    \if@large\vspace*{15.2pt}\else
+    \if@medium\vspace*{15.2pt}\else
+    \vspace*{21pt}
+    \fi\fi
+  \else
+  \fi
+  \fi
+  \fi
+  \if@twocolumn\else\vspace*{-10pt}\fi
+  \if@modern%
+      \if@large%
+          \hbox to \textwidth{\raisebox{5pt}[0pt]{%
+          \parbox[b]{416pt}{\raggedright{{\sffamilyfontcnitalic\fontsize{8bp}{12}\selectfont \@journaltitle}, \sffamilyfontcn\@copyrightyear, \thepage--\thelastpage}\\[1pt]
+          {\sffamilyfontcn doi: \@DOI}\\[1pt]
+          {\ifx\@access\@empty
+          \else
+          {\sffamilyfontcn \@access}\fi}
+          \vskip1pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\sffamilyfontcn \@appnotes}\fi}
+            }}%
+          \hfill
+          {\color{black!20}\rule{45pt}{55pt}}
+          }
+      \else%
+      \if@medium%
+          \hbox to \textwidth{\raisebox{5pt}[0pt]{%
+          \parbox[b]{362pt}{\raggedleft{{\sffamilyfontcnitalic\fontsize{8bp}{12}\selectfont \@journaltitle}, \sffamilyfontcn\@copyrightyear, \thepage--\thelastpage}\\[1pt]
+          {\sffamilyfontcn doi: \@DOI}\\[1pt]
+          {\ifx\@access\@empty
+          \else
+          {\sffamilyfontcn \@access}\fi}
+          \vskip1pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\sffamilyfontcn \@appnotes}\fi}
+            }}%
+          \hfill{\color{black!20}\rule{45pt}{55pt}}}
+      \else%
+      \if@small
+          \vspace*{17pt}
+          \hbox to \textwidth{\raisebox{5pt}[0pt]{%
+          \parbox[b]{.8\textwidth}{\raggedleft{{\sffamilyfontcnitalic\fontsize{8bp}{12}\selectfont \@journaltitle}, {\sffamilyfontcn\fontsize{8bp}{12}\selectfont\@copyrightyear, \thepage--\thelastpage}}\\
+          {\sffamilyfontcn\fontsize{8bp}{12}\selectfont doi: \@DOI}\\
+          {\ifx\@access\@empty
+          \else
+          {\sffamilyfontcn\fontsize{8bp}{12}\selectfont \@access}\fi}\\
+          %\vskip1pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\sffamilyfontcn\fontsize{8bp}{12}\selectfont \@appnotes}\fi}
+            }}%
+          \hfill{\color{black!20}\rule{45pt}{55pt}}}
+      \else
+      \fi%
+      \fi%
+      \fi%
+  \else
+  \if@traditional
+      \if@large
+          \hbox to \textwidth{\raisebox{0pt}[0pt]{%
+          \parbox[b]{416pt}{{{\fontsize{9.5bp}{10}\selectfont\itshape \@journaltitle\rm\ Vol. \@vol, No. \@issue, pp. \thepage--\thelastpage}}\\[-1.5pt]
+          {\fontsize{9.5bp}{10}\selectfont doi: \@DOI}\\[-1.5pt]
+          {\ifx\@access\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@access}\fi}
+          \vskip-1.5pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@appnotes}\fi}
+            }}%
+          \hfill{\color{black!20}\rule{45pt}{55pt}}}
+      \else
+      \if@medium
+          \hbox to \textwidth{\raisebox{0pt}[0pt]{%
+          \parbox[b]{350pt}{{{\fontsize{9.5bp}{10}\selectfont\itshape \@journaltitle\rm\ Vol. \@vol, No. \@issue, pp. \thepage--\thelastpage}}\\[-.5pt]
+          {\fontsize{9.5bp}{10}\selectfont doi: \@DOI}\\[-1.5pt]
+          {\ifx\@access\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@access}\vskip-1.5pt\fi}
+          {\ifx\@appnotes\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@appnotes}\fi}
+            }}%
+          \hfill{\color{black!20}\rule{45pt}{55pt}}}
+      \else
+          \hbox to \textwidth{\raisebox{0pt}[0pt]{%
+          \parbox[b]{250pt}{{{\fontsize{9.5bp}{10}\selectfont\itshape \@journaltitle\rm\ \@copyrightyear, \@vol, \thepage--\thelastpage}}\\[-.5pt]
+          {\fontsize{9.5bp}{10}\selectfont doi: \@DOI}\\[-1.5pt]
+          {\ifx\@access\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@access}\vskip-1.5pt\fi}
+          {\ifx\@appnotes\@empty
+          \else
+          {\fontsize{9.5bp}{10}\selectfont \@appnotes}\fi}
+            }}%
+          \hfill{\color{black!20}\rule{45pt}{55pt}}}
+      \fi
+      \fi
+  \else
+  \if@contemporary
+    \if@large
+          \hbox to \textwidth{{\color{black!20}\rule{45pt}{55pt}}\hfill
+          \raisebox{-3.7pt}[0pt]{\hfill%
+          \parbox[b]{416pt}{\raggedleft{{\fontsize{8bp}{10}\selectfont\itshape\hspace*{178pt} \@journaltitle,\rm\ \@copyrightyear, pp. \thepage--\thelastpage}}\\[-.5pt]
+          \hspace*{181pt}{\color{black!15}\rule{184pt}{2pt}}\\[1.6pt]
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \textbf{\color{jnlclr}doi: \@DOI}}\\[-.9pt]
+          {\ifx\@access\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \@access}\fi}
+          \vskip-.9pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \@appnotes}\\[-.9pt]\fi}
+%          \hspace*{181pt}{\color{black!15}\rule{288.5pt}{2pt}}\\%[1.6pt]
+            }}%
+          }
+    \else
+    \if@medium
+          \hbox to \textwidth{{\color{black!20}\rule{45pt}{55pt}}\hfill
+          \raisebox{-8pt}[0pt]{\hfill%
+          \parbox[b]{416pt}{\raggedleft{{\fontsize{8bp}{10}\selectfont\itshape\hspace*{178pt} \@journaltitle,\rm\ \@copyrightyear, pp. \thepage--\thelastpage}}\\[-.5pt]
+          \hspace*{181pt}{\color{black!15}\rule{184pt}{2pt}}\\[1.6pt]
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \textbf{\color{jnlclr}doi: \@DOI}}\\[-.9pt]
+          {\ifx\@access\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \@access}\fi}
+          \vskip-.9pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{178pt} \@appnotes}\\[-.9pt]\fi}
+%          \hspace*{181pt}{\color{black!15}\rule{257pt}{2pt}}\\%[1.6pt]
+            }}%
+          }
+    \else
+          \hbox to \textwidth{{\color{black!20}\rule{45pt}{55pt}}\hfill
+          \raisebox{-8pt}[0pt]{\hfill%
+          \parbox[b]{290pt}{\raggedleft{{\fontsize{8bp}{10}\selectfont\itshape\hspace*{80pt} \@journaltitle,\rm\ \@copyrightyear, pp. \thepage--\thelastpage}}\\[-.5pt]
+          \hspace*{80pt}{\color{black!15}\rule{184pt}{2pt}}\\[1.6pt]
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{80pt} \textbf{\color{jnlclr}doi: \@DOI}}\\[-.9pt]
+          {\ifx\@access\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{80pt} \@access}\fi}
+          \vskip-.9pt
+          {\ifx\@appnotes\@empty
+          \else
+          {\hfill\fontsize{6.5bp}{8}\selectfont\hspace*{80pt} \@appnotes}\\[-.9pt]\fi}
+%          \hspace*{111pt}{\color{black!15}\rule{234pt}{2pt}}\\%[1.6pt]
+            }}%
+          }
+    \fi
+    \fi
+  \else
+  \fi
+  \fi
+  \fi
+  \if@modern\vskip2pt\else\if@traditional\if@large\vskip-1.7pt\else\if@medium\vskip.7pt\else\vskip-2pt\fi\fi\else\fi\fi
+  \if@modern%
+    \if@large\noindent\rule{\textwidth}{1\p@}\else%
+    \if@medium\noindent\rule{\textwidth}{1\p@}\else%
+    \if@small\noindent\rule{\textwidth}{1\p@}\else%
     \fi\fi\fi%
   \else%
   \if@traditional
-  \if@large\vspace*{9.6mm}\noindent\rule{\textwidth}{.5\p@}\vspace*{2pt}\else%
-  \if@medium\vspace*{4mm}\noindent\rule{\textwidth}{.5\p@}\vspace*{2pt}\else%
-  \null\vspace*{4mm}\nointerlineskip\noindent\rule{\textwidth}{.5\p@}%
+  \if@large\noindent\rule{\textwidth}{.5\p@}\else%
+  \if@medium\noindent\rule{\textwidth}{.5\p@}\else%
+  \noindent\rule{\textwidth}{.5\p@}
   \fi\fi
   \else
   \if@contemporary
-    \if@large\null\vspace*{40bp}\nointerlineskip\else%
-    \if@medium\if@mediumone\null\vspace*{64bp}\nointerlineskip\else\null\vspace*{39.5bp}\nointerlineskip\fi\else%
-    \if@small\null\vspace*{50bp}\nointerlineskip\else%
+    \if@large\vspace*{25pt}\else%
+    \if@medium\vspace*{25pt}\else%
+    \if@small\vspace*{25pt}\else%
     \fi\fi\fi%
   \else
   \fi
   \fi\fi\par%
   %
-  \if@contemporary\sffamilyfont\else\if@traditional\else\sffamilyfont\fi\fi%
-  {%
-  %%\parbox[t]{\titlepagewd}{%
-    \if@modern\vspace*{5pt}\else\if@traditional\else\fi\fi%
+  \if@contemporary\else\if@traditional\else\sffamilyfont\fi\fi
+  \hbox to \textwidth{%
+  \parbox[t]{\titlepagewd}{%
+    \if@modern\vspace*{3pt}\else\if@traditional\if@large\vspace*{.9pt}\else\if@medium\vspace*{3.4pt}\else\vspace*{.9pt}\fi\fi\else\fi\fi%
     \ifx\@subtitle\@empty%
     \else%
-    \if@traditional\else{\sffamilyfontcn\if@modern\if@small\fontsize{12bp}{19}\selectfont\else\fontsize{14bp}{21}\selectfont\fi\else\fontsize{14bp}{21}\selectfont\fi\raggedright \@subtitle \par}%
+    \if@traditional\else{\sffamilyfontcn\if@modern\if@small\fontsize{12}{19}\selectfont\else\fontsize{14}{21}\selectfont\fi\else\fontsize{14}{21}\selectfont\fi\raggedright \@subtitle \par}%
     \vspace{7.5\p@}\fi%
     \fi%
     % Title here
     \if@modern%
-        {\sffamilyfontbold\if@small\fontsize{20bp}{21}\selectfont\raggedright\else\fontsize{20bp}{21}\selectfont\fi\raggedright \@title \par}%
+        {\sffamilyfontbold\if@small\fontsize{16}{21}\selectfont\else\fontsize{18}{23}\selectfont\fi\raggedright \@title \par}%
     \else%
     \if@traditional%
-        \vskip8bp%
-        {\if@large\fontsize{21bp}{22bp}\bfseries\selectfont\else\if@medium\fontsize{21bp}{22bp}\bfseries\selectfont\else\fontsize{21bp}{22bp}\selectfont\bfseries\fi\fi\centering\@title\par}%%
+        {\if@large\fontsize{24bp}{25}\bfseries\selectfont\else\if@medium\fontsize{24}{25}\selectfont\bfseries\else\fontsize{18}{20}\selectfont\bfseries\fi\fi\leftskip0pt plus1fill\rightskip0pt plus1fill \@title \par}%%
     \else%
     \if@contemporary
-        %{\fontsize{9.8bp}{10}\selectfont \MakeUppercase{\@appnotes}}\\[6.5pt]
-        {\if@large\fontsize{20bp}{24bp}\selectfont\bfseries\else\if@medium\fontsize{20bp}{24bp}\selectfont\bfseries\else\fontsize{20bp}{24bp}\selectfont\bfseries\fi\fi\centering\@title\par}%%
+        {\fontsize{9.8bp}{10}\selectfont \MakeUppercase{\@appnotes}}\\[6.5pt]
+        {\if@large\fontsize{18bp}{20}\bfseries\selectfont\else\if@medium\fontsize{18}{20}\selectfont\bfseries\else\fontsize{18}{20}\selectfont\bfseries\fi\fi\leftskip0pt\rightskip0pt plus1fill {\color{jnlclr}\@title} \par}%%
     \else
-        {\if@large\fontsize{24bp}{26}\bfseries\selectfont\else\if@medium\fontsize{24bp}{25}\selectfont\bfseries\else\fontsize{18bp}{20}\selectfont\bfseries\fi\fi\leftskip0pt plus1fill\rightskip0pt plus1fill \@title \par}%%
+        {\if@large\fontsize{24bp}{26}\bfseries\selectfont\else\if@medium\fontsize{24}{25}\selectfont\bfseries\else\fontsize{18}{20}\selectfont\bfseries\fi\fi\leftskip0pt plus1fill\rightskip0pt plus1fill \@title \par}%%
     \fi%
     \fi%
     \fi%
     % Title below space
     \if@modern\if@medium\vspace{8.8\p@}\else\if@small\vspace{7.8\p@}\else\vspace{6\p@}\fi\fi\else%
-    \if@traditional\if@large\vskip11.5pt\else\if@medium\vskip11.5pt\else\vskip11.5pt\fi\fi%
+    \if@traditional%
+    \if@large\vspace{4.8\p@}\else\if@medium\vspace{4.8\p@}\else\vspace{8\p@}\fi\fi
     \else%
-    \if@contemporary\if@large\vspace{10\p@}\else\if@medium\vspace{10\p@}\else\vspace{10\p@}\fi\fi\else
+    \if@contemporary\if@large\vspace{12\p@}\else\if@medium\vspace{12\p@}\else\vspace{12\p@}\fi\fi\else
     \fi%
     \fi%
     \fi%
     % Author here
     \if@modern
-        {\reset@font\sffamilyfont\fontseries{b}\if@small\fontsize{11bp}{15}\selectfont\else\fontsize{11bp}{15}\selectfont\fi\raggedright \@author \par}
-        \if@otherarticle\else\noindent\vspace*{.5pt}\textcolor{black!60}{\rule{\textwidth}{1\p@}}\par\fi%
+        {\sffamilyfontbold\boldmath\if@small\fontsize{11}{14}\selectfont\else\fontsize{12}{15}\selectfont\fi\raggedright \@author \par}%
     \else
     \if@traditional%
-        {\if@large\fontsize{11bp}{15bp}\selectfont\else\if@medium\fontsize{11bp}{15bp}\selectfont\else\fontsize{11bp}{15bp}\selectfont\fi\fi\centering\@author\par}%
+        {\boldmath\if@large\fontsize{16bp}{18}\selectfont\else\if@medium\fontsize{16bp}{18}\selectfont\else\fontsize{12bp}{14}\selectfont\fi\fi\leftskip0pt plus1fill\rightskip0pt plus1fill \@author \par}%
     \else
     \if@contemporary
-        {\fontseries{m}\selectfont\if@large\fontsize{12bp}{14bp}\selectfont\else\if@medium\fontsize{12bp}{14bp}\selectfont\else\fontsize{12bp}{14bp}\selectfont\fi\fi\centering\@author\par}%
-    \else%
-    \fi%
-    \fi%
-    \fi%
-    % Author below space
-    \if@modern\if@medium\vspace{3.5\p@}\else\if@small\vspace{3.5\p@}\else\vspace{3.5\p@}\fi\fi\else
-    \if@traditional%
-        \if@large\vskip8pt\else\if@medium\vskip8pt\else\vskip8pt\fi\fi%
+        {\boldmath\if@large\fontsize{13bp}{15}\selectfont\else\if@medium\fontsize{12bp}{14}\selectfont\else\fontsize{12bp}{14}\selectfont\fi\fi\leftskip0pt\rightskip0pt plus1fill \@author \par}%
     \else
-    \if@contemporary\vskip20\p@\else%
-    \fi\fi\fi%
-    % Address here
-    \if@modern%
-        {\reset@font\sffamily\fontseries{m}\if@large\fontsize{8bp}{11}\rightskip24pt\else\if@medium\fontsize{8bp}{11}\if@mediumone\raggedright\else\rightskip10pt\fi\else\if@small\fontsize{8bp}{11}\raggedright\else\fi\fi\fi\selectfont \@address \par}%
-    \else%
+    \fi
+    \fi
+    \fi
+    % Author below space
+    \if@modern\if@medium\vspace{3\p@}\else\if@small\vspace{3.5\p@}\else\vspace{3\p@}\fi\fi\else
     \if@traditional%
-        {\if@large\fontsize{9bp}{11.5bp}\else\if@medium\fontsize{9bp}{11.5bp}\else\fontsize{9bp}{11.5bp}\fi\fi\selectfont\centering\@address\par}%
-    \else%
+    \if@large\vspace{10\p@}\else\if@medium\vspace{10\p@}\else\vspace{4\p@}\fi\fi
+    \else
+    \if@contemporary\vspace{4\p@}\else
+    \fi\fi\fi
+    % Address here
+    \if@modern
+        {\sffamilyfontcn\if@large\fontsize{9}{12}\rightskip24pt\else\if@medium\fontsize{10}{13}\rightskip10pt\else\if@small\fontsize{8.5}{11.5}\raggedright\else\fi\fi\fi\selectfont \@address \par}%
+    \else
+    \if@traditional%
+        {\if@large\fontsize{8bp}{10}\else\if@medium\fontsize{8bp}{10}\else\if@small\fontsize{8.5}{11.5}\else\fi\fi\fi\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \@address \par}%
+    \else
     \if@contemporary%
-        {\sffamily\if@large\fontsize{7bp}{9bp}\else\if@medium\fontsize{7bp}{9bp}\else\if@small\fontsize{7bp}{9bp}\else\fi\fi\fi\selectfont\centering\@address\par}%
-    \else%
-    \fi%
-    \fi%
-    \fi%
+        {\if@large\fontsize{6.5bp}{9.5}\else\if@medium\fontsize{8bp}{10}\else\if@small\fontsize{8.5}{11.5}\else\fi\fi\fi\selectfont\leftskip0pt\rightskip0pt plus1fill \@address \par}%
+    \else
+    \fi
+    \fi
+    \fi
     % Address below space
-    \if@modern\vspace{0\p@}\else\if@traditional\vskip5.75pt\else\vskip9pt\fi\fi
+    \if@modern\vspace{6\p@}\else\if@traditional\vspace{6\p@}\else\fi\fi
     % Correspondence author here
     \if@modern
-        {\sffamily\fontseries{m}\if@large\fontsize{8bp}{11}\selectfont\else\if@medium\fontsize{8bp}{11}\selectfont\else\if@small\fontsize{8bp}{11}\selectfont\else\fontsize{8.5bp}{12}\selectfont\fi\fi\fi\raggedright \@corresp \par}%
+        {\sffamilyfontcn\if@large\fontsize{8.5}{12}\selectfont\else\if@medium\fontsize{8}{11.5}\selectfont\else\if@small\fontsize{8.5}{12}\selectfont\else\fontsize{8.5}{12}\selectfont\fi\fi\fi\raggedright \@corresp \par}%
     \else
     \if@traditional%
-        {\if@large\fontsize{7bp}{10}\selectfont\else\if@medium\fontsize{7bp}{10}\selectfont\else\fontsize{7bp}{10}\selectfont\fi\fi\centering\@corresp\par}%
+        {\if@large\fontsize{8bp}{10}\selectfont\else\if@medium\fontsize{8bp}{10}\selectfont\else\if@small\fontsize{8.5}{12}\selectfont\else\fontsize{8.5}{12}\selectfont\fi\fi\fi\leftskip0pt plus1fill\rightskip0pt plus1fill \@corresp \par}%
     \else
     \if@contemporary%
-        {\sffamily\fontseries{m}\fontsize{7bp}{9bp}\selectfont\centering\@corresp\par}%
+        {\if@large\fontsize{6.5bp}{9.5}\selectfont\else\if@medium\fontsize{8bp}{10}\selectfont\else\if@small\fontsize{8.5}{12}\selectfont\else\fontsize{8.5}{12}\selectfont\fi\fi\fi\leftskip0pt\rightskip0pt plus1fill \@corresp \par}%
     \else
     \fi
     \fi
     \fi
     % Correspondence below space
-    \if@modern\vspace{2\p@}\else\fi%
+    \if@modern\vspace{2\p@}\else\fi
     % Editor here
     \if@modern%
-        {\sffamilyfont\if@large\fontsize{8.5bp}{12}\selectfont\else\if@medium\fontsize{8bp}{11.5}\selectfont\else\if@small\fontsize{8.5bp}{12}\selectfont\else\fontsize{8.5bp}{12}\selectfont\fi\fi\fi\raggedright \@editor \par}%
-    \else%
-    \fi%
+        {\sffamilyfont\if@large\fontsize{8.5}{12}\selectfont\else\if@medium\fontsize{8}{11.5}\selectfont\else\if@small\fontsize{8.5}{12}\selectfont\else\fontsize{8.5}{12}\selectfont\fi\fi\fi\raggedright \@editor \par}
+    \else
+    \fi
     % Editor below space
-%%    \if@modern\vspace{4\p@}\else\if@contemporary\vskip6pt\else\fi\fi%
-%%    % History here
-%%    \if@modern%
-%%        {\sffamilyfont\fontsize{7}{12}\selectfont\raggedright \@history \par}%
-%%    \else%
-%%    \if@traditional%
-%%        {\fontsize{8bp}{10}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \@history \par}%
-%%    \else%
-%%    \if@contemporary%
-%%        {\sffamily\fontsize{7bp}{9bp}\selectfont\centering\@history\par}%
-%%    \else
-%%        {\fontsize{8bp}{10}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \@history \par}
-%%    \fi
-%%    \fi
-%%    \fi
-%%    % History below space
-    \if@modern\if@small\vspace{15\p@}\else\vspace{20\p@}\fi\else
-    \if@traditional\if@large\vskip14pt\else\if@medium\vskip14pt\else\vskip14pt\fi\fi\else
-    \if@contemporary\if@large\vspace*{7pt}\else\if@medium\vspace*{7pt}\else\vspace*{11pt}\fi\fi\else\fi\fi\fi
-\if@contemporary\else\ifx\@fmaubio\@empty\else\@fmaubio\fi\fi%
+    \if@modern\vspace{4\p@}\else\fi
+    % History here
+    \if@modern%
+        {\sffamilyfont\fontsize{7}{12}\selectfont\raggedright \@history \par}
+    \else
+    \if@traditional%
+        {\fontsize{8bp}{10}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \@history \par}
+    \else
+    \if@contemporary
+        {\fontsize{6.5bp}{9.5}\selectfont\leftskip0pt\rightskip0pt plus1fill \@history \par}
+    \else
+        {\fontsize{8bp}{10}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \@history \par}
+    \fi
+    \fi
+    \fi
+    % History below space
+    \if@modern\vspace{14\p@}\else
+    \if@traditional\if@large\vspace{24\p@}\else\if@medium\vspace{20\p@}\else\vspace{24\p@}\fi\fi\else
+    \if@contemporary\vspace*{8.5pt}\else\fi\fi\fi
     % Abstract here
     \if@modern%
-        \if@mediumone\raggedright\else\if@small\raggedright\else\fi\fi\ifx\@abstract\@empty\vskip-20pt\else{\let\section\absection{\sffamilyfont\if@traditional\fontsize{11.5bp}{13.5bp}\else\if@contemporary\fontsize{12bp}{14bp}\else\if@modern\fontsize{13bp}{14bp}\else\fontsize{10bp}{12}\fi\fi\fi\bfseries\selectfont Abstract}\par}
-       \vskip5pt\fi%
+        {\let\section\absection{\sffamilyfont\fontsize{10}{12}\bfseries\selectfont Abstract}\par}
+    \vskip5pt
     \else
     \if@traditional%
         \if@large
-            {\fontsize{11.5bp}{13.5bp}\fontseries{b}\selectfont\centering Abstract\par}\vskip5pt%
-        \else%
-        \if@medium%
-            {\fontsize{11.5bp}{13.5bp}\fontseries{b}\selectfont\centering Abstract\par}\vskip5pt%
+        {\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \uppercase{Abstract}\par}
+        \vskip4pt
         \else
-            {\fontsize{11.5bp}{13.5bp}\fontseries{b}\selectfont\centering Abstract\par}\vskip5pt%
+        \if@medium
+        {\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \uppercase{Abstract}\par}
+        \vskip4pt
+        \else
+        {\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill \uppercase{Abstract}\par}
+        \vskip4pt
         \fi
         \fi
     \else
     \if@contemporary
        \if@large
-        \noindent{\color{grayfifty}\dhorline{\textwidth}{2pt}\color{black}}\par\vskip3pt%
-              \ifx\@fmaubio\@empty\else\@fmaubio\fi%
-              {\fontseries{b}\fontsize{12bp}{14bp}\selectfont\centering Abstract\par}%
-                \vskip3pt%
+        %{\color{jnlruleclr}\rule{542pt}{2pt}}
+\vspace*{12.35pt}\par
+{\fontsize{11.5bp}{12}\fontseries{b}\selectfont\leftskip0pt\rightskip0pt plus1fill {\color{jnlclr} Abstract}\par}
+        \vskip5.5pt
       \else
       \if@medium
-        \noindent{\color{grayfifty}\dhorline{\textwidth}{2pt}\color{black}}\par\vskip3pt%
-              \ifx\@fmaubio\@empty\else\@fmaubio\fi%
-      {\fontseries{b}\fontsize{13bp}{14bp}\selectfont\centering Abstract\par}%
-        \vskip3pt%
-      \else\noindent{\color{grayfifty}\dhorline{\textwidth}{2pt}\color{black}}\par\vskip3pt%
-              \ifx\@fmaubio\@empty\else\@fmaubio\fi%
-      {\fontseries{b}\fontsize{12bp}{14bp}\selectfont\centering Abstract\par}%
-        \vskip3pt%
+        %{\color{jnlruleclr}\rule{484pt}{2pt}}
+\vspace*{12.35pt}\par{\fontsize{11.5bp}{12}\fontseries{b}\selectfont\leftskip0pt\rightskip0pt plus1fill {\color{jnlclr} Abstract}\par}
+        \vskip5.5pt
+      \else
+        %{\color{jnlruleclr}\rule{390pt}{2pt}}
+\vspace*{12.35pt}\par{\fontsize{11.5bp}{12}\fontseries{b}\selectfont\leftskip0pt\rightskip0pt plus1fill {\color{jnlclr} Abstract}\par}
+        \vskip5.5pt
       \fi
       \fi
     \else
@@ -1599,29 +1586,30 @@
     \fi
     \begingroup
     \if@modern
-        \if@small\begin{minipage}[t]{\textwidth}\else\begin{minipage}[t]{\textwidth}\fi
+        \if@small\begin{minipage}[t]{\textwidth}\else\begin{minipage}[t]{415pt}\fi
     \else
     \if@traditional%
+        \hfil\if@large\begin{minipage}[t]{\textwidth}\else\if@medium\begin{minipage}[t]{\textwidth}\else\begin{minipage}[t]{\textwidth}\fi\fi%\hspace*{12pt}
     \else
     \if@contemporary
-        %\if@large\begin{minipage}[t]{\textwidth}\else\begin{minipage}[t]{\textwidth}\fi
+        \if@large\begin{minipage}[t]{\textwidth}\else\begin{minipage}[t]{\textwidth}\fi
     \else
     \fi\fi\fi\parindent=0pt
     {\if@modern
         \sffamilyfont
-        \if@large\sffamily\fontseries{b}\fontsize{9.5bp}{11.5}\selectfont\else
-        \if@medium\sffamily\fontseries{b}\fontsize{9.5bp}{11.5}\else
-        \if@small\sffamily\fontseries{b}\fontsize{9.5bp}{11.5}\selectfont\else
-        \fontsize{9bp}{12}\selectfont
+        \if@large\fontsize{9}{12}\selectfont\else
+        \if@medium\fontsize{9}{12}\selectfont\else
+        \if@small\fontsize{7.5}{10.5}\selectfont\else
+        \fontsize{9}{12}\selectfont
         \fi\fi\fi
     \else
     \if@traditional%
-        \if@large\fontsize{9.75bp}{12.5bp}\selectfont\bfseries\else%
-        \if@medium\fontsize{9.75bp}{12.5bp}\selectfont\bfseries\else%
-        \fontsize{9.75bp}{12.5bp}\selectfont\bfseries\fi\fi
+        \if@large\fontsize{9.5bp}{11}\selectfont\else
+        \if@medium\fontsize{8.5bp}{10}\selectfont\else
+        \fontsize{9.5bp}{10.5}\selectfont\fi\fi
     \else
     \if@contemporary
-        \sffamily\fontseries{b}\fontsize{8bp}{11bp}\selectfont
+        \fontsize{9bp}{11}\selectfont
     \else
     \fi
     \fi
@@ -1634,29 +1622,44 @@
     \else
     \fi
     \fi
-    \@abstract}%
-    \ifx\@keywords\@empty\else\@keywords\par\fi%
-    \ifx\@nonabstract\@empty\else\@nonabstract\par\fi%
-  \ifx\@boxedtext\@empty\else\vspace*{12pt}\par\fi%
-  \@boxedtext%
+    \@abstract
     \if@contemporary
-        \noindent{\color{grayfifty}\dhorline{\textwidth}{2pt}\color{black}}\par%
       \if@large
-          \vspace*{12pt}\par%        \vspace*{6.5pt}\par{\color{jnlruleclr}\rule{542pt}{2pt}}
+\vspace*{12pt}\par%        \vspace*{6.5pt}\par{\color{jnlruleclr}\rule{542pt}{2pt}}
       \else
       \if@medium
         \vspace*{6.5pt}\par%{\color{jnlruleclr}\rule{484pt}{2pt}}
       \else
-        \vspace*{11pt}\par%{\color{jnlruleclr}\rule{390pt}{2pt}}
+        \vspace*{6.5pt}\par%{\color{jnlruleclr}\rule{390pt}{2pt}}
       \fi
       \fi
-    \else\if@traditional\par\vskip20pt\else\par\fi\fi
-    \if@contemporary\else\if@modern\end{minipage}\fi\fi
-    \endgroup%
-  }%
+    \else\par\fi}
+    \end{minipage}
+    \if@traditional\hfil\else\fi
+    \endgroup
+    %\vspace{20\p@}
+    }%
+  }
+  %
+  \vspace{13.5\p@}%
+  \if@modern
+    \if@medium\noindent%\rule{\textwidth}{2\p@}
+\else
+    \if@small\noindent%\rule{\textwidth}{2\p@}
+\else
+    \noindent%\rule{415pt}{2\p@}
+\fi\fi
+  \else
+  \if@traditional
+  \else
+  %\noindent\rule{415pt}{2\p@}
+  \fi
+  \fi%
+  \ifx\@boxedtext\@empty\else\vspace*{12pt}\par\fi%
+  \@boxedtext
   \vspace{12\p@ plus 6\p@ minus 6\p@}%
   \vspace{\extraspace}
-  }%
+  \if@traditional\if@small\enlargethispage{-36pt}\else\fi\else\if@contemporary\vspace*{-18pt}\else\fi\fi}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1672,16 +1675,19 @@
 
 \def\secsize{%
     \if@modern%
-        \if@large\sffamily\fontsize{15.5bp}{17}\selectfont\bfseries\else%
-        \if@medium\sffamily\fontsize{15.5bp}{17}\selectfont\bfseries\else%
-        \if@small\sffamily\fontsize{15.5bp}{17}\selectfont\bfseries\else%
-        \sffamilyfontbold\fontsize{10bp}{12}\selectfont\fi\fi\fi%
+        \if@large\sffamilyfontbold\fontsize{10}{12}\selectfont\else%
+        \if@medium\sffamilyfontbold\fontsize{10}{12}\selectfont\else%
+        \if@small\sffamilyfontbold\fontsize{11}{13}\selectfont\else%
+        \sffamilyfontbold\fontsize{10}{12}\selectfont\fi\fi\fi%
     \else%%
     \if@traditional%
-        \fontsize{11.5bp}{11.75bp}\fontseries{b}\selectfont\centering%
+        \if@large\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else%
+        \if@medium\fontsize{9bp}{11}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else
+        \if@small\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else
+        \fi\fi\fi%
     \else%
     \if@contemporary
-        \sffamily\fontsize{10.5bp}{14bp}\selectfont\bfseries\centering%
+        \fontsize{11bp}{13}\selectfont\fontseries{b}\leftskip0pt\rightskip0pt plus1fill\color{jnlclr}
     \else
     \fi
     \fi%
@@ -1689,82 +1695,56 @@
 
 \def\subsecsize{%
     \if@modern%
-        \sffamilyfont\fontsize{13bp}{17}\selectfont\bfseries
+        \sffamilyfont\fontsize{9}{12}\selectfont
     \else%%
     \if@traditional%
-        \fontsize{10.5bp}{11.75bp}\fontseries{b}\selectfont\centering%
+        \if@large\fontsize{11bp}{13}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else%
+        \if@medium\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else
+        \if@small\fontsize{10bp}{12}\fontseries{b}\selectfont\leftskip0pt plus1fill\rightskip0pt plus1fill\else
+        \fi\fi\fi%
     \else%
     \if@contemporary
-        \sffamily\fontsize{10bp}{12bp}\selectfont\centering
+        \fontsize{10bp}{12}\selectfont\fontseries{b}\leftskip0pt\rightskip0pt plus1fill
     \else\fi\fi%
     \fi}
 
 \def\subsubsecsize{%
     \if@modern%
-       \sffamilyfont\fontsize{10.5bp}{11.5}\selectfont\bfseries%
+        \normalfont\mathversion{bold}\normalsize\bfseries
     \else%%
     \if@traditional%
-        \fontsize{9.75bp}{11.75bp}\selectfont\bfseries\itshape\centering%
+        \if@large\normalfont\mathversion{bold}\normalsize\bfseries\else%
+        \if@medium\normalfont\mathversion{bold}\normalsize\bfseries\else
+        \if@small\normalfont\mathversion{bold}\fontsize{10bp}{12}\selectfont\bfseries\else
+        \fi\fi\fi%
     \else%
     \if@contemporary
-        \sffamily\fontsize{9.5bp}{12}\selectfont\itshape\centering%
-    \else\fi\fi%
-    \fi}
-
-\def\paragraphsize{%
-    \if@modern%
-        \if@large\sffamilyfont\fontsize{9bp}{11.5}\selectfont\itshape\else\sffamilyfont\fontsize{9bp}{11.5}\selectfont\itshape\fi%%
-    \else%%
-    \if@traditional%
-        \fontsize{9.5bp}{11.75bp}\selectfont\bfseries\centering
-    \else%
-    \if@contemporary
-        \fontsize{8.5bp}{11.5}\selectfont\bfseries\centering
-    \else\fi\fi%
-    \fi}
-
-\def\subparagraphsize{%
-    \if@modern%
-        \if@large\sffamilyfont\fontsize{9bp}{11.5}\selectfont\else\sffamilyfont\fontsize{9bp}{11.5}\selectfont\fi%
-    \else%%
-    \if@traditional%
-        \fontsize{9.5bp}{11.75bp}\selectfont\centering
-    \else%
-    \if@contemporary
-       \fontseries{m}\fontsize{8.25bp}{11}\selectfont\centering
+        \fontsize{9bp}{11}\selectfont\itshape\leftskip0pt\rightskip0pt plus1fill
     \else\fi\fi%
     \fi}
 
 \def\section{%
   \@startsection{section}{1}{\z@}
-  {\if@modern-10\p@ plus -3\p@\else\if@contemporary-15\p@ plus -3\p@\else\if@traditional-15\p@ plus -3\p@\else-15\p@ plus -3\p@\fi\fi\fi}
-  {\if@modern\if@large6pt\else6pt\fi\else\if@traditional5\p@\else\if@contemporary6\p@\else4\p@\fi\fi\fi}
-  {\reset@font\if@modern\raggedright\fi\secsize}}
+  {-16\p@ plus -3\p@}{\if@traditional\if@large.4\p@\else\if@medium6.5\p@\else4\p@\fi\fi\else\if@contemporary5\p@\else4\p@\fi\fi}
+  {\reset@font\raggedright\secsize}}
 
 \def\subsection{%
   \@startsection{subsection}{2}{\z@}
-  {\if@modern-8\p@ plus -3\p@\else\if@contemporary-9\p@ plus -2\p@\else\if@traditional-12\p@ plus -2\p@\else-11\p@ plus -2\p@\fi\fi\fi}
-  {\if@modern\if@large6pt\else6pt\fi\else\if@traditional3\p@\else\if@contemporary6\p@\else2\p@\fi\fi\fi}
-  {\reset@font\if@modern\raggedright\fi\subsecsize}}
+  {-11\p@ plus -2\p@}{\if@traditional.4\p@\else2\p@\fi}
+  {\reset@font\raggedright\subsecsize}}
 
 \def\subsubsection{%
   \@startsection{subsubsection}{3}{\z@}
-  {\if@modern-6\p@ plus -3\p@\else\if@contemporary-6\p@ plus -1\p@\else\if@traditional-6\p@ plus -1\p@\else-11\p@ plus -1\p@\fi\fi\fi}
-  {\if@modern\if@large2pt\else2pt\fi\else\if@contemporary3\p@\else\if@traditional1.5\p@\else0.1em\fi\fi\fi}
-  {\reset@font\if@modern\raggedright\fi\subsubsecsize}}
+  {-11\p@ plus -1\p@}{0.1em}
+  {\reset@font\raggedright\subsubsecsize}}
 
 \def\textcolon{\text{\rm :}}
 
  \def\paragraph{%
    \@startsection{paragraph}{4}{\z@}
-   {\if@modern-6\p@\else\if@contemporary-6\p@ plus -1\p@\else\if@traditional-12\p@ plus -2\p@\else-11\p@ plus -1\p@\fi\fi\fi}
-   {\if@modern\if@large1pt\else1pt\fi\else\if@contemporary3\p@\else\if@traditional1\p@\else0.1em\fi\fi\fi}
-   {\reset@font\paragraphsize}}
-
-\def\subparagraph{\@startsection{subparagraph}{5}{\z@}%
-        {\if@modern-6\p@\else\if@contemporary-3.5\p@ plus -1\p@\else\if@traditional-12\p@ plus -2\p@\else-3.5\p@ plus -1\p@\fi\fi\fi}%
-        {\if@modern\if@large1pt\else1pt\fi\else\if@contemporary3\p@\else\if@traditional1\p@\else0.1em\fi\fi\fi}%
-        {\subparagraphsize}}
+   {-6\p@}
+   {0.1em}
+   {\reset@font\normalsize}}
 
 \def\@startsection#1#2#3#4#5#6{%
   \if@noskipsec \leavevmode \fi
@@ -1775,14 +1755,8 @@
     \@tempskipa -\@tempskipa \@afterindentfalse
   \fi
   \if@nobreak
-    \everypar{}%
-    \if@traditional
-        \ifnum#2=2\vspace*{-3pt}\fi\ifnum#2=3\vspace*{-1pt}\fi\ifnum#2=4\vspace*{-1pt}\fi\ifnum#2=5\vspace*{-1pt}\fi%
-    \else%
-    \if@contemporary\ifnum#2=2\vspace*{-3pt}\fi\ifnum#2=3\vspace*{-3pt}\fi\ifnum#2=5\vspace*{0.5pt}\fi%
-    \else%
-    \fi%
-    \fi%%
+    \everypar{}\if@traditional\if@large\ifnum#2=2\vspace*{5.65pt}\fi\ifnum#2=3\vspace*{-1pt}\fi\else%
+    \ifnum#2=2\vspace*{-3pt}\fi\ifnum#2=3\vspace*{1pt}\fi\fi\else\fi%%
   \else
     \addpenalty\@secpenalty\addvspace\@tempskipa
   \fi
@@ -1802,7 +1776,7 @@
     \begingroup
       #6{%
         \@hangfrom{\hskip #3\relax\@svsec}%
-          \interlinepenalty \@M #8\@@par}%
+          \interlinepenalty \@M \if@traditional\ifnum#2=1\uppercase{#8}\else#8\fi\else#8\fi\@@par}%
     \endgroup
     \csname #1mark\endcsname{#7}%
     \addcontentsline{toc}{#1}{%
@@ -1838,74 +1812,67 @@
 
 %\newlength{\abovecaptionskip}
 %\newlength{\belowcaptionskip}
-\if@contemporary
-    \if@large
-        \setlength{\abovecaptionskip}{11pt}
-        \setlength{\belowcaptionskip}{5.5pt}
-    \else
-        \setlength{\abovecaptionskip}{11pt}
-        \setlength{\belowcaptionskip}{4.5pt}
-    \fi
-\if@traditional
-    \setlength{\abovecaptionskip}{11pt}
-    \setlength{\belowcaptionskip}{5.5pt}
-\else
-    \setlength{\abovecaptionskip}{13pt}
-    \setlength{\belowcaptionskip}{2pt}
-\fi
-\fi
+\setlength{\abovecaptionskip}{13pt}
+\setlength{\belowcaptionskip}{2pt}
 
-\long\def\@makecaption#1#2{\if@modern\vskip3pt\else\vspace{\abovecaptionskip}\fi%
+\long\def\@makecaption#1#2{\vspace{\abovecaptionskip}%
   \begingroup
-  \if@modern\else\scriptsize\fi\sffamily
+  \scriptsize\sffamily
   \text{\sfb #1.}\space{#2}\par
   \endgroup}
 
 \long\def\@tablecaption#1#2{%
   \begingroup%
   \if@modern%
-      \fontsize{9bp}{11.5pt}\sffamily\selectfont%
+      \fontsize{7.5pt}{10.5pt}\sffamily\selectfont%
       \textbf{#1.}\space{#2\strut\par}%
   \else%
   \if@traditional%
-      \fontsize{8bp}{11bp}\selectfont\textbf{#1}\space#2\strut\par%
-  \else%
-  \if@contemporary
-    \if@large%
-      \sffamily\fontsize{8bp}{9.5bp}\selectfont%
-      \textbf{#1}\space{#2\strut\par}%
-     \else%
-    \if@medium
-      \sffamily\fontsize{8bp}{11.5bp}\selectfont%
-      \textbf{#1}\space{#2\strut\par}%
+    \if@large
+      \fontsize{11bp}{13pt}\rmfamily\selectfont%
+      \textbf{#1.}\space{\bfseries#2\strut\par}%
     \else
-      \sffamily\fontsize{8bp}{11bp}\selectfont%
-      \textbf{#1}\space{#2\strut\par}%
-    \fi%
-    \fi%
-  \fi
+    \if@medium
+      \fontsize{9pt}{11pt}\selectfont%
+      \textbf{#1.}\space{\bfseries#2\strut\par}%
+    \else
+      \fontsize{9pt}{11pt}\selectfont%
+      \textbf{#1.}\space{\bfseries#2\strut\par}%
+    \fi
+    \fi
+  \else%
+      \fontsize{7pt}{9pt}\selectfont%
+      \textbf{#1.}\space{#2\strut\par}%
   \fi%
   \fi%
   \endgroup\vspace{\belowcaptionskip}}
 
-\long\def\@figurecaption#1#2{\if@traditional\vspace*{7.5pt}\else\if@modern\else\vspace{\abovecaptionskip}\fi\fi%
+\long\def\@figurecaption#1#2{%
   \begingroup%
   \if@modern%
-{\vskip3pt%
-      \fontsize{8bp}{11}\selectfont%
+      \hspace*{1pt}\vspace*{-1.5pt}\newline%
       %\fontsize{7.5pt}{10.5pt}\sffamily\selectfont%
-      \textbf{#1}\space#2\strut\par}%
+      #1:\space{#2\strut\par}%
   \else%
   \if@traditional%
-      \if@boxenvpresent\fontsize{8bp}{11bp}\selectfont\else\fontsize{8bp}{11bp}\selectfont\fi\raggedright\textbf{#1}\space#2\strut\par%
+    \if@large
+      \fontsize{9.5bp}{11pt}\selectfont%
+      \hspace*{1pt}\vspace*{-3pt}\newline%
+      \textbf{#1.}\space{\bfseries#2\strut\par}%
+    \else
+      \fontsize{8.5bp}{10pt}\selectfont%
+      \hspace*{1pt}\vspace*{-3pt}\newline%
+      \textbf{#1.}\space{\bfseries#2\strut\par}%
+    \fi
   \else%
-      \if@boxenvpresent\sffamily\fontseries{m}\fontsize{7bp}{10pt}\selectfont\else\sffamily\fontsize{7.5bp}{9.5pt}\selectfont\fi%
-      \textbf{#1}\space{#2\strut\par}%
+      \fontsize{6bp}{9pt}\selectfont%
+      \hspace*{1pt}\vspace*{-3pt}\newline%
+      \textbf{#1.}\space{#2\strut\par}%
   \fi%
   \fi%
-  \endgroup\if@modern\vspace{\belowcaptionskip}\fi}
+  \endgroup\vspace{\belowcaptionskip}}
 
-\if@traditional\if@large\def\arraystretch{1}\else\def\arraystretch{1}\fi\fi
+\if@traditional\if@large\def\arraystretch{1.5}\else\def\arraystretch{1}\fi\fi
 
 % Table rules
 \if@modern
@@ -1921,17 +1888,29 @@
         \hrule \@height 0.5pt \futurelet \@tempa\@xhline}
 \else
 \if@traditional
+ \if@large
     \def\toprule{\noalign{\ifnum0=`}\fi%
-        \hrule \@height 0.25pt
+        \hrule \@height 0.5pt
+        \hrule \@height 0pt \@width 0pt \futurelet \@tempa\@xhline}
+    \def\midrule{\noalign{\ifnum0=`}\fi%
+        \hrule \@height -2pt \@width 0pt%
+        \hrule \@height 0.5pt%
+        \hrule \@height 1.9pt \@width 0pt \futurelet \@tempa\@xhline}
+    \def\botrule{\noalign{\ifnum0=`}\fi%
+        \hrule \@height .3pt \@width 0pt
+        \hrule \@height 0.5pt \futurelet \@tempa\@xhline}
+ \else
+    \def\toprule{\noalign{\ifnum0=`}\fi%
+        \hrule \@height 0.5pt
         \hrule \@height 4pt \@width 0pt \futurelet \@tempa\@xhline}
     \def\midrule{\noalign{\ifnum0=`}\fi%
-        \hrule \@height 3.5pt \@width 0pt%
-        \hrule \@height 0.25pt%
-        \hrule \@height 8pt \@width 0pt \futurelet \@tempa\@xhline}
+        \hrule \@height 3pt \@width 0pt%
+        \hrule \@height 0.5pt%
+        \hrule \@height 4pt \@width 0pt \futurelet \@tempa\@xhline}
     \def\botrule{\noalign{\ifnum0=`}\fi%
-        \hrule \@height 6pt \@width 0pt
-        \hrule \@height 0.25pt \futurelet \@tempa\@xhline}
-    \setlength\arrayrulewidth{0.25pt}
+        \hrule \@height 3.5pt \@width 0pt
+        \hrule \@height 0.5pt \futurelet \@tempa\@xhline}
+ \fi
 \else
     \def\toprule{\noalign{\ifnum0=`}\fi%
         \hrule \@height 0.5pt
@@ -1943,7 +1922,6 @@
     \def\botrule{\noalign{\ifnum0=`}\fi%
         \hrule \@height 3.75pt \@width 0pt
         \hrule \@height 0.5pt \futurelet \@tempa\@xhline}
-    \def\cline#1{\@cline#1\@nil\noalign{\vskip3pt}}
 \fi
 \fi
 \def\hrulefill{\leavevmode\leaders\hrule height .5pt\hfill\kern\z@}
@@ -1955,135 +1933,17 @@
 \def\fnum@figure{\figurename~\thefigure}
 \def\figure{\let\@makecaption\@figurecaption\@float{figure}}
 \let\endfigure\end@float
-\newcommand\figalttext[2][]{\relax}%
 \@namedef{figure*}{\let\@makecaption\@figurecaption\@dblfloat{figure}}
 \@namedef{endfigure*}{\end@dblfloat}
-
-\def\sidewaysfigure{\let\@makecaption\@figurecaption\@rotfloat{figure}}
-\let\endsidewaysfigure\end@rotfloat
-
-\renewenvironment{sidewaysfigure*}
-               {\let\@makecaption\@figurecaption\@rotdblfloat{figure}}
-               {\end@rotdblfloat}
-
-
-
 \def\thetable{\@arabic\c@table}
 \def\fps@table{tbp}
 \def\ftype@table{2}
 \def\ext@table{lot}
-\def\fnum@table{\tablename~\thetable}
-
-\if@contemporary
-    \usepackage{arydshln}
-    \setlength{\dashlinedash}{0.5pt}
-    \setlength\dashlinegap{1.5pt}
-    \if@large
-        \def \@floatboxreset {%
-                \reset@font
-                \sffamily\fontsize{7.5bp}{9.5bp}\selectfont
-                \@setminipage
-        }
-    \else
-        \def \@floatboxreset {%
-                \reset@font
-                \sffamily\fontsize{7bp}{10bp}\selectfont
-                \@setminipage
-        }
-    \fi
-\fi
-
-\def\table{%
-\if@contemporary%
-    \if@large%
-        \def\arraystretch{1}
-        \def\toprule{\hdashline\noalign{\vspace*{3.5pt}}}%
-        \def\midrule{\noalign{\vspace*{2.5pt}}\hdashline\noalign{\vspace*{5pt}}}%
-        \def\botrule{\noalign{\vspace*{3.5pt}}\hdashline}
-    \else
-    \if@medium%
-        \def\arraystretch{1.2}
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{6pt}}}%
-        \def\botrule{\noalign{\vspace*{2.5pt}}\hdashline}
-    \else%
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{5.5pt}}}%
-        \def\botrule{\noalign{\vspace*{1.5pt}}\hdashline}\def\arraystretch{1.1}%
-    \fi%
-    \fi%
-\fi%
-\let\@makecaption\@tablecaption\let\source\tablesource\@float{table}}
+\def\fnum@table{Table~\thetable}
+\def\table{\let\@makecaption\@tablecaption\let\source\tablesource\@float{table}}
 \def\endtable{\end@float}
-
-\@namedef{table*}{\if@contemporary%
-    \if@large%
-        \def\arraystretch{1}
-        \def\toprule{\hdashline\noalign{\vspace*{3.5pt}}}%
-        \def\midrule{\noalign{\vspace*{2.5pt}}\hdashline\noalign{\vspace*{5pt}}}%
-        \def\botrule{\noalign{\vspace*{3.5pt}}\hdashline}
-    \else
-    \if@medium%
-        \def\arraystretch{1.2}
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{6pt}}}%
-        \def\botrule{\noalign{\vspace*{2.5pt}}\hdashline}
-    \else%
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{5.5pt}}}%
-        \def\botrule{\noalign{\vspace*{1.5pt}}\hdashline}\def\arraystretch{1.1}%
-    \fi%
-    \fi%
-\fi%%
-\let\@makecaption\@tablecaption\@dblfloat{table}}
+\@namedef{table*}{\let\@makecaption\@tablecaption\@dblfloat{table}}
 \@namedef{endtable*}{\end@dblfloat}
-
-\def\sidewaystable{\if@contemporary%
-    \if@large%
-        \def\arraystretch{1}
-        \def\toprule{\hdashline\noalign{\vspace*{3.5pt}}}%
-        \def\midrule{\noalign{\vspace*{2.5pt}}\hdashline\noalign{\vspace*{5pt}}}%
-        \def\botrule{\noalign{\vspace*{3.5pt}}\hdashline}
-    \else
-    \if@medium%
-        \def\arraystretch{1.2}
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{6pt}}}%
-        \def\botrule{\noalign{\vspace*{2.5pt}}\hdashline}
-    \else%
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{5.5pt}}}%
-        \def\botrule{\noalign{\vspace*{1.5pt}}\hdashline}\def\arraystretch{1.1}%
-    \fi%
-    \fi%
-\fi%
-\let\@makecaption\@tablecaption\@rotfloat{table}}
-
-\let\endsidewaystable\end@rotfloat
-
-\renewenvironment{sidewaystable*}
-               {\if@contemporary%
-    \if@large%
-        \def\arraystretch{1}
-        \def\toprule{\hdashline\noalign{\vspace*{3.5pt}}}%
-        \def\midrule{\noalign{\vspace*{2.5pt}}\hdashline\noalign{\vspace*{5pt}}}%
-        \def\botrule{\noalign{\vspace*{3.5pt}}\hdashline}
-    \else
-    \if@medium%
-        \def\arraystretch{1.2}
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{6pt}}}%
-        \def\botrule{\noalign{\vspace*{2.5pt}}\hdashline}
-    \else%
-        \def\toprule{\hdashline\noalign{\vspace*{1.5pt}}}%
-        \def\midrule{\noalign{\vspace*{1.5pt}}\hdashline\noalign{\vspace*{5.5pt}}}%
-        \def\botrule{\noalign{\vspace*{1.5pt}}\hdashline}\def\arraystretch{1.1}%
-    \fi%
-    \fi%
-\fi%
-\let\@makecaption\@tablecaption\@rotdblfloat{table}}
-               {\end@rotdblfloat}
-
 
 \newif\if@rotate \@rotatefalse
 \newif\if@rotatecenter \@rotatecenterfalse
@@ -2128,7 +1988,7 @@
 \begin{minipage}{#4}%
 \@ifmtarg{#1}{}{\caption{#1}}{\tablesize #2}%
 \vskip7\p@\noindent
-\parbox{#4}{\fontsize{7bp}{9}\selectfont #3\par}%
+\parbox{#4}{\fontsize{7}{9}\selectfont #3\par}%
 \end{minipage}}\vss}%
 \rotr{4}
 \else
@@ -2136,7 +1996,7 @@
 \vskip2.9pt
 \@ifmtarg{#1}{}{\caption{#1}}{\tablesize #2}%
 \vskip6\p@\parindent=12pt
-\parbox{#4}{\fontsize{7bp}{9}\selectfont #3\par}%
+\parbox{#4}{\fontsize{7}{9}\selectfont #3\par}%
 \end{minipage}\hss}\fi}%
 
 \newcolumntype{P}[1]{>{\raggedright\let\\\@arraycr\hangindent1em}p{#1}}
@@ -2144,21 +2004,21 @@
 % ******************************
 % List numbering and lettering *
 % ******************************
-\def\labelenumi{{\arabic{enumi}.}}
+\def\labelenumi{{\rm\arabic{enumi}.}}
 \def\theenumi{\arabic{enumi}}
-\def\labelenumii{{\alph{enumii}.}}
+\def\labelenumii{{\rm\alph{enumii}.}}
 \def\theenumii{\alph{enumii}}
 \def\p@enumii{\theenumi}
-\def\labelenumiii{{\roman{enumiii}.}}
+\def\labelenumiii{{\rm(\roman{enumiii})}}
 \def\theenumiii{\roman{enumiii}}
 \def\p@enumiii{\theenumi(\theenumii)}
-\def\labelenumiv{{(\arabic{enumiv})}}
+\def\labelenumiv{{\rm(\arabic{enumiv})}}
 \def\theenumiv{\Alph{enumiv}}
 \def\p@enumiv{\p@enumiii\theenumiii}
-\def\labelitemi{\if@modern{\small$\bullet$}\else{\textbullet}\fi}
+\def\labelitemi{{\small$\bullet$}}
 \def\labelitemii{{--}}
-\def\labelitemiii{\if@modern{\small$\bullet$}\else{\textbullet}\fi}
-\def\labelitemiv{\if@modern{\small$\bullet$}\else{\textbullet}\fi}
+\def\labelitemiii{{\small$\bullet$}}
+\def\labelitemiv{{\small$\bullet$}}
 
 \def\@listI{\leftmargin\leftmargini \topsep\medskipamount}
 \let\@listi\@listI
@@ -2169,40 +2029,24 @@
 \def\@listv{\leftmargin\leftmarginv \topsep\z@}
 \def\@listvi{\leftmargin\leftmarginvi \topsep\z@}
 
-\if@modern\setlength{\leftmargini}{3mm}\else\setlength{\leftmargini}{0mm}\fi
-\setlength{\leftmarginii}{0mm}
-\setlength{\leftmarginiii}{0mm}
+\setlength{\leftmargini}{3mm}
+\setlength{\leftmarginii}{1mm}
+\setlength{\leftmarginiii}{2mm}
 \setlength{\leftmarginiv}{\z@}
 
 % Changes to the list parameters for enumerate
 \def\enumargs{%
    \partopsep     \z@
-   \if@contemporary
-       \if@large
-            \ifnum\@enumdepth >1\fontsize{7.75bp}{11bp}\selectfont\itemsep1\p@\else\fontsize{8bp}{11.5bp}\selectfont\itemsep0\p@\fi
-        \else
-        \if@medium\ifnum\@enumdepth >1\itemsep0.5\p@\else\itemsep2\p@\fi
-        \else\itemsep1\p@
-        \fi
-        \fi
-   \else\itemsep\z@
-   \fi%
+   \itemsep       \z@
    \parsep        \z@
-   \labelsep      \if@contemporary1em\else\if@traditional5.5pt\else\if@modern.5em\else1em\fi\fi\fi
+   \labelsep      1em
    \listparindent \parindent
    \itemindent    \z@
-   \if@contemporary\if@medium\ifnum\@enumdepth >1\topsep 1.5\p@\else\topsep 6\p@\fi%
-   \else%
-    \ifnum\@enumdepth >1\topsep 2\p@\else\topsep 6.5\p@\fi
-    \fi
-   \else
-   \if@traditional
-    \ifnum\@enumdepth >1\topsep 0\p@\else\topsep 2mm\fi
-   \else\ifnum \@enumdepth>1\topsep 0\p@\else\topsep 7\p@\fi\fi\fi
+   \topsep 7\p@
 }
 
 \def\enumerate{%
-    \@ifnextchar[{\@numerate}{\@numerate[0.]}}
+    \@ifnextchar[{\@numerate}{\@numerate[0]}}
 
 \def\@numerate[#1]{%
      \ifnum \@enumdepth >3 \@toodeep\else
@@ -2212,28 +2056,10 @@
        \enumargs
        \setlength{\leftmargin}{\csname leftmargin\romannumeral\the\@enumdepth\endcsname}
        \usecounter{\@enumctr}
-       \if@contemporary
-        \settowidth\labelwidth{\sffamily\selectfont#1}
-        \addtolength{\leftmargin}{\labelwidth}
-        \addtolength{\leftmargin}{\labelsep}
-        \def\makelabel##1{\hss \llap{\sffamily\selectfont##1}}%
-       \else
-       \if@traditional%
-        \ifnum\@enumdepth >1
-            \settowidth\labelwidth{#1}%
-        \else
-            \setlength{\labelwidth}{5mm}
-        \fi
-        \addtolength{\leftmargin}{\labelwidth}%
-        \addtolength{\leftmargin}{\labelsep}%
-        \def\makelabel##1{\hss \llap{##1}}%
-       \else
-        \settowidth\labelwidth{#1}
-        \addtolength{\leftmargin}{\labelwidth}
-        \addtolength{\leftmargin}{2pt}
-        \def\makelabel##1{\hss \llap{##1}}%
-       \fi
-       \fi}
+       \settowidth\labelwidth{#1}
+       \addtolength{\leftmargin}{\labelwidth}
+       \addtolength{\leftmargin}{2pt}
+       \def\makelabel##1{\hss \llap{##1}}}%
      \fi
    }
 \let\endenumerate\endlist
@@ -2241,25 +2067,14 @@
 % Changes to the list parameters for itemize
 \def\itemargs{%
    \partopsep     \z@
-   \if@contemporary
-        \if@large
-            \ifnum\@itemdepth >1\fontsize{7.75bp}{11bp}\selectfont\itemsep1\p@\else\fontsize{8bp}{11.5bp}\selectfont\itemsep0\p@\fi
-        \else
-        \if@medium\ifnum\@itemdepth >1\itemsep0.5\p@\else\itemsep0\p@\fi\else\itemsep1\p@\fi
-        \fi
-   \else\itemsep\z@\fi
+   \itemsep       0\p@
    \parsep        \z@
-   \labelsep      \if@contemporary1em\else\if@traditional5.5pt\else\if@modern.7em\else.7em\fi\fi\fi
+   \labelsep      1em
    \rightmargin   \z@
    \listparindent \parindent
    \itemindent    \z@
-   \if@contemporary\ifnum\@itemdepth >1\topsep 2\p@\else\topsep 6.5\p@\fi\else
-   \if@traditional
-    \ifnum\@itemdepth >1\topsep 0\p@\else\topsep 2mm\fi
-   \else\if@modern\ifnum \@itemdepth >1\topsep0\p@\else\topsep7\p@\fi
-      \setlength{\leftmarginii}{2mm}
-       \setlength{\leftmargini}{4mm}
-   \else\topsep 7\p@\fi\fi\fi
+   \topsep7\p@
+   \setlength{\leftmarginii}{3mm}
 }
 
 \def\itemize{%
@@ -2272,21 +2087,9 @@
      \list{\csname label\@itemctr\endcsname}{%
        \itemargs
        \setlength{\leftmargin}{\csname leftmargin\romannumeral\the\@itemdepth\endcsname}
-       \if@traditional
-           \ifnum\@itemdepth >1
-               \settowidth\labelwidth{#1}
-               \addtolength{\leftmargin}{\labelwidth}
-               \addtolength{\leftmargin}{\labelsep}
-           \else
-               \setlength\labelwidth{3mm}
-               \addtolength{\leftmargin}{\labelwidth}
-               \addtolength{\leftmargin}{\labelsep}
-           \fi
-       \else
-           \settowidth\labelwidth{#1}
-           \addtolength{\leftmargin}{\labelwidth}
-           \if@modern\else\addtolength{\leftmargin}{\labelsep}\fi
-       \fi
+       \settowidth\labelwidth{#1}
+       \addtolength{\leftmargin}{\labelwidth}
+       %\addtolength{\leftmargin}{\labelsep}
        \def\makelabel##1{\hss \llap{##1}}}%
      \fi
    }
@@ -2296,12 +2099,10 @@
   \begin{list}{}%
     {\setlength{\labelwidth}{\z@}%
      \setlength{\labelsep}{\z@}%
-     \partopsep\z@
-     \if@contemporary\setlength{\topsep}{6.5\p@}\else\if@traditional\setlength{\topsep}{5mm}\else\setlength{\topsep}{\medskipamount}\fi\fi%
-     \if@contemporary\setlength{\itemsep}{2\p@}\else\if@traditional\setlength{\itemsep}{0\p@}\else\setlength{\itemsep}{3\p@}\fi\fi%
-     \if@traditional\setlength{\leftmargin}{5mm}\setlength{\itemindent}{-3mm}\else
-     \setlength{\leftmargin}{2em}\setlength{\itemindent}{-2em}\fi
-     \parindent\z@}}
+     \setlength{\topsep}{\medskipamount}%
+     \setlength{\itemsep}{3\p@}%
+     \setlength{\leftmargin}{2em}%
+     \setlength{\itemindent}{-2em}}}
 {\end{list}}
 
 
@@ -2309,50 +2110,16 @@
 % Quotes and Quotations *
 % ***********************
 \def\quotation{\par\begin{list}{}{
-      \partopsep\z@
-      \if@contemporary%
-        \setlength{\topsep}{4pt}
-        \setlength{\leftmargin}{9pt}%
-        \setlength{\rightmargin}{9pt}%
-      \else%
-      \if@traditional
-        \setlength{\topsep}{11.75bp}
-        \setlength{\leftmargin}{1em}
-        \setlength{\rightmargin}{1em}%
-      \else
-        \setlength{\topsep}{\medskipamount}
-        \setlength{\leftmargin}{2em}
-        \setlength{\rightmargin}{\z@}%
-      \fi\fi%
-      \itemsep\z@%
+      \setlength{\topsep}{\medskipamount}
+      \setlength{\leftmargin}{2em}%
+      \setlength{\rightmargin}{\z@}%
       \setlength\labelwidth{0pt}%
       \setlength\labelsep{0pt}%
       \listparindent\parindent}%
-  \if@contemporary\sffamily\fontseries{m}\selectfont\item[]{\hskip-9pt{\color{grayfifty}\dhorline{\hsize}{1pt}\color{black}}\vskip3pt}
-  \else\if@traditional\fontsize{8.5bp}{11.75bp}\selectfont\else\fi\fi%
   \item[]}
-\def\endquotation{\if@contemporary\item[]{\hskip-9pt{\color{grayfifty}\dhorline{\hsize}{1pt}\color{black}}}\fi%
-\end{list}}
-
+\def\endquotation{\end{list}}
 \let\quote\quotation
 \let\endquote\endquotation
-
-\def\episource#1{%
-\if@contemporary%
-\par\vskip5pt\hspace*{0pt}\hfill\sffamily\fontseries{m}\fontsize{7bp}{9bp}\selectfont\itshape#1\par%
-\else\if@modern\par\hspace*{0pt}\hfill{\fontseries{b}\fontsize{8bp}{11.5}\selectfont#1}%
-\else\par\hspace*{0pt}\hfill{\fontsize{8bp}{11.5}\selectfont#1}\fi\fi}
-%
-\newenvironment{epigraph}{\par%%
-\if@contemporary\if@medium\addvspace{3pt}\else\addvspace{-6pt}\fi\sffamily\fontseries{m}%
-    \if@medium\fontsize{8bp}{11.5bp}\selectfont\else\fontsize{8bp}{11bp}\selectfont\fi%
-\leftskip12.5pt\rightskip\leftskip%
-\else\if@modern\addvspace{0pt}\fontsize{9bp}{11.5}\selectfont\leftskip9pt\rightskip\leftskip%
-\else\addvspace{0pt}\fontsize{9bp}{11.5}\selectfont\leftskip9pt\rightskip\leftskip%
-\fi\fi%
-\let\source\episource}{\par\addvspace{3pt}}
-
-
 
 \skip\@mpfootins = \skip\footins
 \fboxsep=6\p@
@@ -2397,12 +2164,9 @@
 % Footnotes *
 % ***********
 
-\def\footnoterule{\if@traditional\hrule\@width \z@\@height 0pt\kern2pt\else%
-\if@modern\noindent\rule{\columnwidth}{0.5pt}\else\hrule\@width \columnwidth\@height 0.5pt\kern2pt\fi\fi}
-
+\def\footnoterule{\noindent\rule{\columnwidth}{0.5pt}}
 \def\@makefnmark{\@textsuperscript{\normalfont\@thefnmark}}%
-
-\renewcommand\@makefntext[1]{\noindent\if@traditional\@hangfrom{\hbox to 4mm{\hfill\@makefnmark\hskip1.5mm}}\else{\@makefnmark\enskip}\fi#1}
+\newcommand\@makefntext[1]{\noindent\if@traditional\if@small\@hangfrom{\@thefnmark\enskip}\else{\@makefnmark\enskip}\fi\else{\@makefnmark\enskip}\fi#1}
 
 % ***********
 % References *
@@ -2431,37 +2195,11 @@
 %  {Check the bibliography entries for non-compliant syntax,\MessageBreak
 %   or select author-year BibTeX style, e.g. plainnat}%
 %  \global\NAT@numberstrue\fi}
-
 \def\NAT@force@numbers{\if@numbib\global\NAT@numberstrue\else\global\NAT@numbersfalse\fi}%
 
-\if@modern\if@medium\def\bibfont{\fontsize{7.5bp}{10}\selectfont}\else\fi
-\else
-\if@traditional\def\bibfont{\fontsize{9bp}{11.75bp}\selectfont}
-\else
-\if@contemporary\def\bibfont{\fontsize{7.75bp}{11bp}\selectfont}%
-\else
-\fi
-\fi
-\fi
+\if@modern\if@medium\def\bibfont{\fontsize{7.5bp}{10}\selectfont}\else\fi\else\fi
 
-\if@contemporary
-    \renewcommand\@biblabel[1]{#1.\hspace*{10pt}\hfill}
-    \bibhang=12pt
-    \bibsep=\z@
-\else
-\if@traditional
-    \renewcommand\@biblabel[1]{#1.\hspace*{5.5pt}\hfill}
-    \bibhang=12pt
-    \bibsep=\z@
-\else
-\if@modern
-    \renewcommand\@biblabel[1]{#1.\hfill\hspace*{3pt}}
-\else
-    \renewcommand\@biblabel[1]{#1.\hspace*{10pt}\hfill}
-    \bibhang=1em
-\fi
-\fi
-\fi
+\renewcommand\@biblabel[1]{#1.\hfill\hspace*{3pt}}
 
 \renewcommand\NAT@bibsetnum[1]{\settowidth\labelwidth{\@biblabel{#1}}%
    \setlength{\leftmargin}{\labelwidth}\addtolength{\leftmargin}{\labelsep}%
@@ -2509,17 +2247,13 @@
 \doublehyphendemerits 640000
 \finalhyphendemerits  1000000
 
-%%\raggedbottom
 \flushbottom
 \frenchspacing
 \ps@headings
 
-\if@mediumone
-\else
 \if@small%
 \else%
 \twocolumn%
-\fi%
 \fi%
 
 % Screen PDF compatability
@@ -2533,11 +2267,11 @@
 \def\section{%
   \@startsection{section}{1}{\z@}
   {-24\p@ plus -3\p@}{4\p@}
-  {\reset@font\raggedright\sffamilyfontbold\fontsize{10bp}{12}\selectfont}}
+  {\reset@font\raggedright\sffamilyfontbold\fontsize{10}{12}\selectfont}}
  \def\subsection{%
   \@startsection{subsection}{2}{\z@}
   {-11\p@ plus -2\p@}{4\p@}
-  {\reset@font\raggedright\sffamilyfont\fontsize{9bp}{12}\selectfont}}
+  {\reset@font\raggedright\sffamilyfont\fontsize{9}{12}\selectfont}}
 \def\subsubsection{%
   \@startsection{subsubsection}{3}{\z@}
   {-11\p@ plus -1\p@}{0.001em}
@@ -2546,8 +2280,6 @@
   \par}
 {\par\endgroup\bigskip\@afterheading\@afterindentfalse}
 
-
-%\usepackage{lstlang1}
 
 \language=2
 
@@ -2574,7 +2306,7 @@
 \setbox\@authorfigbox=\hbox{#1}%
 \@authorfigboxdim=\wd\@authorfigbox%
 \advance\@authorfigboxdim by -10pt
-\wraplines=7\fboxrule=1pt\fboxsep=6pt%
+\wraplines=9\fboxrule=1pt\fboxsep=6pt%
 \noindent{%
 \ifx\@authorfig\@empty\else\unskip%
 \begin{wrapfigure}[\wraplines]{l}[0pt]{\@authorfigboxdim}%{38.25mm}%
@@ -2633,60 +2365,47 @@
 \thm@preskip=12pt%
 \thm@postskip=12pt}
 %
-
 %%%%%%%%%%%%%%%%%% StyleOne
 %
 \newtheoremstyle{thmstyleone}% Numbered
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space above
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space below
-{\if@contemporary\sffamily\fontseries{m}\selectfont\leftskip12pt\else
-\if@traditional\normalsize\leftskip6mm\rightskip3mm plus1fill\else\normalfont\itshape\fi\fi}% Body font
-{\if@traditional-3mm\else0pt\fi}% Indent amount
-{\if@contemporary\sffamily\selectfont\bfseries\else\bfseries\fi}% Theorem head font
+{12pt plus2pt minus1pt}% Space above
+{12pt plus2pt minus1pt}% Space below
+{\normalfont\itshape}% Body font
+{0pt}% Indent amount
+{\bfseries}% Theorem head font
 {}% Punctuation after theorem head
 {.5em}% Space after theorem headi
 {\thmname{#1}\thmnumber{\@ifnotempty{#1}{ }\@upn{#2}}%
   \thmnote{ {\the\thm@notefont(#3)}}}% Theorem head spec (can be left empty, meaning `normal')
 %
 \newtheoremstyle{thmstyletwo}% Numbered
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space above
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space below
-{\if@contemporary\sffamily\fontseries{m}\selectfont\leftskip12pt\else
-\if@traditional\normalsize\leftskip6mm\rightskip3mm plus1fill\else\normalfont\itshape\fi\fi}% Body font
-{\if@traditional-3mm\else0pt\fi}% Indent amount
-{\if@contemporary\sffamily\selectfont\bfseries\else\if@traditional\bfseries\else\if@modern\normalfont\fi\fi\fi}% Theorem head font
+{12pt plus2pt minus1pt}% Space above
+{12pt plus2pt minus1pt}% Space below
+{\itshape}% Body font
+{0pt}% Indent amount
+{\normalfont}% Theorem head font
 {}% Punctuation after theorem head
 {.5em}% Space after theorem headi
 {\thmname{#1}\thmnumber{\@ifnotempty{#1}{ }{#2}}%
   \thmnote{ {\the\thm@notefont(#3)}}}% Theorem head spec (can be left empty, meaning `normal')
 %
 \newtheoremstyle{thmstylethree}% Definition
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space above
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space below
-{\if@contemporary\sffamily\fontseries{m}\selectfont\leftskip12pt\else%
-\if@traditional\normalsize\leftskip6mm\rightskip3mm plus1fill\else\if@modern\normalfont\fi\fi\fi}% Body font
-{\if@traditional-3mm\else0pt\fi}% Indent amount
-{\if@contemporary\sffamily\selectfont\bfseries\else\bfseries\fi}% Theorem head font
+{12pt plus2pt minus1pt}% Space above
+{12pt plus2pt minus1pt}% Space below
+{\normalfont}% Body font
+{0pt}% Indent amount
+{\bfseries}% Theorem head font
 {}% Punctuation after theorem head
 {.5em}% Space after theorem headi
 {\thmname{#1}\thmnumber{\@ifnotempty{#1}{ }\@upn{#2}}%
   \thmnote{ {\the\thm@notefont(#3)}}}% Theorem head spec (can be left empty, meaning `normal')
 %
 \newtheoremstyle{thmstylefour}% Proof
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space above
-{\if@contemporary\if@small11pt plus2pt minus1pt\else11.5pt plus2pt minus1pt\fi\else
-\if@traditional11.75pt plus2pt minus1pt\else12pt plus2pt minus1pt\fi\fi}% Space below
-{\if@contemporary\sffamily\fontseries{m}\selectfont\leftskip12pt\else
-\if@traditional\normalsize\leftskip6mm\rightskip3mm plus1fill\else\if@modern\normalfont\else\normalfont\itshape\fi\fi\fi}% Body font
-{\if@traditional-3mm\else0pt\fi}% Indent amount
-{\if@contemporary\sffamily\selectfont\bfseries\else\if@modern\itshape\else\bfseries\fi\fi}% Theorem head font
+{12pt plus2pt minus1pt}% Space above
+{12pt plus2pt minus1pt}% Space below
+{\normalfont}% Body font
+{0pt}% Indent amount
+{\itshape}% Theorem head font
 {}% Punctuation after theorem head
 {.5em}% Space after theorem headi
 {\global\proofthmtrue\thmname{#1} \thmnote{#3}}% Theorem head spec (can be left empty, meaning `normal')
@@ -2703,7 +2422,7 @@
 
 %% Additional Packages
 \RequirePackage[countmax]{subfloat}%,subfig
-\AtBeginDocument{\usepackage{anyfontsize}}%
+\usepackage{anyfontsize}%
 \RequirePackage{multirow}
 \RequirePackage{footnote}
 \RequirePackage{url}
@@ -2994,13 +2713,6 @@
 
 \usetikzlibrary{svg.path}
 
-\usetikzlibrary{decorations.markings}
-\newcommand{\dhorline}[3][0]{%
-    \tikz[baseline]{\path[decoration={markings,
-      mark=between positions 0 and 1 step 2*#3
-      with {\node[fill, circle, minimum width=#3, inner sep=0pt, anchor=south west] {};}},postaction={decorate}]  (0,#1) -- ++(#2,0);}}
-
-
 \definecolor{orcidlogocol}{HTML}{A6CE39}
 \tikzset{
   orcidlogo/.pic={
@@ -3032,202 +2744,6 @@ xscale=\@OrigHeightRecip*\@curXheight,transform shape]
    \edef \@fps {\@fps\csname fps@\@captype \endcsname}%
 }
 
-
-%\RequirePackage[most]{tcolorbox}
-
-\newif\if@boxenvpresent\global\@boxenvpresentfalse
-%
-%%%
-\def\boxtypehdstyle{\reset@font
-\if@contemporary\sffamily\fontsize{9bp}{11bp}\selectfont\raggedright\else
-\if@traditional\fontsize{10bp}{11.75bp}\selectfont\else\fontsize{10bp}{11.5bp}\selectfont
-\fi\fi}%
-%
-\def\boxtypetextAstyle{\reset@font
-\if@contemporary\sffamily\fontseries{m}\fontsize{7.5bp}{11.5bp}\selectfont\else
-\if@traditional\fontsize{9bp}{11.75bp}\selectfont\else\fontsize{7.5bp}{11.5bp}\selectfont
-\fi\fi%
-\parindent=0bp}
-%
-\def\boxtypeonehdstyle{\reset@font
-\if@contemporary\sffamily\if@large\fontsize{9bp}{11.5bp}\selectfont\else\fontsize{9bp}{11bp}\selectfont\fi\bfseries\else
-\if@traditional\fontsize{9bp}{11.75bp}\selectfont\bfseries\else\fontsize{9bp}{11bp}\selectfont\bfseries\fi\fi}
-
-\def\boxtypetwohdstyle{\reset@font
-\if@contemporary\sffamily\if@large\fontsize{9bp}{11.5bp}\selectfont\else\fontsize{9bp}{11bp}\selectfont\fi\itshape\else
-\if@traditional\fontsize{9bp}{11.75bp}\selectfont\else\fontsize{9bp}{11bp}\selectfont\fi\fi}
-
-\def\boxtypethreehdstyle{\reset@font
-\if@contemporary\sffamily\if@large\fontsize{7.5bp}{10.5bp}\selectfont\else\fontsize{7.5bp}{10bp}\selectfont\fi\bfseries\else
-\if@traditional\fontsize{9bp}{11.75bp}\selectfont\itshape\else\fontsize{7.5bp}{10bp}\selectfont\fi\fi}
-
-\def\boxtypefootnotetxt{\reset@font\if@traditional\fontsize{6.5bp}{9bp}\selectfont\else\sffamily\fontsize{6.5bp}{9bp}\selectfont\fi}
-
-\def\boxnameA{Box}
-\gdef\theBoxone{\@arabic\c@tcb@cnt@BoxTypeA}
-
-\def\boxfootnotetxt#1{{\par\vskip0pt\noindent{\boxtypefootnotetxt\selectfont\leftskip-6pt\rightskip-6pt#1\par}}}
-
-\newenvironment{Figure}[1][]{\par\addvspace{9pt}\let\@makecaption\@figurecaption\def\@captype{figure}}{\par\addvspace{9pt}}
-
-\newenvironment{Table}[1][]{\par\addvspace{9pt}\def\@captype{table}}{\par\addvspace{9pt}}
-
-\newcounter{boxnumcnt}
-\setcounter{boxnumcnt}{0}
-
-
-\newenvironment{boxtext}[1][]
-{\par\addvspace{12pt}\global\@boxenvpresenttrue\urlstyle{rm}\refstepcounter{boxnumcnt}%
-\def\@xfloat##1[{\@ifnextchar{H}{\@float@HH{##1}[}{\@float@Hx{##1}[}}%% reinstate float.sty macro (over floatpag)
-\gdef\@envopt{#1}%
-\let\footnotesize\boxtypefootnotetxt%
-\setlength{\footnotesep}{11\p@}\columnsep=12pt%
-\setlength{\skip\@mpfootins}{9\p@ \@plus 1 \p@} % \@minus 4\p@
-\renewcommand\@makefntext[1]{\def\thempfootnote{{\fontsize{10bp}{12bp}\selectfont\itshape\@alph\c@mpfootnote}}%
-\def\thempfn{\thempfootnote}
-%%\def\@makefnmark{\hbox{\@textsuperscript{\normalfont\@thefnmark}}}%%
-\if@contemporary%
-    \setlength\parindent{1em}%
-\else%
-\if@traditional
-    \setlength\parindent{8pt}%
-\else
-\if@modern
-    \setlength\parindent{12pt}%
-\else
-    \setlength\parindent{12pt}%
-\fi%
-\fi%
-\fi
-    \noindent%\raggedright
-    {\hbox{\smash{\rmfamily\@makefnmark\hskip3pt}}}##1\vphantom{p}\par\vspace*{-3.5pt}}%
-\setlength{\abovecaptionskip}{6pt}%
-\def\boxsection{\@startsection {section}{1}{\z@}%
-                                   {\if@contemporary\if@large-9pt \@plus -2pt\else-10.5pt \@plus -2pt\fi\else
-                                   \if@traditional-3.44mm \@plus -2pt\else-9pt \@plus -2pt\fi\fi}%
-                                   {\if@contemporary2.5pt\else\if@traditional0.001pt\else0.001pt\fi\fi}%
-                                   {\boxtypeonehdstyle}}
-\def\boxsubsection{\@startsection{subsection}{2}{\z@}%
-                                     {\if@contemporary\if@large-9pt \@plus -2pt\else-10.5pt \@plus -2pt\fi\else
-                                      \if@traditional-3.44mm \@plus -2pt\else-9pt \@plus -2pt\fi\fi}%
-                                     {\if@contemporary2.5pt\else\if@traditional0.001pt\else0.001pt\fi\fi}%
-                                     {\boxtypetwohdstyle}}
-\def\boxsubsubsection{\@startsection{subsubsection}{3}{\z@}%
-                                     {\if@contemporary\if@large-6pt \@plus -2pt\else-7pt \@plus -2pt\fi\else
-                                     \if@traditional-4.155mm \@plus -2pt\else-7pt \@plus -2pt\fi\fi}%
-                                     {-6pt}%
-                                     {\def\@sechdenddot{}\boxtypethreehdstyle}}
-\let\section\boxsection
-\let\subsection\boxsubsection
-\let\subsubsection\boxsubsubsection
-\let\figure\Figure\let\endfigure\endFigure%
-%\ifx\@envopt\empty\begin{BoxTypeA}[#1]\else\begin{BoxTypeA}[#1]\fi
-\noindent\hbox to \hsize{\rule{6pc}{0.5pt}\hfill}\par\nointerlineskip\vskip8pt\nointerlineskip\par\leftskip8pt\rightskip8pt%
-{\boxtypehdstyle\leftskip8pt\textbf{\boxnameA~\theboxnumcnt}\enspace#1\par}\par\nointerlineskip\vskip8pt\nointerlineskip\par\noindent\@afterindentfalse\noindent\ignorespaces\boxtypetextAstyle}%
-{\par\nointerlineskip\vskip8pt\nointerlineskip\par\noindent\hbox to \hsize{\hfill\rule{6pc}{0.5pt}\hskip8pt}\par\nointerlineskip\vskip8pt\nointerlineskip\par\vphantom{p}\par\vspace*{-2.5pt}%\ifx\@envopt\empty\end{BoxTypeA}\else\end{BoxTypeA}\fi
-\addvspace{10pt}%
-\@endparenv\global\@boxenvpresentfalse}%
-%
-% \if@contemporary
-%     \newtcolorbox[auto counter]{BoxTypeA}[1][]{%
-%     %label={#1},
-%     enhanced,breakable,
-%     arc=0pt,outer arc=0pt,boxrule=1pt,boxsep=0pt,
-%     top={\if@large10.5pt\else11pt\fi},left={\if@large9pt\else8.5pt\fi},right={\if@large9pt\else8.5pt\fi},
-%     bottom={\if@large9pt\else8.5pt\fi},middle=0pt,
-%     toptitle=7pt,bottomtitle=9pt,%
-%     colback=white,
-%     colbacktitle=graysevtyfive,
-%     colframe=graysevtyfive, coltitle=white,
-%     titlerule=0pt,titlerule style={white,line width=0pt},
-%     title={{\textbf{\boxnameA~\thetcbcounter:}\enspace}#1},
-%     fonttitle=\boxtypehdstyle, fontupper=\boxtypetextAstyle,
-%     topsep at break=0pt,bottomsep at break=0pt,
-%     pad before break=0pt,pad after break=6pt,bottomrule at break=0pt,toprule at break=0pt}%
-% \else
-% \if@traditional
-%     \newtcolorbox[auto counter]{BoxTypeA}[1][]{%
-%     %label={#1},
-%     enhanced,breakable,
-%     arc=0pt,outer arc=0pt,boxrule=0.5pt,boxsep=0pt,
-%     top=11pt,left=8.5pt,right=8.5pt,bottom=8.5pt,middle=0pt,
-%     toptitle=7pt,bottomtitle=6pt,%
-%     colback=white,
-%     colbacktitle=white,
-%     colframe=black, coltitle=black,
-%     titlerule=0pt,titlerule style={white,line width=0pt},
-%     title={{\textbf{\boxnameA~\thetcbcounter}\enspace}#1},
-%     fonttitle=\boxtypehdstyle, fontupper=\boxtypetextAstyle,
-%     topsep at break=0pt,bottomsep at break=0pt,
-%     pad before break=0pt,pad after break=6pt,bottomrule at break=0pt,toprule at break=0pt}%
-% \else
-% \if@modern
-%     \newtcolorbox[auto counter]{BoxTypeA}[1][]{%
-%     %label={#1},
-%     enhanced,breakable,
-%     arc=0pt,outer arc=0pt,boxrule=0.5pt,boxsep=0pt,
-%     top=11pt,left=8.5pt,right=8.5pt,bottom=8.5pt,middle=0pt,
-%     toptitle=7pt,bottomtitle=6pt,%
-%     colback=white,
-%     colbacktitle=white,
-%     colframe=black, coltitle=black,
-%     titlerule=0pt,titlerule style={white,line width=0pt},
-%     title={{\textbf{\boxnameA~\thetcbcounter}\enspace}#1},
-%     fonttitle=\boxtypehdstyle, fontupper=\boxtypetextAstyle,
-%     topsep at break=0pt,bottomsep at break=0pt,
-%     pad before break=0pt,pad after break=6pt,bottomrule at break=0pt,toprule at break=0pt}%
-% \else
-% \fi%
-% \fi%
-% \fi%
-
-\def\boxbreak{\vspace*{-11pt}\pagebreak\vspace*{-11pt}}
-
-\def\@outputdblcol{%
-  \if@firstcolumn
-    \global\@firstcolumnfalse
-    \global\setbox\@leftcolumn\copy\@outputbox\ifnum\currentpageno=\c@page\enlargethispage{-12pt}\fi%
-    \splitmaxdepth\maxdimen
-     \vbadness\maxdimen
-     \setbox\@outputbox\vbox{\unvbox\@outputbox\unskip}%
-     \setbox\@outputbox\vsplit\@outputbox to\maxdimen
-    \toks@\expandafter{\topmark}%
-    \xdef\@firstcoltopmark{\the\toks@}%
-    \toks@\expandafter{\splitfirstmark}%
-    \xdef\@firstcolfirstmark{\the\toks@}%
-    \ifx\@firstcolfirstmark\@empty
-      \global\let\@setmarks\relax
-    \else
-      \gdef\@setmarks{%
-        \let\firstmark\@firstcolfirstmark
-        \let\topmark\@firstcoltopmark}%
-    \fi
-  \else
-    \global\@firstcolumntrue
-    \setbox\@outputbox\vbox{%
-     \hb@xt@\textwidth{%
-        \hb@xt@\columnwidth{\box\@leftcolumn\hss}%
-        \hfil
-        {\normalcolor\vrule \@width\columnseprule}%
-        \hfil
-       \hb@xt@\columnwidth{\box\@outputbox\hss}}}%
-  \@combinedblfloats
-    \@setmarks
-    \@outputpage
-    \begingroup
-      \@dblfloatplacement
-      \@startdblcolumn
-      \@whilesw\if@fcolmade \fi{\@outputpage
-     \@startdblcolumn}%
-    \endgroup
-  \fi}%
-
-%\RequirePackage{silence}
-%\WarningFilter{latexfont}{Font shape}
-%\WarningFilter{latexfont}{Some font shapes}
-
-\immediate\write18{texcount -total -inc \jobname.tex > wordcount.txt}
-\newcommand{\wordcount}{\input{wordcount.txt}}
 
 %% End here %%
 

@@ -7,7 +7,7 @@
 \onecolumn
 \usepackage[fontsize=12pt]{fontsize}
 \usepackage{setspace}
-\usepackage[a4paper,textwidth=160mm,textheight=660pt,centering,headheight=15pt,headsep=12pt,footskip=24pt]{geometry}
+\usepackage[a4paper,textwidth=160mm,textheight=660pt,centering,headheight=24pt,headsep=12pt,footskip=24pt]{geometry}
 % OUP omits the standard description environment expected by enumitem.
 \newenvironment{description}{\begin{list}{}{\setlength{\labelwidth}{0pt}}}{\end{list}}
 \usepackage{booktabs,enumitem,tabto,algorithm,tabularx}
@@ -26,13 +26,22 @@
 \setlength\emergencystretch{2em}
 \setlength\parindent{1.5em}
 \setlist[enumerate]{itemsep=0pt}
-\pagestyle{plain}
 \makeatletter
 % The OUP class sets crop stock before geometry; keep the physical PDF A4.
 \CROP@size{\paperwidth}{\paperheight}
 \crop[off,noinfo]
+% Leave the RSS title blocks intact; omit unassigned production metadata.
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\def\jrssbproductionyear{\ifx\@copyrightyear\@empty\else\@copyrightyear,\fi}
+\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
+\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\apptocmd{\ps@opening}{\def\@oddfoot{\hfil\normalfont\normalsize\thepage\hfil}\let\@evenfoot\@oddfoot}{}{}
 \renewcommand\subsubsecsize{\normalfont\normalsize\bfseries}
-\renewcommand\paragraphsize{\normalfont\normalsize\itshape}
 % These class-specific macros bypass caption's font settings.
 \long\def\@figurecaption#1#2{\par\vspace{6pt}\begingroup
   \normalfont\normalsize\setstretch{1.666667}
@@ -52,34 +61,29 @@
 \AtEndDocument{\refstepcounter{figure}\label{finalfig}}
 
 \begin{document}
-\thispagestyle{empty}
-\begin{center}
-{\Large\bfseries \articleTitle\par}
-\vspace{24pt}
-K. Tan$^{1}$, A. J. Abkemeier$^{2}$, K. He$^{2}$,\\
-G. Hooker$^{1}$ and E. L. Ionides$^{2}$
-\vspace{24pt}
-
-$^{1}$Department of Statistics, University of Pennsylvania\\
-$^{2}$Department of Statistics, University of Michigan
-\end{center}
-\vspace{24pt}
-\noindent\textbf{Corresponding author}\\
-Edward L. Ionides\\
-Department of Statistics, University of Michigan\\
-1085 South University Avenue\\
-Ann Arbor, MI 48109-1107, USA\\
-\href{mailto:ionides@umich.edu}{ionides@umich.edu}
-
-\vspace{24pt}
-\noindent\textbf{Running head:} Differentiable particle filtering
-\clearpage
-\section*{Abstract}
+\journaltitle{Journal of the Royal Statistical Society: Series B}
+\DOI{}
+\copyrightyear{}
+\pubyear{}
+\access{}
+\appnotes{Original article}
+\firstpage{1}
+\title[Differentiable particle filtering]{\articleTitle}
+\author[1]{K. Tan}
+\author[2]{A. J. Abkemeier}
+\author[2]{K. He}
+\author[1]{G. Hooker}
+\author[2,$\ast$]{E. L. Ionides}
+\authormark{Tan et al.}
+\address[1]{\orgdiv{Department of Statistics}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
+\address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\country{USA}}}
+\corresp[$\ast$]{Address for correspondence: Edward L. Ionides, Department of Statistics, University of Michigan, 1085 South University Avenue, Ann Arbor, MI 48109-1107, USA. \href{mailto:ionides@umich.edu}{ionides@umich.edu}}
+\abstract{
 Automatic differentiation (AD) has driven recent advances in machine learning, including deep neural networks and Hamiltonian Markov Chain Monte Carlo methods. Partially observed nonlinear stochastic dynamical systems have proved resistant to AD techniques because widely used particle filter algorithms yield an estimated likelihood function that is discontinuous as a function of the model parameters. To resolve this, we create a theoretical framework that embeds two existing AD particle filter methods within a new class of algorithms. This new class permits a bias-variance tradeoff and hence a mean squared error substantially lower than the existing algorithms. This allows us to develop likelihood maximization algorithms suited to the Monte Carlo properties of the AD gradient estimate. Our algorithms require only a differentiable simulator for the latent dynamic system; by contrast, most previous approaches to AD likelihood maximization for particle filters require access to the system's transition probabilities. Numerical results indicate that a hybrid algorithm, using AD to refine a coarse solution from an iterated filtering algorithm, shows substantial improvement on current state-of-the-art methods on a challenging scientific benchmark problem.
-
-\noindent\textbf{Keywords:} Automatic differentiation; Hidden Markov models;
-Likelihood inference; Particle filtering; Sequential Monte Carlo.
-\clearpage
+}
+\keywords{Automatic differentiation; Hidden Markov models; Likelihood inference;
+Particle filtering; Sequential Monte Carlo}
+\maketitle
 \section{Introduction}
 
 Many scientific models involve highly nonlinear stochastic dynamic systems possessing significant random variation in both the process dynamics and the measurements.

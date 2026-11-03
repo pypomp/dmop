@@ -6,7 +6,7 @@
 \onecolumn
 \usepackage[fontsize=12pt]{fontsize}
 \usepackage{setspace}
-\usepackage[a4paper,textwidth=160mm,textheight=660pt,centering,headheight=15pt,headsep=12pt,footskip=24pt]{geometry}
+\usepackage[a4paper,textwidth=160mm,textheight=660pt,centering,headheight=24pt,headsep=12pt,footskip=24pt]{geometry}
 % OUP omits the standard description environment expected by enumitem.
 \newenvironment{description}{\begin{list}{}{\setlength{\labelwidth}{0pt}}}{\end{list}}
 \usepackage{booktabs,enumitem,tabto,algorithm,tabularx}
@@ -25,13 +25,22 @@
 \setlength\emergencystretch{2em}
 \setlength\parindent{1.5em}
 \setlist[enumerate]{itemsep=0pt}
-\pagestyle{plain}
 \makeatletter
 % The OUP class sets crop stock before geometry; keep the physical PDF A4.
 \CROP@size{\paperwidth}{\paperheight}
 \crop[off,noinfo]
+% Leave the RSS title blocks intact; omit unassigned production metadata.
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\patchcmd{\@maketitle}{doi: \@DOI}{\strut\@DOI}{}{}
+\def\jrssbproductionyear{\ifx\@copyrightyear\@empty\else\@copyrightyear,\fi}
+\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
+\patchcmd{\@maketitle}{\@copyrightyear,}{\jrssbproductionyear}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\patchcmd{\@maketitle}{\rule{45pt}{55pt}}{\rule{0pt}{55pt}}{}{}
+\apptocmd{\ps@opening}{\def\@oddfoot{\hfil\normalfont\normalsize\thepage\hfil}\let\@evenfoot\@oddfoot}{}{}
 \renewcommand\subsubsecsize{\normalfont\normalsize\bfseries}
-\renewcommand\paragraphsize{\normalfont\normalsize\itshape}
 % These class-specific macros bypass caption's font settings.
 \long\def\@figurecaption#1#2{\par\vspace{6pt}\begingroup
   \normalfont\normalsize\setstretch{1.666667}
