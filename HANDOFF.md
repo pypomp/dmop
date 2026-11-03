@@ -1,5 +1,56 @@
 # Handoff
 
+## November 3: independent score audits and off-truth extension
+
+- User requested fresh independent audits and asked whether evaluation
+  away from the generating parameter matters. Three fresh-context agents
+  separately audited recursion-to-score, the population bound/example,
+  and off-truth behavior. No defect found in S176/S177 as stated. These
+  audits do not claim to reverify the entire sharper particle theorem.
+- The exact posterior decomposition at evaluation/reference v survives
+  away from theta0, but uses the v-posterior. Its conditional mean is zero
+  under P_v, not generally under P_theta0. Current theorem is pointwise
+  at the generating parameter, with deterministic alpha, causal
+  parameter-free initialization/noises, and observation-uniform local
+  bounds. It is not finite-J unbiasedness or a bound at same-data iterates.
+- Independently checked extension of the existing continuous-state example:
+  with N=2m, Z=ab, P_theta0(Z=z)=(1+z theta0/36)/2, the block score at v
+  is Z/(36+vZ), and discounted score is alpha times this. Exactly,
+  E_theta0 |score(v)-score_alpha(v)|^2
+  = (1-alpha)^2 [m(1296-theta0^2)+m^2(theta0-v)^2]/(1296-v^2)^2.
+  Thus fixed nonzero distance gives an N^2 term under the same assumptions.
+  For alpha>0 this example preserves direction/stationary points: the
+  larger absolute discrepancy alone does not establish bad optimization.
+- Root derived and two agents independently checked a GENERAL local
+  extension on a convex ball satisfying the proposition's uniform bounds.
+  Let B uniformly bound coordinate pathwise scores; a=1-Munder/Mbar.
+  For fixed true-supported past and ANY next candidate observation, extend
+  e_n(v,y) by its historical-posterior-difference formula. Current h_n
+  cancels. Backward projected historical scores have diameter at most
+  2 sqrt(p) B a^(n-s-1), so ||e_n|| <= K(1-alpha),
+  K=2 sqrt(p) B/(1-a)^2, even outside the true observation support.
+  Bayes integration under the v-predictive law gives mean zero.
+- Exact conditional-score identity + lag forgetting gives a uniform
+  predictive log-score bound L on true-supported histories/outcomes and
+  parameters on the ball. Integrating along the parameter segment gives
+  p_v >= exp(-L delta) p_theta0 there, delta=||v-theta0||. Thus predictive
+  TV <= 1-exp(-L delta) <= L delta, requiring no common-support extension.
+  The sharper TV <= L delta/2 follows if derivative bounds cover common
+  support, but is not needed. This resolves an initial support objection.
+- Under actual law write d_n=E_theta0[e_n|past], m_n=e_n-d_n.
+  Then ||d_n|| <= 2KL delta(1-alpha), and the martingale differences obey
+  sum E||m_n||^2 <= (N-1)K^2(1-alpha)^2. Hence
+  ||sum e_n||_L2 <= K(1-alpha)[sqrt(N-1)+2L delta(N-1)].
+  Squaring gives C_model (1-alpha)^2[N+N^2 delta^2]. Retain L^2 if
+  displaying dependence on p,B: the drift has an additional pB^2 factor.
+  Mixing alone would not provide L; uniform full pathwise A3 is essential.
+- For fixed deterministic v_N with ||v_N-theta0||=O(N^-1/2), this preserves
+  O(N(1-alpha)^2). Substituting adaptive same-data iterates requires
+  additional uniform control and is not justified by pointwise bounds.
+- No theorem/source/PDF changes made in this audit turn. The off-truth
+  extension above is audited research recorded here, not yet inserted
+  into SI. Main/submission remains untouched.
+
 ## November 3: derive S176 directly from DMOP
 
 - Kevin challenged the posterior representation in S176 and requested
