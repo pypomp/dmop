@@ -1,5 +1,31 @@
 # Handoff
 
+## November 3: separate JRSSB review manuscript
+
+- Fast-forwarded main to 2c35cfc7b before work. Added `ms-jrssb.tex`, generated
+  from `ms.tex` by `code/build_jrssb.py`, with A4, 12pt/24pt spacing, a separate
+  title/contact page, and the three tables relocated to the end. No edits to
+  ms.tex, si.tex, macros.tex, or the private response.
+- `jrssb/` contains the RSS template linked by the journal, the unmodified
+  OUP class v1.5, provenance/checksums and build instructions. Formatting
+  overrides are in preamble.tex. Regenerate after manuscript content changes.
+- Compiled successfully with local latexmk (native document control reported
+  no connected sessions). Final PDF: 38 A4 pages, no overfull boxes, oversized
+  floats or undefined references. All-page independent visual review converged
+  after fixing OUP's page stock, caption font, float spacing and hardware-table
+  wrapping. Source comparison confirms unchanged abstract, prose, equations,
+  and table content. PDF sha256:
+  9a4e4aa89e162f00602e8492e4255651c68a5eb1467ca0accaf1dd4bf5981fc1.
+- The PDF is ignored. Length exceeds the journal's suggested range; shortening
+  was outside this formatting task. A pre-existing duplicated 'NUTS' in the
+  Fig. 6 caption was flagged but left unchanged.
+- Audited the current private response at dc19e7b. Proposed six focused updates
+  in chat: Bayesian target/prior/diagnostics/sensitivity/control; correct the
+  DS19 monthly approximation versus Euler-path claim; qualify benchmark
+  superiority; explain SAEM/score implementations and Dhaka comparison;
+  clarify Theorem 5's two error terms and A6/A6-J; document code/Zenodo updates.
+  User requested suggestions, so response.tex remains untouched.
+
 ## October 20: approved prose cleanup
 
 - Applied the 16 approved wording edits in ms.tex and si.tex on main.

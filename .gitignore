@@ -190,3 +190,7 @@ renv
 # Bayesian figure previews; vector PDFs are the manuscript assets.
 /imgs/pmcmc/common_target_*.png
 /imgs/pmcmc/identity_control_*.png
+
+# JRSSB submission output and bundled official class.
+/ms-jrssb.pdf
+!/jrssb/oup-authoring-template.cls

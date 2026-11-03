@@ -1,0 +1,51 @@
+% Review layout based on the RSS template linked by JRSSB (see README.md).
+\makeatletter
+\def\input@path{{jrssb/}}
+\makeatother
+\documentclass[numsec,webpdf,modern,medium,namedate]{oup-authoring-template}
+\onecolumn
+\usepackage[fontsize=12pt]{fontsize}
+\usepackage{setspace}
+\usepackage[a4paper,textwidth=160mm,textheight=660pt,centering,headheight=15pt,headsep=12pt,footskip=24pt]{geometry}
+% OUP omits the standard description environment expected by enumitem.
+\newenvironment{description}{\begin{list}{}{\setlength{\labelwidth}{0pt}}}{\end{list}}
+\usepackage{booktabs,enumitem,tabto,algorithm,tabularx}
+\usepackage{algpseudocode}
+\usepackage{etoolbox}
+\newcommand\new[1]{\textcolor{red}{#1}}
+\newcommand\eic[1]{\textcolor{orange}{#1}}
+\newcommand\aja[1]{\textcolor{blue}{#1}}
+\newcommand\arxiv[2]{#1}
+\input{macros}
+\hypersetup{hidelinks,pdftitle={\articleTitle},pdfauthor={K. Tan, A. J. Abkemeier, K. He, G. Hooker and E. L. Ionides}}
+\setstretch{1.666667}
+\captionsetup{font={normalsize,stretch=1.666667},labelfont=bf}
+\renewcommand\bibfont{\normalsize\setstretch{1.666667}}
+\renewcommand\bibsection{\section*{References}}
+\setlength\emergencystretch{2em}
+\setlength\parindent{1.5em}
+\setlist[enumerate]{itemsep=0pt}
+\pagestyle{plain}
+\makeatletter
+% The OUP class sets crop stock before geometry; keep the physical PDF A4.
+\CROP@size{\paperwidth}{\paperheight}
+\crop[off,noinfo]
+\renewcommand\subsubsecsize{\normalfont\normalsize\bfseries}
+\renewcommand\paragraphsize{\normalfont\normalsize\itshape}
+% These class-specific macros bypass caption's font settings.
+\long\def\@figurecaption#1#2{\par\vspace{6pt}\begingroup
+  \normalfont\normalsize\setstretch{1.666667}
+  \textbf{#1.}\space#2\par\endgroup\vspace{6pt}}
+\let\@tablecaption\@figurecaption
+% setspace otherwise restores single spacing inside floats.
+\apptocmd{\@xfloat}{\normalsize\setstretch{1.666667}}{}{}
+\AtBeginEnvironment{tabular}{\normalsize\setstretch{1.666667}}
+\AtBeginEnvironment{tabularx}{\normalsize\setstretch{1.666667}}
+\AtBeginDocument{\normalsize\typeout{JRSSB BODY FONT: \f@size; BASELINE: \the\baselineskip; TEXTHEIGHT: \the\textheight}}
+\makeatother
+\AtEndDocument{\refstepcounter{thm}\label{finalthm}}
+\AtEndDocument{\refstepcounter{lem}\label{finallem}}
+\AtEndDocument{\refstepcounter{defn}\label{finaldefn}}
+\AtEndDocument{\refstepcounter{prop}\label{finalprop}}
+\AtEndDocument{\refstepcounter{aspt}\label{finalaspt}}
+\AtEndDocument{\refstepcounter{figure}\label{finalfig}}
