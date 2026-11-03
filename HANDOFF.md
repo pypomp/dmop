@@ -1,5 +1,53 @@
 # Handoff
 
+## November 3: simplify S7 and average population error over data
+
+- Work is isolated in `dmop-covariance-mse` on branch `covariance-mse`.
+  Do not merge into main or the current submission. The main-text source
+  is unchanged in this revision.
+- Kevin explicitly requested removal of the older variance proof. This
+  supersedes October 19's preservation instruction below. Keep one
+  complete sharper particle-MSE proof; remove its obsolete alternative,
+  unused preliminary lemmas, and inactive S7 drafts. Git retains them.
+- The new population result generates observations at theta0 and evaluates
+  both population scores at theta=phi=theta0. Alpha is deterministic and
+  the assumptions' bounds are uniform over observations. Historical
+  posterior increments are martingale differences under this law, giving
+  E_data ||score_alpha-score||^2 = O(N (1-alpha)^2), with fixed model
+  factors. This does not assert the same rate for every fixed dataset.
+- A continuous-state model with independent two-observation blocks
+  attains N^2 (1-alpha)^2 / 5184 for all-success fixed observations and
+  N (1-alpha)^2 / 2592 under the generating law. It satisfies A1--A5,
+  A6 and A6-J; its finite-horizon A4 constants may grow with N.
+- Combining the new population result with the existing uniform particle
+  bound yields an attainable N/J^(2/3)+N^2/J^2 data-and-particle MSE
+  bound at 1-alpha of order J^(-1/3). Compare with alpha=1 for short
+  horizons; no optimality claim is made.
+- Independent draft reviews checked the martingale argument, continuous
+  example, conditional-mean telescope, reverse genealogical variance,
+  and before-resampling transfer. Keep the forward conditional-kernel
+  minorization and joint-state gradient definition inside the retained
+  proof after deleting the old preliminaries.
+- S6 is now a short DMOP-0 warmup with the two score identities and a
+  conditional-resampling error proof. This removes its dependency on the
+  superseded S7 variance calculation. One warmup lemma replaces the old
+  mixing lemma, preserving the main text's reference to particle Lemma S13.
+- The source before S6 and after S7 is byte-for-byte unchanged. Revised
+  text remains in \kevin{} comments at readable body size. Main ms.tex is
+  unchanged. S7 shrank from 10,189 source lines (including inactive drafts)
+  to 1,817; the complete SI shrank from 100 to 82 pages.
+- The native editor compiler was attempted but cannot load this project's
+  macros.tex dependency. The repository TinyTeX/latexmk build succeeds,
+  with no undefined references, LaTeX errors or overfull boxes. Existing
+  figure/table hyperref destination warnings remain outside this revision.
+- Mathematical and independent visual reviews passed. Reviewed rendered
+  pages 22--47; fixed equation breaks in the averaged-score definition,
+  telescope identities and full-MSE bounds, then inspected rebuilt pages.
+  The final SI has 82 pages. Refreshed output/pdf/si-covariance-review.pdf
+  and output/covariance-review.patch against c7556a655; reverse-apply check
+  passed. Generated build files remain ignored. Commit/push this revision
+  to covariance-mse only; main stays at a7db04677.
+
 ## October 19: incorporated audited proof on covariance-mse
 
 - Kevin requested incorporation in `\\kevin{}` comments, consistent
