@@ -1,5 +1,5 @@
 diff --git a/bib-ifad.bib b/bib-ifad.bib
-index bb708e3d1..a3e04e85a 100644
+index bb708e3d1..089bf2b24 100644
 --- a/bib-ifad.bib
 +++ b/bib-ifad.bib
 @@ -2071,6 +2071,17 @@ address = "Boca Raton, FL"
@@ -20,6 +20,18 @@ index bb708e3d1..a3e04e85a 100644
  @article{delmoral18,
    author = {Del Moral, Pierre and Jasra, Ajay},
    title = {A sharp first order analysis of {F}eynman--{K}ac particle models, {Part I}: Propagation of chaos},
+@@ -2139,3 +2150,11 @@ ZZZZZZZZ
+   pages = {1--41},
+   doi = {10.18637/jss.v088.c02}
+ }
++
++@misc{wolpert08conditional,
++  author = {Wolpert, Robert L.},
++  title = {Conditional Expectation},
++  year = {2008},
++  howpublished = {Lecture notes, Duke University},
++  url = {https://www2.stat.duke.edu/courses/Spring08/sta205/lec/topics/rn.pdf}
++}
 diff --git a/ms.tex b/ms.tex
 index af7a5d6f5..8f6a4640b 100644
 --- a/ms.tex
@@ -189,10 +201,10 @@ index af7a5d6f5..8f6a4640b 100644
  
  \section{Computational Efficiency} \label{sec:efficiency}
 diff --git a/si.tex b/si.tex
-index bae10a174..adcef1b6c 100644
+index bae10a174..194c84746 100644
 --- a/si.tex
 +++ b/si.tex
-@@ -2440,191 +2440,85 @@ For $F_J(\theta)=\eta_n^J(h_\theta)$, the conclusion is convergence to $\nabla_\
+@@ -2440,194 +2440,98 @@ For $F_J(\theta)=\eta_n^J(h_\theta)$, the conclusion is convergence to $\nabla_\
  Theorem~{\thmMopGradConsistency} follows by taking $F_J(\theta)=\hat\ell_J^1(\theta)$ and $h_\theta^*=\ell(\theta)$. Keep the reference parameter $\phi$ fixed throughout $K$. For $\alpha=1$, the off-parameter consistency result and Lemma~\ref{lem:lik-proper-weight} give $\hat\lik_J^1(\theta)\to\lik(\theta)>0$ almost surely for each fixed $\theta\in K$, not only at $\theta=\phi$. The continuous mapping theorem gives the corresponding convergence of the log likelihoods. The neighborhood form of Assumption~\refAssumpLocalBoundedDerivative\ supplies their uniform gradient and Hessian bounds, and Assumption~\refAssumpDifferentiableSimulator\ supplies their pathwise smoothness with the simulator draws and reference-filter resampling indices held fixed. Applying the theorem to these log likelihoods establishes score consistency at $\phi$ directly.
  
  
@@ -435,6 +447,9 @@ index bae10a174..adcef1b6c 100644
  \section{Proof of Theorem~{\thmMopBiasvar} (Bias-Variance Analysis)}
  \label{appendix:sharper-biasvar}
  
+-Write $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th conditional score
+-of the population recursion. At $\theta=\phi$ and $\alpha=1$, it equals
+-$\nabla_\theta\ell_n(\theta)$. Along each selected lineage,
 +\kevin{\normalfont\normalsize
 +Except where we explicitly average over observations, the data are fixed
 +and expectations are over particle-filter randomness.
@@ -449,10 +464,23 @@ index bae10a174..adcef1b6c 100644
 +The first term is particle error and the second is population discounting
 +error. We first bound the population term for fixed observations and
 +under the data-generating law, then bound the particle term.
- Write $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th conditional score
- of the population recursion. At $\theta=\phi$ and $\alpha=1$, it equals
- $\nabla_\theta\ell_n(\theta)$. Along each selected lineage,
-@@ -2648,9768 +2542,1782 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
++The reference parameter $\phi$ is held fixed during differentiation.
++More explicitly, our notation for the population score means
++\[
++\nabla_\theta\ell_n^\alpha(\phi)
++:=\left.\partial_\theta\log L_n^\alpha(\theta;\phi)
++\right|_{\theta=\phi}.
++\]
++This is the derivative computed by the stop-gradient construction.
++Differentiating along the diagonal $L_n^\alpha(\theta;\theta)$ would
++also differentiate the reference law and would give the ordinary likelihood
++score, since $L_n^\alpha(\theta;\theta)=p_\theta(y_n^*\mid y_{1:n-1}^*)$.
++We derive the population score from the same weight recursion as the
++particle score. Along each selected lineage,
+ \begin{equation}
+ \left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
+ =
+@@ -2648,9768 +2552,1864 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
  +\log g_{n,k_j}^{\theta}-\log g_{n,k_j}^{\phi}.
  \label{eq:log-weight-recursion}
  \end{align}
@@ -581,8 +609,16 @@ index bae10a174..adcef1b6c 100644
 +at $\theta=\phi$.
 +\endgraf
 +\paragraph*{Score identities.}
-+Differentiation holds the simulator draws and reference resampling indices
-+fixed and includes the dependence of each state on $\theta$. The
++Let $U=(U_0,\ldots,U_N)$ contain the independent, parameter-free
++simulator draws, including initialization, with joint law $\mu$.
++Write $X_s^\theta=X_s^\theta(U_{0:s})$ and
++$g_s^\theta(U)=f_{Y_s\mid X_s}(y_s^*\mid X_s^\theta(U_{0:s});\theta)$.
++Thus the likelihood is
++\[
++p_\theta(y_{1:t}^*)=\int\prod_{s=1}^t g_s^\theta(u)\,\mu(du).
++\]
++Differentiation holds $U$ and the reference resampling indices fixed.
++It includes the dependence of each state on $\theta$. The
 +measurement gradient on a simulator history satisfies
  \begin{align}
 -&\left\|
@@ -661,23 +697,29 @@ index bae10a174..adcef1b6c 100644
 +\label{eq:finite-horizon-differentiation-under-expectation}
  \end{equation}
 -Write
-+Here $\E_U$ integrates the independent base simulator draws. At
-+$\theta=\phi$, their posterior law through time $t$ is
++Here $\E_U$ integrates $\mu$. On the reference pass, propagation appends
++a fresh simulator draw and selection weights each history by $g_t^\phi$.
++Starting from $\mu$, successive selections therefore give the population
++history law
  \begin{equation}
 -h_k
 -=
 -\left.\nabla_\theta\log g_k^{A,F,\theta}\right|_{\theta=\phi}
 -\label{eq:actual-path-score}
-+\rho_t(h)=
-+\frac{\E_U[h\prod_{s=1}^tG_s(X_s)]}
-+{\E_U[\prod_{s=1}^tG_s(X_s)]}.
++\rho_t^\phi(du)=
++\frac{\prod_{s=1}^t g_s^\phi(u)\,\mu(du)}
++{\int\prod_{s=1}^t g_s^\phi(v)\,\mu(dv)},
++\qquad \rho_t=\rho_t^\phi.
 +\label{eq:canonical-extended-posterior-path-law}
  \end{equation}
 -for the measurement gradient on an ancestral path. Following
 -\citet{delmoral18}, let
-+It includes the derivative history needed to evaluate $h_k$, and its
-+current-state marginal is $\pi_t$. Particle-error expectations instead
-+integrate the particle-filter law, including resampling. Let
++This is Bayes' formula for the simulator draws given $y_{1:t}^*$ under
++$\phi$. The state and its parameter derivative are both functions of
++these draws, so this law also specifies the derivative history.
++Its current-state marginal is $\pi_t$. Finite particle histories
++approximate $\rho_t^\phi$; their empirical means need not be unbiased.
++Let
  \begin{equation}
 -m(\xi_t)
 -=
@@ -752,9 +794,16 @@ index bae10a174..adcef1b6c 100644
 -Equation~(\ref{eq:unrolled-filtered-weight}) into
 -Equation~(\ref{eq:conditional-score-weight-difference}) and changing the
 -index in the second sum give
-+All these weights equal one at $\theta=\phi$. Differentiating the two
-+sample averages defining the after-resampling conditional likelihood
-+therefore yields
++The after-resampling likelihood increment is
++\[
++\widehat L_n^{A,\alpha}(\theta;\phi)
++=\widehat L_n^\phi
++\frac{J^{-1}\sum_jw_{n,j}^{F,\theta}}
++     {J^{-1}\sum_jw_{n,j}^{P,\theta}}.
++\]
++The factor $\widehat L_n^\phi$ is frozen during differentiation, and
++both sets of weights equal one at $\theta=\phi$. Differentiating the
++log numerator and log denominator therefore yields
  \begin{align}
  \nabla_\theta\hat\ell_n^\alpha(\theta)
 -&=
@@ -807,17 +856,61 @@ index bae10a174..adcef1b6c 100644
 -}                                                               \notag\\
 -&\quad=
 -\sum_{s=1}^n\rho_n(h_s).
-+Differentiation under the simulator expectation gives
++For the population calculation, keep $\phi$ fixed and apply the weight
++recursion to one simulator history:
++\[
++w_n^{F,\theta}(u)
++=\prod_{s=1}^n\left\{\frac{g_s^\theta(u)}{g_s^\phi(u)}\right\}^{\alpha^{n-s}},
++\qquad
++w_n^{P,\theta}=(w_{n-1}^{F,\theta})^\alpha.
++\]
++The reference law satisfies
++$\rho_n^\phi(q)=\rho_{n-1}^\phi(g_n^\phi q)/L_n^\phi$, where
++$L_n^\phi=\rho_{n-1}^\phi(g_n^\phi)$ and the unused future draws retain
++their original law. Since $w_n^{F,\theta}=w_n^{P,\theta}g_n^\theta/g_n^\phi$,
++the before- and after-resampling population increments agree:
++\[
++L_n^\alpha(\theta;\phi)
++=\frac{\rho_{n-1}^\phi(g_n^\theta w_n^{P,\theta})}
++       {\rho_{n-1}^\phi(w_n^{P,\theta})}
++=L_n^\phi\frac{\rho_n^\phi(w_n^{F,\theta})}
++                  {\rho_{n-1}^\phi(w_n^{P,\theta})}.
++\]
++All expectations here are with respect to the fixed reference law.
++At $\theta=\phi$, the weights equal one and their derivatives are
++\[
++\left.\partial_\theta w_n^{F,\theta}\right|_{\theta=\phi}
++=\sum_{s=1}^n\alpha^{n-s}h_s,
++\qquad
++\left.\partial_\theta w_n^{P,\theta}\right|_{\theta=\phi}
++=\sum_{s=1}^{n-1}\alpha^{n-s}h_s.
++\]
++The local bounds used above also justify differentiating these fixed-horizon
++weight integrals: each ratio $g_s^\theta/g_s^\phi$ and its derivative is
++bounded on the parameter neighborhood. Consequently,
++\[
++\left.\partial_\theta\log L_n^\alpha(\theta;\phi)\right|_{\theta=\phi}
++=\rho_n\left(\sum_{s=1}^n\alpha^{n-s}h_s\right)
++-\rho_{n-1}\left(\sum_{s=1}^{n-1}\alpha^{n-s}h_s\right).
++\]
++The second term comes from the prediction-weight denominator.
++\endgraf
++For comparison, differentiating the likelihood integral gives
 +\begin{equation}
-+\nabla_\theta\log\E_U\left[\prod_{s=1}^nG_s(X_s)\right]
++\left.\partial_\theta\log p_\theta(y_{1:n}^*)\right|_{\theta=\phi}
++=\frac{\int\!\left(\sum_{s=1}^n h_s(u)\right)
++                 \prod_{s=1}^n g_s^\phi(u)\,\mu(du)}
++       {\int\prod_{s=1}^n g_s^\phi(u)\,\mu(du)}
 +=\sum_{s=1}^n\rho_n(h_s).
  \label{eq:full-population-score-path-average}
 -\end{align}
 -Subtracting the same identity at time $n-1$ gives
 +\end{equation}
-+Subtracting its time-$(n-1)$ version, and differentiating the two
-+population weighted averages in the MOP-$\alpha$ recursion, respectively,
-+give
++This is Fisher's identity applied to the simulator draws; the usual
++state-trajectory version is given by \citet[Equation~(4)]{poyiadjis11}.
++Here process and initialization derivatives enter through $X_s^\theta(U)$,
++while $\mu$ is parameter-free. Subtracting the time-$(n-1)$ likelihood
++score, and collecting the terms in the discounted derivative, gives
  \begin{align}
  \nabla_\theta\ell_n(\theta)
 -&=
@@ -855,7 +948,14 @@ index bae10a174..adcef1b6c 100644
  \end{align}
 +\endgraf
 +}
-+
+ 
+-\begin{lem}[Lagwise first-derivative forgetting]
+-\label{lem:derivative-measure-forgetting}
+-Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
+-{\refAssumpBoundedMeasurement}, and {\refAssumpDifferentiableSimulator},
+-there are
+-constants $C<\infty$ and $\varrho\in(0,1)$ such that, for
+-$0\leq r<n$,
 +\kevin{\normalfont\normalsize
 +\begin{lem}[Full-score summation by parts]
 +\label{lem:dmop-full-score-summation-by-parts}
@@ -874,56 +974,17 @@ index bae10a174..adcef1b6c 100644
 +\label{eq:population-full-score-summation-by-parts}
 +\end{align}
 +For every coordinate $i$ and $t\leq N$,
-+\begin{equation}
-+\left\|\sum_{k=1}^t\alpha^{t-k}h_{k,i}\right\|_\infty
-+\leq G'(\theta)\sum_{k=1}^t\alpha^{t-k}.
-+\label{eq:discounted-score-supremum}
-+\end{equation}
-+\end{lem}
-+\begin{proof}
-+Summing Equation~(\ref{eq:conditional-score-path-decomposition}) by
-+creation time gives
-+\begin{equation}
-+\nabla_\theta\hat\ell^\alpha
-+=\sum_{k=1}^N\left[m(\xi_k)(h_k)
-++\sum_{t=k+1}^N\alpha^{t-k}
-+ \{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}\right].
-+\label{eq:full-score-reindexed-by-contribution}
-+\end{equation}
-+For each $k$, collect the coefficient at every endpoint:
-+\begin{align}
-+&m(\xi_k)(h_k)+\sum_{t=k+1}^N\alpha^{t-k}
-+ \{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}\notag\\
-+&\quad=(1-\alpha)\sum_{t=k}^{N-1}\alpha^{t-k}m(\xi_t)(h_k)
-+ +\alpha^{N-k}m(\xi_N)(h_k).
-+\label{eq:one-score-summation-by-parts}
-+\end{align}
-+Interchanging the finite sums proves the particle identity. Replacing
-+$m(\xi_t)$ by $\rho_t$ proves the population identity. The coordinate
-+bound follows from $\|h_{k,i}\|_\infty\leq G'(\theta)$.
-+\end{proof}
-+}
- 
-+\kevin{\normalfont\normalsize
- \begin{lem}[Lagwise first-derivative forgetting]
- \label{lem:derivative-measure-forgetting}
- Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
- {\refAssumpBoundedMeasurement}, and {\refAssumpDifferentiableSimulator},
--there are
--constants $C<\infty$ and $\varrho\in(0,1)$ such that, for
--$0\leq r<n$,
-+there are constants $C<\infty$ and $\varrho\in(0,1)$ such that
  \begin{equation}
 -\|\Delta_{n,r}\|_2
 -\leq C\sqrt p\,G'(\theta)\varrho^r.
-+\|\Delta_{n,r}\|_2\leq C\sqrt p\,G'(\theta)\varrho^r,
-+\qquad 0\leq r<n.
- \label{eq:derivative-measure-forgetting}
+-\label{eq:derivative-measure-forgetting}
++\left\|\sum_{k=1}^t\alpha^{t-k}h_{k,i}\right\|_\infty
++\leq G'(\theta)\sum_{k=1}^t\alpha^{t-k}.
++\label{eq:discounted-score-supremum}
  \end{equation}
  \end{lem}
 -
-+\endgraf
- \begin{proof}[Proof.]
+-\begin{proof}[Proof.]
 -We use the posterior update and backward-kernel contraction.
 -
 -\medskip\noindent\emph{Step 1: one-step posterior update.}\quad
@@ -941,9 +1002,7 @@ index bae10a174..adcef1b6c 100644
 -path through time \(k\leq n-1\), Equation~
 -(\ref{eq:canonical-extended-posterior-path-law}) and conditional expectation
 -with respect to the new base simulator variable give
-+Fix $1\leq r<n$, put $k=n-r$, and consider coordinate $i$.
-+We first integrate out the history in $h_{k,i}$. Set
- \begin{align}
+-\begin{align}
 -\rho_n(h_{k,i})
 -&=
 -\frac{
@@ -964,32 +1023,30 @@ index bae10a174..adcef1b6c 100644
 -}
 -{\rho_{n-1}M_n(G_n)},
 -\label{eq:posterior-path-update-functional}
-+\bar h_{k,i}(X_k)&=\E_{\rho_k}(h_{k,i}\mid X_k),
-+\label{eq:population-score-current-projection}\\
-+L_{k,t}(X_k)&=\E_U\left[\left.\prod_{s=k+1}^tG_s(X_s)\right|X_k\right],
-+\qquad L_{k,k}=1.
-+\label{eq:population-score-future-likelihood}
- \end{align}
+-\end{align}
 -where the first equality uses the independence of the new base simulator
 -variable from the path through time \(n-1\). The second equality first uses
 -the identity below and then divides its numerator and denominator by
 -\(\E_U\{\prod_{s=1}^{n-1}G_s(X_s)\}\). Using the manuscript's kernel
 -notation, the required identity is
-+Future simulator draws are independent of the history given $X_k$.
-+Thus, for every bounded $q$ and $t\geq k$,
++\begin{proof}
++Summing Equation~(\ref{eq:conditional-score-path-decomposition}) by
++creation time gives
  \begin{equation}
 -M_n(G_n)(x_{n-1})
 -=
 -\int M_n(x_{n-1},dx_n)G_n(x_n).
 -\label{eq:predictive-potential-functional}
-+\rho_t\{h_{k,i}q(X_k)\}
-+=\frac{\rho_k\{h_{k,i}q(X_k)L_{k,t}(X_k)\}}{\rho_k(L_{k,t})}
-+=\frac{\rho_k\{\bar h_{k,i}q(X_k)L_{k,t}(X_k)\}}{\rho_k(L_{k,t})}.
-+\label{eq:population-score-projection-invariance}
++\nabla_\theta\hat\ell^\alpha
++=\sum_{k=1}^N\left[m(\xi_k)(h_k)
+++\sum_{t=k+1}^N\alpha^{t-k}
++ \{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}\right].
++\label{eq:full-score-reindexed-by-contribution}
  \end{equation}
 -The bounds on \(G_n\) and the fact that \(M_n\) is a Markov kernel imply
 -for every \(x_{n-1}\) that
--\begin{align}
++For each $k$, collect the coefficient at every endpoint:
+ \begin{align}
 -M_n(G_n)(x_{n-1})
 -&\geq
 -\underbar G\int M_n(x_{n-1},dx_n)
@@ -1003,14 +1060,26 @@ index bae10a174..adcef1b6c 100644
 -=
 -\bar G.
 -\label{eq:predictive-potential-upper}
--\end{align}
--
++&m(\xi_k)(h_k)+\sum_{t=k+1}^N\alpha^{t-k}
++ \{m(\xi_t)(h_k)-m(\xi_{t-1})(h_k)\}\notag\\
++&\quad=(1-\alpha)\sum_{t=k}^{N-1}\alpha^{t-k}m(\xi_t)(h_k)
++ +\alpha^{N-k}m(\xi_N)(h_k).
++\label{eq:one-score-summation-by-parts}
+ \end{align}
++Interchanging the finite sums proves the particle identity. Replacing
++$m(\xi_t)$ by $\rho_t$ proves the population identity. The coordinate
++bound follows from $\|h_{k,i}\|_\infty\leq G'(\theta)$.
++\end{proof}
++}
+ 
 -\medskip\noindent\emph{Step 2: backward-kernel contraction.}\quad
 -For \(s\geq1\), the posterior backward kernel from \(X_s\) to \(X_{s-1}\) is
-+Consequently $\E_{\rho_t}(h_{k,i}\mid X_k)=\bar h_{k,i}(X_k)$.
-+This conditional independence also holds given a later state, so the
-+physical backward kernels propagate the projected historical score.
-+They are
++\kevin{\normalfont\normalsize
++\begin{lem}[Lagwise first-derivative forgetting]
++\label{lem:derivative-measure-forgetting}
++Suppose $\theta=\phi$. Under Assumptions {\refAssumpBoundedProcess},
++{\refAssumpBoundedMeasurement}, and {\refAssumpDifferentiableSimulator},
++there are constants $C<\infty$ and $\varrho\in(0,1)$ such that
  \begin{equation}
 -B_s(x_s,dx_{s-1})
 -=
@@ -1022,15 +1091,19 @@ index bae10a174..adcef1b6c 100644
 -\int
 -\pi_{s-1}(du)
 -f_{X_s\mid X_{s-1}}(x_s\mid u;\theta)}.
-+B_s(x_s,dx_{s-1})=
-+\frac{\pi_{s-1}(dx_{s-1})
-+f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1};\theta)}
-+{\int\pi_{s-1}(du)f_{X_s\mid X_{s-1}}(x_s\mid u;\theta)}.
- \label{eq:posterior-backward-kernel}
+-\label{eq:posterior-backward-kernel}
++\|\Delta_{n,r}\|_2\leq C\sqrt p\,G'(\theta)\varrho^r,
++\qquad 0\leq r<n.
++\label{eq:derivative-measure-forgetting}
  \end{equation}
 -Assumption {\refAssumpBoundedProcess} gives the following minorization for
 -every measurable set \(A\):
--\begin{align}
++\end{lem}
++\endgraf
++\begin{proof}[Proof.]
++Fix $1\leq r<n$, put $k=n-r$, and consider coordinate $i$.
++We first integrate out the history in $h_{k,i}$. Set
+ \begin{align}
 -B_s(x_s,A)
 -&=
 -\frac{
@@ -1051,31 +1124,45 @@ index bae10a174..adcef1b6c 100644
 -&=
 -\frac{\underbar M}{\bar M}\pi_{s-1}(A).
 -\label{eq:posterior-backward-minorization}
--\end{align}
++\bar h_{k,i}(X_k)&=\E_{\rho_k}(h_{k,i}\mid X_k),
++\label{eq:population-score-current-projection}\\
++L_{k,t}(X_k)&=\E_U\left[\left.\prod_{s=k+1}^tG_s(X_s)\right|X_k\right],
++\qquad L_{k,k}=1.
++\label{eq:population-score-future-likelihood}
+ \end{align}
 -Put \(\epsilon=\underbar M/\bar M\). If \(\epsilon<1\), Equation~
 -(\ref{eq:posterior-backward-minorization}) permits the decomposition
--\begin{equation}
++Future simulator draws are independent of the history given $X_k$.
++Thus, for every bounded $q$ and $t\geq k$,
+ \begin{equation}
 -B_s(x_s,\cdot)
 -=
 -\epsilon\pi_{s-1}(\cdot)
 -+(1-\epsilon)R_s(x_s,\cdot),
 -\label{eq:posterior-backward-splitting}
--\end{equation}
++\rho_t\{h_{k,i}q(X_k)\}
++=\frac{\rho_k\{h_{k,i}q(X_k)L_{k,t}(X_k)\}}{\rho_k(L_{k,t})}
++=\frac{\rho_k\{\bar h_{k,i}q(X_k)L_{k,t}(X_k)\}}{\rho_k(L_{k,t})}.
++\label{eq:population-score-projection-invariance}
+ \end{equation}
 -where
-+With $\epsilon=\underbar M/\bar M$, the transition bounds imply
++Consequently $\E_{\rho_t}(h_{k,i}\mid X_k)=\bar h_{k,i}(X_k)$.
++This conditional independence also holds given a later state, so the
++physical backward kernels propagate the projected historical score.
++They are
  \begin{equation}
 -R_s(x_s,A)
 -=
 -\frac{B_s(x_s,A)-\epsilon\pi_{s-1}(A)}{1-\epsilon}
-+B_s(x_s,\cdot)\geq\epsilon\pi_{s-1}(\cdot),
-+\qquad \operatorname{osc}(B_sf)\leq(1-\epsilon)\operatorname{osc}(f).
-+\label{eq:posterior-backward-oscillation-contraction}
++B_s(x_s,dx_{s-1})=
++\frac{\pi_{s-1}(dx_{s-1})
++f_{X_s\mid X_{s-1}}(x_s\mid x_{s-1};\theta)}
++{\int\pi_{s-1}(du)f_{X_s\mid X_{s-1}}(x_s\mid u;\theta)}.
++\label{eq:posterior-backward-kernel}
  \end{equation}
 -is a Markov kernel. Hence, for every bounded real function \(f\) and any
 -\(x_s,x'_s\),
-+Indeed, subtracting the common mass $\epsilon\pi_{s-1}$ leaves
-+$(1-\epsilon)$ times a probability kernel. It follows that
- \begin{align}
+-\begin{align}
 -B_s(f)(x_s)-B_s(f)(x'_s)
 -&=
 -(1-\epsilon)
@@ -1084,51 +1171,33 @@ index bae10a174..adcef1b6c 100644
 -&\leq
 -(1-\epsilon)\operatorname{osc}(f).
 -\label{eq:posterior-backward-one-step-contraction}
-+H(x)&:=\E_{\rho_{n-1}}(h_{k,i}\mid X_{n-1}=x)
-+=(B_{n-1}\cdots B_{k+1}\bar h_{k,i})(x),
-+\label{eq:iterated-backward-conditioning}\\
-+\operatorname{osc}(H)&\leq2G'(\theta)(1-\epsilon)^{r-1}.
-+\label{eq:conditional-past-score-forgetting}
- \end{align}
+-\end{align}
 -If \(\epsilon=1\), Equation~
 -(\ref{eq:posterior-backward-minorization}) implies
 -\(B_s(x_s,\cdot)=\pi_{s-1}(\cdot)\), so the left-hand side is zero.
 -Taking the supremum over \(x_s,x'_s\) gives
-+An empty kernel product is the identity, and a zeroth power here is one,
-+including when $\epsilon=1$.
-+\endgraf
-+Integrating the last simulator draw gives the posterior update
++With $\epsilon=\underbar M/\bar M$, the transition bounds imply
  \begin{equation}
 -\operatorname{osc}\{B_s(f)\}
 -\leq
 -(1-\epsilon)\operatorname{osc}(f).
--\label{eq:posterior-backward-oscillation-contraction}
-+\rho_n(h_{k,i})=
-+\frac{\rho_{n-1}\{h_{k,i}M_n(G_n)\}}{\rho_{n-1}M_n(G_n)},
-+\qquad M_n(G_n)(x)=\int M_n(x,du)G_n(u).
-+\label{eq:posterior-path-update-functional}
++B_s(x_s,\cdot)\geq\epsilon\pi_{s-1}(\cdot),
++\qquad \operatorname{osc}(B_sf)\leq(1-\epsilon)\operatorname{osc}(f).
+ \label{eq:posterior-backward-oscillation-contraction}
  \end{equation}
 -
 -\medskip\noindent\emph{Step 3: project and propagate the time-$k$
 -contribution.}\quad
 -For the historical gradient $h_{k,i}$, define
-+Writing the numerator using $H$ therefore gives
- \begin{equation}
+-\begin{equation}
 -\bar h_{k,i}(X_k)
 -=
 -\E_{\rho_k}(h_{k,i}\mid X_k).
 -\label{eq:population-score-current-projection}
-+\Delta_{n,r,i}=
-+\frac{\pi_{n-1}[(H-\pi_{n-1}H)
-+\{M_n(G_n)-\pi_{n-1}M_n(G_n)\}]}{\pi_{n-1}M_n(G_n)}.
-+\label{eq:lag-coefficient-covariance-identity}
- \end{equation}
+-\end{equation}
 -To identify this conditional expectation under later posterior laws,
 -for $t\geq k$ let
-+The denominator is at least $\underbar G$. Also,
-+$M_n(x,\cdot)\geq\epsilon M_n(x^\star,\cdot)$ for any fixed
-+$x^\star$, so subtracting this common mass shows that
- \begin{equation}
+-\begin{equation}
 -L_{k,t}(X_k)
 -=
 -\E_U\left\{
@@ -1136,10 +1205,7 @@ index bae10a174..adcef1b6c 100644
 -\right\},
 -\qquad L_{k,k}=1.
 -\label{eq:population-score-future-likelihood}
-+\operatorname{osc}\{M_n(G_n)\}
-+\leq(1-\epsilon)(\bar G-\underbar G).
-+\label{eq:predictive-potential-oscillation}
- \end{equation}
+-\end{equation}
 -For every bounded function $q$ of $X_k$, the Markov property and
 -Equation~(\ref{eq:canonical-extended-posterior-path-law}) give
 -\begin{align}
@@ -1173,18 +1239,12 @@ index bae10a174..adcef1b6c 100644
 -The second equality is the defining conditional-expectation identity in
 -Equation~(\ref{eq:population-score-current-projection}), multiplied by the
 -$X_k$-measurable function $q(X_k)L_{k,t}(X_k)$.  Hence
-+Combining the last three displays with
-+$|f-\pi_{n-1}f|\leq\operatorname{osc}(f)$ gives
- \begin{equation}
+-\begin{equation}
 -\E_{\rho_t}(h_{k,i}\mid X_k)
 -=\bar h_{k,i}(X_k),
 -\qquad t\geq k.
 -\label{eq:population-score-projection-conditional}
-+|\Delta_{n,r,i}|\leq
-+\frac{2(\bar G-\underbar G)}{\underbar G}
-+G'(\theta)(1-\epsilon)^r.
-+\label{eq:lag-coordinate-geometric-bound}
- \end{equation}
+-\end{equation}
 -Repeated conditioning through the physical backward kernels therefore gives
 -\begin{align}
 -\E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=x_{n-1}\}
@@ -1194,48 +1254,24 @@ index bae10a174..adcef1b6c 100644
 -\end{align}
 -There are \(n-1-k=r-1\) backward kernels in this display. Moreover,
 -Equation~(\ref{eq:population-forgetting-score-bound}) gives
-+Choose
-+\begin{equation}
-+\varrho=1-\frac{\underbar M}{2\bar M}\in(0,1).
-+\label{eq:population-forgetting-varrho}
-+\end{equation}
-+Since $1-\epsilon\leq\varrho$, summing squared coordinate bounds gives
-+the result for $r\geq1$. For $r=0$,
-+$\|\rho_n(h_n)\|_2\leq\sqrt p\,G'(\theta)$.
-+If $\epsilon=1$, $M_n(G_n)$ is constant and every positive-lag
-+coefficient is zero.
-+\end{proof}
-+\endgraf
-+\endgraf
-+}
-+
-+\kevin{\normalfont\normalsize
-+\begin{lem}[Population discounting bias]
-+\label{lem:dmop-population-discount-bias}
-+Under the conditions of Lemma~\ref{lem:derivative-measure-forgetting},
-+suppose $\theta=\phi$ and $\alpha\in[0,1]$. Then
- \begin{align}
+-\begin{align}
 -\|\bar h_{k,i}\|_\infty
 -&\leq
 -\|h_{k,i}\|_\infty
 -\leq G'(\theta),                                            \notag\\
 -\operatorname{osc}(\bar h_{k,i})
-+\left\|
-+\nabla_\theta\ell_n^\alpha(\theta)
-+-\nabla_\theta\ell_n(\theta)
-+\right\|_2
- &\leq
+-&\leq
 -2\|\bar h_{k,i}\|_\infty                                  \notag\\
-+C\sqrt p\,G'(\theta)
-+\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r                       \notag\\
- &\leq
+-&\leq
 -2G'(\theta).
 -\label{eq:conditional-past-score-oscillation}
 -\end{align}
 -If \(r=1\), Equation~(\ref{eq:iterated-backward-conditioning}) contains no
 -backward kernel. If \(r\geq2\), applying Equation~
 -(\ref{eq:posterior-backward-oscillation-contraction}) successively gives
--\begin{align}
++Indeed, subtracting the common mass $\epsilon\pi_{s-1}$ leaves
++$(1-\epsilon)$ times a probability kernel. It follows that
+ \begin{align}
 -&\operatorname{osc}\!\left[
 -\E_{\rho_{n-1}}\{h_{k,i}\mid X_{n-1}=\mathord\cdot\}
 -\right]                                                       \notag\\
@@ -1245,11 +1281,11 @@ index bae10a174..adcef1b6c 100644
 -1, & r=1,\\
 -(1-\epsilon)^{r-1}, & r\geq2.
 -\end{cases}
--\label{eq:conditional-past-score-forgetting}
-+C\sqrt p\,G'(\theta)
-+\frac{\varrho(1-\alpha)}
-+{(1-\varrho)(1-\alpha\varrho)}.
-+\label{eq:dmop-population-discount-bias}
++H(x)&:=\E_{\rho_{n-1}}(h_{k,i}\mid X_{n-1}=x)
++=(B_{n-1}\cdots B_{k+1}\bar h_{k,i})(x),
++\label{eq:iterated-backward-conditioning}\\
++\operatorname{osc}(H)&\leq2G'(\theta)(1-\epsilon)^{r-1}.
+ \label{eq:conditional-past-score-forgetting}
  \end{align}
 -
 -\medskip\noindent\emph{Step 4: covariance identity and geometric bound.}\quad
@@ -1257,8 +1293,7 @@ index bae10a174..adcef1b6c 100644
 -Equation~(\ref{eq:conditional-past-score-forgetting}) by \(H\), only for
 -the next calculation. Since the \(X_{n-1}\)-marginal of \(\rho_{n-1}\)
 -is \(\pi_{n-1}\), the tower property gives
-+For the full score,
- \begin{align}
+-\begin{align}
 -\rho_{n-1}(h_{k,i})
 -&=
 -\pi_{n-1}(H),
@@ -1268,32 +1303,12 @@ index bae10a174..adcef1b6c 100644
 -&=
 -\pi_{n-1}\{H M_n(G_n)\}.
 -\label{eq:tower-past-score-potential}
-+&\left\|
-+\nabla_\theta\ell(\theta)
-+-\nabla_\theta\ell^\alpha(\theta)
-+\right\|_2                                                     \notag\\
-+&\quad\leq
-+C\sqrt p\,G'(\theta)\varrho(1-\alpha)
-+\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q                    \notag\\
-+&\quad=
-+C\sqrt p\,G'(\theta)\varrho(1-\alpha)
-+\frac{(N-1)-N\alpha\varrho+(\alpha\varrho)^N}
-+{(1-\alpha\varrho)^2}                                       \notag\\
-+&\quad\leq
-+C(N-1)\sqrt p\,G'(\theta)
-+\frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
-+\label{eq:dmop-full-population-discount-bias}
- \end{align}
+-\end{align}
 -Substituting Equations~(\ref{eq:tower-past-score})--
 -(\ref{eq:tower-past-score-potential}) into
 -Equation~(\ref{eq:posterior-path-update-functional}) and then subtracting
 -\(\rho_{n-1}(h_{k,i})\) gives the exact covariance identity
-+For $N=1$, the finite sum is empty, the displayed fraction is zero, and
-+the full-score difference is zero.
-+The dependence on the transition bounds can be sharpened further.
-+With the existing $\varrho=1-\underbar M/(2\bar M)$ from Equation~
-+(\ref{eq:population-forgetting-varrho}), for $\tfrac12<\varrho<1$,
- \begin{align}
+-\begin{align}
 -\Delta_{n,r,i}
 -&=
 -\rho_n(h_{k,i})-\rho_{n-1}(h_{k,i})                           \notag\\
@@ -1312,36 +1327,21 @@ index bae10a174..adcef1b6c 100644
 -}
 -{\pi_{n-1}M_n(G_n)}.
 -\label{eq:lag-coefficient-covariance-identity}
-+&\left\|\nabla_\theta\ell(\theta)
-+-\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
-+&\quad\leq
-+2\sqrt p\,G'(\theta)
-+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}(1-\alpha)
-+\sum_{q=0}^{N-2}(N-1-q)
-+\left\{\alpha\frac{2\varrho-1}{3-2\varrho}\right\}^{q}       \notag\\
-+&\quad\leq
-+2(N-1)\sqrt p\,G'(\theta)
-+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+\frac{(1-\alpha)(3-2\varrho)}
-+{3-2\varrho-\alpha(2\varrho-1)}.
-+\label{eq:population-discount-sharp-transition-bound}
- \end{align}
+-\end{align}
 -For any probability measure \(\mu\) and bounded real \(f\),
-+If every transition is independent of its starting location, in
-+particular if $\varrho=\tfrac12$, the population discounting bias is zero
-+for every $N$ and $\alpha$.
-+\end{lem}
++An empty kernel product is the identity, and a zeroth power here is one,
++including when $\epsilon=1$.
 +\endgraf
-+\begin{proof}[Proof.]
-+The score identities give the exact difference
++Integrating the last simulator draw gives the posterior update
  \begin{equation}
 -|f(x)-\mu(f)|
 -\leq
 -\operatorname{osc}(f).
 -\label{eq:centered-function-oscillation-bound}
-+\nabla_\theta\ell_n(\theta)-\nabla_\theta\ell_n^\alpha(\theta)
-+=\sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r}.
-+\label{eq:population-discount-lag-difference}
++\rho_n(h_{k,i})=
++\frac{\rho_{n-1}\{h_{k,i}M_n(G_n)\}}{\rho_{n-1}M_n(G_n)},
++\qquad M_n(G_n)(x)=\int M_n(x,du)G_n(u).
++\label{eq:posterior-path-update-functional}
  \end{equation}
 -The first positive lag also inherits one contraction from the forward
 -transition.  To see this directly, fix \(x^\star\).  Assumption
@@ -1363,25 +1363,20 @@ index bae10a174..adcef1b6c 100644
 -\end{align}
 -If \(\epsilon<1\), Equation~
 -(\ref{eq:forward-transition-minorization}) permits the decomposition
-+In particular, $\nabla_\theta\ell_n^0(\theta)=\Delta_{n,0}$, whereas
-+$\alpha=1$ gives the exact score. Lemma~\ref{lem:derivative-measure-forgetting}
-+and the geometric-series identity
++Writing the numerator using $H$ therefore gives
  \begin{equation}
 -M_n(x,\cdot)
 -=
 -\epsilon M_n(x^\star,\cdot)
 -+(1-\epsilon)R_n(x,\cdot),
 -\label{eq:forward-transition-splitting}
-+\sum_{r=1}^\infty(1-\alpha^r)\varrho^r
-+=\frac{\varrho}{1-\varrho}-\frac{\alpha\varrho}{1-\alpha\varrho}
-+=\frac{\varrho(1-\alpha)}{(1-\varrho)(1-\alpha\varrho)}
++\Delta_{n,r,i}=
++\frac{\pi_{n-1}[(H-\pi_{n-1}H)
++\{M_n(G_n)-\pi_{n-1}M_n(G_n)\}]}{\pi_{n-1}M_n(G_n)}.
++\label{eq:lag-coefficient-covariance-identity}
  \end{equation}
 -where \(R_n\) is a Markov kernel.  Therefore, for any \(x,x'\),
-+prove the conditional-score bound.
-+\endgraf
-+For the full score, summation by parts retains the cancellation across
-+observation times. The contribution of $h_s$ to the discounted score is
- \begin{align}
+-\begin{align}
 -M_n(G_n)(x)-M_n(G_n)(x')
 -&=
 -(1-\epsilon)
@@ -1391,23 +1386,17 @@ index bae10a174..adcef1b6c 100644
 -(1-\epsilon)\operatorname{osc}(G_n)                        \notag\\
 -&\leq
 -(1-\epsilon)(\bar G-\underbar G).
-+\rho_s(h_s)+\sum_{q=1}^{N-s}\alpha^q
-+\{\rho_{s+q}(h_s)-\rho_{s+q-1}(h_s)\}
-+&=(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q\rho_{s+q}(h_s)
-++\alpha^{N-s}\rho_N(h_s).
-+\label{eq:population-discount-summation-by-parts}
- \end{align}
+-\end{align}
 -Taking the supremum over \(x,x'\) gives
-+Subtract this from $\rho_N(h_s)$ and sum over $s$ to obtain
++The denominator is at least $\underbar G$. Also,
++$M_n(x,\cdot)\geq\epsilon M_n(x^\star,\cdot)$ for any fixed
++$x^\star$, so subtracting this common mass shows that
  \begin{equation}
--\operatorname{osc}\{M_n(G_n)\}
+ \operatorname{osc}\{M_n(G_n)\}
 -\leq
 -(1-\epsilon)(\bar G-\underbar G).
--\label{eq:predictive-potential-oscillation}
-+\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
-+=(1-\alpha)\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}\alpha^q
-+\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
-+\label{eq:population-discount-full-boundary-comparison}
++\leq(1-\epsilon)(\bar G-\underbar G).
+ \label{eq:predictive-potential-oscillation}
  \end{equation}
 -If \(\epsilon=1\), Equation~
 -(\ref{eq:forward-transition-minorization}) implies that \(M_n(x,\cdot)\)
@@ -1428,24 +1417,27 @@ index bae10a174..adcef1b6c 100644
 -}
 -{\underbar G}                                                 \notag\\
 -&\leq
--\frac{2(\bar G-\underbar G)}{\underbar G}
++Combining the last three displays with
++$|f-\pi_{n-1}f|\leq\operatorname{osc}(f)$ gives
++\begin{equation}
++|\Delta_{n,r,i}|\leq
+ \frac{2(\bar G-\underbar G)}{\underbar G}
 -G'(\theta)
 -\begin{cases}
 -(1-\epsilon), & r=1,\\
 -(1-\epsilon)^r, & r\geq2.
 -\end{cases}
--\label{eq:lag-coordinate-geometric-bound}
++G'(\theta)(1-\epsilon)^r.
+ \label{eq:lag-coordinate-geometric-bound}
 -\end{align}
 -For both cases, take
-+We bound each comparison directly, using a likelihood-ratio inequality.
-+For a probability measure $\mu$ and $0<a\leq L\leq b$, put $m=\mu L$.
-+When $a<b$, the chord bound for the convex function $|L-m|$ gives
++\end{equation}
++Choose
  \begin{equation}
 -\varrho=1-\frac{\epsilon}{2}
 -=1-\frac{\underbar M}{2\bar M}\in(0,1).
--\label{eq:population-forgetting-varrho}
-+\mu|L-m|\leq\frac{2(b-m)(m-a)}{b-a}.
-+\label{eq:population-discount-likelihood-chord}
++\varrho=1-\frac{\underbar M}{2\bar M}\in(0,1).
+ \label{eq:population-forgetting-varrho}
  \end{equation}
 -Since $1-\epsilon\leq\varrho$, the two cases in Equation~
 -(\ref{eq:lag-coordinate-geometric-bound}) are both bounded by
@@ -1460,29 +1452,46 @@ index bae10a174..adcef1b6c 100644
 -\qquad 1\leq r<n.
 -\label{eq:lag-vector-geometric-bound}
 -\end{align}
--
++Since $1-\epsilon\leq\varrho$, summing squared coordinate bounds gives
++the result for $r\geq1$. For $r=0$,
++$\|\rho_n(h_n)\|_2\leq\sqrt p\,G'(\theta)$.
++If $\epsilon=1$, $M_n(G_n)$ is constant and every positive-lag
++coefficient is zero.
++\end{proof}
++\endgraf
++\endgraf
++}
+ 
 -\medskip\noindent\emph{Step 5: the zero-lag case.}\quad
 -Finally, when \(r=0\), Equation~
 -(\ref{eq:lag-coefficient-definitions}) and
 -Equation~(\ref{eq:bounded-realized-measurement-score}) give
-+Subtracting the midpoint of the range of $f$ from
-+$\mu[f(L-m)]$ therefore yields
++\kevin{\normalfont\normalsize
++\begin{lem}[Population discounting bias]
++\label{lem:dmop-population-discount-bias}
++Under the conditions of Lemma~\ref{lem:derivative-measure-forgetting},
++suppose $\theta=\phi$ and $\alpha\in[0,1]$. Then
  \begin{align}
 -\|\Delta_{n,0}\|_2
 -&=
 -\|\rho_n(h_n)\|_2                                            \notag\\
 -&\leq
 -\rho_n(\|h_n\|_2)                                            \notag\\
--&\leq
++\left\|
++\nabla_\theta\ell_n^\alpha(\theta)
++-\nabla_\theta\ell_n(\theta)
++\right\|_2
+ &\leq
 -\sqrt p\,G'(\theta)                                         \notag\\
--&\leq
++C\sqrt p\,G'(\theta)
++\sum_{r=1}^{n-1}(1-\alpha^r)\varrho^r                       \notag\\
+ &\leq
 -C\sqrt p\,G'(\theta)\varrho^0.
 -\label{eq:current-lag-vector-bound}
-+\left|\frac{\mu(fL)}{\mu L}-\mu f\right|
-+&\leq\frac{\operatorname{osc}(f)}{2m}\mu|L-m|\notag\\
-+&\leq\operatorname{osc}(f)\frac{a+b-m-ab/m}{b-a}
-+\leq\operatorname{osc}(f)\frac{\sqrt b-\sqrt a}{\sqrt b+\sqrt a}.
-+\label{eq:population-discount-bayes-range-bound}
++C\sqrt p\,G'(\theta)
++\frac{\varrho(1-\alpha)}
++{(1-\varrho)(1-\alpha\varrho)}.
++\label{eq:dmop-population-discount-bias}
  \end{align}
 -Equations~(\ref{eq:lag-vector-geometric-bound}) and
 -(\ref{eq:current-lag-vector-bound}) prove
@@ -1519,9 +1528,51 @@ index bae10a174..adcef1b6c 100644
 -current pair $(X_t,\partial_\theta X_t)$, with constants depending on the
 -joint-transition bounds. Under (A6), Lemma~\ref{lem:dmop-alpha-variance}
 -handles $h_t$ by decomposing its simulator history.
--\end{lem}
++For the full score,
++\begin{align}
++&\left\|
++\nabla_\theta\ell(\theta)
++-\nabla_\theta\ell^\alpha(\theta)
++\right\|_2                                                     \notag\\
++&\quad\leq
++C\sqrt p\,G'(\theta)\varrho(1-\alpha)
++\sum_{q=0}^{N-2}(N-1-q)(\alpha\varrho)^q                    \notag\\
++&\quad=
++C\sqrt p\,G'(\theta)\varrho(1-\alpha)
++\frac{(N-1)-N\alpha\varrho+(\alpha\varrho)^N}
++{(1-\alpha\varrho)^2}                                       \notag\\
++&\quad\leq
++C(N-1)\sqrt p\,G'(\theta)
++\frac{\varrho(1-\alpha)}{1-\alpha\varrho}.
++\label{eq:dmop-full-population-discount-bias}
++\end{align}
++For $N=1$, the finite sum is empty, the displayed fraction is zero, and
++the full-score difference is zero.
++The dependence on the transition bounds can be sharpened further.
++With the existing $\varrho=1-\underbar M/(2\bar M)$ from Equation~
++(\ref{eq:population-forgetting-varrho}), for $\tfrac12<\varrho<1$,
++\begin{align}
++&\left\|\nabla_\theta\ell(\theta)
++-\nabla_\theta\ell^\alpha(\theta)\right\|_2                    \notag\\
++&\quad\leq
++2\sqrt p\,G'(\theta)
++\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}(1-\alpha)
++\sum_{q=0}^{N-2}(N-1-q)
++\left\{\alpha\frac{2\varrho-1}{3-2\varrho}\right\}^{q}       \notag\\
++&\quad\leq
++2(N-1)\sqrt p\,G'(\theta)
++\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++\frac{(1-\alpha)(3-2\varrho)}
++{3-2\varrho-\alpha(2\varrho-1)}.
++\label{eq:population-discount-sharp-transition-bound}
++\end{align}
++If every transition is independent of its starting location, in
++particular if $\varrho=\tfrac12$, the population discounting bias is zero
++for every $N$ and $\alpha$.
+ \end{lem}
 -
--\begin{proof}[Proof.]
++\endgraf
+ \begin{proof}[Proof.]
 -We telescope the bias over particle updates, using semigroup contraction.
 -
 -\medskip\noindent\emph{Step 1: prediction-to-filtering reduction.}\quad
@@ -1529,18 +1580,13 @@ index bae10a174..adcef1b6c 100644
 -Feynman--Kac model defined in Section~\ref{appendix:feynman}.
 -The current-location marginal of
 -$\rho_t$ is the filtering distribution, and hence
-+The last inequality uses $m+ab/m\geq2\sqrt{ab}$. For $a=b$, both
-+sides are zero.
-+\endgraf
-+Write $\epsilon=\underbar M/\bar M=2(1-\varrho)$ and, for this proof,
++The score identities give the exact difference
  \begin{equation}
 -\rho_t(f)=\pi_t(f)=\Psi_t(\eta_t)(f).
 -\label{eq:current-state-posterior-filter-identity}
-+\beta=\frac{1-\epsilon}{1+\epsilon}
-+=\frac{2\varrho-1}{3-2\varrho},
-+\qquad
-+\gamma=\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
-+=\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}.
++\nabla_\theta\ell_n(\theta)-\nabla_\theta\ell_n^\alpha(\theta)
++=\sum_{r=1}^{n-1}(1-\alpha^r)\Delta_{n,r}.
++\label{eq:population-discount-lag-difference}
  \end{equation}
 -Conditionally on the prediction cloud $\eta_t^J$, multinomial resampling
 -draws the filtering particles independently from $\Psi_t(\eta_t^J)$.
@@ -1559,31 +1605,49 @@ index bae10a174..adcef1b6c 100644
 -
 -\medskip\noindent\emph{Step 2: normalized-semigroup contraction.}\quad
 -Take $\Phi_{t,t}$ to be the identity. For $1\leq p\leq t$, define
--\begin{align}
++In particular, $\nabla_\theta\ell_n^0(\theta)=\Delta_{n,0}$, whereas
++$\alpha=1$ gives the exact score. Lemma~\ref{lem:derivative-measure-forgetting}
++and the geometric-series identity
++\begin{equation}
++\sum_{r=1}^\infty(1-\alpha^r)\varrho^r
++=\frac{\varrho}{1-\varrho}-\frac{\alpha\varrho}{1-\alpha\varrho}
++=\frac{\varrho(1-\alpha)}{(1-\varrho)(1-\alpha\varrho)}
++\end{equation}
++prove the conditional-score bound.
++\endgraf
++For the full score, summation by parts retains the cancellation across
++observation times. The contribution of $h_s$ to the discounted score is
+ \begin{align}
 -Q_{t,t}(f)(x)
 -&=G_t(x)f(x),                                                \notag\\
 -Q_{p,t}(f)(x)
 -&=G_p(x)M_{p+1}\{Q_{p+1,t}(f)\}(x),
 -\qquad p<t.
 -\label{eq:weak-bias-semigroup-definition}
--\end{align}
++\rho_s(h_s)+\sum_{q=1}^{N-s}\alpha^q
++\{\rho_{s+q}(h_s)-\rho_{s+q-1}(h_s)\}
++&=(1-\alpha)\sum_{q=0}^{N-s-1}\alpha^q\rho_{s+q}(h_s)
+++\alpha^{N-s}\rho_N(h_s).
++\label{eq:population-discount-summation-by-parts}
+ \end{align}
 -The definitions of $\Phi_{p,t}$ and $\Psi_t$ give, for every probability
 -measure $\mu$,
-+For two backward kernels $B_t(x,\cdot)$ and $B_t(x',\cdot)$,
-+the former is a likelihood tilt of the latter by
++Subtract this from $\rho_N(h_s)$ and sum over $s$ to obtain
  \begin{equation}
 -\Psi_t\{\Phi_{p,t}(\mu)\}(f)
 -=
 -\frac{\mu Q_{p,t}(f)}{\mu Q_{p,t}(1)}.
 -\label{eq:normalized-feynman-kac-semigroup}
-+L(u)=\frac{f_{X_t\mid X_{t-1}}(x\mid u;\theta)}
-+{f_{X_t\mid X_{t-1}}(x'\mid u;\theta)},
-+\qquad \epsilon\leq L(u)\leq\epsilon^{-1}.
++\nabla_\theta\ell(\theta)-\nabla_\theta\ell^\alpha(\theta)
++=(1-\alpha)\sum_{s=1}^{N-1}\sum_{q=0}^{N-s-1}\alpha^q
++\{\rho_N(h_s)-\rho_{s+q}(h_s)\}.
++\label{eq:population-discount-full-boundary-comparison}
  \end{equation}
 -
 -For $p<t$,
-+Equation~(\ref{eq:population-discount-bayes-range-bound}), with
-+$a=\epsilon$ and $b=\epsilon^{-1}$, gives
++We bound each comparison directly, using a likelihood-ratio inequality.
++For a probability measure $\mu$ and $0<a\leq L\leq b$, put $m=\mu L$.
++When $a<b$, the chord bound for the convex function $|L-m|$ gives
  \begin{equation}
 -Q_{p,t}(1)(x)
 -=
@@ -1591,11 +1655,13 @@ index bae10a174..adcef1b6c 100644
 -f_{X_{p+1}\mid X_p}(u\mid x;\theta)
 -Q_{p+1,t}(1)(u)\,du.
 -\label{eq:weak-bias-future-normalizer}
-+\operatorname{osc}(B_tf)\leq\beta\operatorname{osc}(f).
-+\label{eq:population-discount-sharp-backward-contraction}
++\mu|L-m|\leq\frac{2(b-m)(m-a)}{b-a}.
++\label{eq:population-discount-likelihood-chord}
  \end{equation}
 -Thus, for every $x,x'$,
--\begin{align}
++Subtracting the midpoint of the range of $f$ from
++$\mu[f(L-m)]$ therefore yields
+ \begin{align}
 -\frac{Q_{p,t}(1)(x)}{Q_{p,t}(1)(x')}
 -&\leq
 -\frac{
@@ -1606,35 +1672,43 @@ index bae10a174..adcef1b6c 100644
 -&=
 -\frac{\bar G\bar M}{\underbar G\underbar M}.
 -\label{eq:weak-bias-normalizer-ratio}
--\end{align}
++\left|\frac{\mu(fL)}{\mu L}-\mu f\right|
++&\leq\frac{\operatorname{osc}(f)}{2m}\mu|L-m|\notag\\
++&\leq\operatorname{osc}(f)\frac{a+b-m-ab/m}{b-a}
++\leq\operatorname{osc}(f)\frac{\sqrt b-\sqrt a}{\sqrt b+\sqrt a}.
++\label{eq:population-discount-bayes-range-bound}
+ \end{align}
 -For $p=t$, the same ratio is at most $\bar G/\underbar G$. Put
-+For $s\leq t=s+q<N$, future observations are conditionally independent
-+of the extended history through $t$ given $X_t$. The projection argument
-+in Lemma~\ref{lem:derivative-measure-forgetting} thus gives
++The last inequality uses $m+ab/m\geq2\sqrt{ab}$. For $a=b$, both
++sides are zero.
++\endgraf
++Write $\epsilon=\underbar M/\bar M=2(1-\varrho)$ and, for this proof,
  \begin{equation}
 -R=\frac{\bar G\bar M}{\underbar G\underbar M}\geq1.
 -\label{eq:weak-bias-normalizer-constant}
-+H_{s,t,i}(x):=\E_{\rho_N}(h_{s,i}\mid X_t=x)
-+=\E_{\rho_t}(h_{s,i}\mid X_t=x)
-+=(B_t\cdots B_{s+1}\bar h_{s,i})(x).
-+\label{eq:population-discount-common-conditional-past}
++\beta=\frac{1-\epsilon}{1+\epsilon}
++=\frac{2\varrho-1}{3-2\varrho},
++\qquad
++\gamma=\frac{1-\sqrt\epsilon}{1+\sqrt\epsilon}
++=\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}.
  \end{equation}
 -Then
-+The kernel product is empty if $q=0$. Since
-+$\operatorname{osc}(\bar h_{s,i})\leq2G'(\theta)$,
++For two backward kernels $B_t(x,\cdot)$ and $B_t(x',\cdot)$,
++the former is a likelihood tilt of the latter by
  \begin{equation}
 -\sup_{x,x'}
 -\frac{Q_{p,t}(1)(x)}{Q_{p,t}(1)(x')}
 -\leq R,
 -\qquad 1\leq p\leq t.
 -\label{eq:weak-bias-uniform-normalizer-ratio}
-+\operatorname{osc}(H_{s,t,i})\leq2G'(\theta)\beta^q.
-+\label{eq:population-discount-partial-smoother-oscillation}
++L(u)=\frac{f_{X_t\mid X_{t-1}}(x\mid u;\theta)}
++{f_{X_t\mid X_{t-1}}(x'\mid u;\theta)},
++\qquad \epsilon\leq L(u)\leq\epsilon^{-1}.
  \end{equation}
 -
 -For $p\leq s<t$, the normalized forward kernel is
-+The future likelihood in Equation~(\ref{eq:population-score-future-likelihood})
-+satisfies
++Equation~(\ref{eq:population-discount-bayes-range-bound}), with
++$a=\epsilon$ and $b=\epsilon^{-1}$, gives
  \begin{equation}
 -P_{s,s+1}^{(t)}(x,A)
 -=
@@ -1648,13 +1722,13 @@ index bae10a174..adcef1b6c 100644
 -Q_{s+1,t}(1)(u)\,du
 -}.
 -\label{eq:weak-bias-forward-normalized-kernel}
-+L_{t,N}(x)=\int M_{t+1}(x,du)G_{t+1}(u)L_{t+1,N}(u),
-+\qquad \epsilon\leq\frac{L_{t,N}(x)}{L_{t,N}(x')}\leq\epsilon^{-1}.
-+\label{eq:population-discount-future-likelihood-ratio}
++\operatorname{osc}(B_tf)\leq\beta\operatorname{osc}(f).
++\label{eq:population-discount-sharp-backward-contraction}
  \end{equation}
 -Define, only within this proof,
-+The ratio bound follows from the transition bounds on the first kernel.
-+The two expectations being compared are consequently
++For $s\leq t=s+q<N$, future observations are conditionally independent
++of the extended history through $t$ given $X_t$. The projection argument
++in Lemma~\ref{lem:derivative-measure-forgetting} thus gives
  \begin{equation}
 -\nu_{s,t}(A)
 -=
@@ -1664,16 +1738,9 @@ index bae10a174..adcef1b6c 100644
 -\displaystyle\int Q_{s+1,t}(1)(u)\,du
 -}.
 -\label{eq:weak-bias-forward-minorizing-measure}
-+\rho_N(h_{s,i})=\frac{\pi_t(H_{s,t,i}L_{t,N})}{\pi_t(L_{t,N})},
-+\qquad \rho_t(h_{s,i})=\pi_t(H_{s,t,i}).
-+\label{eq:population-discount-two-boundary-expectations}
- \end{equation}
+-\end{equation}
 -Assumption~{\refAssumpBoundedProcess} gives
-+Here $\sup L_{t,N}/\inf L_{t,N}\leq\epsilon^{-1}$, so the same
-+likelihood-tilt inequality bounds their difference by
-+$\gamma\operatorname{osc}(H_{s,t,i})$. Summing squared coordinate bounds
-+gives
- \begin{align}
+-\begin{align}
 -P_{s,s+1}^{(t)}(x,A)
 -&\geq
 -\frac{
@@ -1684,14 +1751,7 @@ index bae10a174..adcef1b6c 100644
 -&=
 -\frac{\underbar M}{\bar M}\nu_{s,t}(A).
 -\label{eq:weak-bias-forward-minorization}
-+\|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
-+&\leq2\sqrt p\,G'(\theta)\gamma\beta^q\notag\\
-+&=2\sqrt p\,G'(\theta)
-+\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
-+\left(\frac{2\varrho-1}{3-2\varrho}\right)^q
-+\leq2\sqrt p\,G'(\theta)\varrho^{q+1},
-+\label{eq:population-discount-vector-boundary-comparison}
- \end{align}
+-\end{align}
 -Consequently, by Equation~
 -(\ref{eq:population-forgetting-varrho}), the Dobrushin coefficient of
 -every kernel in Equation~
@@ -1704,9 +1764,15 @@ index bae10a174..adcef1b6c 100644
 -P_{p,p+1}^{(t)}P_{p+1,p+2}^{(t)}\cdots
 -P_{t-1,t}^{(t)}f.
 -\label{eq:weak-bias-forward-kernel-factorization}
--\end{equation}
++H_{s,t,i}(x):=\E_{\rho_N}(h_{s,i}\mid X_t=x)
++=\E_{\rho_t}(h_{s,i}\mid X_t=x)
++=(B_t\cdots B_{s+1}\bar h_{s,i})(x).
++\label{eq:population-discount-common-conditional-past}
+ \end{equation}
 -It follows that
--\begin{equation}
++The kernel product is empty if $q=0$. Since
++$\operatorname{osc}(\bar h_{s,i})\leq2G'(\theta)$,
+ \begin{equation}
 -\operatorname{osc}
 -\left\{
 -\frac{Q_{p,t}(f)}{Q_{p,t}(1)}
@@ -1714,15 +1780,22 @@ index bae10a174..adcef1b6c 100644
 -\leq
 -\varrho^{t-p}\operatorname{osc}(f).
 -\label{eq:weak-bias-normalized-semigroup-contraction}
--\end{equation}
++\operatorname{osc}(H_{s,t,i})\leq2G'(\theta)\beta^q.
++\label{eq:population-discount-partial-smoother-oscillation}
+ \end{equation}
 -
 -\medskip\noindent\emph{Step 3: one complete particle update.}\quad
 -For one selection--mutation update, if $p=1$, put
 -$\mu=\eta_1=\pi_0M_1$. For $p\geq2$, condition on $\eta_{p-1}^J$ and put
--\begin{equation}
++The future likelihood in Equation~(\ref{eq:population-score-future-likelihood})
++satisfies
+ \begin{equation}
 -\mu=\Phi_p(\eta_{p-1}^J).
 -\label{eq:weak-bias-local-conditional-law}
--\end{equation}
++L_{t,N}(x)=\int M_{t+1}(x,du)G_{t+1}(u)L_{t+1,N}(u),
++\qquad \epsilon\leq\frac{L_{t,N}(x)}{L_{t,N}(x')}\leq\epsilon^{-1}.
++\label{eq:population-discount-future-likelihood-ratio}
+ \end{equation}
 -In either case, the particles forming $\eta_p^J$ are conditionally
 -independent with common law $\mu$. Define the normalizer $q$ and
 -centered fluctuation $d$ by
@@ -1739,14 +1812,23 @@ index bae10a174..adcef1b6c 100644
 -\label{eq:weak-bias-local-functions}
 -\end{align}
 -Then
--\begin{equation}
++The ratio bound follows from the transition bounds on the first kernel.
++The two expectations being compared are consequently
+ \begin{equation}
 -\mu(q)=1,
 -\qquad
 -\mu(d)=0,
 -\label{eq:weak-bias-local-centering}
--\end{equation}
++\rho_N(h_{s,i})=\frac{\pi_t(H_{s,t,i}L_{t,N})}{\pi_t(L_{t,N})},
++\qquad \rho_t(h_{s,i})=\pi_t(H_{s,t,i}).
++\label{eq:population-discount-two-boundary-expectations}
+ \end{equation}
 -and Equation~(\ref{eq:normalized-feynman-kac-semigroup}) gives
--\begin{align}
++Here $\sup L_{t,N}/\inf L_{t,N}\leq\epsilon^{-1}$, so the same
++likelihood-tilt inequality bounds their difference by
++$\gamma\operatorname{osc}(H_{s,t,i})$. Summing squared coordinate bounds
++gives
+ \begin{align}
 -&\Psi_t\{\Phi_{p,t}(\eta_p^J)\}(f)
 --\Psi_t\{\Phi_{p,t}(\mu)\}(f)                              \notag\\
 -&\quad=
@@ -1756,7 +1838,14 @@ index bae10a174..adcef1b6c 100644
 -&\quad=
 -\frac{\eta_p^J(d)}{\eta_p^J(q)}.
 -\label{eq:weak-bias-local-ratio}
--\end{align}
++\|\rho_N(h_s)-\rho_{s+q}(h_s)\|_2
++&\leq2\sqrt p\,G'(\theta)\gamma\beta^q\notag\\
++&=2\sqrt p\,G'(\theta)
++\frac{1-\sqrt{2(1-\varrho)}}{1+\sqrt{2(1-\varrho)}}
++\left(\frac{2\varrho-1}{3-2\varrho}\right)^q
++\leq2\sqrt p\,G'(\theta)\varrho^{q+1},
++\label{eq:population-discount-vector-boundary-comparison}
+ \end{align}
 -
 -Equation~(\ref{eq:weak-bias-uniform-normalizer-ratio}) implies
 -\begin{equation}
@@ -2200,8 +2289,10 @@ index bae10a174..adcef1b6c 100644
 -\label{eq:coordinate-conditional-score-direct-bias}
 +\begin{proof}
 +\kevin{\normalfont\normalsize
-+By Equation~(\ref{eq:population-conditional-score-path-decomposition}),
-+the time-$n$ score difference is
++Subtract the score identities in Equations~
++(\ref{eq:exact-population-conditional-score-path-decomposition}) and
++(\ref{eq:population-conditional-score-path-decomposition}) at the fixed
++reference $\phi=\theta_0$. By Equation~(\ref{eq:data-average-posterior-law}),
 +\begin{align}
 +e_n^\alpha
 +&:=\nabla_\theta\ell_n(\theta_0)
@@ -2211,8 +2302,23 @@ index bae10a174..adcef1b6c 100644
 +      -\E_{\theta_0}(h_s\mid\mathcal F_{n-1}^Y)\right\}.
 +\label{eq:data-averaged-score-increment}
 +\end{align}
-+The zero-lag term cancels. Applying the tower property to each remaining
-+term gives
++The current contribution $\rho_n(h_n)$ cancels. For each $s<n$, both
++conditional expectations concern the same random variable
++$h_s(U_{0:s},Y_s)$, with $Y_s$ already observed at time $n-1$.
++The tower property gives
++\[
++\E_{\theta_0}\!\left[
++\E_{\theta_0}(h_s\mid\mathcal F_n^Y)
++\mid\mathcal F_{n-1}^Y\right]
++=\E_{\theta_0}(h_s\mid\mathcal F_{n-1}^Y).
++\]
++For completeness, if $Z=\E(h_s\mid\mathcal F_n^Y)$, then for every
++$A\in\mathcal F_{n-1}^Y\subseteq\mathcal F_n^Y$,
++$\E(\mathbf1_AZ)=\E(\mathbf1_Ah_s)$ by the definition of conditional
++expectation. Conditioning $Z$ on $\mathcal F_{n-1}^Y$ therefore gives
++$\E(h_s\mid\mathcal F_{n-1}^Y)$ by the same definition
++\citep[pp.~1--3]{wolpert08conditional}. Since the coefficients
++$1-\alpha^{n-s}$ are deterministic, it follows that
 +\[
 +\E_{\theta_0}(e_n^\alpha\mid\mathcal F_{n-1}^Y)=0.
 +\]
@@ -2448,12 +2554,7 @@ index bae10a174..adcef1b6c 100644
 -\leq
 -G'(\theta)\sum_{k=1}^{t}\alpha^{t-k}.
 -\label{eq:discounted-score-supremum-statement}
-+D_{x_t}\log f_{Y_n\mid X_n}
-+\bigl(y_n^*\mid X_n^\theta(x_t,\omega_{t+1:n});\theta\bigr)
-+\right\|_2
-+\leq C\kappa^{n-t},\qquad C<\infty,\quad 0<\kappa<1.
-+\label{eq:measurement-sensitivity-assumption}
- \end{equation}
+-\end{equation}
 -\end{lem}
 -
 -\begin{proof}[Proof.]
@@ -9138,7 +9239,9 @@ index bae10a174..adcef1b6c 100644
 -\begin{align}
 -\left\|
 -\nabla_\theta\hat\ell^1(\theta)-\nabla_\theta\ell(\theta)
--\right\|_2
++D_{x_t}\log f_{Y_n\mid X_n}
++\bigl(y_n^*\mid X_n^\theta(x_t,\omega_{t+1:n});\theta\bigr)
+ \right\|_2
 -&\leq
 -m(\xi_N)\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)
 -+\rho_N\left(\left\|\sum_{s=1}^{N}h_s\right\|_2\right)       \notag\\
@@ -9554,7 +9657,9 @@ index bae10a174..adcef1b6c 100644
 -J(1+\log J)^2\gtrsim N^3&0&N^3/J.
 -\end{array}
 -\label{eq:alpha-tuning-soft-lag-regimes}
--\end{equation}
++\leq C\kappa^{n-t},\qquad C<\infty,\quad 0<\kappa<1.
++\label{eq:measurement-sensitivity-assumption}
+ \end{equation}
 -The first boundary is where the two particle coefficients have the
 -same order. In the middle regime, compare the balanced bound with the
 -independent terminal bound:

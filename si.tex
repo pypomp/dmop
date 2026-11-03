@@ -2519,9 +2519,19 @@ At $\theta=\phi$, add and subtract the population discounted score:
 The first term is particle error and the second is population discounting
 error. We first bound the population term for fixed observations and
 under the data-generating law, then bound the particle term.
-Write $\nabla_\theta\ell_n^\alpha(\theta)$ for the $n$th conditional score
-of the population recursion. At $\theta=\phi$ and $\alpha=1$, it equals
-$\nabla_\theta\ell_n(\theta)$. Along each selected lineage,
+The reference parameter $\phi$ is held fixed during differentiation.
+More explicitly, our notation for the population score means
+\[
+\nabla_\theta\ell_n^\alpha(\phi)
+:=\left.\partial_\theta\log L_n^\alpha(\theta;\phi)
+\right|_{\theta=\phi}.
+\]
+This is the derivative computed by the stop-gradient construction.
+Differentiating along the diagonal $L_n^\alpha(\theta;\theta)$ would
+also differentiate the reference law and would give the ordinary likelihood
+score, since $L_n^\alpha(\theta;\theta)=p_\theta(y_n^*\mid y_{1:n-1}^*)$.
+We derive the population score from the same weight recursion as the
+particle score. Along each selected lineage,
 \begin{equation}
 \left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
 =
@@ -2545,8 +2555,16 @@ Equation~(\ref{eq:actual-path-score}). This follows by differentiating
 at $\theta=\phi$.
 \endgraf
 \paragraph*{Score identities.}
-Differentiation holds the simulator draws and reference resampling indices
-fixed and includes the dependence of each state on $\theta$. The
+Let $U=(U_0,\ldots,U_N)$ contain the independent, parameter-free
+simulator draws, including initialization, with joint law $\mu$.
+Write $X_s^\theta=X_s^\theta(U_{0:s})$ and
+$g_s^\theta(U)=f_{Y_s\mid X_s}(y_s^*\mid X_s^\theta(U_{0:s});\theta)$.
+Thus the likelihood is
+\[
+p_\theta(y_{1:t}^*)=\int\prod_{s=1}^t g_s^\theta(u)\,\mu(du).
+\]
+Differentiation holds $U$ and the reference resampling indices fixed.
+It includes the dependence of each state on $\theta$. The
 measurement gradient on a simulator history satisfies
 \begin{align}
 h_k&=\left.\nabla_\theta\log g_k^{A,F,\theta}\right|_{\theta=\phi},
@@ -2570,17 +2588,23 @@ theorem, so dominated convergence gives
 =\E_U\left[\nabla_\theta\prod_{s=1}^tG_s(X_s)\right].
 \label{eq:finite-horizon-differentiation-under-expectation}
 \end{equation}
-Here $\E_U$ integrates the independent base simulator draws. At
-$\theta=\phi$, their posterior law through time $t$ is
+Here $\E_U$ integrates $\mu$. On the reference pass, propagation appends
+a fresh simulator draw and selection weights each history by $g_t^\phi$.
+Starting from $\mu$, successive selections therefore give the population
+history law
 \begin{equation}
-\rho_t(h)=
-\frac{\E_U[h\prod_{s=1}^tG_s(X_s)]}
-{\E_U[\prod_{s=1}^tG_s(X_s)]}.
+\rho_t^\phi(du)=
+\frac{\prod_{s=1}^t g_s^\phi(u)\,\mu(du)}
+{\int\prod_{s=1}^t g_s^\phi(v)\,\mu(dv)},
+\qquad \rho_t=\rho_t^\phi.
 \label{eq:canonical-extended-posterior-path-law}
 \end{equation}
-It includes the derivative history needed to evaluate $h_k$, and its
-current-state marginal is $\pi_t$. Particle-error expectations instead
-integrate the particle-filter law, including resampling. Let
+This is Bayes' formula for the simulator draws given $y_{1:t}^*$ under
+$\phi$. The state and its parameter derivative are both functions of
+these draws, so this law also specifies the derivative history.
+Its current-state marginal is $\pi_t$. Finite particle histories
+approximate $\rho_t^\phi$; their empirical means need not be unbiased.
+Let
 \begin{equation}
 m(\xi_t)=\frac1J\sum_{j=1}^J\delta_{\xi_{t,j}},
 \qquad m(\xi_t)(h_k)=\frac1J\sum_{j=1}^Jh_k(\xi_{t,j}),
@@ -2602,9 +2626,16 @@ w_{n,j}^{P,\theta}=(w_{n-1,j}^{F,\theta})^\alpha,
 \frac{g_{n,k_j}^{\theta}}{g_{n,k_j}^{\phi}}.
 \label{eq:filtered-weight-current-resampling-index}
 \end{equation}
-All these weights equal one at $\theta=\phi$. Differentiating the two
-sample averages defining the after-resampling conditional likelihood
-therefore yields
+The after-resampling likelihood increment is
+\[
+\widehat L_n^{A,\alpha}(\theta;\phi)
+=\widehat L_n^\phi
+\frac{J^{-1}\sum_jw_{n,j}^{F,\theta}}
+     {J^{-1}\sum_jw_{n,j}^{P,\theta}}.
+\]
+The factor $\widehat L_n^\phi$ is frozen during differentiation, and
+both sets of weights equal one at $\theta=\phi$. Differentiating the
+log numerator and log denominator therefore yields
 \begin{align}
 \nabla_\theta\hat\ell_n^\alpha(\theta)
 &=\frac1J\sum_j\left.\nabla_\theta\log w_{n,j}^{F,\theta}\right|_{\theta=\phi}
@@ -2622,15 +2653,59 @@ Define the particle and population lag coefficients by
 \quad 1\leq r<n.
 \label{eq:lag-coefficient-definitions}
 \end{align}
-Differentiation under the simulator expectation gives
+For the population calculation, keep $\phi$ fixed and apply the weight
+recursion to one simulator history:
+\[
+w_n^{F,\theta}(u)
+=\prod_{s=1}^n\left\{\frac{g_s^\theta(u)}{g_s^\phi(u)}\right\}^{\alpha^{n-s}},
+\qquad
+w_n^{P,\theta}=(w_{n-1}^{F,\theta})^\alpha.
+\]
+The reference law satisfies
+$\rho_n^\phi(q)=\rho_{n-1}^\phi(g_n^\phi q)/L_n^\phi$, where
+$L_n^\phi=\rho_{n-1}^\phi(g_n^\phi)$ and the unused future draws retain
+their original law. Since $w_n^{F,\theta}=w_n^{P,\theta}g_n^\theta/g_n^\phi$,
+the before- and after-resampling population increments agree:
+\[
+L_n^\alpha(\theta;\phi)
+=\frac{\rho_{n-1}^\phi(g_n^\theta w_n^{P,\theta})}
+       {\rho_{n-1}^\phi(w_n^{P,\theta})}
+=L_n^\phi\frac{\rho_n^\phi(w_n^{F,\theta})}
+                  {\rho_{n-1}^\phi(w_n^{P,\theta})}.
+\]
+All expectations here are with respect to the fixed reference law.
+At $\theta=\phi$, the weights equal one and their derivatives are
+\[
+\left.\partial_\theta w_n^{F,\theta}\right|_{\theta=\phi}
+=\sum_{s=1}^n\alpha^{n-s}h_s,
+\qquad
+\left.\partial_\theta w_n^{P,\theta}\right|_{\theta=\phi}
+=\sum_{s=1}^{n-1}\alpha^{n-s}h_s.
+\]
+The local bounds used above also justify differentiating these fixed-horizon
+weight integrals: each ratio $g_s^\theta/g_s^\phi$ and its derivative is
+bounded on the parameter neighborhood. Consequently,
+\[
+\left.\partial_\theta\log L_n^\alpha(\theta;\phi)\right|_{\theta=\phi}
+=\rho_n\left(\sum_{s=1}^n\alpha^{n-s}h_s\right)
+-\rho_{n-1}\left(\sum_{s=1}^{n-1}\alpha^{n-s}h_s\right).
+\]
+The second term comes from the prediction-weight denominator.
+\endgraf
+For comparison, differentiating the likelihood integral gives
 \begin{equation}
-\nabla_\theta\log\E_U\left[\prod_{s=1}^nG_s(X_s)\right]
+\left.\partial_\theta\log p_\theta(y_{1:n}^*)\right|_{\theta=\phi}
+=\frac{\int\!\left(\sum_{s=1}^n h_s(u)\right)
+                 \prod_{s=1}^n g_s^\phi(u)\,\mu(du)}
+       {\int\prod_{s=1}^n g_s^\phi(u)\,\mu(du)}
 =\sum_{s=1}^n\rho_n(h_s).
 \label{eq:full-population-score-path-average}
 \end{equation}
-Subtracting its time-$(n-1)$ version, and differentiating the two
-population weighted averages in the MOP-$\alpha$ recursion, respectively,
-give
+This is Fisher's identity applied to the simulator draws; the usual
+state-trajectory version is given by \citet[Equation~(4)]{poyiadjis11}.
+Here process and initialization derivatives enter through $X_s^\theta(U)$,
+while $\mu$ is parameter-free. Subtracting the time-$(n-1)$ likelihood
+score, and collecting the terms in the discounted derivative, gives
 \begin{align}
 \nabla_\theta\ell_n(\theta)
 &=\rho_n(h_n)+\sum_{r=1}^{n-1}
@@ -3123,8 +3198,10 @@ independent of $N$ and $\alpha$. Neither (A6) nor (A6-J) is required.}
 
 \begin{proof}
 \kevin{\normalfont\normalsize
-By Equation~(\ref{eq:population-conditional-score-path-decomposition}),
-the time-$n$ score difference is
+Subtract the score identities in Equations~
+(\ref{eq:exact-population-conditional-score-path-decomposition}) and
+(\ref{eq:population-conditional-score-path-decomposition}) at the fixed
+reference $\phi=\theta_0$. By Equation~(\ref{eq:data-average-posterior-law}),
 \begin{align}
 e_n^\alpha
 &:=\nabla_\theta\ell_n(\theta_0)
@@ -3134,8 +3211,23 @@ e_n^\alpha
       -\E_{\theta_0}(h_s\mid\mathcal F_{n-1}^Y)\right\}.
 \label{eq:data-averaged-score-increment}
 \end{align}
-The zero-lag term cancels. Applying the tower property to each remaining
-term gives
+The current contribution $\rho_n(h_n)$ cancels. For each $s<n$, both
+conditional expectations concern the same random variable
+$h_s(U_{0:s},Y_s)$, with $Y_s$ already observed at time $n-1$.
+The tower property gives
+\[
+\E_{\theta_0}\!\left[
+\E_{\theta_0}(h_s\mid\mathcal F_n^Y)
+\mid\mathcal F_{n-1}^Y\right]
+=\E_{\theta_0}(h_s\mid\mathcal F_{n-1}^Y).
+\]
+For completeness, if $Z=\E(h_s\mid\mathcal F_n^Y)$, then for every
+$A\in\mathcal F_{n-1}^Y\subseteq\mathcal F_n^Y$,
+$\E(\mathbf1_AZ)=\E(\mathbf1_Ah_s)$ by the definition of conditional
+expectation. Conditioning $Z$ on $\mathcal F_{n-1}^Y$ therefore gives
+$\E(h_s\mid\mathcal F_{n-1}^Y)$ by the same definition
+\citep[pp.~1--3]{wolpert08conditional}. Since the coefficients
+$1-\alpha^{n-s}$ are deterministic, it follows that
 \[
 \E_{\theta_0}(e_n^\alpha\mid\mathcal F_{n-1}^Y)=0.
 \]

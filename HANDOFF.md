@@ -1,5 +1,31 @@
 # Handoff
 
+## November 3: derive S176 directly from DMOP
+
+- Kevin challenged the posterior representation in S176 and requested
+  an explicit derivation and citations. Added the actual particle
+  likelihood ratio, reference posterior on parameter-free simulator
+  draws, population before/after ratio equality, and both differentiated
+  weight integrals. The prediction-weight denominator supplies the
+  historical posterior subtraction.
+- The reference phi is fixed during differentiation, then theta=phi is
+  imposed. Differentiating along the diagonal instead gives the ordinary
+  likelihood score. The derivative history is a function of the same
+  simulator draws; no process-density derivative is omitted.
+- Derived the undiscounted score by differentiating the likelihood
+  integral and cited Poyiadjis et al. (2011), Eq. (4), for Fisher's
+  identity. Derived the tower property from its defining indicator-event
+  equality and cited Wolpert's Conditional Expectation lecture notes,
+  pp. 1--3 (Duke, Spring 2008). Both sources were checked directly.
+- Targeted independent review of the actual algorithm and edited proof
+  found no remaining gap. Equations S176 and S177 retain their numbering.
+  The new derivation is on pages S-23--S-25, with S176/S177 on S-31--S-32.
+- Rebuilt with repository latexmk; no undefined references, overfull
+  boxes or LaTeX errors. Visually inspected the new derivation and proof
+  pages and repaired one awkward page break. Native standalone compiler
+  was also invoked; this multi-file project requires the repository build.
+  Refreshed the tracked SI PDF and cumulative review patch. Main untouched.
+
 ## November 3: simplify S7 and average population error over data
 
 - Work is isolated in `dmop-covariance-mse` on branch `covariance-mse`.
