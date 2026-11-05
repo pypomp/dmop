@@ -1,5 +1,16 @@
 # Handoff
 
+## November 5: publish the submission PDFs on main
+
+- User requested Git-ignore exceptions for the JRSSB manuscript and SI.
+  Added explicit root-only exceptions for ms-jrssb.pdf and si.pdf; other
+  generated documents and auxiliary files remain ignored. Added PDF links
+  to the root README and corrected jrssb/README.md's tracking instructions.
+- Pulled main (already current), regenerated ms-jrssb.tex from ms.tex
+  without changing tracked source, and rebuilt both PDFs with the shared
+  latexmk setup. These are main's submission documents, not covariance-mse.
+- Publish the two PDFs with these documentation/ignore changes on main.
+
 ## November 3: retain original template placeholders; bias audits converged
 
 - User explicitly requested the original header, placeholders and all.

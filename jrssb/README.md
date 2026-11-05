@@ -14,7 +14,8 @@ make -C .. dmop/ms-jrssb.pdf
 The second command uses the shared workspace's LaTeX setup. Elsewhere, run
 `latexmk -pdf ms-jrssb.tex` from the repository root with a full TeX Live
 installation. On Overleaf, select `ms-jrssb.tex` as the main document. The
-generated PDF and auxiliary files are ignored by Git.
+submission PDFs `ms-jrssb.pdf` and `si.pdf` are tracked in Git. Auxiliary
+files and other generated documents remain ignored.
 
 Edit manuscript content in `ms.tex`, layout in `preamble.tex`, and title-page
 details in the generator, then regenerate. The submission copy uses A4,

@@ -191,6 +191,7 @@ renv
 /imgs/pmcmc/common_target_*.png
 /imgs/pmcmc/identity_control_*.png
 
-# JRSSB submission output and bundled official class.
-/ms-jrssb.pdf
+# Publish the submission manuscript and SI; keep other build products ignored.
+!/ms-jrssb.pdf
+!/si.pdf
 !/jrssb/oup-authoring-template.cls

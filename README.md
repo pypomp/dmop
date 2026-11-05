@@ -9,8 +9,8 @@ Development for arXiv version v2 takes place here. The older
 
 | Topic | Source and instructions | Manuscript output |
 |---|---|---|
-| Manuscript and supplement | [ms.tex](ms.tex), [si.tex](si.tex) | Main text and SI |
-| JRSSB review format | [ms-jrssb.tex](ms-jrssb.tex), [build instructions](jrssb/README.md) | Separate A4, 12pt, double-spaced manuscript |
+| Manuscript and supplement | [ms.tex](ms.tex), [si.tex](si.tex) | Main text and [SI PDF](si.pdf) |
+| JRSSB review format | [ms-jrssb.tex](ms-jrssb.tex), [build instructions](jrssb/README.md) | [JRSSB manuscript PDF](ms-jrssb.pdf), A4, 12pt, double-spaced |
 | MOP likelihood illustration | [code/fig1a/](code/fig1a/README.md) | Fig. 1A, `imgs/095/mop.png` |
 | Dhaka IF2/IFAD searches | [code/global_search/](code/global_search/) | Main Dhaka comparison |
 | DS19 comparison | [ditlevsen/](ditlevsen/README.md) | SI Sections S11, S12 |
