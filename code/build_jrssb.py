@@ -13,6 +13,11 @@ def main():
     source = (ROOT / 'ms.tex').read_text()
     abstract = source.split(r'\begin{abstract}', 1)[1].split(r'\end{abstract}', 1)[0].strip()
     body = source[source.index(r'\section{Introduction}'):]
+    # Keep author markup in ms.tex, but typeset the administrative statements
+    # cleanly in the submission copy. Other revision markup is unchanged.
+    body = body.replace('% BEGIN submission declarations',
+                        r'\begingroup\renewcommand{\kevin}[1]{#1}\renewcommand{\sout}[1]{}')
+    body = body.replace('% END submission declarations', r'\endgroup')
     tables = re.findall(r'\\begin\{table\}(?:\[[^\]]*\])?.*?\\end\{table\}', body, re.S)
     for table in tables:
         body = body.replace(table, '', 1)
@@ -35,15 +40,15 @@ def main():
 \appnotes{Original article}
 \firstpage{1}
 \title[Differentiable particle filtering]{\articleTitle}
-\author[1]{K. Tan}
+\author[1,$\ast$]{K. Tan}
 \author[2]{A. J. Abkemeier}
 \author[2]{K. He}
 \author[1]{G. Hooker}
-\author[2,$\ast$]{E. L. Ionides}
+\author[2]{E. L. Ionides}
 \authormark{Tan et al.}
-\address[1]{\orgdiv{Department of Statistics}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
+\address[1]{\orgdiv{Department of Statistics and Data Science, The Wharton School}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
 \address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\country{USA}}}
-\corresp[$\ast$]{Address for correspondence: Edward L. Ionides, Department of Statistics, University of Michigan, 1085 South University Avenue, Ann Arbor, MI 48109-1107, USA. \href{mailto:ionides@umich.edu}{ionides@umich.edu}}
+\corresp[$\ast$]{Address for correspondence: Kevin Tan, Department of Statistics and Data Science, The Wharton School, University of Pennsylvania, Philadelphia, PA 19104-6373, USA. \href{mailto:kevtan@wharton.upenn.edu}{kevtan@wharton.upenn.edu}}
 \received{Date}{0}{Year}
 \revised{Date}{0}{Year}
 \accepted{Date}{0}{Year}

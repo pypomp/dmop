@@ -1,5 +1,30 @@
 # Handoff
 
+## November 6: administrative resubmission fixes
+
+- Pulled main (already current). The editorial return requires matching
+  corresponding-author metadata and three separate declarations before references.
+  Set the JRSSB title contact to Kevin Tan, kevtan@wharton.upenn.edu, using
+  the Wharton affiliation/address in the supplied ScholarOne page. That page
+  identifies Kevin's account but its plaintext does not retain an explicit
+  corresponding-author badge; ensure Kevin is selected in the portal.
+- Added conflict of interest (none, per ScholarOne), funding (the four NSF
+  awards in ScholarOne, including OAC-2607870), and data availability sections
+  in ms.tex. Replaced the former Reproducibility section with the latter.
+  Retained author markup for new statements and struck old funding text;
+  the generator renders this declarations block cleanly for submission.
+- Regenerated ms-jrssb.tex and rebuilt the tracked 37-page ms-jrssb.pdf.
+  Visually checked title and declarations (page 29); no undefined references
+  or errors. Only the unchanged publisher-footer 2.61pt overfull box remains.
+  Built-in standalone compiler cannot load macros.tex; repository latexmk passes.
+  SI and covariance-mse were not changed.
+- Remaining human/portal steps: upload the revised manuscript, copy its data
+  availability statement into ScholarOne, confirm Kevin as corresponding author,
+  and resubmit. Aaron Abkemeier and Kunyang He must each send their own approval
+  to JRSSSB.editorialoffice@paeditorial.co.uk for JRSSB-Jan-2026-0033.R1.
+  Added-author identities are confirmed in dmop_private/jrssb-r2/response.tex.
+  No emails or portal submission have been made by this task.
+
 ## November 5: publish the submission PDFs on main
 
 - User requested Git-ignore exceptions for the JRSSB manuscript and SI.

@@ -2,7 +2,7 @@
 
 `../ms-jrssb.tex` is the separate submission source. Scientific content comes
 from `../ms.tex`; formatting and the RSS title metadata are applied by
-`../code/build_jrssb.py`. The original manuscript and supplement are unchanged.
+`../code/build_jrssb.py`. The supplement is unchanged.
 
 From the repository root:
 
@@ -23,7 +23,18 @@ details in the generator, then regenerate. The submission copy uses A4,
 title/author/contact/abstract layout, and tables at the end. Captions, references, tables and
 algorithms retain 12pt text; the title block retains the template's own font
 sizes, including its 9pt abstract. Figures retain the existing PDF assets. The
-corresponding author is Edward L. Ionides, using his departmental address.
+corresponding author is Kevin Tan, using the Wharton affiliation, Philadelphia
+PA 19104-6373 address and kevtan@wharton.upenn.edu email from the November 6
+ScholarOne submission. The generator typesets the administrative declarations
+without the author markup retained in `ms.tex`.
+
+The November 6 administrative return required separate conflict-of-interest,
+funding and data-availability statements before the references. These are now
+on page 29, with all four NSF grants listed in ScholarOne. Use the same data
+availability text in the ScholarOne form. Aaron J. Abkemeier and Kunyang He
+must each email their own approval of addition to the author list directly to
+JRSSSB.editorialoffice@paeditorial.co.uk, citing JRSSB-Jan-2026-0033.R1.
+Those emails and the portal resubmission are not completed by this source change.
 
 The November 3 build is 37 pages including the title/abstract, references and
 tables. This exceeds the journal's suggested length; the conversion preserves

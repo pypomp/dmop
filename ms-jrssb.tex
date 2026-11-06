@@ -58,15 +58,15 @@
 \appnotes{Original article}
 \firstpage{1}
 \title[Differentiable particle filtering]{\articleTitle}
-\author[1]{K. Tan}
+\author[1,$\ast$]{K. Tan}
 \author[2]{A. J. Abkemeier}
 \author[2]{K. He}
 \author[1]{G. Hooker}
-\author[2,$\ast$]{E. L. Ionides}
+\author[2]{E. L. Ionides}
 \authormark{Tan et al.}
-\address[1]{\orgdiv{Department of Statistics}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
+\address[1]{\orgdiv{Department of Statistics and Data Science, The Wharton School}, \orgname{University of Pennsylvania}, \orgaddress{\country{USA}}}
 \address[2]{\orgdiv{Department of Statistics}, \orgname{University of Michigan}, \orgaddress{\country{USA}}}
-\corresp[$\ast$]{Address for correspondence: Edward L. Ionides, Department of Statistics, University of Michigan, 1085 South University Avenue, Ann Arbor, MI 48109-1107, USA. \href{mailto:ionides@umich.edu}{ionides@umich.edu}}
+\corresp[$\ast$]{Address for correspondence: Kevin Tan, Department of Statistics and Data Science, The Wharton School, University of Pennsylvania, Philadelphia, PA 19104-6373, USA. \href{mailto:kevtan@wharton.upenn.edu}{kevtan@wharton.upenn.edu}}
 \received{Date}{0}{Year}
 \revised{Date}{0}{Year}
 \accepted{Date}{0}{Year}
@@ -746,16 +746,21 @@ Discounting the weights by some $\alpha \in [0,1]$ is not the only way to interp
 As the proof of Theorem \ref{thm:mop-biasvar} implies, we can also truncate the weights at a fixed lag, corresponding to the MOP-$(1,k)$ algorithm mentioned. 
 The analysis is similar, with comparable rates but with a slightly less convenient implementation. 
 
-\section*{Reproducibility}
-
-Source code for this article is archived on Zenodo with DOI \href{https://doi.org/10.5281/zenodo.23538801}{10.5281/zenodo.23538801}.
-It is also available on GitHub at \href{https://github.com/pypomp/dmop}{https://github.com/pypomp/dmop}.
-
-
+\begingroup\renewcommand{\kevin}[1]{#1}\renewcommand{\sout}[1]{}
 \section*{Acknowledgments}
-This research was supported by National Science Foundation grants DMS-1761603, DEB-1933497 and  OAC-2607869. 
+\sout{This research was supported by National Science Foundation grants DMS-1761603, DEB-1933497 and OAC-2607869.}
 We thank Nicolas Chopin for communications regarding the strong law of large numbers for off-parameter resampled particle filters, and other feedback. We thank Jun Chen and Arnaud Doucet for helpful discussions.
 {\editAIstatement}
+
+\section*{Conflict of interest}
+\kevin{The authors declare no conflicts of interest.}
+
+\section*{Funding}
+\kevin{This research was supported by National Science Foundation grants DMS-1761603, DEB-1933497, OAC-2607869 and OAC-2607870.}
+
+\section*{Data availability}
+\kevin{The data and code used in this article are available at \url{https://github.com/pypomp/dmop}. Source code for the article is archived on Zenodo at \url{https://doi.org/10.5281/zenodo.23538801}. The Pypomp package is available at \url{https://github.com/pypomp/pypomp}.}
+\endgroup
 
 %\bibliographystyle{abbrvnat}
 \bibliographystyle{apalike}
